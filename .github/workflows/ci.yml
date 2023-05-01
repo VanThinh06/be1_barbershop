@@ -10,7 +10,9 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+
     steps:
+
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
@@ -19,9 +21,6 @@ jobs:
 
     - name: Check out code into the Go module directory
       git uses: actions/checkout@v3
-
-    - name: Build
-      run: go build -v ./...
 
     - name: Test
       run: make test
