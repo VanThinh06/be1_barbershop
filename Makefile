@@ -8,7 +8,7 @@ createdb:
 #     docker exec -it postgres1 dropdb barbershop
 
 migrateup:
-    migrate -path db/migration -database "postgresql\://mtt16\:Vanthinh11@localhost:8888/barbershop?sslmode=disable" -verbose up
+    migrate -path db/migration -database "postgresql://mtt16:Vanthinh11@localhost:8888/barbershop?sslmode=disable" -verbose up
 
 migratedown:
     migrate -path db/migration -database "postgresql\://mtt16\:Vanthinh11@localhost:8888/barbershop?sslmode=disable" -verbose down

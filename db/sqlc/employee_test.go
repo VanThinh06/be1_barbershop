@@ -4,7 +4,6 @@ import (
 	"barbershop/db/util"
 	"context"
 	"database/sql"
-	"fmt"
 	"testing"
 
 	"github.com/google/uuid"
@@ -46,28 +45,25 @@ func TestGetListEmployee(t *testing.T) {
 	}
 
 	listEmployee, err := testQueries.GetListEmployeewithStore(context.Background(), arg)
-
-	fmt.Println(listEmployee)
 	require.NoError(t, err)
 	require.NotEmpty(t, listEmployee)
 
 }
 
 func TestUpdateEmployee(t *testing.T) {
-	employee, err := testQueries.GetEmployee(context.Background(), uuid.MustParse("18a072c7-f86d-4bb7-bd36-36580ec07fec"))
+	employee, err := testQueries.GetEmployee(context.Background(), uuid.MustParse("00489b51-3966-430d-9cb0-294eebbeca7d"))
 	require.NoError(t, err)
 	require.NotEmpty(t, employee)
 
-	arg := UpdateAuthorParams{
-		ID:       uuid.MustParse("18a072c7-f86d-4bb7-bd36-36580ec07fec"),
+	arg := UpdateEmployeeParams{
+		ID:       uuid.MustParse("00489b51-3966-430d-9cb0-294eebbeca7d"),
 		Username: "Okela",
 		Image:    employee.Image,
 		StoreID:  employee.StoreID,
 	}
 
-	employeeUpdate, err := testQueries.UpdateAuthor(context.Background(), arg)
+	employeeUpdate, err := testQueries.UpdateEmployee(context.Background(), arg)
 
-	fmt.Println(employeeUpdate)
 	require.NoError(t, err)
 	require.NotEmpty(t, employeeUpdate)
 
