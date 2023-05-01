@@ -46,6 +46,11 @@ jobs:
     - name: Run migrations
       run: migrate -path db/migration -database "postgresql://mtt16:Vanthinh11@localhost:8888/barbershop?sslmode=disable" -verbose up
 
+    - name: Build
+      run: |
+        go get github.com/lib/pq
+        go get github.com/google/uuid
+
 
     - name: Test
       run: go test -v -cover ./...
