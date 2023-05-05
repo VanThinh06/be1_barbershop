@@ -5,8 +5,10 @@ package db
 
 import (
 	"context"
-	"database/sql"
+
+
 	"github.com/google/uuid"
+	null "gopkg.in/guregu/null.v4"
 )
 
 const createEmployee = `-- name: CreateEmployee :one
@@ -18,10 +20,10 @@ VALUES ( $1,
 `
 
 type CreateEmployeeParams struct {
-	Username string         `json:"username"`
-	Role     string         `json:"role"`
-	Image    sql.NullString `json:"image"`
-	StoreID  uuid.UUID      `json:"store_id"`
+	Username string      `json:"username"`
+	Role     string      `json:"role"`
+	Image    null.String `json:"image"`
+	StoreID  uuid.UUID   `json:"store_id"`
 }
 
 func (q *Queries) CreateEmployee(ctx context.Context, arg CreateEmployeeParams) (Employee, error) {
@@ -129,10 +131,10 @@ WHERE id = $1 RETURNING id, username, role, image, store_id, created_at, update_
 `
 
 type UpdateEmployeeParams struct {
-	ID       uuid.UUID      `json:"id"`
-	Username string         `json:"username"`
-	Image    sql.NullString `json:"image"`
-	StoreID  uuid.UUID      `json:"store_id"`
+	ID       uuid.UUID   `json:"id"`
+	Username string      `json:"username"`
+	Image    null.String `json:"image"`
+	StoreID  uuid.UUID   `json:"store_id"`
 }
 
 func (q *Queries) UpdateEmployee(ctx context.Context, arg UpdateEmployeeParams) (Employee, error) {

@@ -10,11 +10,11 @@ CREATE TABLE "employee" ("id" uuid UNIQUE PRIMARY KEY DEFAULT (uuid_generate_v4(
 CREATE TABLE "manager" ("id" uuid UNIQUE PRIMARY KEY DEFAULT (uuid_generate_v4()), "username" varchar NOT NULL,
                                                                                                       "role" varchar NOT NULL,
                                                                                                                      "image" varchar, "store_id" uuid[], "created_at" timestamp NOT NULL DEFAULT (now()), "update_at" timestamp);
-
-
 CREATE TABLE "store" (
     "id" uuid UNIQUE PRIMARY KEY DEFAULT (uuid_generate_v4()),
-    "name_store" varchar, "location" integer, "manager_id" uuid,
+    "name_store" varchar, 
+    "location" integer,
+    "manager_id" uuid,
     "employee_id" uuid,
     "status" varchar, 
     "created_at" timestamp NOT NULL DEFAULT (now()), 
