@@ -6,7 +6,6 @@ package db
 import (
 	"context"
 
-
 	"github.com/google/uuid"
 	null "gopkg.in/guregu/null.v4"
 )

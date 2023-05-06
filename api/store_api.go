@@ -22,7 +22,7 @@ type createStoreParams struct {
 	NameStore  string `json:"name_store" binding:"required`
 	ManagerID  string `json:"manager_id"`
 	EmployeeID string `json:"employee_id"`
-	Location   int32  `json:"location"`
+	Location   int64  `json:"location"`
 	Status     string `json:"status" binding:"required,oneof=Work Off Destroy"`
 }
 
@@ -37,7 +37,7 @@ func (server *Server) NewStore(ctx *gin.Context) {
 		NameStore:  null.StringFrom(req.NameStore),
 		ManagerID:  uuid.MustParse(req.ManagerID),
 		EmployeeID: uuid.MustParse(req.EmployeeID),
-		Location:   sql.NullInt32{Int32: req.Location, Valid: true},
+		Location:   null.IntFrom(req.Location),
 		Status:     null.StringFrom(req.Status),
 	}
 	store, err := server.queries.CreateStore(ctx, arg)

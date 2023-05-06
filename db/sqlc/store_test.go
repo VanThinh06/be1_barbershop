@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 	"testing"
 
 	"github.com/google/uuid"
@@ -15,7 +14,7 @@ func TestCreateRandomEmployee(t *testing.T) {
 		NameStore:  null.String{},
 		ManagerID:  uuid.MustParse("4714dc3f-2f14-4abe-b19f-d8b925334b48"),
 		EmployeeID: uuid.MustParse("1792c33c-4102-4756-b27d-ab519e192275"),
-		Location:   sql.NullInt32{Int32: 1, Valid: false},
+		Location:   null.IntFrom(21),
 		Status:     null.String{},
 	}
 

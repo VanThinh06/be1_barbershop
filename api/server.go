@@ -9,7 +9,7 @@ import (
 )
 
 type Server struct {
-	queries *db.Queries
+	queries db.StoreMain
 	router  *gin.Engine
 }
 
@@ -17,7 +17,7 @@ type IdEmployee struct {
 	ID string `uri:"id" binding:"required"`
 }
 
-func NewServer(queries *db.Queries) *Server {
+func NewServer(queries db.StoreMain) *Server {
 	server := &Server{
 		queries: queries,
 	}

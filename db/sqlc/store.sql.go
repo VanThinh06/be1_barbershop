@@ -5,8 +5,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
-
 
 	"github.com/google/uuid"
 	null "gopkg.in/guregu/null.v4"
@@ -24,11 +22,11 @@ VALUES ($1,
 `
 
 type CreateStoreParams struct {
-	NameStore  null.String   `json:"name_store"`
-	ManagerID  uuid.UUID     `json:"manager_id"`
-	EmployeeID uuid.UUID     `json:"employee_id"`
-	Location   sql.NullInt32 `json:"location"`
-	Status     null.String   `json:"status"`
+	NameStore  null.String `json:"name_store"`
+	ManagerID  uuid.UUID   `json:"manager_id"`
+	EmployeeID uuid.UUID   `json:"employee_id"`
+	Location   null.Int    `json:"location"`
+	Status     null.String `json:"status"`
 }
 
 func (q *Queries) CreateStore(ctx context.Context, arg CreateStoreParams) (Store, error) {

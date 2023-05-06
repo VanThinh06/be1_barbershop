@@ -3,41 +3,39 @@
 package db
 
 import (
-	"database/sql"
 	"time"
-
 
 	"github.com/google/uuid"
 	null "gopkg.in/guregu/null.v4"
 )
 
 type Employee struct {
-	ID        uuid.UUID    `json:"id"`
-	Username  string       `json:"username"`
-	Role      string       `json:"role"`
-	Image     null.String  `json:"image"`
-	StoreID   uuid.UUID    `json:"store_id"`
-	CreatedAt time.Time    `json:"created_at"`
-	UpdateAt  sql.NullTime `json:"update_at"`
+	ID        uuid.UUID   `json:"id"`
+	Username  string      `json:"username"`
+	Role      string      `json:"role"`
+	Image     null.String `json:"image"`
+	StoreID   uuid.UUID   `json:"store_id"`
+	CreatedAt time.Time   `json:"created_at"`
+	UpdateAt  null.Time   `json:"update_at"`
 }
 
 type Manager struct {
-	ID        uuid.UUID    `json:"id"`
-	Username  string       `json:"username"`
-	Role      string       `json:"role"`
-	Image     null.String  `json:"image"`
-	StoreID   []uuid.UUID  `json:"store_id"`
-	CreatedAt time.Time    `json:"created_at"`
-	UpdateAt  sql.NullTime `json:"update_at"`
+	ID        uuid.UUID   `json:"id"`
+	Username  string      `json:"username"`
+	Role      string      `json:"role"`
+	Image     null.String `json:"image"`
+	StoreID   []uuid.UUID `json:"store_id"`
+	CreatedAt time.Time   `json:"created_at"`
+	UpdateAt  null.Time   `json:"update_at"`
 }
 
 type Store struct {
-	ID         uuid.UUID     `json:"id"`
-	NameStore  null.String   `json:"name_store"`
-	Location   sql.NullInt32 `json:"location"`
-	ManagerID  uuid.UUID     `json:"manager_id"`
-	EmployeeID uuid.UUID     `json:"employee_id"`
-	Status     null.String   `json:"status"`
-	CreatedAt  time.Time     `json:"created_at"`
-	UpdateAt   sql.NullTime  `json:"update_at"`
+	ID         uuid.UUID   `json:"id"`
+	NameStore  null.String `json:"name_store"`
+	Location   null.Int    `json:"location"`
+	ManagerID  uuid.UUID   `json:"manager_id"`
+	EmployeeID uuid.UUID   `json:"employee_id"`
+	Status     null.String `json:"status"`
+	CreatedAt  time.Time   `json:"created_at"`
+	UpdateAt   null.Time   `json:"update_at"`
 }
