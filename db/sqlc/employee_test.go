@@ -3,12 +3,11 @@ package db
 import (
 	"barbershop/db/util"
 	"context"
-	"database/sql"
-	"fmt"
 	"testing"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
+	"gopkg.in/guregu/null.v4"
 )
 
 // tên file test phải kết thúc bằng hậu tố _test
@@ -23,7 +22,7 @@ func createRandomEmployee(t *testing.T) {
 	arg := CreateEmployeeParams{
 		Username: util.RandomName(),
 		Role:     util.RandomRole(),
-		Image:    sql.NullString{Valid: true},
+		Image:    null.String{},
 		StoreID:  uuid.Nil,
 	}
 
@@ -39,35 +38,30 @@ func createRandomEmployee(t *testing.T) {
 }
 
 func TestGetListEmployee(t *testing.T) {
-
 	arg := GetListEmployeewithStoreParams{
 		StoreID: uuid.MustParse("00000000-0000-0000-0000-000000000000"),
 		Limit:   10,
 	}
-
 	listEmployee, err := testQueries.GetListEmployeewithStore(context.Background(), arg)
-
-	fmt.Println(listEmployee)
 	require.NoError(t, err)
 	require.NotEmpty(t, listEmployee)
 
 }
 
 func TestUpdateEmployee(t *testing.T) {
-	employee, err := testQueries.GetEmployee(context.Background(), uuid.MustParse("18a072c7-f86d-4bb7-bd36-36580ec07fec"))
+	employee, err := testQueries.GetEmployee(context.Background(), uuid.MustParse("00489b51-3966-430d-9cb0-294eebbeca7d"))
 	require.NoError(t, err)
 	require.NotEmpty(t, employee)
 
-	arg := UpdateAuthorParams{
-		ID:       uuid.MustParse("18a072c7-f86d-4bb7-bd36-36580ec07fec"),
+	arg := UpdateEmployeeParams{
+		ID:       uuid.MustParse("00489b51-3966-430d-9cb0-294eebbeca7d"),
 		Username: "Okela",
 		Image:    employee.Image,
-		StoreID:  employee.StoreID,
+		StoreID:  uuid.MustParse("00000000-0000-0000-0000-000000000000"),
 	}
 
-	employeeUpdate, err := testQueries.UpdateAuthor(context.Background(), arg)
+	employeeUpdate, err := testQueries.UpdateEmployee(context.Background(), arg)
 
-	fmt.Println(employeeUpdate)
 	require.NoError(t, err)
 	require.NotEmpty(t, employeeUpdate)
 
