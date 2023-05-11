@@ -13,9 +13,6 @@ sql:
         emit_exact_table_names: false
         emit_interface: true
         overrides:
-        - column: "*.uuid"
-          go_type: "github.com/google/uuid"
-          nullable: true
 
         - db_type: "pg_catalog.varchar"
           nullable: true
@@ -24,6 +21,22 @@ sql:
             import: "gopkg.in/guregu/null.v4"
             package: "null"
             type: "String"
+
+        - db_type: "uuid"
+          nullable: true
+          engine: "postgresql"
+          go_type: 
+            import: "github.com/google/uuid"
+            package: "uuid"
+            type: "NullUUID"
+        
+        - db_type: "uuid"
+          nullable: true
+          engine: "postgresql"
+          go_type: 
+            import: "github.com/google/uuid"
+            package: "uuid"
+            type: "NullUUID"
 
         - db_type: "pg_catalog.int4"
           nullable: true

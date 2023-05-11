@@ -3,39 +3,43 @@
 package db
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
 	null "gopkg.in/guregu/null.v4"
 )
 
-type Employee struct {
-	ID        uuid.UUID   `json:"id"`
-	Username  string      `json:"username"`
-	Role      string      `json:"role"`
-	Image     null.String `json:"image"`
-	StoreID   uuid.UUID   `json:"store_id"`
-	CreatedAt time.Time   `json:"created_at"`
-	UpdateAt  null.Time   `json:"update_at"`
-}
-
-type Manager struct {
-	ID        uuid.UUID   `json:"id"`
-	Username  string      `json:"username"`
-	Role      string      `json:"role"`
-	Image     null.String `json:"image"`
-	StoreID   []uuid.UUID `json:"store_id"`
-	CreatedAt time.Time   `json:"created_at"`
-	UpdateAt  null.Time   `json:"update_at"`
+type Barber struct {
+	ID           uuid.UUID     `json:"id"`
+	NameID       string        `json:"name_id"`
+	StoreID      uuid.NullUUID `json:"store_id"`
+	StoreManager []uuid.UUID   `json:"store_manager"`
+	CreatedAt    time.Time     `json:"created_at"`
+	UpdateAt     sql.NullTime  `json:"update_at"`
 }
 
 type Store struct {
-	ID         uuid.UUID   `json:"id"`
-	NameStore  null.String `json:"name_store"`
-	Location   null.Int    `json:"location"`
-	ManagerID  uuid.UUID   `json:"manager_id"`
-	EmployeeID uuid.UUID   `json:"employee_id"`
-	Status     null.String `json:"status"`
-	CreatedAt  time.Time   `json:"created_at"`
-	UpdateAt   null.Time   `json:"update_at"`
+	ID         uuid.UUID     `json:"id"`
+	NameID     string        `json:"name_id"`
+	NameStore  string        `json:"name_store"`
+	Location   null.Int      `json:"location"`
+	Image      null.String   `json:"image"`
+	ListImage  []string      `json:"list_image"`
+	ManagerID  uuid.NullUUID `json:"manager_id"`
+	EmployeeID []uuid.UUID   `json:"employee_id"`
+	Status     string        `json:"status"`
+	CreatedAt  time.Time     `json:"created_at"`
+	UpdateAt   sql.NullTime  `json:"update_at"`
+}
+
+type User struct {
+	Username          string      `json:"username"`
+	FullName          null.String `json:"full_name"`
+	Email             string      `json:"email"`
+	HashedPassword    string      `json:"hashed_password"`
+	PasswordChangedAt time.Time   `json:"password_changed_at"`
+	CreatedAt         time.Time   `json:"created_at"`
+	Image             null.String `json:"image"`
+	Role              null.String `json:"role"`
 }
