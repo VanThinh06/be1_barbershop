@@ -11,11 +11,13 @@ import (
 
 const createUsers = `-- name: CreateUsers :one
 
-INSERT INTO users (username, full_name, email, hashed_password)
+INSERT INTO users (username, full_name, email, hashed_password, image, role)
 VALUES ($1,
         $2,
         $3,
-        $4) RETURNING username, full_name, email, hashed_password, password_changed_at, created_at, image, role
+        $4,
+        $5, $6
+        ) RETURNING username, full_name, email, hashed_password, password_changed_at, created_at, image, role
 `
 
 type CreateUsersParams struct {
@@ -23,6 +25,8 @@ type CreateUsersParams struct {
 	FullName       null.String `json:"full_name"`
 	Email          string      `json:"email"`
 	HashedPassword string      `json:"hashed_password"`
+	Image          null.String `json:"image"`
+	Role           null.String `json:"role"`
 }
 
 func (q *Queries) CreateUsers(ctx context.Context, arg CreateUsersParams) (User, error) {
@@ -31,6 +35,8 @@ func (q *Queries) CreateUsers(ctx context.Context, arg CreateUsersParams) (User,
 		arg.FullName,
 		arg.Email,
 		arg.HashedPassword,
+		arg.Image,
+		arg.Role,
 	)
 	var i User
 	err := row.Scan(
