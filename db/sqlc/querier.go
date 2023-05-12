@@ -4,20 +4,13 @@ package db
 
 import (
 	"context"
-
-	"github.com/google/uuid"
 )
 
 type Querier interface {
-	CreateEmployee(ctx context.Context, arg CreateEmployeeParams) (Employee, error)
-	CreateManager(ctx context.Context, arg CreateManagerParams) (Manager, error)
-	CreateStore(ctx context.Context, arg CreateStoreParams) (Store, error)
-	DeleteEmployee(ctx context.Context, id uuid.UUID) error
-	GetEmployee(ctx context.Context, id uuid.UUID) (Employee, error)
-	GetListEmployeewithStore(ctx context.Context, arg GetListEmployeewithStoreParams) ([]Employee, error)
-	UpdateEmployee(ctx context.Context, arg UpdateEmployeeParams) (Employee, error)
-	UpdateManager(ctx context.Context, arg UpdateManagerParams) (Manager, error)
+	CreateBarber(ctx context.Context, arg CreateBarberParams) (Barber, error)
+	CreateUsers(ctx context.Context, arg CreateUsersParams) (User, error)
+	GetBarber(ctx context.Context, nameID string) (Barber, error)
+	GetUsers(ctx context.Context, username string) (User, error)
 }
 
 var _ Querier = (*Queries)(nil)
-// Queries cấu trúc phải thực hiện tất cả các chức năng của giao diện này Querier

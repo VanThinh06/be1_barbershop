@@ -1,13 +1,14 @@
 package util
 
 import (
+	"fmt"
 	"math/rand"
 	"strings"
-	"time"
+	// "time"
 )
 
 func init() {
-	rand.Seed(time.Now().UnixNano())
+	// rand.Seed(time.Now().UnixNano())
 }
 
 const alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -26,6 +27,10 @@ func RandomString(n int) string {
 
 func RandomName() string {
 	return RandomString(5)
+}
+
+func RandomEmail() string {
+	return fmt.Sprintf("%s@gmail.com", RandomString(6))
 }
 
 func RandomRole() string {

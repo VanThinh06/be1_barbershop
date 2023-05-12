@@ -1,0 +1,3 @@
+ALTER TABLE users  
+DROP COLUMN image,
+DROP COLUMN role;
