@@ -1,0 +1,1 @@
+DROP INDEX "public"."sessions_username_key";
