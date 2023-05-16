@@ -3,7 +3,6 @@
 package db
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -16,7 +15,18 @@ type Barber struct {
 	StoreID      uuid.NullUUID `json:"store_id"`
 	StoreManager []uuid.UUID   `json:"store_manager"`
 	CreatedAt    time.Time     `json:"created_at"`
-	UpdateAt     sql.NullTime  `json:"update_at"`
+	UpdateAt     null.Time     `json:"update_at"`
+}
+
+type Session struct {
+	ID           uuid.UUID `json:"id"`
+	Username     string    `json:"username"`
+	RefreshToken string    `json:"refresh_token"`
+	UserAgent    string    `json:"user_agent"`
+	ClientIp     string    `json:"client_ip"`
+	IsBlocked    bool      `json:"is_blocked"`
+	ExpiresAt    time.Time `json:"expires_at"`
+	UpdateAt     time.Time `json:"update_at"`
 }
 
 type Store struct {
@@ -28,9 +38,9 @@ type Store struct {
 	ListImage  []string      `json:"list_image"`
 	ManagerID  uuid.NullUUID `json:"manager_id"`
 	EmployeeID []uuid.UUID   `json:"employee_id"`
-	Status     string        `json:"status"`
+	Status     int32         `json:"status"`
 	CreatedAt  time.Time     `json:"created_at"`
-	UpdateAt   sql.NullTime  `json:"update_at"`
+	UpdateAt   null.Time     `json:"update_at"`
 }
 
 type User struct {

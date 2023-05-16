@@ -1,0 +1,1 @@
+ALTER TABLE store ALTER COLUMN status TYPE VARCHAR USING (trim(status)::varchar);

@@ -7,8 +7,8 @@ createdb:
 dropdb:
     docker exec -it postgres1 dropdb barbershop
 
-migratecreate:
-    migrate create -ext sql -dir db/migration -seq add_filed_users
+migratecreate:migrate create -ext sql -dir db/migration -seq add_filed_users
+    
 
 migrateup:
     migrate -path db/migration -database "postgresql://mtt16:Vanthinh11@localhost:8888/barbershop?sslmode=disable" -verbose up
