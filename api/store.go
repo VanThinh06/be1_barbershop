@@ -11,14 +11,14 @@ import (
 	"gopkg.in/guregu/null.v4"
 )
 
-type Enum interface {
+type StatusStore interface {
 	IsValid() bool
 }
 
 type Status int
 
 const (
-	Active Status = iota + 1 // add + 1 otherwise validation won't work for 0
+	Active Status = iota + 1
 	Shutdown
 	Stop
 )
@@ -31,7 +31,7 @@ func (s Status) IsValid() bool {
 	return false
 }
 
-func (s Status) NameStatus() int32 {
+func (s Status) NameStatusStore() int32 {
 	switch s {
 	case Active:
 		return 1
@@ -50,7 +50,7 @@ type newUserParams struct {
 	Image      null.String   `json:"image"`
 	ManagerID  uuid.NullUUID `json:"manager_id"`
 	EmployeeID []uuid.UUID   `json:"employee_id"`
-	Status     Status        `json:"status" binding:"required,enum"`
+	Status     Status        `json:"status" binding:"required,statusStore"`
 }
 
 func (server *Server) newStore(ctx *gin.Context) {
@@ -67,7 +67,7 @@ func (server *Server) newStore(ctx *gin.Context) {
 		Image:      req.Image,
 		ManagerID:  req.ManagerID,
 		EmployeeID: req.EmployeeID,
-		Status:     req.Status.NameStatus(),
+		Status:     req.Status.NameStatusStore(),
 	}
 
 	store, err := server.queries.CreateStore(ctx, arg)

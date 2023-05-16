@@ -32,7 +32,7 @@ func NewServer(config util.Config, queries db.StoreMain) (*Server, error) {
 	//     v.RegisterValidation("currency", validCurrency)
 	// }
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		v.RegisterValidation("enum", ValidateEnum)
+		v.RegisterValidation("statusStore", ValidateEnum)
 	}
 	server.setupRouter()
 
@@ -48,7 +48,7 @@ func (server *Server) Start(address string) error {
 }
 
 func ValidateEnum(fl validator.FieldLevel) bool {
-	value := fl.Field().Interface().(Enum)
+	value := fl.Field().Interface().(StatusStore)
 	return value.IsValid()
 }
 

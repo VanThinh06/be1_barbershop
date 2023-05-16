@@ -4,6 +4,7 @@ INSERT INTO "sessions" (id,
                      refresh_token,
                      user_agent,
                      client_ip,
+                     location,
                      is_blocked,
                      expires_at)
 VALUES ($1,
@@ -12,7 +13,8 @@ VALUES ($1,
         $4,
         $5,
         $6,
-        $7 ) RETURNING *;
+        $7,
+        $8 ) RETURNING *;
 
 -- name: GetSession :one
 SELECT *
