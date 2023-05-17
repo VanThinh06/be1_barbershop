@@ -1,1 +1,0 @@
-ALTER TABLE store ALTER COLUMN "status" TYPE varchar USING ("status"::varchar);

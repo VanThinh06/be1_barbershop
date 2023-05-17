@@ -2,10 +2,13 @@ package api
 
 import (
 	db "barbershop/db/sqlc"
+	"database/sql"
+	"errors"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"gopkg.in/guregu/null.v4"
@@ -42,21 +45,34 @@ func (s Status) NameStatusStore() int32 {
 	}
 	return 1
 }
+func ValidateStatusStore(fl validator.FieldLevel) bool {
+	value := fl.Field().Interface().(StatusStore)
+	return value.IsValid()
+}
 
-type newUserParams struct {
-	NameID     string        `json:"name_id" binding:"required"`
-	NameStore  string        `json:"name_store" binding:"required"`
-	Location   null.Int      `json:"location"`
-	Image      null.String   `json:"image"`
-	ManagerID  uuid.NullUUID `json:"manager_id"`
-	EmployeeID []uuid.UUID   `json:"employee_id"`
-	Status     Status        `json:"status" binding:"required,statusStore"`
+type newStoreParams struct {
+	NameID     string          `json:"name_id" binding:"required"`
+	NameStore  string          `json:"name_store" binding:"required"`
+	Location   sql.NullFloat64 `json:"location"`
+	Image      null.String     `json:"image"`
+	ManagerID  uuid.NullUUID   `json:"manager_id"`
+	EmployeeID []uuid.UUID     `json:"employee_id"`
+	Status     Status          `json:"status" binding:"required,statusStore"`
 }
 
 func (server *Server) newStore(ctx *gin.Context) {
-	var req newUserParams
+	var req newStoreParams
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		var ve validator.ValidationErrors
+		if errors.As(err, &ve) {
+			out := make([]ApiError, len(ve))
+			for i, fe := range ve {
+				out[i] = ApiError{fe.Field(), msgForTag(fe.Tag())}
+			}
+			ctx.JSON(http.StatusBadRequest, gin.H{"errors": out})
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, gin.H{"errors": errorResponse(err)})
 		return
 	}
 
@@ -85,5 +101,4 @@ func (server *Server) newStore(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, store)
-
 }
