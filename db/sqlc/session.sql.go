@@ -24,7 +24,8 @@ VALUES ($1,
         $4,
         $5,
         $6,
-        $7 ) RETURNING id, username, refresh_token, user_agent, client_ip, is_blocked, expires_at, update_at
+        $7
+         ) RETURNING id, username, refresh_token, user_agent, client_ip, is_blocked, expires_at, update_at
 `
 
 type CreateSessionParams struct {

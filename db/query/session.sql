@@ -12,7 +12,8 @@ VALUES ($1,
         $4,
         $5,
         $6,
-        $7 ) RETURNING *;
+        $7
+         ) RETURNING *;
 
 -- name: GetSession :one
 SELECT *

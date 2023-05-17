@@ -32,11 +32,27 @@ func NewServer(config util.Config, queries db.StoreMain) (*Server, error) {
 	//     v.RegisterValidation("currency", validCurrency)
 	// }
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		v.RegisterValidation("enum", ValidateEnum)
+		v.RegisterValidation("statusStore", ValidateStatusStore)
 	}
 	server.setupRouter()
 
 	return server, nil
+}
+
+// / ERROR
+type ApiError struct {
+	Field string
+	Msg   string
+}
+
+func msgForTag(tag string) string {
+	switch tag {
+	case "statusStore":
+		return "Invalid status store"
+	case "email":
+		return "Invalid email"
+	}
+	return ""
 }
 
 func errorResponse(err error) gin.H {
@@ -47,11 +63,7 @@ func (server *Server) Start(address string) error {
 	return server.router.Run(address)
 }
 
-func ValidateEnum(fl validator.FieldLevel) bool {
-	value := fl.Field().Interface().(Enum)
-	return value.IsValid()
-}
-
+// / Router
 func (server *Server) setupRouter() {
 	router := gin.Default()
 	router.POST("/users/login", server.loginUser)
@@ -61,6 +73,11 @@ func (server *Server) setupRouter() {
 	authRoutes := router.Group("/").Use(addMiddleWare(server.tokenMaker))
 	authRoutes.POST("/barber", server.newBarber)
 	authRoutes.POST("/store", server.newStore)
+	authRoutes.POST("/service", server.createService)
+	authRoutes.POST("/schedulerwork", server.newSchedulerWork)
+	
+
 
 	server.router = router
 }
+

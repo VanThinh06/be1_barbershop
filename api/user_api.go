@@ -15,7 +15,7 @@ import (
 
 type createUsersParams struct {
 	Username string      `json:"username" binding:"required,alphanum"`
-	FullName null.String `json:"full_name"`
+	FullName string `json:"full_name"`
 	Email    string      `json:"email" binding:"required,email"`
 	Password string      `json:"password" binding:"required,min=6"`
 	Image    null.String `json:"image"`
@@ -23,7 +23,7 @@ type createUsersParams struct {
 }
 type userResponse struct {
 	Username          string      `json:"username"`
-	FullName          null.String `json:"full_name"`
+	FullName          string `json:"full_name"`
 	Email             string      `json:"email"`
 	PasswordChangedAt time.Time   `json:"password_changed_at"`
 	CreatedAt         time.Time   `json:"created_at"`

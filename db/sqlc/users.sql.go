@@ -11,22 +11,23 @@ import (
 
 const createUsers = `-- name: CreateUsers :one
 
-INSERT INTO users (username, full_name, email, hashed_password, image, role)
+INSERT INTO users (username, full_name, email, hashed_password, image, role, address)
 VALUES ($1,
         $2,
         $3,
         $4,
-        $5, $6
-        ) RETURNING username, full_name, email, hashed_password, password_changed_at, created_at, image, role
+        $5, $6, $7
+        ) RETURNING username, full_name, email, image, role, location, address, hashed_password, password_changed_at, created_at
 `
 
 type CreateUsersParams struct {
 	Username       string      `json:"username"`
-	FullName       null.String `json:"full_name"`
+	FullName       string      `json:"full_name"`
 	Email          string      `json:"email"`
 	HashedPassword string      `json:"hashed_password"`
 	Image          null.String `json:"image"`
 	Role           null.String `json:"role"`
+	Address        null.String `json:"address"`
 }
 
 func (q *Queries) CreateUsers(ctx context.Context, arg CreateUsersParams) (User, error) {
@@ -37,24 +38,27 @@ func (q *Queries) CreateUsers(ctx context.Context, arg CreateUsersParams) (User,
 		arg.HashedPassword,
 		arg.Image,
 		arg.Role,
+		arg.Address,
 	)
 	var i User
 	err := row.Scan(
 		&i.Username,
 		&i.FullName,
 		&i.Email,
+		&i.Image,
+		&i.Role,
+		&i.Location,
+		&i.Address,
 		&i.HashedPassword,
 		&i.PasswordChangedAt,
 		&i.CreatedAt,
-		&i.Image,
-		&i.Role,
 	)
 	return i, err
 }
 
 const getUsers = `-- name: GetUsers :one
 
-SELECT username, full_name, email, hashed_password, password_changed_at, created_at, image, role
+SELECT username, full_name, email, image, role, location, address, hashed_password, password_changed_at, created_at
 FROM users
 WHERE username = $1
 LIMIT 1
@@ -67,11 +71,13 @@ func (q *Queries) GetUsers(ctx context.Context, username string) (User, error) {
 		&i.Username,
 		&i.FullName,
 		&i.Email,
+		&i.Image,
+		&i.Role,
+		&i.Location,
+		&i.Address,
 		&i.HashedPassword,
 		&i.PasswordChangedAt,
 		&i.CreatedAt,
-		&i.Image,
-		&i.Role,
 	)
 	return i, err
 }

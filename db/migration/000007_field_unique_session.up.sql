@@ -1,1 +1,0 @@
-CREATE index sessions_username_key on "sessions" (username);

@@ -8,30 +8,39 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	null "gopkg.in/guregu/null.v4"
 )
 
 const createBarber = `-- name: CreateBarber :one
 
-INSERT INTO barber(name_id, store_id, store_manager)
+INSERT INTO barber(name_id, store_id, store_manager, status)
 VALUES ($1,
         $2,
-        $3
-        ) RETURNING id, name_id, store_id, store_manager, created_at, update_at
+        $3,
+        $4
+        ) RETURNING id, name_id, store_id, status, store_manager, created_at, update_at
 `
 
 type CreateBarberParams struct {
 	NameID       string        `json:"name_id"`
 	StoreID      uuid.NullUUID `json:"store_id"`
 	StoreManager []uuid.UUID   `json:"store_manager"`
+	Status       null.String   `json:"status"`
 }
 
 func (q *Queries) CreateBarber(ctx context.Context, arg CreateBarberParams) (Barber, error) {
-	row := q.db.QueryRowContext(ctx, createBarber, arg.NameID, arg.StoreID, pq.Array(arg.StoreManager))
+	row := q.db.QueryRowContext(ctx, createBarber,
+		arg.NameID,
+		arg.StoreID,
+		pq.Array(arg.StoreManager),
+		arg.Status,
+	)
 	var i Barber
 	err := row.Scan(
 		&i.ID,
 		&i.NameID,
 		&i.StoreID,
+		&i.Status,
 		pq.Array(&i.StoreManager),
 		&i.CreatedAt,
 		&i.UpdateAt,
@@ -41,7 +50,7 @@ func (q *Queries) CreateBarber(ctx context.Context, arg CreateBarberParams) (Bar
 
 const getBarber = `-- name: GetBarber :one
 
-SELECT id, name_id, store_id, store_manager, created_at, update_at
+SELECT id, name_id, store_id, status, store_manager, created_at, update_at
 FROM barber
 WHERE name_id = $1
 LIMIT 1
@@ -54,6 +63,7 @@ func (q *Queries) GetBarber(ctx context.Context, nameID string) (Barber, error) 
 		&i.ID,
 		&i.NameID,
 		&i.StoreID,
+		&i.Status,
 		pq.Array(&i.StoreManager),
 		&i.CreatedAt,
 		&i.UpdateAt,

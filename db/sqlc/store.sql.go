@@ -5,6 +5,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
@@ -31,13 +32,13 @@ VALUES ($1,
 `
 
 type CreateStoreParams struct {
-	NameID     string        `json:"name_id"`
-	NameStore  string        `json:"name_store"`
-	Location   null.Int      `json:"location"`
-	Image      null.String   `json:"image"`
-	ManagerID  uuid.NullUUID `json:"manager_id"`
-	EmployeeID []uuid.UUID   `json:"employee_id"`
-	Status     int32         `json:"status"`
+	NameID     string          `json:"name_id"`
+	NameStore  string          `json:"name_store"`
+	Location   sql.NullFloat64 `json:"location"`
+	Image      null.String     `json:"image"`
+	ManagerID  uuid.NullUUID   `json:"manager_id"`
+	EmployeeID []uuid.UUID     `json:"employee_id"`
+	Status     int32           `json:"status"`
 }
 
 func (q *Queries) CreateStore(ctx context.Context, arg CreateStoreParams) (Store, error) {

@@ -3,6 +3,7 @@
 package db
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -13,9 +14,35 @@ type Barber struct {
 	ID           uuid.UUID     `json:"id"`
 	NameID       string        `json:"name_id"`
 	StoreID      uuid.NullUUID `json:"store_id"`
+	Status       null.String   `json:"status"`
 	StoreManager []uuid.UUID   `json:"store_manager"`
 	CreatedAt    time.Time     `json:"created_at"`
 	UpdateAt     null.Time     `json:"update_at"`
+}
+
+type Schedulerwork struct {
+	ID         uuid.UUID   `json:"id"`
+	BarberID   uuid.UUID   `json:"barber_id"`
+	UsersID    string      `json:"users_id"`
+	Timerstart time.Time   `json:"timerstart"`
+	Timerend   time.Time   `json:"timerend"`
+	Service    []uuid.UUID `json:"service"`
+	TotalPrice float32     `json:"total_price"`
+	Status     int32       `json:"status"`
+	CreatedAt  time.Time   `json:"created_at"`
+	UpdateAt   null.Time   `json:"update_at"`
+}
+
+type Service struct {
+	ID          uuid.UUID   `json:"id"`
+	StoreID     uuid.UUID   `json:"store_id"`
+	Work        string      `json:"work"`
+	Timer       int32       `json:"timer"`
+	Price       float32     `json:"price"`
+	Description null.String `json:"description"`
+	Image       null.String `json:"image"`
+	CreatedAt   time.Time   `json:"created_at"`
+	UpdateAt    null.Time   `json:"update_at"`
 }
 
 type Session struct {
@@ -30,26 +57,28 @@ type Session struct {
 }
 
 type Store struct {
-	ID         uuid.UUID     `json:"id"`
-	NameID     string        `json:"name_id"`
-	NameStore  string        `json:"name_store"`
-	Location   null.Int      `json:"location"`
-	Image      null.String   `json:"image"`
-	ListImage  []string      `json:"list_image"`
-	ManagerID  uuid.NullUUID `json:"manager_id"`
-	EmployeeID []uuid.UUID   `json:"employee_id"`
-	Status     int32         `json:"status"`
-	CreatedAt  time.Time     `json:"created_at"`
-	UpdateAt   null.Time     `json:"update_at"`
+	ID         uuid.UUID       `json:"id"`
+	NameID     string          `json:"name_id"`
+	NameStore  string          `json:"name_store"`
+	Location   sql.NullFloat64 `json:"location"`
+	Image      null.String     `json:"image"`
+	ListImage  []string        `json:"list_image"`
+	ManagerID  uuid.NullUUID   `json:"manager_id"`
+	EmployeeID []uuid.UUID     `json:"employee_id"`
+	Status     int32           `json:"status"`
+	CreatedAt  time.Time       `json:"created_at"`
+	UpdateAt   null.Time       `json:"update_at"`
 }
 
 type User struct {
-	Username          string      `json:"username"`
-	FullName          null.String `json:"full_name"`
-	Email             string      `json:"email"`
-	HashedPassword    string      `json:"hashed_password"`
-	PasswordChangedAt time.Time   `json:"password_changed_at"`
-	CreatedAt         time.Time   `json:"created_at"`
-	Image             null.String `json:"image"`
-	Role              null.String `json:"role"`
+	Username          string          `json:"username"`
+	FullName          string          `json:"full_name"`
+	Email             string          `json:"email"`
+	Image             null.String     `json:"image"`
+	Role              null.String     `json:"role"`
+	Location          sql.NullFloat64 `json:"location"`
+	Address           null.String     `json:"address"`
+	HashedPassword    string          `json:"hashed_password"`
+	PasswordChangedAt time.Time       `json:"password_changed_at"`
+	CreatedAt         time.Time       `json:"created_at"`
 }

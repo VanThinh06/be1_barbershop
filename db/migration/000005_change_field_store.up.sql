@@ -1,1 +1,0 @@
-ALTER TABLE store ALTER COLUMN status TYPE integer USING (trim(status)::integer);

@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/require"
-	"gopkg.in/guregu/null.v4"
 )
 
 // tên file test phải kết thúc bằng hậu tố _test
@@ -21,7 +20,7 @@ func TestListEmployee(t *testing.T) {
 func CreateRandomUsers(t *testing.T) User {
 	arg := CreateUsersParams{
 		Username:       util.RandomName(),
-		FullName:       null.StringFrom(util.RandomString(15)),
+		FullName:       util.RandomString(15),
 		Email:          util.RandomEmail(),
 		HashedPassword: "secret",
 	}
