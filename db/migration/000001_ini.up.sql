@@ -60,8 +60,8 @@ CREATE TABLE "service" (
 
 CREATE TABLE "schedulerwork" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "barber_id" uuid UNIQUE NOT NULL,
-  "users_id" varchar UNIQUE NOT NULL,
+  "barber_id" uuid  NOT NULL,
+  "users_id" varchar  NOT NULL,
   "timerstart" timestamptz NOT NULL,
   "timerend" timestamptz NOT NULL,
   "service" uuid[],
