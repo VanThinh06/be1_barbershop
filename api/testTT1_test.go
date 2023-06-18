@@ -10,28 +10,40 @@ import (
 
 func Test(t *testing.T) {
 
-	require.Equal(t, TestisPrime(5), true)
+	plusMinus([]int32{
+		1, 1, 0, -1, -1})
 	require.Equal(t, factorSum(2), 2)
-	fmt.Println(diagonalDifference([][]int32{
-		{1, 2, 3},
-		{4, 5, 6},
-		{9, 8, 9},
-	}))
+	// fmt.Println(diagonalDifference([][]int32{
+	// 	{1, 2, 3},
+	// 	{4, 5, 6},
+	// 	{9, 8, 9},
+	// }))
 
 }
 
-func TestisPrime(n int) bool {
-	if n > 2 {
+func plusMinus(arr []int32) {
+	// Write your code here
+	nagative := 0.0
+	positive := 0.0
+	zeros := 0.0
+	for _, value := range arr {
 
-		for i := 2; i <= int(math.Sqrt(float64(n))); i++ {
-			fmt.Println(i)
-			if n%i == 0 {
-				return false
-			}
+		if value == 0 {
+			zeros += 1
+		} else if value > 0 {
+			positive += 1
+		} else if value < 0 {
+			nagative += 1
 		}
-		return true
 	}
-	return false
+
+	fmt.Printf("%f", float64(positive)/float64(len(arr)))
+	fmt.Println()
+	fmt.Printf("%f", float64(nagative)/float64(len(arr)))
+	fmt.Println()
+
+	fmt.Printf("%f", float64(zeros)/float64(len(arr)))
+
 }
 
 func diagonalDifference(arr [][]int32) int32 {

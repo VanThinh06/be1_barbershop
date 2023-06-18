@@ -11,13 +11,13 @@ import (
 
 const createUsers = `-- name: CreateUsers :one
 
-INSERT INTO users (username, full_name, email, hashed_password, image, role, address)
+INSERT INTO users (username, full_name, email, hashed_password, fcm_device, image, role, address )
 VALUES ($1,
         $2,
         $3,
         $4,
-        $5, $6, $7
-        ) RETURNING username, full_name, email, image, role, location, address, hashed_password, password_changed_at, created_at
+        $5, $6, $7, $8
+        ) RETURNING username, full_name, email, image, fcm_device, role, location, address, hashed_password, password_changed_at, created_at
 `
 
 type CreateUsersParams struct {
@@ -25,6 +25,7 @@ type CreateUsersParams struct {
 	FullName       string      `json:"full_name"`
 	Email          string      `json:"email"`
 	HashedPassword string      `json:"hashed_password"`
+	FcmDevice      string      `json:"fcm_device"`
 	Image          null.String `json:"image"`
 	Role           null.String `json:"role"`
 	Address        null.String `json:"address"`
@@ -36,6 +37,7 @@ func (q *Queries) CreateUsers(ctx context.Context, arg CreateUsersParams) (User,
 		arg.FullName,
 		arg.Email,
 		arg.HashedPassword,
+		arg.FcmDevice,
 		arg.Image,
 		arg.Role,
 		arg.Address,
@@ -46,6 +48,7 @@ func (q *Queries) CreateUsers(ctx context.Context, arg CreateUsersParams) (User,
 		&i.FullName,
 		&i.Email,
 		&i.Image,
+		&i.FcmDevice,
 		&i.Role,
 		&i.Location,
 		&i.Address,
@@ -56,9 +59,18 @@ func (q *Queries) CreateUsers(ctx context.Context, arg CreateUsersParams) (User,
 	return i, err
 }
 
+const deleteUsers = `-- name: DeleteUsers :exec
+DELETE FROM users WHERE username = $1
+`
+
+func (q *Queries) DeleteUsers(ctx context.Context, username string) error {
+	_, err := q.db.ExecContext(ctx, deleteUsers, username)
+	return err
+}
+
 const getUsers = `-- name: GetUsers :one
 
-SELECT username, full_name, email, image, role, location, address, hashed_password, password_changed_at, created_at
+SELECT username, full_name, email, image, fcm_device, role, location, address, hashed_password, password_changed_at, created_at
 FROM users
 WHERE username = $1
 LIMIT 1
@@ -72,6 +84,7 @@ func (q *Queries) GetUsers(ctx context.Context, username string) (User, error) {
 		&i.FullName,
 		&i.Email,
 		&i.Image,
+		&i.FcmDevice,
 		&i.Role,
 		&i.Location,
 		&i.Address,

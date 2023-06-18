@@ -23,6 +23,7 @@ func CreateRandomUsers(t *testing.T) User {
 		FullName:       util.RandomString(15),
 		Email:          util.RandomEmail(),
 		HashedPassword: "secret",
+		FcmDevice:      "oke",
 	}
 	users, err := testQueries.CreateUsers(context.Background(), arg)
 	require.NoError(t, err)
@@ -33,6 +34,9 @@ func CreateRandomUsers(t *testing.T) User {
 	require.Equal(t, users.Email, arg.Email)
 	require.NotZero(t, users.CreatedAt)
 	require.True(t, users.PasswordChangedAt.IsZero())
+
+	// delete user
+	testQueries.DeleteUsers(context.Background(), arg.Username)
 	return users
 }
 

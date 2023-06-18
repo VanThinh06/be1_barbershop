@@ -51,6 +51,9 @@ func msgForTag(tag string) string {
 		return "Invalid status store"
 	case "email":
 		return "Invalid email"
+
+	case "Fcm_Device":
+		return "Invalid fmc"
 	}
 	return ""
 }
@@ -69,15 +72,16 @@ func (server *Server) setupRouter() {
 	router.POST("/users/login", server.loginUser)
 	router.POST("/tokent/refresh_access", server.reNewAccessToken)
 	router.POST("/users", server.createUser)
+	router.POST("/image", server.uploadImage)
+	router.Static("/assets", "./assets/upload")
 
 	authRoutes := router.Group("/").Use(addMiddleWare(server.tokenMaker))
 	authRoutes.POST("/barber", server.newBarber)
 	authRoutes.POST("/store", server.newStore)
 	authRoutes.POST("/service", server.createService)
 	authRoutes.POST("/schedulerwork", server.newSchedulerWork)
-	
 
+	router.GET("/sdkNotification", sdkFirebaseAdmin)
 
 	server.router = router
 }
-

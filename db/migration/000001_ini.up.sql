@@ -3,6 +3,7 @@ CREATE TABLE "users" (
   "full_name" varchar NOT NULL,
   "email" varchar UNIQUE NOT NULL,
   "image" varchar,
+  "fcm_device" varchar NOT NULL,
   "role" varchar,
   "location" real,
   "address" varchar,
@@ -60,8 +61,8 @@ CREATE TABLE "service" (
 
 CREATE TABLE "schedulerwork" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "barber_id" uuid  NOT NULL,
-  "users_id" varchar  NOT NULL,
+  "barber_id" uuid NOT NULL,
+  "users_id" varchar NOT NULL,
   "timerstart" timestamptz NOT NULL,
   "timerend" timestamptz NOT NULL,
   "service" uuid[],
@@ -81,7 +82,9 @@ CREATE INDEX ON "store" ("manager_id");
 
 CREATE INDEX ON "service" ("store_id");
 
-CREATE UNIQUE INDEX ON "schedulerwork" ("timerstart", "timerend");
+CREATE INDEX ON "schedulerwork" ("barber_id");
+
+CREATE UNIQUE INDEX ON "schedulerwork" ("barber_id", "timerstart");
 
 ALTER TABLE "barber" ADD FOREIGN KEY ("name_id") REFERENCES "users" ("username");
 

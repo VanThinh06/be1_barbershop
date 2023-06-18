@@ -75,6 +75,7 @@ type User struct {
 	FullName          string          `json:"full_name"`
 	Email             string          `json:"email"`
 	Image             null.String     `json:"image"`
+	FcmDevice         string          `json:"fcm_device"`
 	Role              null.String     `json:"role"`
 	Location          sql.NullFloat64 `json:"location"`
 	Address           null.String     `json:"address"`

@@ -15,6 +15,7 @@ type Querier interface {
 	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateStore(ctx context.Context, arg CreateStoreParams) (Store, error)
 	CreateUsers(ctx context.Context, arg CreateUsersParams) (User, error)
+	DeleteUsers(ctx context.Context, username string) error
 	GetBarber(ctx context.Context, nameID string) (Barber, error)
 	GetService(ctx context.Context, storeID uuid.UUID) ([]Service, error)
 	GetSession(ctx context.Context, id uuid.UUID) (Session, error)

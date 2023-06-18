@@ -2,11 +2,14 @@ package api
 
 import (
 	db "barbershop/db/sqlc"
+	"errors"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type newSchedulerWorkParams struct {
@@ -22,7 +25,20 @@ type newSchedulerWorkParams struct {
 func (server *Server) newSchedulerWork(ctx *gin.Context) {
 	var req newSchedulerWorkParams
 	if err := ctx.ShouldBindJSON(&req); err != nil {
+
+		//
+		var ve validator.ValidationErrors
+		if errors.As(err, &ve) {
+			for _, fe := range ve {
+				if fe.Field() == "Fcm_Device" {
+					ctx.JSON(http.StatusBadRequest, gin.H{"errors": msgForTag(fe.Field())})
+					return
+				}
+			}
+
+		}
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+
 		return
 	}
 
@@ -50,6 +66,15 @@ func (server *Server) newSchedulerWork(ctx *gin.Context) {
 
 	schedulerWork, err := server.queries.CreateSchedulerWork(ctx, arg)
 	if err != nil {
+		if pqErr, ok := err.(*pq.Error); ok {
+			switch pqErr.Code.Name() {
+			case "unique_violation":
+				if pqErr.Constraint == "schedulerwork_barber_id_timerstart_idx" {
+					ctx.JSON(http.StatusForbidden, "Working time already exists")
+					return
+				}
+			}
+		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
