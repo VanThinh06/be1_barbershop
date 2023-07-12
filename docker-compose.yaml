@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=mtt16
+      - POSTGRES_PASSWORD=Vanthinh11
+      - POSTGRES_DB=barbershop
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports: 
+      - "8080:8080"
+    environment:
+      - DB_SOURCE=postgresql://mtt16:Vanthinh11@postgres:5432/barbershop?sslmode=disable
+    depends_on:
+      - postgres
+    entrypoint: [ "/app/wait-for.sh", "postgres:5432", "--", "/app/start.sh" ]
+    command: [ "/app/main" ]
+    
+    
+
+
+   

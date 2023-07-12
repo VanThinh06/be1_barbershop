@@ -22,4 +22,12 @@ test:
 mock: 
     mockgen -package mockdb  -destination db/mock/store.go  barbershop/db/sqlc StoreMain
 
+docker: 
+    docker build
+
+dropcontainer: 
+    docker exec -it postgres1 dropdb barbershop
+
+
+
 .PHONY: postgres createdb dropdb migrateup migratedown test

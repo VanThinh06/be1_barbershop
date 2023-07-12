@@ -11,17 +11,21 @@ import (
 )
 
 func main() {
+
+	// Load file config
 	config, err := util.LoadConfig(".") // . vì nằm cùng vị trí với thư mục hiện tại app.env
 	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}
 
+	// connect possgres
 	conn, err := sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
 
-	queries := db.New(conn)
+	// 
+	queries := db.New(conn) 
 	server, err := api.NewServer(config, queries)
 	if err != nil {
 		log.Fatal("cannot create server:", err)

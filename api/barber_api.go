@@ -2,7 +2,6 @@ package api
 
 import (
 	db "barbershop/db/sqlc"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -32,8 +31,6 @@ func (server *Server) newBarber(ctx *gin.Context) {
 	barber, err := server.queries.CreateBarber(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
-			log.Println(pqErr.Code.Name())
-			log.Println(ok)
 			switch pqErr.Code.Name() {
 			case "foreign_key_violation", "unique_violation":
 				ctx.JSON(http.StatusForbidden, errorResponse(err))

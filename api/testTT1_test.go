@@ -4,21 +4,115 @@ import (
 	"fmt"
 	"math"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 )
 
 func Test(t *testing.T) {
 
-	plusMinus([]int32{
-		1, 1, 0, -1, -1})
-	require.Equal(t, factorSum(2), 2)
-	// fmt.Println(diagonalDifference([][]int32{
-	// 	{1, 2, 3},
-	// 	{4, 5, 6},
-	// 	{9, 8, 9},
-	// }))
+	// plusMinus([]int32{
+	// 	1, 1, 0, -1, -1})
+	// require.Equal(t, factorSum(2), 2)
+	// // fmt.Println(diagonalDifference([][]int32{
+	// // 	{1, 2, 3},
+	// // 	{4, 5, 6},
+	// // 	{9, 8, 9},
+	// // }))
+	// arr := []int32{1, 3, 5,7 ,9 }
+	miniMaxSum([]int32{256741038, 623958417, 467905213, 714532089, 938071625})
 
+}
+
+// CanFastAttack can be executed only when the knight is sleeping.
+func CanFastAttack(knightIsAwake bool) bool {
+ if knightIsAwake {
+ return false    
+ }
+return true
+}
+
+// CanSpy can be executed if at least one of the characters is awake.
+func CanSpy(knightIsAwake, archerIsAwake, prisonerIsAwake bool) bool {
+	 if knightIsAwake && archerIsAwake && prisonerIsAwake == false{
+         return true
+     }
+return false
+}
+
+// CanSignalPrisoner can be executed if the prisoner is awake and the archer is sleeping.
+func CanSignalPrisoner(archerIsAwake, prisonerIsAwake bool) bool {
+	 if archerIsAwake && prisonerIsAwake == false{
+     return true    
+     }
+return false
+}
+
+// CanFreePrisoner can be executed if the prisoner is awake and the other 2 characters are asleep
+// or if Annalyn's pet dog is with her and the archer is sleeping.
+func CanFreePrisoner(knightIsAwake, archerIsAwake, prisonerIsAwake, petDogIsPresent bool) bool {
+	if petDogIsPresent{
+    if(archerIsAwake == false){
+    return true    
+    }else{
+    if(prisonerIsAwake && knightIsAwake == false && archerIsAwake == false){
+        return true
+        }
+        }
+    return false
+    }
+	return false
+}
+
+
+func miniMaxSum(arr []int32) {
+	var numMax int32 = arr[0]
+	var numMin int32 = arr[0]
+	var sumMax int
+	var sumMin int
+	var arrMin []int32
+	var arrMax []int32
+	var equalNumMin int
+	var equalNumMax int
+
+	for _, v := range arr {
+		if v < numMin {
+			numMin = v
+		}
+
+		if v > numMax {
+			numMax = v
+		}
+	}
+
+	for _, v := range arr {
+		if v < numMax {
+			arrMin = append(arrMin, v)
+		}
+		if v > numMin {
+			arrMax = append(arrMax, v)
+		}
+		if v == numMin {
+			equalNumMin++
+		}
+		if v == numMax {
+			equalNumMax++
+		}
+	}
+
+	for _, v := range arrMax {
+		sumMax += int(v)
+	}
+
+	for _, v := range arrMin {
+		sumMin += int(v)
+	}
+
+	if equalNumMax > 1 {
+		sumMax += int(numMax) * (int(equalNumMax) - 1)
+	}
+	if equalNumMin > 1 {
+		sumMin += int(numMin) * (int(equalNumMax) - 1)
+	}
+
+	fmt.Printf("%d %d", sumMin, sumMax)
 }
 
 func plusMinus(arr []int32) {

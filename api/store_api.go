@@ -4,7 +4,6 @@ import (
 	db "barbershop/db/sqlc"
 	"database/sql"
 	"errors"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -89,8 +88,6 @@ func (server *Server) newStore(ctx *gin.Context) {
 	store, err := server.queries.CreateStore(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
-			log.Println(pqErr.Code.Name())
-			log.Println(ok)
 			switch pqErr.Code.Name() {
 			case "foreign_key_violation", "unique_violation":
 				ctx.JSON(http.StatusForbidden, errorResponse(err))

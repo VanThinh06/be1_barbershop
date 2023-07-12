@@ -28,34 +28,12 @@ func NewServer(config util.Config, queries db.StoreMain) (*Server, error) {
 		queries:    queries,
 		tokenMaker: tokenMaker,
 	}
-	// if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-	//     v.RegisterValidation("currency", validCurrency)
-	// }
+
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("statusStore", ValidateStatusStore)
 	}
 	server.setupRouter()
-
 	return server, nil
-}
-
-// / ERROR
-type ApiError struct {
-	Field string
-	Msg   string
-}
-
-func msgForTag(tag string) string {
-	switch tag {
-	case "statusStore":
-		return "Invalid status store"
-	case "email":
-		return "Invalid email"
-
-	case "Fcm_Device":
-		return "Invalid fmc"
-	}
-	return ""
 }
 
 func errorResponse(err error) gin.H {
@@ -80,8 +58,26 @@ func (server *Server) setupRouter() {
 	authRoutes.POST("/store", server.newStore)
 	authRoutes.POST("/service", server.createService)
 	authRoutes.POST("/schedulerwork", server.newSchedulerWork)
-
-	router.GET("/sdkNotification", sdkFirebaseAdmin)
+	// router.GET("/sdkNotification", sdkFirebaseAdmin) // todo
 
 	server.router = router
+}
+
+// / ERROR
+type ApiError struct {
+	Field string
+	Msg   string
+}
+
+func msgForTag(tag string) string {
+	switch tag {
+	case "statusStore":
+		return "Invalid status store"
+	case "email":
+		return "Invalid email"
+
+	case "Fcm_Device":
+		return "Invalid fmc"
+	}
+	return ""
 }

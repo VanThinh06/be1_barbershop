@@ -10,17 +10,9 @@ import (
 
 type Querier interface {
 	CreateBarber(ctx context.Context, arg CreateBarberParams) (Barber, error)
-	CreateSchedulerWork(ctx context.Context, arg CreateSchedulerWorkParams) (Schedulerwork, error)
-	CreateService(ctx context.Context, arg CreateServiceParams) (Service, error)
-	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
-	CreateStore(ctx context.Context, arg CreateStoreParams) (Store, error)
-	CreateUsers(ctx context.Context, arg CreateUsersParams) (User, error)
-	DeleteUsers(ctx context.Context, username string) error
-	GetBarber(ctx context.Context, nameID string) (Barber, error)
-	GetService(ctx context.Context, storeID uuid.UUID) ([]Service, error)
-	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
-	GetStore(ctx context.Context, nameID string) (Store, error)
-	GetUsers(ctx context.Context, username string) (User, error)
+	CreateSessionBarber(ctx context.Context, arg CreateSessionBarberParams) (SessionsBarber, error)
+	GetBarber(ctx context.Context, username string) (Barber, error)
+	GetSession(ctx context.Context, id uuid.UUID) (SessionsBarber, error)
 }
 
 var _ Querier = (*Queries)(nil)

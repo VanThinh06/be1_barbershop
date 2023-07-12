@@ -176,9 +176,9 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		ID:           refreshPayload.ID,
 		Username:     refreshPayload.Username,
 		RefreshToken: refreshToken,
-		UserAgent:    ctx.Request.UserAgent(),
+		UserAgent:    ctx.Request.UserAgent(), 
 		ClientIp:     ctx.ClientIP(),
-		IsBlocked:    false,
+		IsBlocked:    false,  // chặn session
 		ExpiresAt:    refreshPayload.ExpiredAt,
 	})
 
@@ -195,6 +195,5 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		RefreshTokenExpiresAt: refreshPayload.ExpiredAt,
 		User:                  newUserResponse(users),
 	}
-
 	ctx.JSON(http.StatusOK, rsp)
 }

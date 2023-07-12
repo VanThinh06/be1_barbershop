@@ -3,7 +3,6 @@
 package db
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -11,18 +10,36 @@ import (
 )
 
 type Barber struct {
-	ID           uuid.UUID     `json:"id"`
-	NameID       string        `json:"name_id"`
-	StoreID      uuid.NullUUID `json:"store_id"`
-	Status       null.String   `json:"status"`
-	StoreManager []uuid.UUID   `json:"store_manager"`
-	CreatedAt    time.Time     `json:"created_at"`
-	UpdateAt     null.Time     `json:"update_at"`
+	Username          string        `json:"username"`
+	FullName          string        `json:"full_name"`
+	Email             string        `json:"email"`
+	HashedPassword    string        `json:"hashed_password"`
+	Avatar            null.String   `json:"avatar"`
+	Role              null.String   `json:"role"`
+	Status            null.String   `json:"status"`
+	StoreID           uuid.NullUUID `json:"store_id"`
+	StoreManager      []uuid.UUID   `json:"store_manager"`
+	PasswordChangedAt time.Time     `json:"password_changed_at"`
+	CreatedAt         time.Time     `json:"created_at"`
+	UpdateAt          null.Time     `json:"update_at"`
+}
+
+type Customer struct {
+	Username          string      `json:"username"`
+	FullName          string      `json:"full_name"`
+	Email             string      `json:"email"`
+	HashedPassword    string      `json:"hashed_password"`
+	Avatar            null.String `json:"avatar"`
+	Role              null.String `json:"role"`
+	Address           null.String `json:"address"`
+	PasswordChangedAt time.Time   `json:"password_changed_at"`
+	CreatedAt         time.Time   `json:"created_at"`
+	UpdateAt          null.Time   `json:"update_at"`
 }
 
 type Schedulerwork struct {
 	ID         uuid.UUID   `json:"id"`
-	BarberID   uuid.UUID   `json:"barber_id"`
+	BarberID   string      `json:"barber_id"`
 	UsersID    string      `json:"users_id"`
 	Timerstart time.Time   `json:"timerstart"`
 	Timerend   time.Time   `json:"timerend"`
@@ -45,41 +62,42 @@ type Service struct {
 	UpdateAt    null.Time   `json:"update_at"`
 }
 
-type Session struct {
+type SessionsBarber struct {
+	ID           uuid.UUID `json:"id"`
+	Username     string    `json:"username"`
+	RefreshToken string    `json:"refresh_token"`
+	IsManager    bool      `json:"is_manager"`
+	UserAgent    string    `json:"user_agent"`
+	ClientIp     string    `json:"client_ip"`
+	FcmDevice    string    `json:"fcm_device"`
+	IsBlocked    bool      `json:"is_blocked"`
+	ExpiresAt    time.Time `json:"expires_at"`
+	CreateAt     time.Time `json:"create_at"`
+}
+
+type SessionsCustomer struct {
 	ID           uuid.UUID `json:"id"`
 	Username     string    `json:"username"`
 	RefreshToken string    `json:"refresh_token"`
 	UserAgent    string    `json:"user_agent"`
 	ClientIp     string    `json:"client_ip"`
+	FcmDevice    string    `json:"fcm_device"`
 	IsBlocked    bool      `json:"is_blocked"`
 	ExpiresAt    time.Time `json:"expires_at"`
-	UpdateAt     time.Time `json:"update_at"`
+	CreateAt     time.Time `json:"create_at"`
 }
 
 type Store struct {
-	ID         uuid.UUID       `json:"id"`
-	NameID     string          `json:"name_id"`
-	NameStore  string          `json:"name_store"`
-	Location   sql.NullFloat64 `json:"location"`
-	Image      null.String     `json:"image"`
-	ListImage  []string        `json:"list_image"`
-	ManagerID  uuid.NullUUID   `json:"manager_id"`
-	EmployeeID []uuid.UUID     `json:"employee_id"`
-	Status     int32           `json:"status"`
-	CreatedAt  time.Time       `json:"created_at"`
-	UpdateAt   null.Time       `json:"update_at"`
-}
-
-type User struct {
-	Username          string          `json:"username"`
-	FullName          string          `json:"full_name"`
-	Email             string          `json:"email"`
-	Image             null.String     `json:"image"`
-	FcmDevice         string          `json:"fcm_device"`
-	Role              null.String     `json:"role"`
-	Location          sql.NullFloat64 `json:"location"`
-	Address           null.String     `json:"address"`
-	HashedPassword    string          `json:"hashed_password"`
-	PasswordChangedAt time.Time       `json:"password_changed_at"`
-	CreatedAt         time.Time       `json:"created_at"`
+	ID         uuid.UUID   `json:"id"`
+	NameID     string      `json:"name_id"`
+	NameStore  string      `json:"name_store"`
+	Location   float32     `json:"location"`
+	Address    string      `json:"address"`
+	Image      null.String `json:"image"`
+	ListImage  []string    `json:"list_image"`
+	ManagerID  []uuid.UUID `json:"manager_id"`
+	EmployeeID []uuid.UUID `json:"employee_id"`
+	Status     int32       `json:"status"`
+	CreatedAt  time.Time   `json:"created_at"`
+	UpdateAt   null.Time   `json:"update_at"`
 }
