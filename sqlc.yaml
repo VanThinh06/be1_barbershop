@@ -27,7 +27,7 @@ sql:
           engine: "postgresql"
           go_type: 
             import: "github.com/google/uuid"
-            package: "uuid"
+           
             type: "NullUUID"
       
         - db_type: "pg_catalog.int4"

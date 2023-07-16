@@ -1,22 +1,27 @@
-CREATE TABLE "users" (
+CREATE TABLE "customer" (
   "username" varchar PRIMARY KEY,
   "full_name" varchar NOT NULL,
   "email" varchar UNIQUE NOT NULL,
-  "image" varchar,
-  "role" varchar,
-  "location" real,
-  "address" varchar,
   "hashed_password" varchar NOT NULL,
+  "avatar" varchar,
+  "role" varchar,
+  "address" varchar,
   "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
-  "created_at" timestamptz NOT NULL DEFAULT (now())
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "update_at" timestamptz
 );
 
 CREATE TABLE "barber" (
-  "id" uuid UNIQUE PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "name_id" varchar UNIQUE NOT NULL,
-  "store_id" uuid,
+  "username" varchar PRIMARY KEY,
+  "full_name" varchar NOT NULL,
+  "email" varchar UNIQUE NOT NULL,
+  "hashed_password" varchar NOT NULL,
+  "avatar" varchar,
+  "role" varchar,
   "status" varchar,
+  "store_id" uuid,
   "store_manager" uuid[],
+  "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz
 );
@@ -25,25 +30,40 @@ CREATE TABLE "store" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name_id" varchar UNIQUE NOT NULL,
   "name_store" varchar NOT NULL,
-  "location" real,
+  "location" real NOT NULL,
+  "address" varchar NOT NULL,
   "image" varchar,
   "list_image" varchar[],
-  "manager_id" uuid,
+  "manager_id" uuid[],
   "employee_id" uuid[],
   "status" integer NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz
 );
 
-CREATE TABLE "sessions" (
+CREATE TABLE "sessions_barber" (
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "username" varchar NOT NULL,
+  "refresh_token" varchar NOT NULL,
+  "is_manager" bool NOT NULL DEFAULT false,
+  "user_agent" varchar NOT NULL,
+  "client_ip" varchar NOT NULL,
+  "fcm_device" varchar NOT NULL,
+  "is_blocked" bool NOT NULL DEFAULT false,
+  "expires_at" timestamptz NOT NULL,
+  "create_at" timestamptz NOT NULL DEFAULT (now())
+);
+
+CREATE TABLE "sessions_customer" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "username" varchar NOT NULL,
   "refresh_token" varchar NOT NULL,
   "user_agent" varchar NOT NULL,
   "client_ip" varchar NOT NULL,
+  "fcm_device" varchar NOT NULL,
   "is_blocked" bool NOT NULL DEFAULT false,
   "expires_at" timestamptz NOT NULL,
-  "update_at" timestamptz NOT NULL DEFAULT (now())
+  "create_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "service" (
@@ -60,18 +80,20 @@ CREATE TABLE "service" (
 
 CREATE TABLE "schedulerwork" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "barber_id" uuid  NOT NULL,
-  "users_id" varchar  NOT NULL,
+  "barber_id" varchar NOT NULL,
+  "users_id" varchar NOT NULL,
   "timerstart" timestamptz NOT NULL,
   "timerend" timestamptz NOT NULL,
-  "service" uuid[],
+  "service" uuid[] NOT NULL,
   "total_price" real NOT NULL DEFAULT 0,
   "status" integer NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz
 );
 
-CREATE INDEX ON "barber" ("name_id");
+CREATE INDEX ON "customer" ("username");
+
+CREATE INDEX ON "barber" ("username");
 
 CREATE INDEX ON "store" ("name_store");
 
@@ -81,16 +103,18 @@ CREATE INDEX ON "store" ("manager_id");
 
 CREATE INDEX ON "service" ("store_id");
 
-CREATE UNIQUE INDEX ON "schedulerwork" ("timerstart", "timerend");
+CREATE INDEX ON "schedulerwork" ("barber_id");
 
-ALTER TABLE "barber" ADD FOREIGN KEY ("name_id") REFERENCES "users" ("username");
+CREATE UNIQUE INDEX ON "schedulerwork" ("barber_id", "timerstart");
 
-ALTER TABLE "store" ADD FOREIGN KEY ("manager_id") REFERENCES "barber" ("id");
+ALTER TABLE "barber" ADD FOREIGN KEY ("store_id") REFERENCES "store" ("id");
 
-ALTER TABLE "sessions" ADD FOREIGN KEY ("username") REFERENCES "users" ("username");
+ALTER TABLE "sessions_barber" ADD FOREIGN KEY ("username") REFERENCES "barber" ("username");
+
+ALTER TABLE "sessions_customer" ADD FOREIGN KEY ("username") REFERENCES "customer" ("username");
 
 ALTER TABLE "service" ADD FOREIGN KEY ("store_id") REFERENCES "store" ("id");
 
-ALTER TABLE "schedulerwork" ADD FOREIGN KEY ("barber_id") REFERENCES "barber" ("id");
+ALTER TABLE "schedulerwork" ADD FOREIGN KEY ("barber_id") REFERENCES "barber" ("username");
 
-ALTER TABLE "schedulerwork" ADD FOREIGN KEY ("users_id") REFERENCES "users" ("username");
+ALTER TABLE "schedulerwork" ADD FOREIGN KEY ("users_id") REFERENCES "customer" ("username");
