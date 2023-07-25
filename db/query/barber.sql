@@ -1,16 +1,19 @@
 -- name: CreateBarber :one
 
-INSERT INTO barber(name_id, store_id, store_manager, status)
+INSERT INTO barber(username, full_name, email, hashed_password, avatar, role, status, store_id, store_manager)
 VALUES ($1,
         $2,
         $3,
-        $4
-        ) RETURNING *;
+        $4,
+        $5,
+        $6,
+        $7,
+        $8,
+        $9) RETURNING *;
 
 -- name: GetBarber :one
 
 SELECT *
 FROM barber
-WHERE name_id = $1
+WHERE username = $1
 LIMIT 1;
-

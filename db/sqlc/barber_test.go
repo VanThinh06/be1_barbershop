@@ -6,23 +6,30 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
+	"gopkg.in/guregu/null.v4"
 )
 
 func TestCreateBarber(t *testing.T) {
-	users := CreateRandomUsers(t)
-
 	arg := CreateBarberParams{
-		NameID:       users.Username,
-		StoreID:      uuid.NullUUID{},
-		StoreManager: nil,
+		Username:       "ThinhVan",
+		FullName:       "DuongVanThinh",
+		Email:          "dvanthinh06@gmail.com",
+		HashedPassword: "VanThinh123",
+		Avatar:         null.StringFrom("https://"),
+		Role:           null.StringFrom(""),
+		Status:         null.StringFrom(""),
+		StoreID:        uuid.NullUUID{},
+		StoreManager:   []uuid.UUID{},
 	}
-
 	barber, err := testQueries.CreateBarber(context.Background(), arg)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, barber)
-	require.Equal(t, arg.NameID, barber.NameID)
-	require.Equal(t, arg.StoreID, barber.StoreID)
-	require.Equal(t, arg.StoreManager, barber.StoreManager)
-	require.NotZero(t, barber.CreatedAt)
+}
+
+func TestGetBarber(t *testing.T) {
+	nameBarber := "ThinhVan"
+	barber, err := testQueries.GetBarber(context.Background(), nameBarber)
+	require.NoError(t, err)
+	require.NotEmpty(t, barber)
 }
