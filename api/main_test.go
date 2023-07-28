@@ -1,30 +1,30 @@
 package api
 
-// import (
-// 	db "barbershop/db/sqlc"
-// 	"barbershop/db/util"
-// 	"os"
-// 	"testing"
-// 	"time"
+import (
+	db "barbershop/db/sqlc"
+	"barbershop/db/util"
+	"os"
+	"testing"
+	"time"
 
-// 	"github.com/gin-gonic/gin"
-// 	_ "github.com/lib/pq"
-// 	"github.com/stretchr/testify/require"
-// )
+	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
+	"github.com/stretchr/testify/require"
+)
 
-// func TestMain(m *testing.M) {
-// 	gin.SetMode(gin.TestMode)
-// 	os.Exit(m.Run())
-// }
+func TestMain(m *testing.M) {
+	gin.SetMode(gin.TestMode)
+	os.Exit(m.Run())
+}
 
-// func newTestServer(t *testing.T, store db.StoreMain) *Server {
-//     config := util.Config{
-//         TokenSymmetricKey:   util.RandomString(32),
-//         AccessTokenDuration: time.Minute,
-//     }
+func NewTestServer(t *testing.T, store db.StoreMain) *Server {
+	config := util.Config{
+		TokenSymmetricKey:   util.RandomString(32),
+		AccessTokenDuration: time.Minute,
+	}
 
-//     server, err := NewServer(config, store)
-//     require.NoError(t, err)
+	server, err := NewServer(config, store)
+	require.NoError(t, err)
 
-//     return server
-// }
+	return server
+}
