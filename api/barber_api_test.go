@@ -90,10 +90,10 @@ func TestGetBarberWithName(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			store := mockdb.NewMockStoreMain(ctrl)
-			tc.buildStubs(store)
+			storeMain := mockdb.NewMockStoreMain(ctrl)
+			tc.buildStubs(storeMain)
 
-			server := NewTestServer(t, store)
+			server := NewTestServer(t, storeMain)
 			recorder := httptest.NewRecorder()
 
 			url := fmt.Sprintf("/barber/%s", tc.nameBarber.String)

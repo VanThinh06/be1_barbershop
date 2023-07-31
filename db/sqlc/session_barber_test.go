@@ -11,6 +11,7 @@ import (
 
 func TestCreateSessionBabrer(t *testing.T) {
 	arg := CreateSessionBarberParams{
+		ID:           uuid.New(),
 		Username:     "ThinhVan",
 		RefreshToken: "123",
 		UserAgent:    "foo",
@@ -26,7 +27,7 @@ func TestCreateSessionBabrer(t *testing.T) {
 }
 
 func TestGetSession(t *testing.T) {
-	idSession := "d78e9aae-8ed2-4d51-80c8-ce0644dd813c"
+	idSession := "10af67b7-0125-4870-ab8f-33cc2fa8d049"
 	sessionBarber, err := testQueries.GetSession(context.Background(), uuid.MustParse(idSession))
 	require.NoError(t, err)
 	require.NotEmpty(t, sessionBarber)

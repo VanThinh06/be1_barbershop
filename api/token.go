@@ -9,18 +9,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// login
-type reNewAccessTokenRequest struct {
+type ReNewAccessTokenRequest struct {
 	RefreshTokent string `json:"refresh_tokent" binding:"required"`
 }
 
-type reNewAccessTokenResponse struct {
+type ReNewAccessTokenResponse struct {
 	AccessToken          string    `json:"access_token"`
 	AccessTokenExpiresAt time.Time `json:"access_token_expires_at"`
 }
 
-func (server *Server) reNewAccessToken(ctx *gin.Context) {
-	var req reNewAccessTokenRequest
+func (server *Server) ReNewAccessToken(ctx *gin.Context) {
+	var req ReNewAccessTokenRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
@@ -80,7 +79,7 @@ func (server *Server) reNewAccessToken(ctx *gin.Context) {
 		return
 	}
 
-	rsp := reNewAccessTokenResponse{
+	rsp := ReNewAccessTokenResponse{
 		AccessToken:          access_token,
 		AccessTokenExpiresAt: accessPayload.ExpiredAt,
 	}

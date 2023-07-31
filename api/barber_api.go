@@ -29,7 +29,7 @@ type barberResponse struct {
 	UpdateAt          null.Time     `json:"update_at"`
 }
 
-// Get barber returns
+// * api get barber
 func (server *Server) GetBarber(ctx *gin.Context) {
 	id := ctx.Param("id")
 	barber, err := server.queries.GetBarber(ctx, id)
@@ -57,9 +57,10 @@ func (server *Server) GetBarber(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
+// * auth register
 // create barber
 type newBarberParams struct {
-	Username string        `json:"username" binding:"required"`
+	Username string        `json:"username" binding:"required,alphanum"`
 	FullName string        `json:"full_name" binding:"required"`
 	Email    string        `json:"email" binding:"email,required"`
 	Password string        `json:"password" binding:"required,min=6"`
@@ -79,6 +80,7 @@ func newBarberResponse(barber db.Barber) barberResponse {
 	}
 }
 
+// * auth register
 func (server *Server) NewBarber(ctx *gin.Context) {
 	var req newBarberParams
 
@@ -93,6 +95,10 @@ func (server *Server) NewBarber(ctx *gin.Context) {
 				}
 				if fe.Field() == "Password" {
 					ctx.JSON(http.StatusBadRequest, gin.H{"errors": util.MsgForTag(fe.Field())})
+					return
+				}
+				if fe.Field() == "UserName" {
+					ctx.JSON(http.StatusBadRequest, gin.H{"errors": "Username is only for alphanumeric input, no special characters"})
 					return
 				}
 			}
@@ -138,12 +144,13 @@ func (server *Server) NewBarber(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-// / login accout barber
-type loginAccoutBarber struct {
+// * auth login
+// login accout params
+type LoginAccoutBarberParams struct {
 	Username string `json:"username" binding:"required,alphanum"`
 	Password string `json:"password" binding:"required,min=6"`
 }
-type barberLoginResponse struct {
+type BarberLoginResponse struct {
 	SessionId             uuid.UUID      `json:"session_id"`
 	AccessToken           string         `json:"access_token"`
 	AccessTokenExpiresAt  time.Time      `json:"access_token_expires_at"`
@@ -152,11 +159,24 @@ type barberLoginResponse struct {
 	Barber                barberResponse `json:"barber"`
 }
 
-func (server *Server) loginBarber(ctx *gin.Context) {
-
+// * auth login
+func (server *Server) LoginBarber(ctx *gin.Context) {
 	// check login
-	var req loginAccoutBarber
+	var req LoginAccoutBarberParams
 	if err := ctx.ShouldBindJSON(&req); err != nil {
+		var validateError validator.ValidationErrors
+		if errors.As(err, &validateError) {
+			for _, fe := range validateError {
+				if fe.Field() == "Password" {
+					ctx.JSON(http.StatusBadRequest, gin.H{"errors": "Password must be more than 6 characters"})
+					return
+				}
+				if fe.Field() == "UserName" {
+					ctx.JSON(http.StatusBadRequest, gin.H{"errors": "Username is only for alphanumeric input, no special characters"})
+					return
+				}
+			}
+		}
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
@@ -216,7 +236,7 @@ func (server *Server) loginBarber(ctx *gin.Context) {
 		return
 	}
 
-	response := barberLoginResponse{
+	response := BarberLoginResponse{
 		SessionId:             session.ID,
 		AccessToken:           accessToken,
 		AccessTokenExpiresAt:  accessPayload.ExpiredAt,

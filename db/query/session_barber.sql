@@ -1,5 +1,4 @@
 -- name: CreateSessionBarber :one
-
 INSERT INTO "sessions_barber" (
                                id,
                                username,
@@ -22,7 +21,6 @@ VALUES ($1,
         ) RETURNING *;
 
 -- name: GetSession :one
-
 SELECT *
 FROM "sessions_barber"
 WHERE id = $1

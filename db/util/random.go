@@ -30,7 +30,7 @@ func RandomName() string {
 }
 
 func RandomEmail() string {
-	return fmt.Sprintf("%s@gmail.com", RandomString(6))
+	return fmt.Sprintf("%s@gmail.com", RandomString(10))
 }
 
 func RandomRole() string {

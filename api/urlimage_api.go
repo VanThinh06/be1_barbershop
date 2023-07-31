@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (server *Server) uploadImage(ctx *gin.Context) {
+func (server *Server) UploadImage(ctx *gin.Context) {
 	file, err := ctx.FormFile("image")
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -30,7 +30,7 @@ func (server *Server) uploadImage(ctx *gin.Context) {
 
 }
 
-func (server *Server) loadImageFromURL(URL string) (image.Image, error) {
+func (server *Server) LoadImageFromURL(URL string) (image.Image, error) {
 
 	//Get the response bytes from the url
 	response, err := http.Get(URL)

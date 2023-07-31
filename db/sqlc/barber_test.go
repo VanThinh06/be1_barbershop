@@ -11,9 +11,9 @@ import (
 
 func TestCreateBarber(t *testing.T) {
 	arg := CreateBarberParams{
-		Username:       "ThinhVan",
+		Username:       "VanThinhDuong",
 		FullName:       "DuongVanThinh",
-		Email:          "dvanthinh06@gmail.com",
+		Email:          "dvanthinh@gmail.com",
 		HashedPassword: "VanThinh123",
 		Avatar:         null.StringFrom("https://"),
 		Role:           null.StringFrom(""),
