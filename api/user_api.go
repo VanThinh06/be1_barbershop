@@ -193,7 +193,7 @@ package api
 // 		AccessTokenExpiresAt:  accessPayload.ExpiredAt,
 // 		RefreshToken:          refreshToken,
 // 		RefreshTokenExpiresAt: refreshPayload.ExpiredAt,
-// 		User:                  newUserResponse(users),
+		// User:                  newUserResponse(users),
 // 	}
 // 	ctx.JSON(http.StatusOK, rsp)
 // }

@@ -13,7 +13,7 @@ VALUES ($1,
 
 -- name: GetBarber :one
 
-SELECT username, full_name, email, avatar, role, status, store_id, store_manager
+SELECT *
 FROM barber
 WHERE username = $1
 LIMIT 1

@@ -1,6 +1,7 @@
 -- name: CreateSessionBarber :one
 
 INSERT INTO "sessions_barber" (
+                               id,
                                username,
                                refresh_token,
                                user_agent,
@@ -16,7 +17,8 @@ VALUES ($1,
         $5,
         $6,
         $7,
-        $8
+        $8,
+        $9
         ) RETURNING *;
 
 -- name: GetSession :one

@@ -13,7 +13,7 @@ import (
 type Querier interface {
 	CreateBarber(ctx context.Context, arg CreateBarberParams) (Barber, error)
 	CreateSessionBarber(ctx context.Context, arg CreateSessionBarberParams) (SessionsBarber, error)
-	GetBarber(ctx context.Context, username string) (GetBarberRow, error)
+	GetBarber(ctx context.Context, username string) (Barber, error)
 	GetSession(ctx context.Context, id uuid.UUID) (SessionsBarber, error)
 }
 

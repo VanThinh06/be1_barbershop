@@ -67,10 +67,10 @@ func (mr *MockStoreMainMockRecorder) CreateSessionBarber(arg0, arg1 interface{})
 }
 
 // GetBarber mocks base method.
-func (m *MockStoreMain) GetBarber(arg0 context.Context, arg1 string) (db.GetBarberRow, error) {
+func (m *MockStoreMain) GetBarber(arg0 context.Context, arg1 string) (db.Barber, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBarber", arg0, arg1)
-	ret0, _ := ret[0].(db.GetBarberRow)
+	ret0, _ := ret[0].(db.Barber)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

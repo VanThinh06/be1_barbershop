@@ -71,35 +71,28 @@ func (q *Queries) CreateBarber(ctx context.Context, arg CreateBarberParams) (Bar
 
 const getBarber = `-- name: GetBarber :one
 
-SELECT username, full_name, email, avatar, role, status, store_id, store_manager
+SELECT username, full_name, email, hashed_password, avatar, role, status, store_id, store_manager, password_changed_at, created_at, update_at
 FROM barber
 WHERE username = $1
 LIMIT 1
 `
 
-type GetBarberRow struct {
-	Username     string        `json:"username"`
-	FullName     string        `json:"full_name"`
-	Email        string        `json:"email"`
-	Avatar       null.String   `json:"avatar"`
-	Role         null.String   `json:"role"`
-	Status       null.String   `json:"status"`
-	StoreID      uuid.NullUUID `json:"store_id"`
-	StoreManager []uuid.UUID   `json:"store_manager"`
-}
-
-func (q *Queries) GetBarber(ctx context.Context, username string) (GetBarberRow, error) {
+func (q *Queries) GetBarber(ctx context.Context, username string) (Barber, error) {
 	row := q.db.QueryRowContext(ctx, getBarber, username)
-	var i GetBarberRow
+	var i Barber
 	err := row.Scan(
 		&i.Username,
 		&i.FullName,
 		&i.Email,
+		&i.HashedPassword,
 		&i.Avatar,
 		&i.Role,
 		&i.Status,
 		&i.StoreID,
 		pq.Array(&i.StoreManager),
+		&i.PasswordChangedAt,
+		&i.CreatedAt,
+		&i.UpdateAt,
 	)
 	return i, err
 }

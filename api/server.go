@@ -54,6 +54,7 @@ func (server *Server) setupRouter() {
 	// authRoutes := router.Group("/").Use(addMiddleWare(server.tokenMaker))
 	router.POST("/barber", server.NewBarber)
 	router.GET("/barber/:id", server.GetBarber)
+	
 	// authRoutes.POST("/service", server.createService)
 	// authRoutes.POST("/schedulerwork", server.newSchedulerWork)
 	// router.GET("/sdkNotification", sdkFirebaseAdmin) // todo
@@ -67,15 +68,15 @@ type ApiError struct {
 	Msg   string
 }
 
-func msgForTag(tag string) string {
-	switch tag {
-	case "statusStore":
-		return "Invalid status store"
-	case "email":
-		return "Invalid email"
+// func msgForTag(tag string) string {
+// 	switch tag {
+// 	case "statusStore":
+// 		return "Invalid status store"
+// 	case "email":
+// 		return "Invalid email"
 
-	case "Fcm_Device":
-		return "Invalid fmc"
-	}
-	return ""
-}
+// 	case "Fcm_Device":
+// 		return "Invalid fmc"
+// 	}
+// 	return ""
+// }
