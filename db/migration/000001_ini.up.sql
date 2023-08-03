@@ -6,7 +6,7 @@ CREATE TABLE "barber" (
   "avatar" varchar,
   "role" varchar,
   "status" varchar,
-  "store_id" uuid,
+  "store_work" uuid,
   "store_manager" uuid[],
   "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
   "created_at" timestamptz NOT NULL DEFAULT (now()),
@@ -34,8 +34,8 @@ CREATE TABLE "store" (
   "address" varchar NOT NULL,
   "image" varchar,
   "list_image" varchar[],
-  "manager_id" uuid[],
-  "employee_id" uuid[],
+  "manager_id" varchar[],
+  "employee_id" varchar[],
   "status" integer NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz
@@ -63,7 +63,7 @@ CREATE INDEX ON "store" ("manager_id");
 
 CREATE INDEX ON "service" ("store_id");
 
-ALTER TABLE "barber" ADD FOREIGN KEY ("store_id") REFERENCES "store" ("id");
+ALTER TABLE "barber" ADD FOREIGN KEY ("store_work") REFERENCES "store" ("id");
 
 ALTER TABLE "sessions_barber" ADD FOREIGN KEY ("username") REFERENCES "barber" ("username");
 

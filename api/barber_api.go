@@ -22,7 +22,7 @@ type barberResponse struct {
 	Avatar            null.String   `json:"avatar"`
 	Role              null.String   `json:"role"`
 	Status            null.String   `json:"status"`
-	StoreID           uuid.NullUUID `json:"store_id"`
+	StoreWork         uuid.NullUUID `json:"store_work"`
 	StoreManager      []uuid.UUID   `json:"store_manager"`
 	PasswordChangedAt time.Time     `json:"password_changed_at"`
 	CreatedAt         time.Time     `json:"created_at"`
@@ -48,7 +48,7 @@ func (server *Server) GetBarber(ctx *gin.Context) {
 		Avatar:            barber.Avatar,
 		Role:              barber.Role,
 		Status:            barber.Status,
-		StoreID:           barber.StoreID,
+		StoreWork:         barber.StoreWork,
 		StoreManager:      barber.StoreManager,
 		PasswordChangedAt: barber.PasswordChangedAt,
 		CreatedAt:         barber.CreatedAt,
@@ -60,14 +60,14 @@ func (server *Server) GetBarber(ctx *gin.Context) {
 // * auth register
 // create barber
 type newBarberParams struct {
-	Username string        `json:"username" binding:"required,alphanum"`
-	FullName string        `json:"full_name" binding:"required"`
-	Email    string        `json:"email" binding:"email,required"`
-	Password string        `json:"password" binding:"required,min=6"`
-	Avatar   null.String   `json:"avatar"`
-	Role     null.String   `json:"role"`
-	Status   null.String   `json:"status"`
-	StoreID  uuid.NullUUID `json:"store_id"`
+	Username  string        `json:"username" binding:"required,alphanum"`
+	FullName  string        `json:"full_name" binding:"required"`
+	Email     string        `json:"email" binding:"email,required"`
+	Password  string        `json:"password" binding:"required,min=6"`
+	Avatar    null.String   `json:"avatar"`
+	Role      null.String   `json:"role"`
+	Status    null.String   `json:"status"`
+	StoreWork uuid.NullUUID `json:"store_work"`
 }
 
 func newBarberResponse(barber db.Barber) barberResponse {
@@ -119,7 +119,7 @@ func (server *Server) NewBarber(ctx *gin.Context) {
 		Email:          req.Email,
 		HashedPassword: hashedPassword,
 		Avatar:         req.Avatar,
-		StoreID:        req.StoreID,
+		StoreWork:      req.StoreWork,
 	}
 
 	barber, err := server.queries.CreateBarber(ctx, arg)

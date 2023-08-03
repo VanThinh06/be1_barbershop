@@ -66,6 +66,21 @@ func (mr *MockStoreMainMockRecorder) CreateSessionBarber(arg0, arg1 interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSessionBarber", reflect.TypeOf((*MockStoreMain)(nil).CreateSessionBarber), arg0, arg1)
 }
 
+// CreateStore mocks base method.
+func (m *MockStoreMain) CreateStore(arg0 context.Context, arg1 db.CreateStoreParams) (db.Store, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateStore", arg0, arg1)
+	ret0, _ := ret[0].(db.Store)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateStore indicates an expected call of CreateStore.
+func (mr *MockStoreMainMockRecorder) CreateStore(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateStore", reflect.TypeOf((*MockStoreMain)(nil).CreateStore), arg0, arg1)
+}
+
 // GetBarber mocks base method.
 func (m *MockStoreMain) GetBarber(arg0 context.Context, arg1 string) (db.Barber, error) {
 	m.ctrl.T.Helper()

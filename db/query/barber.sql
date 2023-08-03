@@ -1,6 +1,6 @@
 -- name: CreateBarber :one
 
-INSERT INTO barber(username, full_name, email, hashed_password, avatar, role, status, store_id, store_manager)
+INSERT INTO barber(username, full_name, email, hashed_password, avatar, role, status, store_work, store_manager)
 VALUES ($1,
         $2,
         $3,

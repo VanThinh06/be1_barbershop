@@ -128,6 +128,6 @@ func createBarber() db.Barber {
 		StoreManager: []uuid.UUID{},
 		Username:     util.RandomName(),
 		Role:         null.StringFrom(util.RandomString(1)),
-		StoreID:      uuid.NullUUID{},
+		StoreWork:    uuid.NullUUID{},
 	}
 }
