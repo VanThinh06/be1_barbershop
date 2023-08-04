@@ -1,3 +1,4 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE "barber" (
   "username" varchar PRIMARY KEY,
   "full_name" varchar NOT NULL,
