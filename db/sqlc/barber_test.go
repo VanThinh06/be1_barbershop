@@ -18,7 +18,7 @@ func TestCreateBarber(t *testing.T) {
 		Avatar:         null.StringFrom("https://"),
 		Role:           null.StringFrom(""),
 		Status:         null.StringFrom(""),
-		StoreWork:        uuid.NullUUID{},
+		StoreWork:      uuid.NullUUID{},
 		StoreManager:   []uuid.UUID{},
 	}
 	barber, err := testQueries.CreateBarber(context.Background(), arg)

@@ -96,6 +96,21 @@ func (mr *MockStoreMainMockRecorder) GetBarber(arg0, arg1 interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBarber", reflect.TypeOf((*MockStoreMain)(nil).GetBarber), arg0, arg1)
 }
 
+// GetListStore mocks base method.
+func (m *MockStoreMain) GetListStore(arg0 context.Context, arg1 db.GetListStoreParams) ([]db.Store, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetListStore", arg0, arg1)
+	ret0, _ := ret[0].([]db.Store)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetListStore indicates an expected call of GetListStore.
+func (mr *MockStoreMainMockRecorder) GetListStore(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListStore", reflect.TypeOf((*MockStoreMain)(nil).GetListStore), arg0, arg1)
+}
+
 // GetSession mocks base method.
 func (m *MockStoreMain) GetSession(arg0 context.Context, arg1 uuid.UUID) (db.SessionsBarber, error) {
 	m.ctrl.T.Helper()
@@ -109,4 +124,19 @@ func (m *MockStoreMain) GetSession(arg0 context.Context, arg1 uuid.UUID) (db.Ses
 func (mr *MockStoreMainMockRecorder) GetSession(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSession", reflect.TypeOf((*MockStoreMain)(nil).GetSession), arg0, arg1)
+}
+
+// GetStore mocks base method.
+func (m *MockStoreMain) GetStore(arg0 context.Context, arg1 uuid.UUID) (db.Store, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetStore", arg0, arg1)
+	ret0, _ := ret[0].(db.Store)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStore indicates an expected call of GetStore.
+func (mr *MockStoreMainMockRecorder) GetStore(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStore", reflect.TypeOf((*MockStoreMain)(nil).GetStore), arg0, arg1)
 }

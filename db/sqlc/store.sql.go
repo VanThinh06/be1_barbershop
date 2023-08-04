@@ -8,6 +8,7 @@ package db
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/lib/pq"
 	null "gopkg.in/guregu/null.v4"
 )
@@ -21,22 +22,24 @@ address,
 image,
 list_image,
 manager_id,
+employee_id,
 status
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8
+  $1, $2, $3, $4, $5, $6, $7, $8, $9
 )
 RETURNING id, name_id, name_store, location, address, image, list_image, manager_id, employee_id, status, created_at, update_at
 `
 
 type CreateStoreParams struct {
-	NameID    string      `json:"name_id"`
-	NameStore string      `json:"name_store"`
-	Location  float32     `json:"location"`
-	Address   string      `json:"address"`
-	Image     null.String `json:"image"`
-	ListImage []string    `json:"list_image"`
-	ManagerID []string    `json:"manager_id"`
-	Status    int32       `json:"status"`
+	NameID     string      `json:"name_id"`
+	NameStore  string      `json:"name_store"`
+	Location   float32     `json:"location"`
+	Address    string      `json:"address"`
+	Image      null.String `json:"image"`
+	ListImage  []string    `json:"list_image"`
+	ManagerID  []string    `json:"manager_id"`
+	EmployeeID []string    `json:"employee_id"`
+	Status     int32       `json:"status"`
 }
 
 func (q *Queries) CreateStore(ctx context.Context, arg CreateStoreParams) (Store, error) {
@@ -48,8 +51,84 @@ func (q *Queries) CreateStore(ctx context.Context, arg CreateStoreParams) (Store
 		arg.Image,
 		pq.Array(arg.ListImage),
 		pq.Array(arg.ManagerID),
+		pq.Array(arg.EmployeeID),
 		arg.Status,
 	)
+	var i Store
+	err := row.Scan(
+		&i.ID,
+		&i.NameID,
+		&i.NameStore,
+		&i.Location,
+		&i.Address,
+		&i.Image,
+		pq.Array(&i.ListImage),
+		pq.Array(&i.ManagerID),
+		pq.Array(&i.EmployeeID),
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}
+
+const getListStore = `-- name: GetListStore :many
+SELECT id, name_id, name_store, location, address, image, list_image, manager_id, employee_id, status, created_at, update_at FROM store
+LIMIT $1
+OFFSET $2
+`
+
+type GetListStoreParams struct {
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+func (q *Queries) GetListStore(ctx context.Context, arg GetListStoreParams) ([]Store, error) {
+	rows, err := q.db.QueryContext(ctx, getListStore, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Store{}
+	for rows.Next() {
+		var i Store
+		if err := rows.Scan(
+			&i.ID,
+			&i.NameID,
+			&i.NameStore,
+			&i.Location,
+			&i.Address,
+			&i.Image,
+			pq.Array(&i.ListImage),
+			pq.Array(&i.ManagerID),
+			pq.Array(&i.EmployeeID),
+			&i.Status,
+			&i.CreatedAt,
+			&i.UpdateAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getStore = `-- name: GetStore :one
+
+SELECT id, name_id, name_store, location, address, image, list_image, manager_id, employee_id, status, created_at, update_at
+FROM store
+WHERE id = $1
+LIMIT 1
+`
+
+func (q *Queries) GetStore(ctx context.Context, id uuid.UUID) (Store, error) {
+	row := q.db.QueryRowContext(ctx, getStore, id)
 	var i Store
 	err := row.Scan(
 		&i.ID,

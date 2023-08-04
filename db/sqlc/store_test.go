@@ -22,3 +22,13 @@ func TestCreateStore(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, store)
 }
+
+func TestGetListStore(t *testing.T) {
+	arg := GetListStoreParams{
+		Limit:  5,
+		Offset: 0,
+	}
+	listStore, err := testQueries.GetListStore(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, listStore)
+}

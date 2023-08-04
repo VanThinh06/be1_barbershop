@@ -81,7 +81,7 @@ func newBarberResponse(barber db.Barber) barberResponse {
 }
 
 // * auth register
-func (server *Server) NewBarber(ctx *gin.Context) {
+func (server *Server) AuthRegister(ctx *gin.Context) {
 	var req newBarberParams
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {

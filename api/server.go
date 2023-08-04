@@ -45,38 +45,27 @@ func (server *Server) Start(address string) error {
 // / Router
 func (server *Server) setupRouter() {
 	router := gin.Default()
+
+	router.POST("/barber", server.AuthRegister)
+	router.POST("/barber/login", server.LoginBarber)
+	router.GET("/barber/:id", server.GetBarber)
+	router.POST("/token/refresh_access", server.ReNewAccessToken)
+
 	// router.POST("/image", server.uploadImage)
 	// router.Static("/assets", "./assets/upload")
-	// router.POST("/tokent/refresh_access", server.reNewAccessToken)
-	// router.POST("/users/login", server.loginUser)
 	// router.POST("/users", server.createUser)
 
-	// authRoutes := router.Group("/").Use(addMiddleWare(server.tokenMaker))
-	router.POST("/barber", server.NewBarber)
-	router.GET("/barber/:id", server.GetBarber)
-	
-	// authRoutes.POST("/service", server.createService)
-	// authRoutes.POST("/schedulerwork", server.newSchedulerWork)
+	authRoutes := router.Group("/").Use(AddMiddleWare(server.tokenMaker))
+	authRoutes.POST("/store", server.NewStore)
+	authRoutes.GET("/store/:id", server.GetStore)
+	authRoutes.GET("/store", server.GetListStore)
 	// router.GET("/sdkNotification", sdkFirebaseAdmin) // todo
 
 	server.router = router
 }
 
-// / ERROR
+// ERROR
 type ApiError struct {
 	Field string
 	Msg   string
 }
-
-// func msgForTag(tag string) string {
-// 	switch tag {
-// 	case "statusStore":
-// 		return "Invalid status store"
-// 	case "email":
-// 		return "Invalid email"
-
-// 	case "Fcm_Device":
-// 		return "Invalid fmc"
-// 	}
-// 	return ""
-// }

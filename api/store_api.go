@@ -1,101 +1,115 @@
 package api
 
-// import (
-// 	db "barbershop/db/sqlc"
-// 	"database/sql"
-// 	"errors"
-// 	"net/http"
+import (
+	db "barbershop/db/sqlc"
+	"database/sql"
 
-// 	"github.com/gin-gonic/gin"
-// 	"github.com/go-playground/validator/v10"
-// 	"github.com/google/uuid"
+	"net/http"
 
-// 	"gopkg.in/guregu/null.v4"
-// )
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"gopkg.in/guregu/null.v4"
+)
 
-// type StatusStore interface {
-// 	IsValid() bool
-// }
+// * api create barber
+type newStoreParams struct {
+	NameID         string      `json:"name_id"  binding:"required"`
+	NameStore      string      `json:"name_store" binding:"required"`
+	Location       float32     `json:"location" binding:"required"`
+	Address        string      `json:"address" binding:"required"`
+	Image          null.String `json:"image"`
+	ListImageStore []string    `json:"list_image_store" `
+	ManagerID      []string    `json:"manager_id"`
+	EmployeeID     []string    `json:"employee_id"`
+	Status         int32       `json:"status" binding:"required"`
+}
 
-// type Status int
+func (server *Server) NewStore(ctx *gin.Context) {
+	var req newStoreParams
 
-// const (
-// 	Active Status = iota + 1
-// 	Shutdown
-// 	Stop
-// )
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+	response := db.CreateStoreParams{
+		NameID:     req.NameID,
+		NameStore:  req.NameStore,
+		Location:   req.Location,
+		Address:    req.Address,
+		Image:      req.Image,
+		ListImage:  req.ListImageStore,
+		ManagerID:  req.ManagerID,
+		EmployeeID: req.EmployeeID,
+		Status:     req.Status,
+	}
+	store, err := server.queries.CreateStore(ctx, response)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, store)
+}
 
-// func (s Status) IsValid() bool {
-// 	switch s {
-// 	case Active, Shutdown, Stop:
-// 		return true
-// 	}
-// 	return false
-// }
+// * api Get Store
+type storeResponse struct {
+	NameID     string      `json:"name_id"`
+	NameStore  string      `json:"name_store"`
+	Location   float32     `json:"location"`
+	Address    string      `json:"address"`
+	Image      null.String `json:"image"`
+	ListImage  []string    `json:"list_image"`
+	ManagerID  []string    `json:"manager_id"`
+	EmployeeID []string    `json:"employee_id"`
+	Status     int32       `json:"status"`
+}
 
-// func (s Status) NameStatusStore() int32 {
-// 	switch s {
-// 	case Active:
-// 		return 1
-// 	case Shutdown:
-// 		return 2
-// 	case Stop:
-// 		return 3
-// 	}
-// 	return 1
-// }
-// func ValidateStatusStore(fl validator.FieldLevel) bool {
-// 	value := fl.Field().Interface().(StatusStore)
-// 	return value.IsValid()
-// }
+func (server *Server) GetStore(ctx *gin.Context) {
+	id := ctx.Param("id")
+	store, err := server.queries.GetStore(ctx, uuid.MustParse(id))
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	response := storeResponse{
+		NameID:     store.NameID,
+		NameStore:  store.NameStore,
+		Location:   store.Location,
+		Address:    store.Address,
+		Image:      store.Image,
+		ListImage:  store.ListImage,
+		ManagerID:  store.ManagerID,
+		EmployeeID: store.EmployeeID,
+		Status:     store.Status,
+	}
+	ctx.JSON(http.StatusOK, response)
+}
 
-// type newStoreParams struct {
-// 	NameID     string          `json:"name_id" binding:"required"`
-// 	NameStore  string          `json:"name_store" binding:"required"`
-// 	Location   sql.NullFloat64 `json:"location"`
-// 	Image      null.String     `json:"image"`
-// 	ManagerID  uuid.NullUUID   `json:"manager_id"`
-// 	EmployeeID []uuid.UUID     `json:"employee_id"`
-// 	Status     Status          `json:"status" binding:"required,statusStore"`
-// }
+type listStoreRequest struct {
+	PageID   int32 `form:"page_id" binding:"required,min=1"`
+	PageSize int32 `form:"page_size" binding:"required,min=5,max= 10"`
+}
 
-// func (server *Server) newStore(ctx *gin.Context) {
-// 	var req newStoreParams
-// 	if err := ctx.ShouldBindJSON(&req); err != nil {
-// 		var ve validator.ValidationErrors
-// 		if errors.As(err, &ve) {
-// 			out := make([]ApiError, len(ve))
-// 			for i, fe := range ve {
-// 				out[i] = ApiError{fe.Field(), msgForTag(fe.Tag())}
-// 			}
-// 			ctx.JSON(http.StatusBadRequest, gin.H{"errors": out})
-// 			return
-// 		}
-// 		ctx.JSON(http.StatusBadRequest, gin.H{"errors": errorResponse(err)})
-// 		return
-// 	}
+func (server *Server) GetListStore(ctx *gin.Context) {
+	var req listStoreRequest
+	ctx.Bind(&req)
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
 
-// 	arg := db.CreateStoreParams{
-// 		NameID:     req.NameID,
-// 		NameStore:  req.NameStore,
-// 		Location:   req.Location,
-// 		Image:      req.Image,
-// 		ManagerID:  req.ManagerID,
-// 		EmployeeID: req.EmployeeID,
-// 		Status:     req.Status.NameStatusStore(),
-// 	}
+	arg := db.GetListStoreParams{
+		Limit:  req.PageSize,
+		Offset: (req.PageID - 1) * req.PageSize,
+	}
 
-// 	store, err := server.queries.CreateStore(ctx, arg)
-// 	if err != nil {
-// 		if pqErr, ok := err.(*pq.Error); ok {
-// 			switch pqErr.Code.Name() {
-// 			case "foreign_key_violation", "unique_violation":
-// 				ctx.JSON(http.StatusForbidden, errorResponse(err))
-// 				return
-// 			}
-// 		}
-// 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-// 		return
-// 	}
-// 	ctx.JSON(http.StatusOK, store)
-// }
+	listBarber, err := server.queries.GetListStore(ctx, arg)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, listBarber)
+}

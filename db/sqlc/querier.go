@@ -15,7 +15,9 @@ type Querier interface {
 	CreateSessionBarber(ctx context.Context, arg CreateSessionBarberParams) (SessionsBarber, error)
 	CreateStore(ctx context.Context, arg CreateStoreParams) (Store, error)
 	GetBarber(ctx context.Context, username string) (Barber, error)
+	GetListStore(ctx context.Context, arg GetListStoreParams) ([]Store, error)
 	GetSession(ctx context.Context, id uuid.UUID) (SessionsBarber, error)
+	GetStore(ctx context.Context, id uuid.UUID) (Store, error)
 }
 
 var _ Querier = (*Queries)(nil)
