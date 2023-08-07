@@ -1,4 +1,4 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE "barber" (
   "username" varchar PRIMARY KEY,
   "full_name" varchar NOT NULL,
@@ -42,11 +42,20 @@ CREATE TABLE "store" (
   "update_at" timestamptz
 );
 
-CREATE TABLE "service" (
+CREATE TABLE "service_category" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "store_id" uuid NOT NULL,
   "work" varchar UNIQUE NOT NULL,
-  "timer" integer NOT NULL,
+  "description" varchar,
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "update_at" timestamptz
+);
+
+CREATE TABLE "service" (
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "service_category_id" uuid NOT NULL,
+  "work" varchar UNIQUE NOT NULL,
+  "timer" integer,
   "price" real NOT NULL,
   "description" varchar,
   "image" varchar,
@@ -62,10 +71,14 @@ CREATE INDEX ON "store" ("name_id");
 
 CREATE INDEX ON "store" ("manager_id");
 
-CREATE INDEX ON "service" ("store_id");
+CREATE INDEX ON "service_category" ("store_id");
+
+CREATE INDEX ON "service" ("service_category_id");
 
 ALTER TABLE "barber" ADD FOREIGN KEY ("store_work") REFERENCES "store" ("id");
 
 ALTER TABLE "sessions_barber" ADD FOREIGN KEY ("username") REFERENCES "barber" ("username");
 
-ALTER TABLE "service" ADD FOREIGN KEY ("store_id") REFERENCES "store" ("id");
+ALTER TABLE "service_category" ADD FOREIGN KEY ("store_id") REFERENCES "store" ("id");
+
+ALTER TABLE "service" ADD FOREIGN KEY ("service_category_id") REFERENCES "service_category" ("id");

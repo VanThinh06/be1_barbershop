@@ -51,6 +51,36 @@ func (mr *MockStoreMainMockRecorder) CreateBarber(arg0, arg1 interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateBarber", reflect.TypeOf((*MockStoreMain)(nil).CreateBarber), arg0, arg1)
 }
 
+// CreateService mocks base method.
+func (m *MockStoreMain) CreateService(arg0 context.Context, arg1 db.CreateServiceParams) (db.Service, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateService", arg0, arg1)
+	ret0, _ := ret[0].(db.Service)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateService indicates an expected call of CreateService.
+func (mr *MockStoreMainMockRecorder) CreateService(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateService", reflect.TypeOf((*MockStoreMain)(nil).CreateService), arg0, arg1)
+}
+
+// CreateServiceCategory mocks base method.
+func (m *MockStoreMain) CreateServiceCategory(arg0 context.Context, arg1 db.CreateServiceCategoryParams) (db.ServiceCategory, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateServiceCategory", arg0, arg1)
+	ret0, _ := ret[0].(db.ServiceCategory)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateServiceCategory indicates an expected call of CreateServiceCategory.
+func (mr *MockStoreMainMockRecorder) CreateServiceCategory(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateServiceCategory", reflect.TypeOf((*MockStoreMain)(nil).CreateServiceCategory), arg0, arg1)
+}
+
 // CreateSessionBarber mocks base method.
 func (m *MockStoreMain) CreateSessionBarber(arg0 context.Context, arg1 db.CreateSessionBarberParams) (db.SessionsBarber, error) {
 	m.ctrl.T.Helper()
@@ -96,6 +126,36 @@ func (mr *MockStoreMainMockRecorder) GetBarber(arg0, arg1 interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBarber", reflect.TypeOf((*MockStoreMain)(nil).GetBarber), arg0, arg1)
 }
 
+// GetListServicewithCategory mocks base method.
+func (m *MockStoreMain) GetListServicewithCategory(arg0 context.Context, arg1 db.GetListServicewithCategoryParams) ([]db.Service, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetListServicewithCategory", arg0, arg1)
+	ret0, _ := ret[0].([]db.Service)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetListServicewithCategory indicates an expected call of GetListServicewithCategory.
+func (mr *MockStoreMainMockRecorder) GetListServicewithCategory(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListServicewithCategory", reflect.TypeOf((*MockStoreMain)(nil).GetListServicewithCategory), arg0, arg1)
+}
+
+// GetListServicewithStore mocks base method.
+func (m *MockStoreMain) GetListServicewithStore(arg0 context.Context, arg1 uuid.UUID) ([]db.ServiceCategory, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetListServicewithStore", arg0, arg1)
+	ret0, _ := ret[0].([]db.ServiceCategory)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetListServicewithStore indicates an expected call of GetListServicewithStore.
+func (mr *MockStoreMainMockRecorder) GetListServicewithStore(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListServicewithStore", reflect.TypeOf((*MockStoreMain)(nil).GetListServicewithStore), arg0, arg1)
+}
+
 // GetListStore mocks base method.
 func (m *MockStoreMain) GetListStore(arg0 context.Context, arg1 db.GetListStoreParams) ([]db.Store, error) {
 	m.ctrl.T.Helper()
@@ -109,6 +169,36 @@ func (m *MockStoreMain) GetListStore(arg0 context.Context, arg1 db.GetListStoreP
 func (mr *MockStoreMainMockRecorder) GetListStore(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListStore", reflect.TypeOf((*MockStoreMain)(nil).GetListStore), arg0, arg1)
+}
+
+// GetService mocks base method.
+func (m *MockStoreMain) GetService(arg0 context.Context, arg1 uuid.UUID) (db.Service, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetService", arg0, arg1)
+	ret0, _ := ret[0].(db.Service)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetService indicates an expected call of GetService.
+func (mr *MockStoreMainMockRecorder) GetService(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetService", reflect.TypeOf((*MockStoreMain)(nil).GetService), arg0, arg1)
+}
+
+// GetServiceCategory mocks base method.
+func (m *MockStoreMain) GetServiceCategory(arg0 context.Context, arg1 uuid.UUID) (db.ServiceCategory, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetServiceCategory", arg0, arg1)
+	ret0, _ := ret[0].(db.ServiceCategory)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetServiceCategory indicates an expected call of GetServiceCategory.
+func (mr *MockStoreMainMockRecorder) GetServiceCategory(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetServiceCategory", reflect.TypeOf((*MockStoreMain)(nil).GetServiceCategory), arg0, arg1)
 }
 
 // GetSession mocks base method.

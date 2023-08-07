@@ -27,13 +27,22 @@ type Barber struct {
 }
 
 type Service struct {
+	ID                uuid.UUID   `json:"id"`
+	ServiceCategoryID uuid.UUID   `json:"service_category_id"`
+	Work              string      `json:"work"`
+	Timer             null.Int    `json:"timer"`
+	Price             float32     `json:"price"`
+	Description       null.String `json:"description"`
+	Image             null.String `json:"image"`
+	CreatedAt         time.Time   `json:"created_at"`
+	UpdateAt          null.Time   `json:"update_at"`
+}
+
+type ServiceCategory struct {
 	ID          uuid.UUID   `json:"id"`
 	StoreID     uuid.UUID   `json:"store_id"`
 	Work        string      `json:"work"`
-	Timer       int32       `json:"timer"`
-	Price       float32     `json:"price"`
 	Description null.String `json:"description"`
-	Image       null.String `json:"image"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdateAt    null.Time   `json:"update_at"`
 }

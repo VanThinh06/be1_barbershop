@@ -1,5 +1,4 @@
 -- name: GetStore :one
-
 SELECT *
 FROM store
 WHERE id = $1

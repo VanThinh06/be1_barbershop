@@ -60,7 +60,7 @@ func (server *Server) GetBarber(ctx *gin.Context) {
 // * auth register
 // create barber
 type newBarberParams struct {
-	Username  string        `json:"username" binding:"required,alphanum"`
+	Username  string        `json:"username" binding:"required"`
 	FullName  string        `json:"full_name" binding:"required"`
 	Email     string        `json:"email" binding:"email,required"`
 	Password  string        `json:"password" binding:"required,min=6"`
@@ -97,10 +97,7 @@ func (server *Server) AuthRegister(ctx *gin.Context) {
 					ctx.JSON(http.StatusBadRequest, gin.H{"errors": util.MsgForTag(fe.Field())})
 					return
 				}
-				if fe.Field() == "UserName" {
-					ctx.JSON(http.StatusBadRequest, gin.H{"errors": "Username is only for alphanumeric input, no special characters"})
-					return
-				}
+
 			}
 		}
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -120,6 +117,7 @@ func (server *Server) AuthRegister(ctx *gin.Context) {
 		HashedPassword: hashedPassword,
 		Avatar:         req.Avatar,
 		StoreWork:      req.StoreWork,
+		Role:           req.Role,
 	}
 
 	barber, err := server.queries.CreateBarber(ctx, arg)
@@ -147,7 +145,7 @@ func (server *Server) AuthRegister(ctx *gin.Context) {
 // * auth login
 // login accout params
 type LoginAccoutBarberParams struct {
-	Username string `json:"username" binding:"required,alphanum"`
+	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required,min=6"`
 }
 type BarberLoginResponse struct {
@@ -171,10 +169,6 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 					ctx.JSON(http.StatusBadRequest, gin.H{"errors": "Password must be more than 6 characters"})
 					return
 				}
-				if fe.Field() == "UserName" {
-					ctx.JSON(http.StatusBadRequest, gin.H{"errors": "Username is only for alphanumeric input, no special characters"})
-					return
-				}
 			}
 		}
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -195,7 +189,9 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 	// check password
 	err = util.CheckPassword(req.Password, barber.HashedPassword)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"err": "Incorrect account or password",
+		})
 		return
 	}
 

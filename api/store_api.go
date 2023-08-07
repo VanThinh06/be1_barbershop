@@ -3,6 +3,7 @@ package api
 import (
 	db "barbershop/db/sqlc"
 	"database/sql"
+	"strconv"
 
 	"net/http"
 
@@ -90,20 +91,27 @@ func (server *Server) GetStore(ctx *gin.Context) {
 
 type listStoreRequest struct {
 	PageID   int32 `form:"page_id" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=5,max= 10"`
+	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
 }
 
 func (server *Server) GetListStore(ctx *gin.Context) {
 	var req listStoreRequest
-	ctx.Bind(&req)
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
+	pageId, errPageID := strconv.Atoi(ctx.Query("page_id"))
+	pageSize, errPageSize := strconv.Atoi(ctx.Query("page_size"))
+	if errPageID != nil {
+		return
+	}
+	if errPageSize != nil {
+		return
+	}
 	arg := db.GetListStoreParams{
-		Limit:  req.PageSize,
-		Offset: (req.PageID - 1) * req.PageSize,
+		Limit:  int32(pageId),
+		Offset: int32((pageId - 1) * pageSize),
 	}
 
 	listBarber, err := server.queries.GetListStore(ctx, arg)
