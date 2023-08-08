@@ -59,6 +59,16 @@ func (q *Queries) CreateService(ctx context.Context, arg CreateServiceParams) (S
 	return i, err
 }
 
+const deleteServicewithStoreCategory = `-- name: DeleteServicewithStoreCategory :exec
+DELETE FROM service
+WHERE service_category_id = $1
+`
+
+func (q *Queries) DeleteServicewithStoreCategory(ctx context.Context, serviceCategoryID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteServicewithStoreCategory, serviceCategoryID)
+	return err
+}
+
 const getListServicewithCategory = `-- name: GetListServicewithCategory :many
 SELECT id, service_category_id, work, timer, price, description, image, created_at, update_at
 FROM "service"

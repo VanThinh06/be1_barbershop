@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 	"gopkg.in/guregu/null.v4"
 )
-
+// * new service
 type NewServiceParams struct {
 	ServiceCategoryID uuid.UUID   `json:"service_category_id" binding:"required"`
 	Work              string      `json:"work" binding:"required"`

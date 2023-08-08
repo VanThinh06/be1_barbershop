@@ -15,7 +15,12 @@ FROM service_category
 WHERE id = $1
 LIMIT 1;
 
--- name: GetListServicewithStore :many
+-- name: GetListServiceCategorywithStore :many
 SELECT *
 FROM service_category
 WHERE store_id = $1;
+
+-- name: DeleteServiceCategory :one
+DELETE FROM service_category
+WHERE id = $1
+RETURNING *;

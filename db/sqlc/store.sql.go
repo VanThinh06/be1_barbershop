@@ -120,7 +120,6 @@ func (q *Queries) GetListStore(ctx context.Context, arg GetListStoreParams) ([]S
 }
 
 const getStore = `-- name: GetStore :one
-
 SELECT id, name_id, name_store, location, address, image, list_image, manager_id, employee_id, status, created_at, update_at
 FROM store
 WHERE id = $1

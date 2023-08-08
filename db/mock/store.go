@@ -111,6 +111,35 @@ func (mr *MockStoreMainMockRecorder) CreateStore(arg0, arg1 interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateStore", reflect.TypeOf((*MockStoreMain)(nil).CreateStore), arg0, arg1)
 }
 
+// DeleteServiceCategory mocks base method.
+func (m *MockStoreMain) DeleteServiceCategory(arg0 context.Context, arg1 uuid.UUID) (db.ServiceCategory, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteServiceCategory", arg0, arg1)
+	ret0, _ := ret[0].(db.ServiceCategory)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteServiceCategory indicates an expected call of DeleteServiceCategory.
+func (mr *MockStoreMainMockRecorder) DeleteServiceCategory(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteServiceCategory", reflect.TypeOf((*MockStoreMain)(nil).DeleteServiceCategory), arg0, arg1)
+}
+
+// DeleteServicewithStoreCategory mocks base method.
+func (m *MockStoreMain) DeleteServicewithStoreCategory(arg0 context.Context, arg1 uuid.UUID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteServicewithStoreCategory", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteServicewithStoreCategory indicates an expected call of DeleteServicewithStoreCategory.
+func (mr *MockStoreMainMockRecorder) DeleteServicewithStoreCategory(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteServicewithStoreCategory", reflect.TypeOf((*MockStoreMain)(nil).DeleteServicewithStoreCategory), arg0, arg1)
+}
+
 // GetBarber mocks base method.
 func (m *MockStoreMain) GetBarber(arg0 context.Context, arg1 string) (db.Barber, error) {
 	m.ctrl.T.Helper()
@@ -126,6 +155,21 @@ func (mr *MockStoreMainMockRecorder) GetBarber(arg0, arg1 interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBarber", reflect.TypeOf((*MockStoreMain)(nil).GetBarber), arg0, arg1)
 }
 
+// GetListServiceCategorywithStore mocks base method.
+func (m *MockStoreMain) GetListServiceCategorywithStore(arg0 context.Context, arg1 uuid.UUID) ([]db.ServiceCategory, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetListServiceCategorywithStore", arg0, arg1)
+	ret0, _ := ret[0].([]db.ServiceCategory)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetListServiceCategorywithStore indicates an expected call of GetListServiceCategorywithStore.
+func (mr *MockStoreMainMockRecorder) GetListServiceCategorywithStore(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListServiceCategorywithStore", reflect.TypeOf((*MockStoreMain)(nil).GetListServiceCategorywithStore), arg0, arg1)
+}
+
 // GetListServicewithCategory mocks base method.
 func (m *MockStoreMain) GetListServicewithCategory(arg0 context.Context, arg1 db.GetListServicewithCategoryParams) ([]db.Service, error) {
 	m.ctrl.T.Helper()
@@ -139,21 +183,6 @@ func (m *MockStoreMain) GetListServicewithCategory(arg0 context.Context, arg1 db
 func (mr *MockStoreMainMockRecorder) GetListServicewithCategory(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListServicewithCategory", reflect.TypeOf((*MockStoreMain)(nil).GetListServicewithCategory), arg0, arg1)
-}
-
-// GetListServicewithStore mocks base method.
-func (m *MockStoreMain) GetListServicewithStore(arg0 context.Context, arg1 uuid.UUID) ([]db.ServiceCategory, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetListServicewithStore", arg0, arg1)
-	ret0, _ := ret[0].([]db.ServiceCategory)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetListServicewithStore indicates an expected call of GetListServicewithStore.
-func (mr *MockStoreMainMockRecorder) GetListServicewithStore(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListServicewithStore", reflect.TypeOf((*MockStoreMain)(nil).GetListServicewithStore), arg0, arg1)
 }
 
 // GetListStore mocks base method.

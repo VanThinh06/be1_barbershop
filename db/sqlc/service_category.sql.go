@@ -43,14 +43,34 @@ func (q *Queries) CreateServiceCategory(ctx context.Context, arg CreateServiceCa
 	return i, err
 }
 
-const getListServicewithStore = `-- name: GetListServicewithStore :many
+const deleteServiceCategory = `-- name: DeleteServiceCategory :one
+DELETE FROM service_category
+WHERE id = $1
+RETURNING id, store_id, work, description, created_at, update_at
+`
+
+func (q *Queries) DeleteServiceCategory(ctx context.Context, id uuid.UUID) (ServiceCategory, error) {
+	row := q.db.QueryRowContext(ctx, deleteServiceCategory, id)
+	var i ServiceCategory
+	err := row.Scan(
+		&i.ID,
+		&i.StoreID,
+		&i.Work,
+		&i.Description,
+		&i.CreatedAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}
+
+const getListServiceCategorywithStore = `-- name: GetListServiceCategorywithStore :many
 SELECT id, store_id, work, description, created_at, update_at
 FROM service_category
 WHERE store_id = $1
 `
 
-func (q *Queries) GetListServicewithStore(ctx context.Context, storeID uuid.UUID) ([]ServiceCategory, error) {
-	rows, err := q.db.QueryContext(ctx, getListServicewithStore, storeID)
+func (q *Queries) GetListServiceCategorywithStore(ctx context.Context, storeID uuid.UUID) ([]ServiceCategory, error) {
+	rows, err := q.db.QueryContext(ctx, getListServiceCategorywithStore, storeID)
 	if err != nil {
 		return nil, err
 	}

@@ -60,7 +60,9 @@ func (server *Server) setupRouter() {
 	authRoutes.GET("/store/:id", server.GetStore)
 	authRoutes.GET("/store", server.GetListStore)
 
+	authRoutes.GET("/service_category/:id_store", server.GetListServiceCategorywithStore)
 	authRoutes.POST("/service_category", server.CreateServiceCategory)
+	authRoutes.DELETE("/service_category/:id", server.DeleteServiceCategory)
 
 	authRoutes.GET("/service/:id", server.GetListServicewithCategory)
 	authRoutes.POST("/service", server.CreateService)
