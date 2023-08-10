@@ -15,18 +15,17 @@ import (
 
 const createStore = `-- name: CreateStore :one
 INSERT INTO store (
-name_id,
-name_store,
-location,
-address,
-image,
-list_image,
-manager_id,
-employee_id,
-status
-) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8, $9
-)
+    name_id,
+    name_store,
+    location,
+    address,
+    image,
+    list_image,
+    manager_id,
+    employee_id,
+    status
+  )
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 RETURNING id, name_id, name_store, location, address, image, list_image, manager_id, employee_id, status, created_at, update_at
 `
 
@@ -72,10 +71,36 @@ func (q *Queries) CreateStore(ctx context.Context, arg CreateStoreParams) (Store
 	return i, err
 }
 
+const deleteStore = `-- name: DeleteStore :one
+DELETE FROM store
+WHERE id = $1
+RETURNING id, name_id, name_store, location, address, image, list_image, manager_id, employee_id, status, created_at, update_at
+`
+
+func (q *Queries) DeleteStore(ctx context.Context, id uuid.UUID) (Store, error) {
+	row := q.db.QueryRowContext(ctx, deleteStore, id)
+	var i Store
+	err := row.Scan(
+		&i.ID,
+		&i.NameID,
+		&i.NameStore,
+		&i.Location,
+		&i.Address,
+		&i.Image,
+		pq.Array(&i.ListImage),
+		pq.Array(&i.ManagerID),
+		pq.Array(&i.EmployeeID),
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}
+
 const getListStore = `-- name: GetListStore :many
-SELECT id, name_id, name_store, location, address, image, list_image, manager_id, employee_id, status, created_at, update_at FROM store
-LIMIT $1
-OFFSET $2
+SELECT id, name_id, name_store, location, address, image, list_image, manager_id, employee_id, status, created_at, update_at
+FROM store
+LIMIT $1 OFFSET $2
 `
 
 type GetListStoreParams struct {
@@ -128,6 +153,65 @@ LIMIT 1
 
 func (q *Queries) GetStore(ctx context.Context, id uuid.UUID) (Store, error) {
 	row := q.db.QueryRowContext(ctx, getStore, id)
+	var i Store
+	err := row.Scan(
+		&i.ID,
+		&i.NameID,
+		&i.NameStore,
+		&i.Location,
+		&i.Address,
+		&i.Image,
+		pq.Array(&i.ListImage),
+		pq.Array(&i.ManagerID),
+		pq.Array(&i.EmployeeID),
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}
+
+const updateStore = `-- name: UpdateStore :one
+UPDATE store
+set name_id = $2,
+  name_store = $3,
+  location = $4,
+  address =$5,
+  image =$6,
+  list_image =$7,
+  manager_id = $8,
+  employee_id =$9,
+  status =$10
+WHERE id = $1
+RETURNING id, name_id, name_store, location, address, image, list_image, manager_id, employee_id, status, created_at, update_at
+`
+
+type UpdateStoreParams struct {
+	ID         uuid.UUID   `json:"id"`
+	NameID     string      `json:"name_id"`
+	NameStore  string      `json:"name_store"`
+	Location   float32     `json:"location"`
+	Address    string      `json:"address"`
+	Image      null.String `json:"image"`
+	ListImage  []string    `json:"list_image"`
+	ManagerID  []string    `json:"manager_id"`
+	EmployeeID []string    `json:"employee_id"`
+	Status     int32       `json:"status"`
+}
+
+func (q *Queries) UpdateStore(ctx context.Context, arg UpdateStoreParams) (Store, error) {
+	row := q.db.QueryRowContext(ctx, updateStore,
+		arg.ID,
+		arg.NameID,
+		arg.NameStore,
+		arg.Location,
+		arg.Address,
+		arg.Image,
+		pq.Array(arg.ListImage),
+		pq.Array(arg.ManagerID),
+		pq.Array(arg.EmployeeID),
+		arg.Status,
+	)
 	var i Store
 	err := row.Scan(
 		&i.ID,

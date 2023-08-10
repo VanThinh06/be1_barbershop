@@ -24,14 +24,22 @@ LIMIT 1;
 
 -- name: UpdateService :one
 UPDATE "service"
-set work = $2,
-  timer = $3,
-  price = $4,
-  description = $5,
-  image = $6
+set service_category_id = $2,
+  work = $3,
+  timer = $4,
+  price = $5,
+  description = $6,
+  image = $7
 WHERE id = $1
 RETURNING *;
 
 -- name: DeleteServicewithStoreCategory :exec
-DELETE FROM service
-WHERE service_category_id = $1;
+DELETE FROM "service"
+WHERE service_category_id = $1
+;
+
+-- name: DeleteService :one
+DELETE FROM "service"
+WHERE id = $1
+RETURNING *
+;

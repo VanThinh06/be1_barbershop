@@ -66,6 +66,9 @@ func (server *Server) setupRouter() {
 
 	authRoutes.GET("/service/:id", server.GetListServicewithCategory)
 	authRoutes.POST("/service", server.CreateService)
+	authRoutes.PUT("/service", server.UpdateService)
+	authRoutes.DELETE("/service/:id", server.DeleteService)
+
 	// router.GET("/sdkNotification", sdkFirebaseAdmin) // todo
 
 	server.router = router

@@ -14,15 +14,14 @@ import (
 
 const createService = `-- name: CreateService :one
 INSERT INTO service (
-service_category_id,
-work,
-timer,
-price,
-description,
-image
-) VALUES (
-  $1, $2, $3, $4, $5, $6
-)
+    service_category_id,
+    work,
+    timer,
+    price,
+    description,
+    image
+  )
+VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING id, service_category_id, work, timer, price, description, image, created_at, update_at
 `
 
@@ -59,8 +58,31 @@ func (q *Queries) CreateService(ctx context.Context, arg CreateServiceParams) (S
 	return i, err
 }
 
+const deleteService = `-- name: DeleteService :one
+DELETE FROM "service"
+WHERE id = $1
+RETURNING id, service_category_id, work, timer, price, description, image, created_at, update_at
+`
+
+func (q *Queries) DeleteService(ctx context.Context, id uuid.UUID) (Service, error) {
+	row := q.db.QueryRowContext(ctx, deleteService, id)
+	var i Service
+	err := row.Scan(
+		&i.ID,
+		&i.ServiceCategoryID,
+		&i.Work,
+		&i.Timer,
+		&i.Price,
+		&i.Description,
+		&i.Image,
+		&i.CreatedAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}
+
 const deleteServicewithStoreCategory = `-- name: DeleteServicewithStoreCategory :exec
-DELETE FROM service
+DELETE FROM "service"
 WHERE service_category_id = $1
 `
 
@@ -73,8 +95,7 @@ const getListServicewithCategory = `-- name: GetListServicewithCategory :many
 SELECT id, service_category_id, work, timer, price, description, image, created_at, update_at
 FROM "service"
 WHERE service_category_id = $1
-LIMIT $2
-OFFSET $3
+LIMIT $2 OFFSET $3
 `
 
 type GetListServicewithCategoryParams struct {
@@ -125,6 +146,53 @@ LIMIT 1
 
 func (q *Queries) GetService(ctx context.Context, id uuid.UUID) (Service, error) {
 	row := q.db.QueryRowContext(ctx, getService, id)
+	var i Service
+	err := row.Scan(
+		&i.ID,
+		&i.ServiceCategoryID,
+		&i.Work,
+		&i.Timer,
+		&i.Price,
+		&i.Description,
+		&i.Image,
+		&i.CreatedAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}
+
+const updateService = `-- name: UpdateService :one
+UPDATE "service"
+set service_category_id = $2,
+  work = $3,
+  timer = $4,
+  price = $5,
+  description = $6,
+  image = $7
+WHERE id = $1
+RETURNING id, service_category_id, work, timer, price, description, image, created_at, update_at
+`
+
+type UpdateServiceParams struct {
+	ID                uuid.UUID   `json:"id"`
+	ServiceCategoryID uuid.UUID   `json:"service_category_id"`
+	Work              string      `json:"work"`
+	Timer             null.Int    `json:"timer"`
+	Price             float32     `json:"price"`
+	Description       null.String `json:"description"`
+	Image             null.String `json:"image"`
+}
+
+func (q *Queries) UpdateService(ctx context.Context, arg UpdateServiceParams) (Service, error) {
+	row := q.db.QueryRowContext(ctx, updateService,
+		arg.ID,
+		arg.ServiceCategoryID,
+		arg.Work,
+		arg.Timer,
+		arg.Price,
+		arg.Description,
+		arg.Image,
+	)
 	var i Service
 	err := row.Scan(
 		&i.ID,

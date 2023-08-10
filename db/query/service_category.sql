@@ -24,3 +24,11 @@ WHERE store_id = $1;
 DELETE FROM service_category
 WHERE id = $1
 RETURNING *;
+
+-- name: UpdateServiceCategory :one
+UPDATE service_category
+set store_id = $2,
+  work= $3,
+  description =$4
+WHERE id = $1
+RETURNING *;

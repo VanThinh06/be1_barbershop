@@ -58,6 +58,10 @@ func (server *Server) DeleteServiceCategory(ctx *gin.Context) {
 	id := ctx.Param("id")
 	err := server.queries.DeleteServicewithStoreCategory(ctx, uuid.MustParse(id))
 	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}

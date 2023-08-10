@@ -111,6 +111,21 @@ func (mr *MockStoreMainMockRecorder) CreateStore(arg0, arg1 interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateStore", reflect.TypeOf((*MockStoreMain)(nil).CreateStore), arg0, arg1)
 }
 
+// DeleteService mocks base method.
+func (m *MockStoreMain) DeleteService(arg0 context.Context, arg1 uuid.UUID) (db.Service, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteService", arg0, arg1)
+	ret0, _ := ret[0].(db.Service)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteService indicates an expected call of DeleteService.
+func (mr *MockStoreMainMockRecorder) DeleteService(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteService", reflect.TypeOf((*MockStoreMain)(nil).DeleteService), arg0, arg1)
+}
+
 // DeleteServiceCategory mocks base method.
 func (m *MockStoreMain) DeleteServiceCategory(arg0 context.Context, arg1 uuid.UUID) (db.ServiceCategory, error) {
 	m.ctrl.T.Helper()
@@ -258,4 +273,19 @@ func (m *MockStoreMain) GetStore(arg0 context.Context, arg1 uuid.UUID) (db.Store
 func (mr *MockStoreMainMockRecorder) GetStore(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStore", reflect.TypeOf((*MockStoreMain)(nil).GetStore), arg0, arg1)
+}
+
+// UpdateService mocks base method.
+func (m *MockStoreMain) UpdateService(arg0 context.Context, arg1 db.UpdateServiceParams) (db.Service, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateService", arg0, arg1)
+	ret0, _ := ret[0].(db.Service)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateService indicates an expected call of UpdateService.
+func (mr *MockStoreMainMockRecorder) UpdateService(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateService", reflect.TypeOf((*MockStoreMain)(nil).UpdateService), arg0, arg1)
 }

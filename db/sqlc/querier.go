@@ -16,8 +16,10 @@ type Querier interface {
 	CreateServiceCategory(ctx context.Context, arg CreateServiceCategoryParams) (ServiceCategory, error)
 	CreateSessionBarber(ctx context.Context, arg CreateSessionBarberParams) (SessionsBarber, error)
 	CreateStore(ctx context.Context, arg CreateStoreParams) (Store, error)
+	DeleteService(ctx context.Context, id uuid.UUID) (Service, error)
 	DeleteServiceCategory(ctx context.Context, id uuid.UUID) (ServiceCategory, error)
 	DeleteServicewithStoreCategory(ctx context.Context, serviceCategoryID uuid.UUID) error
+	DeleteStore(ctx context.Context, id uuid.UUID) (Store, error)
 	GetBarber(ctx context.Context, username string) (Barber, error)
 	GetListServiceCategorywithStore(ctx context.Context, storeID uuid.UUID) ([]ServiceCategory, error)
 	GetListServicewithCategory(ctx context.Context, arg GetListServicewithCategoryParams) ([]Service, error)
@@ -26,6 +28,9 @@ type Querier interface {
 	GetServiceCategory(ctx context.Context, id uuid.UUID) (ServiceCategory, error)
 	GetSession(ctx context.Context, id uuid.UUID) (SessionsBarber, error)
 	GetStore(ctx context.Context, id uuid.UUID) (Store, error)
+	UpdateService(ctx context.Context, arg UpdateServiceParams) (Service, error)
+	UpdateServiceCategory(ctx context.Context, arg UpdateServiceCategoryParams) (ServiceCategory, error)
+	UpdateStore(ctx context.Context, arg UpdateStoreParams) (Store, error)
 }
 
 var _ Querier = (*Queries)(nil)

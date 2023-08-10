@@ -119,3 +119,38 @@ func (q *Queries) GetServiceCategory(ctx context.Context, id uuid.UUID) (Service
 	)
 	return i, err
 }
+
+const updateServiceCategory = `-- name: UpdateServiceCategory :one
+UPDATE service_category
+set store_id = $2,
+  work= $3,
+  description =$4
+WHERE id = $1
+RETURNING id, store_id, work, description, created_at, update_at
+`
+
+type UpdateServiceCategoryParams struct {
+	ID          uuid.UUID   `json:"id"`
+	StoreID     uuid.UUID   `json:"store_id"`
+	Work        string      `json:"work"`
+	Description null.String `json:"description"`
+}
+
+func (q *Queries) UpdateServiceCategory(ctx context.Context, arg UpdateServiceCategoryParams) (ServiceCategory, error) {
+	row := q.db.QueryRowContext(ctx, updateServiceCategory,
+		arg.ID,
+		arg.StoreID,
+		arg.Work,
+		arg.Description,
+	)
+	var i ServiceCategory
+	err := row.Scan(
+		&i.ID,
+		&i.StoreID,
+		&i.Work,
+		&i.Description,
+		&i.CreatedAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}

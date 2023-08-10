@@ -10,8 +10,10 @@ import (
 	"github.com/google/uuid"
 	"gopkg.in/guregu/null.v4"
 )
+
 // * new service
 type NewServiceParams struct {
+	ID                uuid.UUID   `json:"id"`
 	ServiceCategoryID uuid.UUID   `json:"service_category_id" binding:"required"`
 	Work              string      `json:"work" binding:"required"`
 	Timer             null.Int    `json:"timer"`
@@ -88,4 +90,46 @@ func (server *Server) GetListServicewithCategory(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, listService)
+}
+
+func (server *Server) UpdateService(ctx *gin.Context) {
+	var req NewServiceParams
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	arg := db.UpdateServiceParams{
+		ID:                req.ID,
+		ServiceCategoryID: req.ServiceCategoryID,
+		Work:              req.Work,
+		Timer:             req.Timer,
+		Price:             req.Price,
+		Description:       req.Description,
+		Image:             req.Image,
+	}
+	service, err := server.queries.UpdateService(ctx, arg)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, service)
+}
+
+func (server *Server) DeleteService(ctx *gin.Context) {
+	id := ctx.Param("id")
+	service, err := server.queries.DeleteService(ctx, uuid.MustParse(id))
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, "Delete success service "+service.Work)
 }
