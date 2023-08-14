@@ -155,6 +155,21 @@ func (mr *MockStoreMainMockRecorder) DeleteServicewithStoreCategory(arg0, arg1 i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteServicewithStoreCategory", reflect.TypeOf((*MockStoreMain)(nil).DeleteServicewithStoreCategory), arg0, arg1)
 }
 
+// DeleteStore mocks base method.
+func (m *MockStoreMain) DeleteStore(arg0 context.Context, arg1 uuid.UUID) (db.Store, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteStore", arg0, arg1)
+	ret0, _ := ret[0].(db.Store)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteStore indicates an expected call of DeleteStore.
+func (mr *MockStoreMainMockRecorder) DeleteStore(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteStore", reflect.TypeOf((*MockStoreMain)(nil).DeleteStore), arg0, arg1)
+}
+
 // GetBarber mocks base method.
 func (m *MockStoreMain) GetBarber(arg0 context.Context, arg1 string) (db.Barber, error) {
 	m.ctrl.T.Helper()
@@ -288,4 +303,34 @@ func (m *MockStoreMain) UpdateService(arg0 context.Context, arg1 db.UpdateServic
 func (mr *MockStoreMainMockRecorder) UpdateService(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateService", reflect.TypeOf((*MockStoreMain)(nil).UpdateService), arg0, arg1)
+}
+
+// UpdateServiceCategory mocks base method.
+func (m *MockStoreMain) UpdateServiceCategory(arg0 context.Context, arg1 db.UpdateServiceCategoryParams) (db.ServiceCategory, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateServiceCategory", arg0, arg1)
+	ret0, _ := ret[0].(db.ServiceCategory)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateServiceCategory indicates an expected call of UpdateServiceCategory.
+func (mr *MockStoreMainMockRecorder) UpdateServiceCategory(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateServiceCategory", reflect.TypeOf((*MockStoreMain)(nil).UpdateServiceCategory), arg0, arg1)
+}
+
+// UpdateStore mocks base method.
+func (m *MockStoreMain) UpdateStore(arg0 context.Context, arg1 db.UpdateStoreParams) (db.Store, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateStore", arg0, arg1)
+	ret0, _ := ret[0].(db.Store)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateStore indicates an expected call of UpdateStore.
+func (mr *MockStoreMainMockRecorder) UpdateStore(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateStore", reflect.TypeOf((*MockStoreMain)(nil).UpdateStore), arg0, arg1)
 }

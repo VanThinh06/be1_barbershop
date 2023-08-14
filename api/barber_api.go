@@ -64,9 +64,6 @@ type newBarberParams struct {
 	FullName  string        `json:"full_name" binding:"required"`
 	Email     string        `json:"email" binding:"email,required"`
 	Password  string        `json:"password" binding:"required,min=6"`
-	Avatar    null.String   `json:"avatar"`
-	Role      null.String   `json:"role"`
-	Status    null.String   `json:"status"`
 	StoreWork uuid.NullUUID `json:"store_work"`
 }
 
@@ -115,9 +112,9 @@ func (server *Server) AuthRegister(ctx *gin.Context) {
 		FullName:       req.FullName,
 		Email:          req.Email,
 		HashedPassword: hashedPassword,
-		Avatar:         req.Avatar,
+		
 		StoreWork:      req.StoreWork,
-		Role:           req.Role,
+		
 	}
 
 	barber, err := server.queries.CreateBarber(ctx, arg)
