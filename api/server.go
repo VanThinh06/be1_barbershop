@@ -47,7 +47,7 @@ func (server *Server) setupRouter() {
 	router := gin.Default()
 
 	router.POST("/barber", server.AuthRegister)
-	router.POST("/barber/login", server.LoginBarber)
+	router.POST("/authentication/barber", server.LoginBarber)
 	router.GET("/barber/:id", server.GetBarber)
 	router.POST("/token/refresh_access", server.ReNewAccessToken)
 

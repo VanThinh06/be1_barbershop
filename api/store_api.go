@@ -110,7 +110,7 @@ func (server *Server) GetListStore(ctx *gin.Context) {
 		return
 	}
 	arg := db.GetListStoreParams{
-		Limit:  int32(pageId),
+		Limit:  int32(pageSize),
 		Offset: int32((pageId - 1) * pageSize),
 	}
 

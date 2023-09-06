@@ -7,7 +7,9 @@ LIMIT 1;
 -- name: GetListStore :many
 SELECT *
 FROM store
-LIMIT $1 OFFSET $2;
+
+LIMIT $1 OFFSET $2
+;
 
 -- name: CreateStore :one
 INSERT INTO store (
