@@ -7,7 +7,8 @@ LIMIT 1;
 -- name: GetListStore :many
 SELECT *
 FROM store
-
+WHERE 
+	 $3 = ANY (manager_id)
 LIMIT $1 OFFSET $2
 ;
 
