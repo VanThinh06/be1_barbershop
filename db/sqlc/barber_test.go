@@ -19,7 +19,6 @@ func TestCreateBarber(t *testing.T) {
 		Role:           null.StringFrom(""),
 		Status:         null.StringFrom(""),
 		StoreWork:      uuid.NullUUID{},
-		StoreManager:   []uuid.UUID{},
 	}
 	barber, err := testQueries.CreateBarber(context.Background(), arg)
 

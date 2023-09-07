@@ -49,7 +49,6 @@ func (server *Server) GetBarber(ctx *gin.Context) {
 		Role:              barber.Role,
 		Status:            barber.Status,
 		StoreWork:         barber.StoreWork,
-		StoreManager:      barber.StoreManager,
 		PasswordChangedAt: barber.PasswordChangedAt,
 		CreatedAt:         barber.CreatedAt,
 		UpdateAt:          barber.UpdateAt,

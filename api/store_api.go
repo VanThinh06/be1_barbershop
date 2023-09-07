@@ -2,8 +2,10 @@ package api
 
 import (
 	db "barbershop/db/sqlc"
+	"barbershop/db/util"
 	"database/sql"
 	"strconv"
+	"time"
 
 	"net/http"
 
@@ -39,7 +41,7 @@ func (server *Server) NewStore(ctx *gin.Context) {
 		Address:    req.Address,
 		Image:      req.Image,
 		ListImage:  req.ListImageStore,
-		ManagerID:  req.ManagerID,
+		ManagerID:  []string{server.payload.Username},
 		EmployeeID: req.EmployeeID,
 		Status:     req.Status,
 	}
@@ -110,8 +112,9 @@ func (server *Server) GetListStore(ctx *gin.Context) {
 		return
 	}
 	arg := db.GetListStoreParams{
-		Limit:  int32(pageSize),
-		Offset: int32((pageId - 1) * pageSize),
+		Limit:     int32(pageSize),
+		Offset:    int32((pageId - 1) * pageSize),
+		ManagerID: server.payload.Username,
 	}
 
 	listBarber, err := server.queries.GetListStore(ctx, arg)
@@ -120,4 +123,73 @@ func (server *Server) GetListStore(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, listBarber)
+}
+
+// update
+type updateStoreParams struct {
+	ID         uuid.UUID   `json:"id" binding:"required"`
+	NameID     string      `json:"name_id"`
+	NameStore  string      `json:"name_store"`
+	Location   float32     `json:"location"`
+	Address    string      `json:"address"`
+	Image      null.String `json:"image"`
+	ListImage  []string    `json:"list_image"`
+	ManagerID  []string    `json:"manager_id"`
+	EmployeeID []string    `json:"employee_id"`
+	Status     int32       `json:"status" `
+}
+
+func (server *Server) UpdateStore(ctx *gin.Context) {
+	var req updateStoreParams
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+	response := db.UpdateStoreParams{
+		ID:         req.ID,
+		NameID:     req.NameID,
+		NameStore:  req.NameStore,
+		Location:   req.Location,
+		Address:    req.Address,
+		Image:      req.Image,
+		ListImage:  req.ListImage,
+		ManagerID:  req.ManagerID,
+		EmployeeID: req.EmployeeID,
+		Status:     req.Status,
+		UpdateAt:   null.TimeFrom(time.Now()),
+	}
+	store, err := server.queries.UpdateStore(ctx, response)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, store)
+}
+
+func (server *Server) DeleteStore(ctx *gin.Context) {
+	id := ctx.Param("id")
+	store, err := server.queries.GetStore(ctx, uuid.MustParse(id))
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, "Store not found")
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	if util.IsAvailable(store.ManagerID, server.payload.Username) {
+		store, err := server.queries.DeleteStore(ctx, uuid.MustParse(id))
+		if err != nil {
+			if err == sql.ErrNoRows {
+				ctx.JSON(http.StatusNotFound, errorResponse(err))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusOK, "Delete success store "+store.NameStore)
+		return
+	}
+	ctx.JSON(http.StatusBadRequest, errorResponse(err))
 }

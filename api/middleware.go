@@ -16,7 +16,7 @@ const (
 	authorizationPayloadKey = "authorization_payload"
 )
 
-func AddMiddleWare(tokenMaker token.Maker) gin.HandlerFunc {
+func (server *Server) AddMiddleWare(tokenMaker token.Maker) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authorizationHeader := ctx.GetHeader(authorizationHeaderKey)
 
@@ -30,7 +30,7 @@ func AddMiddleWare(tokenMaker token.Maker) gin.HandlerFunc {
 		if len(fileds) < 2 {
 			err := errors.New("invalid authorization header format")
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err))
-			return 
+			return
 
 		}
 
@@ -48,6 +48,7 @@ func AddMiddleWare(tokenMaker token.Maker) gin.HandlerFunc {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err))
 			return
 		}
+		server.payload = payload
 
 		ctx.Set(authorizationPayloadKey, payload)
 		ctx.Next()

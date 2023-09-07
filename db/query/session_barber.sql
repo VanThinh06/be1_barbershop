@@ -4,7 +4,6 @@ INSERT INTO "sessions_barber" (
                                username,
                                refresh_token,
                                user_agent,
-                               is_manager,
                                client_ip,
                                fcm_device,
                                is_blocked,
@@ -16,8 +15,7 @@ VALUES ($1,
         $5,
         $6,
         $7,
-        $8,
-        $9
+        $8
         ) RETURNING *;
 
 -- name: GetSession :one

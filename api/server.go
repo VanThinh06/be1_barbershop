@@ -14,6 +14,7 @@ type Server struct {
 	queries    db.StoreMain
 	tokenMaker token.Maker
 	router     *gin.Engine
+	payload    *token.Payload
 }
 
 func NewServer(config util.Config, queries db.StoreMain) (*Server, error) {
@@ -55,10 +56,14 @@ func (server *Server) setupRouter() {
 	// router.Static("/assets", "./assets/upload")
 	// router.POST("/users", server.createUser)
 
-	authRoutes := router.Group("/").Use(AddMiddleWare(server.tokenMaker))
+	authRoutes := router.Group("/").Use(server.AddMiddleWare(server.tokenMaker))
 	authRoutes.POST("/store", server.NewStore)
 	authRoutes.GET("/store/:id", server.GetStore)
 	authRoutes.GET("/store", server.GetListStore)
+	authRoutes.PUT("/store", server.UpdateStore)
+	authRoutes.DELETE("/store/:id", server.DeleteStore)
+
+
 
 	authRoutes.GET("/service_category/:id_store", server.GetListServiceCategorywithStore)
 	authRoutes.POST("/service_category", server.CreateServiceCategory)

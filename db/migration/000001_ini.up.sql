@@ -1,4 +1,3 @@
--- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE "barber" (
   "username" varchar PRIMARY KEY,
   "full_name" varchar NOT NULL,
@@ -7,8 +6,8 @@ CREATE TABLE "barber" (
   "avatar" varchar,
   "role" varchar,
   "status" varchar,
+  "is_manager" bool NOT NULL DEFAULT false,
   "store_work" uuid,
-  "store_manager" uuid[],
   "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz
@@ -18,7 +17,6 @@ CREATE TABLE "sessions_barber" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "username" varchar NOT NULL,
   "refresh_token" varchar NOT NULL,
-  "is_manager" bool NOT NULL DEFAULT false,
   "user_agent" varchar NOT NULL,
   "client_ip" varchar NOT NULL,
   "fcm_device" varchar NOT NULL,
@@ -29,7 +27,7 @@ CREATE TABLE "sessions_barber" (
 
 CREATE TABLE "store" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "name_id" varchar UNIQUE NOT NULL,
+  "name_id" varchar NOT NULL,
   "name_store" varchar NOT NULL,
   "location" real NOT NULL,
   "address" varchar NOT NULL,

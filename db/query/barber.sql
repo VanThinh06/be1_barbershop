@@ -1,6 +1,6 @@
 -- name: CreateBarber :one
 
-INSERT INTO barber(username, full_name, email, hashed_password, avatar, role, status, store_work, store_manager)
+INSERT INTO barber(username, full_name, email, hashed_password, avatar, role, status, store_work)
 VALUES ($1,
         $2,
         $3,
@@ -8,8 +8,7 @@ VALUES ($1,
         $5,
         $6,
         $7,
-        $8,
-        $9) RETURNING *;
+        $8) RETURNING *;
 
 -- name: GetBarber :one
 
