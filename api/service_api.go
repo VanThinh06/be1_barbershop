@@ -92,6 +92,8 @@ func (server *Server) GetListServicewithCategory(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, listService)
 }
 
+
+// * update service
 func (server *Server) UpdateService(ctx *gin.Context) {
 	var req NewServiceParams
 	if err := ctx.ShouldBindJSON(&req); err != nil {

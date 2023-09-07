@@ -15,7 +15,6 @@ func TestCreateSessionBabrer(t *testing.T) {
 		Username:     "ThinhVan",
 		RefreshToken: "123",
 		UserAgent:    "foo",
-		IsManager:    false,
 		ClientIp:     "127.0.0.1",
 		FcmDevice:    "127.0.0.1",
 		IsBlocked:    false,

@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -107,10 +106,6 @@ func TestGetBarberWithName(t *testing.T) {
 }
 
 func requireBodyMatchAccount(t *testing.T, body *bytes.Buffer, barber db.Barber) {
-	// value := gjson.Get(body.String(), "barber")
-	// log.Printf("body barber %s", value)
-	// log.Printf("body barber %s", value.Raw)
-	// data := []byte(value.Raw)
 	var data []byte = body.Bytes()
 	var getBarber db.Barber
 	err := json.Unmarshal(data, &getBarber)
@@ -125,7 +120,6 @@ func createBarber() db.Barber {
 		Email:        util.RandomEmail(),
 		Avatar:       null.StringFrom(util.RandomName()),
 		Status:       null.StringFrom(util.RandomString(1)),
-		StoreManager: []uuid.UUID{},
 		Username:     util.RandomName(),
 		Role:         null.StringFrom(util.RandomString(1)),
 		StoreWork:    uuid.NullUUID{},

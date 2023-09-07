@@ -8,8 +8,8 @@ LIMIT 1;
 SELECT *
 FROM store
 WHERE 
-	 $3 = ANY (manager_id)
-LIMIT $1 OFFSET $2
+	 $1 = ANY (manager_id)
+LIMIT $2 OFFSET $3
 ;
 
 -- name: CreateStore :one
@@ -37,7 +37,8 @@ set name_id = $2,
   list_image =$7,
   manager_id = $8,
   employee_id =$9,
-  status =$10
+  status =$10,
+  update_at = $11
 WHERE id = $1
 RETURNING *;
 
