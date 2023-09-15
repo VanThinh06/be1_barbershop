@@ -3,7 +3,7 @@ package main
 import (
 	"barbershop/api"
 	db "barbershop/db/sqlc"
-	"barbershop/db/util"
+	"barbershop/util"
 	"database/sql"
 	"log"
 

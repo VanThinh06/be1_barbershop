@@ -2,7 +2,7 @@ package api
 
 // import (
 // 	db "barbershop/db/sqlc"
-// 	"barbershop/db/util"
+// 	"barbershop/util"
 // 	"database/sql"
 // 	"errors"
 // 	"net/http"
@@ -193,7 +193,7 @@ package api
 // 		AccessTokenExpiresAt:  accessPayload.ExpiredAt,
 // 		RefreshToken:          refreshToken,
 // 		RefreshTokenExpiresAt: refreshPayload.ExpiredAt,
-		// User:                  newUserResponse(users),
+// User:                  newUserResponse(users),
 // 	}
 // 	ctx.JSON(http.StatusOK, rsp)
 // }

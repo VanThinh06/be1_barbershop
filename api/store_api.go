@@ -2,7 +2,7 @@ package api
 
 import (
 	db "barbershop/db/sqlc"
-	"barbershop/db/util"
+	"barbershop/util"
 	"database/sql"
 	"strconv"
 	"time"
@@ -31,7 +31,12 @@ func (server *Server) NewStore(ctx *gin.Context) {
 	var req newStoreParams
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		err := util.CatchErrorParams(err)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, err)
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, util.MessageResponse("The request was invalid"))
 		return
 	}
 	response := db.CreateStoreParams{
