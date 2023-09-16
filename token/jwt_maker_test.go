@@ -1,7 +1,7 @@
 package token
 
 import (
-	"barbershop/db/util"
+	"barbershop/util"
 	"testing"
 	"time"
 

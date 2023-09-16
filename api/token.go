@@ -10,12 +10,14 @@ import (
 )
 
 type ReNewAccessTokenRequest struct {
-	RefreshTokent string `json:"refresh_token" binding:"required"`
+	RefreshToken string `json:"refresh_token" binding:"required"`
 }
 
 type ReNewAccessTokenResponse struct {
-	AccessToken          string    `json:"access_token"`
-	AccessTokenExpiresAt time.Time `json:"access_token_expires_at"`
+	AccessToken           string    `json:"access_token"`
+	AccessTokenExpiresAt  time.Time `json:"access_token_expires_at"`
+	RefreshToken          string    `json:"refresh_token"`
+	RefreshTokenExpiresAt time.Time `json:"refresh_token_expires_at"`
 }
 
 func (server *Server) ReNewAccessToken(ctx *gin.Context) {
@@ -24,7 +26,7 @@ func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	payload, err := server.tokenMaker.VerifyToken(req.RefreshTokent)
+	payload, err := server.tokenMaker.VerifyToken(req.RefreshToken)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
@@ -52,7 +54,7 @@ func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 		return
 	}
 
-	if session.RefreshToken != req.RefreshTokent {
+	if session.RefreshToken != req.RefreshToken {
 		err := fmt.Errorf("incorect session user")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
@@ -74,14 +76,21 @@ func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 		return
 	}
 
+	refresh_token, refreshPayload, err := server.tokenMaker.CreateToken(
+		payload.Username,
+		server.config.RefreshTokenDuration,
+	)
+
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
 	rsp := ReNewAccessTokenResponse{
-		AccessToken:          access_token,
-		AccessTokenExpiresAt: accessPayload.ExpiredAt,
+		AccessToken:           access_token,
+		AccessTokenExpiresAt:  accessPayload.ExpiredAt,
+		RefreshToken:          refresh_token,
+		RefreshTokenExpiresAt: refreshPayload.ExpiredAt,
 	}
 	ctx.JSON(http.StatusOK, rsp)
 }

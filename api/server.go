@@ -2,8 +2,8 @@ package api
 
 import (
 	db "barbershop/db/sqlc"
-	"barbershop/db/util"
 	"barbershop/token"
+	"barbershop/util"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +13,7 @@ type Server struct {
 	config     util.Config
 	queries    db.StoreMain
 	tokenMaker token.Maker
-	router     *gin.Engine
+	Router     *gin.Engine
 	payload    *token.Payload
 }
 
@@ -40,17 +40,18 @@ func errorResponse(err error) gin.H {
 }
 
 func (server *Server) Start(address string) error {
-	return server.router.Run(address)
+	return server.Router.Run(address)
 }
 
 // / Router
 func (server *Server) setupRouter() {
 	router := gin.Default()
 
-	router.POST("/barber", server.AuthRegister)
-	router.POST("/authentication/barber", server.LoginBarber)
-	router.GET("/barber/:id", server.GetBarber)
-	router.POST("/token/refresh_access", server.ReNewAccessToken)
+	barberRoutes := router.Group("/barber")
+	barberRoutes.POST("/authentication", server.LoginBarber)
+	barberRoutes.POST("/newBarber", server.AuthRegister)
+	barberRoutes.GET("/barber/:id", server.GetBarber)
+	barberRoutes.POST("/token/refresh_access", server.ReNewAccessToken)
 
 	// router.POST("/image", server.uploadImage)
 	// router.Static("/assets", "./assets/upload")
@@ -63,8 +64,6 @@ func (server *Server) setupRouter() {
 	authRoutes.PUT("/store", server.UpdateStore)
 	authRoutes.DELETE("/store/:id", server.DeleteStore)
 
-
-
 	authRoutes.GET("/service_category/:id_store", server.GetListServiceCategorywithStore)
 	authRoutes.POST("/service_category", server.CreateServiceCategory)
 	authRoutes.DELETE("/service_category/:id", server.DeleteServiceCategory)
@@ -76,11 +75,5 @@ func (server *Server) setupRouter() {
 
 	// router.GET("/sdkNotification", sdkFirebaseAdmin) // todo
 
-	server.router = router
-}
-
-// ERROR
-type ApiError struct {
-	Field string
-	Msg   string
+	server.Router = router
 }

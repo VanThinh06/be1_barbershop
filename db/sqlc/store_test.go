@@ -1,7 +1,7 @@
 package db
 
 import (
-	"barbershop/db/util"
+	"barbershop/util"
 	"context"
 	"testing"
 
