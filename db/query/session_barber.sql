@@ -24,3 +24,10 @@ FROM "sessions_barber"
 WHERE id = $1
 LIMIT 1;
 
+-- name: UpdateRefreshToken :one
+UPDATE "sessions_barber"
+set refresh_token = $2,
+    expires_at = $3
+WHERE id = $1
+RETURNING *;
+

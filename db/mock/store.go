@@ -290,6 +290,36 @@ func (mr *MockStoreMainMockRecorder) GetStore(arg0, arg1 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStore", reflect.TypeOf((*MockStoreMain)(nil).GetStore), arg0, arg1)
 }
 
+// UpdateBarber mocks base method.
+func (m *MockStoreMain) UpdateBarber(arg0 context.Context, arg1 db.UpdateBarberParams) (db.Barber, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateBarber", arg0, arg1)
+	ret0, _ := ret[0].(db.Barber)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateBarber indicates an expected call of UpdateBarber.
+func (mr *MockStoreMainMockRecorder) UpdateBarber(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateBarber", reflect.TypeOf((*MockStoreMain)(nil).UpdateBarber), arg0, arg1)
+}
+
+// UpdateRefreshToken mocks base method.
+func (m *MockStoreMain) UpdateRefreshToken(arg0 context.Context, arg1 db.UpdateRefreshTokenParams) (db.SessionsBarber, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateRefreshToken", arg0, arg1)
+	ret0, _ := ret[0].(db.SessionsBarber)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateRefreshToken indicates an expected call of UpdateRefreshToken.
+func (mr *MockStoreMainMockRecorder) UpdateRefreshToken(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateRefreshToken", reflect.TypeOf((*MockStoreMain)(nil).UpdateRefreshToken), arg0, arg1)
+}
+
 // UpdateService mocks base method.
 func (m *MockStoreMain) UpdateService(arg0 context.Context, arg1 db.UpdateServiceParams) (db.Service, error) {
 	m.ctrl.T.Helper()

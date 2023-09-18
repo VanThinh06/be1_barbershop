@@ -49,8 +49,9 @@ func (server *Server) setupRouter() {
 
 	barberRoutes := router.Group("/barber")
 	barberRoutes.POST("/authentication", server.LoginBarber)
-	barberRoutes.POST("/newBarber", server.AuthRegister)
-	barberRoutes.GET("/barber/:id", server.GetBarber)
+	barberRoutes.POST("/new", server.AuthRegister)
+	barberRoutes.GET("/:id", server.GetBarber)
+	barberRoutes.Use(server.AddMiddleWare(server.tokenMaker)).POST("/updateBarber", server.UpdateBarber)
 	barberRoutes.POST("/token/refresh_access", server.ReNewAccessToken)
 
 	// router.POST("/image", server.uploadImage)

@@ -45,6 +45,7 @@ func (server *Server) AddMiddleWare(tokenMaker token.Maker) gin.HandlerFunc {
 		accessToken := fileds[1]
 		payload, err := tokenMaker.VerifyToken(accessToken)
 		if err != nil {
+			err := errors.New("error! An error occurred. Please try again later")
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err))
 			return
 		}

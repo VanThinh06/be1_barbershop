@@ -1,6 +1,8 @@
 package api
 
 import (
+	db "barbershop/db/sqlc"
+	"barbershop/util"
 	"database/sql"
 	"fmt"
 	"net/http"
@@ -11,6 +13,7 @@ import (
 
 type ReNewAccessTokenRequest struct {
 	RefreshToken string `json:"refresh_token" binding:"required"`
+	ClientIP     string `json:"client_ip" binding:"required"`
 }
 
 type ReNewAccessTokenResponse struct {
@@ -23,7 +26,12 @@ type ReNewAccessTokenResponse struct {
 func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 	var req ReNewAccessTokenRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		err := util.CatchErrorParams(err)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, err)
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, util.MessageResponse("The request was invalid"))
 		return
 	}
 	payload, err := server.tokenMaker.VerifyToken(req.RefreshToken)
@@ -66,6 +74,12 @@ func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 		return
 	}
 
+	if session.ClientIp != req.ClientIP {
+		err := fmt.Errorf("blocked session")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
 	access_token, accessPayload, err := server.tokenMaker.CreateToken(
 		payload.Username,
 		server.config.AccessTokenDuration,
@@ -86,10 +100,20 @@ func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 		return
 	}
 
+	ssUpdate, err := server.queries.UpdateRefreshToken(ctx, db.UpdateRefreshTokenParams{
+		ID:           refreshPayload.ID,
+		RefreshToken: refresh_token,
+		ExpiresAt:    refreshPayload.ExpiredAt,
+	})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		return
+	}
+
 	rsp := ReNewAccessTokenResponse{
 		AccessToken:           access_token,
 		AccessTokenExpiresAt:  accessPayload.ExpiredAt,
-		RefreshToken:          refresh_token,
+		RefreshToken:          ssUpdate.RefreshToken,
 		RefreshTokenExpiresAt: refreshPayload.ExpiredAt,
 	}
 	ctx.JSON(http.StatusOK, rsp)

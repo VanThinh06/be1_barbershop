@@ -22,7 +22,7 @@ func NewPasetoMaker(symmetricKey string) (Maker, error) {
 		paseto:       paseto.NewV2(),
 		symmetricKey: []byte(symmetricKey),
 	}
-
+	
 	return maker, nil
 }
 

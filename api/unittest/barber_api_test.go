@@ -120,9 +120,9 @@ func createBarber() db.Barber {
 		FullName:  util.RandomName(),
 		Email:     util.RandomEmail(),
 		Avatar:    null.StringFrom(util.RandomName()),
-		Status:    null.StringFrom(util.RandomString(1)),
+		Status:    null.IntFrom(int64(util.RandomNumber(5))),
 		Username:  util.RandomName(),
-		Role:      null.StringFrom(util.RandomString(1)),
+		Role:      int32(util.RandomNumber(3)),
 		StoreWork: uuid.NullUUID{},
 	}
 }

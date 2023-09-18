@@ -4,10 +4,10 @@ CREATE TABLE "barber" (
   "email" varchar UNIQUE NOT NULL,
   "hashed_password" varchar NOT NULL,
   "avatar" varchar,
-  "role" varchar,
-  "status" varchar,
-  "is_manager" bool NOT NULL DEFAULT false,
+  "role" integer NOT NULL DEFAULT 1,
+  "status" integer,
   "store_work" uuid,
+  "type_barber" integer NOT NULL DEFAULT 1,
   "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz
@@ -35,9 +35,10 @@ CREATE TABLE "store" (
   "list_image" varchar[],
   "manager_id" varchar[],
   "employee_id" varchar[],
-  "status" integer NOT NULL,
+  "status" integer NOT NULL DEFAULT 1,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz
+  "update_at" timestamptz,
+  "boss" varchar NOT NULL
 );
 
 CREATE TABLE "service_category" (
@@ -63,19 +64,23 @@ CREATE TABLE "service" (
 
 CREATE INDEX ON "barber" ("username");
 
+CREATE INDEX ON "barber" ("store_work");
+
 CREATE INDEX ON "store" ("name_store");
 
 CREATE INDEX ON "store" ("name_id");
 
 CREATE INDEX ON "store" ("manager_id");
 
+CREATE INDEX ON "store" ("boss");
+
 CREATE INDEX ON "service_category" ("store_id");
 
 CREATE INDEX ON "service" ("service_category_id");
 
-ALTER TABLE "barber" ADD FOREIGN KEY ("store_work") REFERENCES "store" ("id");
-
 ALTER TABLE "sessions_barber" ADD FOREIGN KEY ("username") REFERENCES "barber" ("username");
+
+ALTER TABLE "store" ADD FOREIGN KEY ("boss") REFERENCES "barber" ("username");
 
 ALTER TABLE "service_category" ADD FOREIGN KEY ("store_id") REFERENCES "store" ("id");
 

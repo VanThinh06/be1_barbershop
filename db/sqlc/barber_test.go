@@ -6,7 +6,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
-	"gopkg.in/guregu/null.v4"
 )
 
 func TestCreateBarber(t *testing.T) {
@@ -15,9 +14,7 @@ func TestCreateBarber(t *testing.T) {
 		FullName:       "DuongVanThinh",
 		Email:          "dvanthinh@gmail.com",
 		HashedPassword: "VanThinh123",
-		Avatar:         null.StringFrom("https://"),
-		Role:           null.StringFrom(""),
-		Status:         null.StringFrom(""),
+		Role:           1,
 		StoreWork:      uuid.NullUUID{},
 	}
 	barber, err := testQueries.CreateBarber(context.Background(), arg)

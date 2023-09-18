@@ -38,3 +38,8 @@ func RandomRole() string {
 	n := len(role)
 	return role[rand.Intn(n)]
 }
+
+func RandomNumber(r int) int {
+
+	return rand.Intn(r)
+}
