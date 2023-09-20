@@ -101,7 +101,7 @@ func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 	}
 
 	ssUpdate, err := server.queries.UpdateRefreshToken(ctx, db.UpdateRefreshTokenParams{
-		ID:           refreshPayload.ID,
+		ID:           payload.ID,
 		RefreshToken: refresh_token,
 		ExpiresAt:    refreshPayload.ExpiredAt,
 	})
