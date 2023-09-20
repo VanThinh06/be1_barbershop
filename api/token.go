@@ -13,7 +13,6 @@ import (
 
 type ReNewAccessTokenRequest struct {
 	RefreshToken string `json:"refresh_token" binding:"required"`
-	ClientIP     string `json:"client_ip" binding:"required"`
 }
 
 type ReNewAccessTokenResponse struct {
@@ -57,13 +56,13 @@ func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 	}
 
 	if session.Username != payload.Username {
-		err := fmt.Errorf("incorect session user")
+		err := fmt.Errorf("incorrect session user")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 
 	if session.RefreshToken != req.RefreshToken {
-		err := fmt.Errorf("incorect session user")
+		err := fmt.Errorf("incorrect session user")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
@@ -74,8 +73,8 @@ func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 		return
 	}
 
-	if session.ClientIp != req.ClientIP {
-		err := fmt.Errorf("blocked session")
+	if session.ClientIp != ctx.ClientIP() {
+		err := fmt.Errorf("incorrect clientIP")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
