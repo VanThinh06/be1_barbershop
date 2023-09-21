@@ -49,6 +49,7 @@ func (server *Server) NewStore(ctx *gin.Context) {
 		ManagerID:  []string{server.payload.Username},
 		EmployeeID: req.EmployeeID,
 		Status:     req.Status,
+		Boss:       server.payload.Username,
 	}
 	store, err := server.queries.CreateStore(ctx, response)
 	if err != nil {

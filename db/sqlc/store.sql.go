@@ -23,9 +23,10 @@ INSERT INTO store (
     list_image,
     manager_id,
     employee_id,
-    status
+    status,
+    boss
   )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 RETURNING id, name_id, name_store, location, address, image, list_image, manager_id, employee_id, status, created_at, update_at, boss
 `
 
@@ -39,6 +40,7 @@ type CreateStoreParams struct {
 	ManagerID  []string    `json:"manager_id"`
 	EmployeeID []string    `json:"employee_id"`
 	Status     int32       `json:"status"`
+	Boss       string      `json:"boss"`
 }
 
 func (q *Queries) CreateStore(ctx context.Context, arg CreateStoreParams) (Store, error) {
@@ -52,6 +54,7 @@ func (q *Queries) CreateStore(ctx context.Context, arg CreateStoreParams) (Store
 		pq.Array(arg.ManagerID),
 		pq.Array(arg.EmployeeID),
 		arg.Status,
+		arg.Boss,
 	)
 	var i Store
 	err := row.Scan(
@@ -102,8 +105,7 @@ func (q *Queries) DeleteStore(ctx context.Context, id uuid.UUID) (Store, error) 
 const getListStore = `-- name: GetListStore :many
 SELECT id, name_id, name_store, location, address, image, list_image, manager_id, employee_id, status, created_at, update_at, boss
 FROM store
-WHERE 
-	 $1 = ANY (manager_id)
+WHERE $1 = ANY (manager_id)
 LIMIT $2 OFFSET $3
 `
 
@@ -183,12 +185,12 @@ UPDATE store
 set name_id = $2,
   name_store = $3,
   location = $4,
-  address =$5,
-  image =$6,
-  list_image =$7,
+  address = $5,
+  image = $6,
+  list_image = $7,
   manager_id = $8,
-  employee_id =$9,
-  status =$10,
+  employee_id = $9,
+  status = $10,
   update_at = $11
 WHERE id = $1
 RETURNING id, name_id, name_store, location, address, image, list_image, manager_id, employee_id, status, created_at, update_at, boss
