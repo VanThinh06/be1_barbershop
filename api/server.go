@@ -58,21 +58,21 @@ func (server *Server) setupRouter() {
 	// router.Static("/assets", "./assets/upload")
 	// router.POST("/users", server.createUser)
 
-	authRoutes := router.Group("/").Use(server.AddMiddleWare(server.tokenMaker))
-	authRoutes.POST("/store", server.NewStore)
-	authRoutes.GET("/store/:id", server.GetStore)
-	authRoutes.GET("/store", server.GetListStore)
-	authRoutes.PUT("/store", server.UpdateStore)
-	authRoutes.DELETE("/store/:id", server.DeleteStore)
+	// authRoutes := router.Group("/").Use(server.AddMiddleWare(server.tokenMaker))
+	// authRoutes.POST("/store", server.NewStore)
+	// authRoutes.GET("/store/:id", server.GetStore)
+	// authRoutes.GET("/store", server.GetListStore)
+	// authRoutes.PUT("/store", server.UpdateStore)
+	// authRoutes.DELETE("/store/:id", server.DeleteStore)
 
-	authRoutes.GET("/service_category/:id_store", server.GetListServiceCategorywithStore)
-	authRoutes.POST("/service_category", server.CreateServiceCategory)
-	authRoutes.DELETE("/service_category/:id", server.DeleteServiceCategory)
+	// authRoutes.GET("/service_category/:id_store", server.GetListServiceCategorywithStore)
+	// authRoutes.POST("/service_category", server.CreateServiceCategory)
+	// authRoutes.DELETE("/service_category/:id", server.DeleteServiceCategory)
 
-	authRoutes.GET("/service/:id", server.GetListServicewithCategory)
-	authRoutes.POST("/service", server.CreateService)
-	authRoutes.PUT("/service", server.UpdateService)
-	authRoutes.DELETE("/service/:id", server.DeleteService)
+	// authRoutes.GET("/service/:id", server.GetListServicewithCategory)
+	// authRoutes.POST("/service", server.CreateService)
+	// authRoutes.PUT("/service", server.UpdateService)
+	// authRoutes.DELETE("/service/:id", server.DeleteService)
 
 	// router.GET("/sdkNotification", sdkFirebaseAdmin) // todo
 

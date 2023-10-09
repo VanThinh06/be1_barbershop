@@ -1,33 +1,48 @@
 -- name: CreateBarber :one
-INSERT INTO barber(username, full_name, email, hashed_password, role, store_work, type_barber)
-VALUES ($1,
-        $2,
-        $3,
-        $4,
-        $5,
-        $6,
-        $7
-        ) RETURNING *;
-
--- name: GetBarber :one
-
+INSERT INTO "Barbers" (
+    shop_id,
+    nick_name,
+    full_name,
+    phone,
+    email,
+    gender,
+    "role",
+    hashed_password,
+    avatar
+  )
+VALUES (
+    $1,
+    $2,
+    $3,
+    $4,
+    $5,
+    $6,
+    $7,
+    $8,
+    $9
+  )
+RETURNING *;
+-- name: GetEmailBarber :one
 SELECT *
-FROM barber
-WHERE username = $1
-LIMIT 1
-;
-
+FROM "Barbers"
+WHERE email = $1
+LIMIT 1;
 -- name: UpdateBarber :one
-
-UPDATE "barber"
-set 
-  status = $2,
+UPDATE "Barbers"
+set shop_id = $1,
+  nick_name = $2,
   full_name = $3,
-  "role" = $4,
-  store_work = $5,
-  type_barber = $6,
-  email = $7,
-  update_at = $8,
-  avatar = $9
-WHERE username = $1
+  phone = $4,
+  email = $5,
+  gender = $6,
+  "role" = $7,
+  avatar = $8,
+  "status" = $9,
+  "update_at" = $10
+WHERE barber_id = $11
+RETURNING *;
+-- name: UpdateStatusBarber :one
+UPDATE "Barbers"
+set "status" = $1
+WHERE barber_id = $2
 RETURNING *;

@@ -39,7 +39,7 @@ func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 		return
 	}
 
-	session, err := server.queries.GetSession(ctx, payload.ID)
+	session, err := server.queries.GetSessionsBarber(ctx, payload.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -55,7 +55,7 @@ func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 		return
 	}
 
-	if session.Username != payload.Username {
+	if session.BarberID != payload.BarberID {
 		err := fmt.Errorf("incorrect session user")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
@@ -80,7 +80,7 @@ func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 	}
 
 	access_token, accessPayload, err := server.tokenMaker.CreateToken(
-		payload.Username,
+		payload.BarberID,
 		server.config.AccessTokenDuration,
 	)
 
@@ -90,7 +90,7 @@ func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 	}
 
 	refresh_token, refreshPayload, err := server.tokenMaker.CreateToken(
-		payload.Username,
+		payload.BarberID,
 		server.config.RefreshTokenDuration,
 	)
 
@@ -99,7 +99,7 @@ func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 		return
 	}
 
-	ssUpdate, err := server.queries.UpdateRefreshToken(ctx, db.UpdateRefreshTokenParams{
+	ssUpdate, err := server.queries.UpdateRefreshTokenSessionsBarber(ctx, db.UpdateRefreshTokenSessionsBarberParams{
 		ID:           payload.ID,
 		RefreshToken: refresh_token,
 		ExpiresAt:    refreshPayload.ExpiredAt,

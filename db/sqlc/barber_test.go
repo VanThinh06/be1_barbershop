@@ -3,19 +3,19 @@ package db
 import (
 	"context"
 	"testing"
-
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 )
 
 func TestCreateBarber(t *testing.T) {
 	arg := CreateBarberParams{
-		Username:       "VanThinhDuong",
 		FullName:       "DuongVanThinh",
 		Email:          "dvanthinh@gmail.com",
 		HashedPassword: "VanThinh123",
 		Role:           1,
-		StoreWork:      uuid.NullUUID{},
+		NickName: "DuongVanThinh",
+		Phone: "0393482512",
+		Gender: 1,
+
 	}
 	barber, err := testQueries.CreateBarber(context.Background(), arg)
 
@@ -24,8 +24,7 @@ func TestCreateBarber(t *testing.T) {
 }
 
 func TestGetBarber(t *testing.T) {
-	nameBarber := "ThinhVan"
-	barber, err := testQueries.GetBarber(context.Background(), nameBarber)
+	barber, err := testQueries.GetEmailBarber(context.Background(), "dvanthinh@gmail.com")
 	require.NoError(t, err)
 	require.NotEmpty(t, barber)
 }

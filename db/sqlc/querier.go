@@ -12,27 +12,12 @@ import (
 
 type Querier interface {
 	CreateBarber(ctx context.Context, arg CreateBarberParams) (Barber, error)
-	CreateService(ctx context.Context, arg CreateServiceParams) (Service, error)
-	CreateServiceCategory(ctx context.Context, arg CreateServiceCategoryParams) (ServiceCategory, error)
 	CreateSessionBarber(ctx context.Context, arg CreateSessionBarberParams) (SessionsBarber, error)
-	CreateStore(ctx context.Context, arg CreateStoreParams) (Store, error)
-	DeleteService(ctx context.Context, id uuid.UUID) (Service, error)
-	DeleteServiceCategory(ctx context.Context, id uuid.UUID) (ServiceCategory, error)
-	DeleteServicewithStoreCategory(ctx context.Context, serviceCategoryID uuid.UUID) error
-	DeleteStore(ctx context.Context, id uuid.UUID) (Store, error)
-	GetBarber(ctx context.Context, username string) (Barber, error)
-	GetListServiceCategorywithStore(ctx context.Context, storeID uuid.UUID) ([]ServiceCategory, error)
-	GetListServicewithCategory(ctx context.Context, arg GetListServicewithCategoryParams) ([]Service, error)
-	GetListStore(ctx context.Context, arg GetListStoreParams) ([]Store, error)
-	GetService(ctx context.Context, id uuid.UUID) (Service, error)
-	GetServiceCategory(ctx context.Context, id uuid.UUID) (ServiceCategory, error)
-	GetSession(ctx context.Context, id uuid.UUID) (SessionsBarber, error)
-	GetStore(ctx context.Context, id uuid.UUID) (Store, error)
+	GetEmailBarber(ctx context.Context, email string) (Barber, error)
+	GetSessionsBarber(ctx context.Context, id uuid.UUID) (SessionsBarber, error)
 	UpdateBarber(ctx context.Context, arg UpdateBarberParams) (Barber, error)
-	UpdateRefreshToken(ctx context.Context, arg UpdateRefreshTokenParams) (SessionsBarber, error)
-	UpdateService(ctx context.Context, arg UpdateServiceParams) (Service, error)
-	UpdateServiceCategory(ctx context.Context, arg UpdateServiceCategoryParams) (ServiceCategory, error)
-	UpdateStore(ctx context.Context, arg UpdateStoreParams) (Store, error)
+	UpdateRefreshTokenSessionsBarber(ctx context.Context, arg UpdateRefreshTokenSessionsBarberParams) (SessionsBarber, error)
+	UpdateStatusBarber(ctx context.Context, arg UpdateStatusBarberParams) (Barber, error)
 }
 
 var _ Querier = (*Queries)(nil)

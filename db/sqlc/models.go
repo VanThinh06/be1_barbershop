@@ -5,51 +5,95 @@
 package db
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
 	null "gopkg.in/guregu/null.v4"
 )
 
+type Appointment struct {
+	AppointmentID       uuid.UUID   `json:"appointment_id"`
+	CustomerID          uuid.UUID   `json:"customer_id"`
+	BarberID            uuid.UUID   `json:"barber_id"`
+	ServiceID           uuid.UUID   `json:"service_id"`
+	AppointmentDatetime time.Time   `json:"appointment_datetime"`
+	Status              null.String `json:"status"`
+	CreatedAt           time.Time   `json:"created_at"`
+	UpdateAt            null.Time   `json:"update_at"`
+}
+
 type Barber struct {
-	Username          string        `json:"username"`
+	BarberID          uuid.UUID     `json:"barber_id"`
+	ShopID            uuid.NullUUID `json:"shop_id"`
+	NickName          string        `json:"nick_name"`
 	FullName          string        `json:"full_name"`
+	Phone             string        `json:"phone"`
 	Email             string        `json:"email"`
+	Gender            int32         `json:"gender"`
+	Role              int32         `json:"role"`
 	HashedPassword    string        `json:"hashed_password"`
 	Avatar            null.String   `json:"avatar"`
-	Role              int32         `json:"role"`
 	Status            null.Int      `json:"status"`
-	StoreWork         uuid.NullUUID `json:"store_work"`
-	TypeBarber        int32         `json:"type_barber"`
 	PasswordChangedAt time.Time     `json:"password_changed_at"`
 	CreatedAt         time.Time     `json:"created_at"`
 	UpdateAt          null.Time     `json:"update_at"`
 }
 
-type Service struct {
-	ID                uuid.UUID   `json:"id"`
-	ServiceCategoryID uuid.UUID   `json:"service_category_id"`
-	Work              string      `json:"work"`
-	Timer             null.Int    `json:"timer"`
-	Price             float32     `json:"price"`
-	Description       null.String `json:"description"`
-	Image             null.String `json:"image"`
-	CreatedAt         time.Time   `json:"created_at"`
+type BarberShop struct {
+	ShopID    uuid.UUID   `json:"shop_id"`
+	OwnerID   uuid.UUID   `json:"owner_id"`
+	Name      string      `json:"name"`
+	Location  float32     `json:"location"`
+	Address   string      `json:"address"`
+	Image     null.String `json:"image"`
+	ListImage []string    `json:"list_image"`
+	Status    int32       `json:"status"`
+	CreatedAt time.Time   `json:"created_at"`
+	UpdateAt  null.Time   `json:"update_at"`
+}
+
+type Customer struct {
+	CustomerID        uuid.UUID   `json:"customer_id"`
+	Name              string      `json:"name"`
+	Email             string      `json:"email"`
+	Phone             string      `json:"phone"`
+	Gender            int32       `json:"gender"`
+	HashedPassword    string      `json:"hashed_password"`
+	Avatar            null.String `json:"avatar"`
+	PasswordChangedAt time.Time   `json:"password_changed_at"`
+	CreateAt          time.Time   `json:"create_at"`
 	UpdateAt          null.Time   `json:"update_at"`
 }
 
+type Service struct {
+	ID          uuid.UUID       `json:"id"`
+	CategoryID  uuid.UUID       `json:"category_id"`
+	Name        string          `json:"name"`
+	Timer       null.Int        `json:"timer"`
+	Price       sql.NullFloat64 `json:"price"`
+	Description null.String     `json:"description"`
+	Image       null.String     `json:"image"`
+	CreatedAt   time.Time       `json:"created_at"`
+	UpdateAt    null.Time       `json:"update_at"`
+}
+
 type ServiceCategory struct {
-	ID          uuid.UUID   `json:"id"`
-	StoreID     uuid.UUID   `json:"store_id"`
-	Work        string      `json:"work"`
-	Description null.String `json:"description"`
-	CreatedAt   time.Time   `json:"created_at"`
-	UpdateAt    null.Time   `json:"update_at"`
+	ID        uuid.UUID `json:"id"`
+	ShopID    uuid.UUID `json:"shop_id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdateAt  null.Time `json:"update_at"`
+}
+
+type ServicesAppointment struct {
+	ServicesID            uuid.UUID `json:"Services_id"`
+	AppointmentsServiceID uuid.UUID `json:"Appointments_service_id"`
 }
 
 type SessionsBarber struct {
 	ID           uuid.UUID `json:"id"`
-	Username     string    `json:"username"`
+	BarberID     uuid.UUID `json:"barber_id"`
 	RefreshToken string    `json:"refresh_token"`
 	UserAgent    string    `json:"user_agent"`
 	ClientIp     string    `json:"client_ip"`
@@ -59,18 +103,14 @@ type SessionsBarber struct {
 	CreateAt     time.Time `json:"create_at"`
 }
 
-type Store struct {
-	ID         uuid.UUID   `json:"id"`
-	NameID     string      `json:"name_id"`
-	NameStore  string      `json:"name_store"`
-	Location   float32     `json:"location"`
-	Address    string      `json:"address"`
-	Image      null.String `json:"image"`
-	ListImage  []string    `json:"list_image"`
-	ManagerID  []string    `json:"manager_id"`
-	EmployeeID []string    `json:"employee_id"`
-	Status     int32       `json:"status"`
-	CreatedAt  time.Time   `json:"created_at"`
-	UpdateAt   null.Time   `json:"update_at"`
-	Boss       string      `json:"boss"`
+type SessionsCustomer struct {
+	ID           uuid.UUID `json:"id"`
+	CustomerID   uuid.UUID `json:"customer_id"`
+	RefreshToken string    `json:"refresh_token"`
+	UserAgent    string    `json:"user_agent"`
+	ClientIp     string    `json:"client_ip"`
+	FcmDevice    string    `json:"fcm_device"`
+	IsBlocked    bool      `json:"is_blocked"`
+	ExpiresAt    time.Time `json:"expires_at"`
+	CreateAt     time.Time `json:"create_at"`
 }

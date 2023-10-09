@@ -14,22 +14,41 @@ import (
 )
 
 type barberResponse struct {
-	Username   string        `json:"username"`
-	FullName   string        `json:"full_name"`
-	Email      string        `json:"email"`
-	Avatar     null.String   `json:"avatar"`
-	Role       int32         `json:"role"`
-	Status     null.Int      `json:"status"`
-	StoreWork  uuid.NullUUID `json:"store_work"`
-	TypeBarber int32         `json:"type_barber"`
-	CreatedAt  time.Time     `json:"created_at"`
-	UpdateAt   null.Time     `json:"update_at"`
+	BarberID  uuid.UUID   `json:"barber_id"`
+	ShopID    uuid.NullUUID   `json:"shop_id"`
+	NickName  string      `json:"nick_name"`
+	FullName  string      `json:"full_name"`
+	Phone     string      `json:"phone"`
+	Email     string      `json:"email"`
+	Gender    int32       `json:"gender"`
+	Role      int32       `json:"role"`
+	Avatar    null.String `json:"avatar"`
+	Status    null.Int    `json:"status"`
+	CreatedAt time.Time   `json:"created_at"`
+	UpdateAt  null.Time   `json:"update_at"`
+}
+
+func newBarberResponse(barber db.Barber) barberResponse {
+	return barberResponse{
+		BarberID:  barber.BarberID,
+		ShopID:    barber.ShopID,
+		NickName:  barber.NickName,
+		FullName:  barber.FullName,
+		Phone:     barber.Phone,
+		Email:     barber.Email,
+		Gender:    barber.Gender,
+		Role:      barber.Role,
+		Avatar:    barber.Avatar,
+		Status:    barber.Status,
+		CreatedAt: barber.CreatedAt,
+		UpdateAt:  barber.UpdateAt,
+	}
 }
 
 // * api get barber
 func (server *Server) GetBarber(ctx *gin.Context) {
-	id := ctx.Param("id")
-	barber, err := server.queries.GetBarber(ctx, id)
+	id := ctx.Param("email")
+	barber, err := server.queries.GetEmailBarber(ctx, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, util.MessageResponse("This account does not exist"))
@@ -38,44 +57,22 @@ func (server *Server) GetBarber(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
 		return
 	}
-	response := barberResponse{
-		Username:  barber.Username,
-		FullName:  barber.FullName,
-		Email:     barber.Email,
-		Avatar:    barber.Avatar,
-		Role:      barber.Role,
-		Status:    barber.Status,
-		StoreWork: barber.StoreWork,
-		CreatedAt: barber.CreatedAt,
-	}
+	response := newBarberResponse(barber)
 	ctx.JSON(http.StatusOK, response)
 }
 
 // * auth register
 // create barber
 type authNewBarberParams struct {
-	Username   string        `json:"username" binding:"required"`
-	FullName   string        `json:"full_name" binding:"required"`
-	Email      string        `json:"email" binding:"email,required"`
-	Password   string        `json:"password" binding:"required,min=6"`
-	TypeBarber int32         `json:"type_barber" binding:"required"`
-	StoreWork  uuid.NullUUID `json:"store_work"`
-	Role       int32         `json:"role" binding:"required"`
-}
-
-func newBarberResponse(barber db.Barber) barberResponse {
-	return barberResponse{
-		Username:   barber.Username,
-		FullName:   barber.FullName,
-		Email:      barber.Email,
-		CreatedAt:  barber.CreatedAt,
-		TypeBarber: barber.TypeBarber,
-		Role:       barber.Role,
-		Avatar:     barber.Avatar,
-		Status:     barber.Status,
-		StoreWork:  barber.StoreWork,
-		UpdateAt:   barber.UpdateAt,
-	}
+	ShopID   uuid.NullUUID   `json:"shop_id"`
+	NickName string      `json:"nickname" binding:"required"`
+	FullName string      `json:"full_name" binding:"required"`
+	Phone    string      `json:"phone" binding:"required"`
+	Email    string      `json:"email" binding:"email,required"`
+	Gender   int         `json:"gender" binding:"required"`
+	Role     int         `json:"role" binding:"required"`
+	Password string      `json:"password" binding:"required,min=6"`
+	Avatar   null.String `json:"avatar"`
 }
 
 // * auth register
@@ -98,13 +95,15 @@ func (server *Server) AuthRegister(ctx *gin.Context) {
 	}
 
 	arg := db.CreateBarberParams{
-		Username:       req.Username,
+		ShopID:         req.ShopID,
+		NickName:       req.NickName,
 		FullName:       req.FullName,
+		Phone:          req.Phone,
 		Email:          req.Email,
+		Gender:         int32(req.Gender),
+		Role:           int32(req.Role),
 		HashedPassword: hashedPassword,
-		StoreWork:      req.StoreWork,
-		Role:           req.Role,
-		TypeBarber:     req.TypeBarber,
+		Avatar:         req.Avatar,
 	}
 
 	barber, err := server.queries.CreateBarber(ctx, arg)
@@ -112,11 +111,11 @@ func (server *Server) AuthRegister(ctx *gin.Context) {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
 			case "unique_violation":
-				if pqErr.Constraint == "barber_pkey" {
+				if pqErr.Constraint == "Barbers_pkey" {
 					ctx.JSON(http.StatusForbidden, "This account has already existed")
 					return
 				}
-				if pqErr.Constraint == "barber_email_key" {
+				if pqErr.Constraint == "Barbers_email_key" {
 					ctx.JSON(http.StatusForbidden, "This email has already existed")
 					return
 				}
@@ -130,9 +129,9 @@ func (server *Server) AuthRegister(ctx *gin.Context) {
 }
 
 // * auth login
-// login accout params
+// login account params
 type authBarberParams struct {
-	Username string `json:"username" binding:"required"`
+	Email    string `json:"email" binding:"email,required"`
 	Password string `json:"password" binding:"required,min=6"`
 }
 
@@ -160,7 +159,7 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 	}
 
 	// get barber with user name
-	barber, err := server.queries.GetBarber(ctx, req.Username)
+	barber, err := server.queries.GetEmailBarber(ctx, req.Email)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, util.MessageResponse("Incorrect account or password"))
@@ -179,7 +178,7 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 
 	// create token
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
-		barber.Username,
+		barber.BarberID,
 		server.config.AccessTokenDuration,
 	)
 
@@ -190,7 +189,7 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 
 	// create refresh token
 	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
-		barber.Username,
+		barber.BarberID,
 		server.config.RefreshTokenDuration,
 	)
 
@@ -201,7 +200,7 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 
 	session, err := server.queries.CreateSessionBarber(ctx, db.CreateSessionBarberParams{
 		ID:           refreshPayload.ID,
-		Username:     refreshPayload.Username,
+		BarberID:     refreshPayload.BarberID,
 		RefreshToken: refreshToken,
 		UserAgent:    ctx.Request.UserAgent(),
 		ClientIp:     ctx.ClientIP(),
@@ -227,16 +226,17 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 
 // update
 type updateBarberParams struct {
-	Username          string        `json:"username"`
-	Status            null.Int      `json:"status"`
-	FullName          string        `json:"full_name"`
-	Role              int32         `json:"role"`
-	StoreWork         uuid.NullUUID `json:"store_work"`
-	TypeBarber        int32         `json:"type_barber"`
-	Email             string        `json:"email"`
-	Avatar            null.String   `json:"avatar"`
-	PasswordChangedAt time.Time     `json:"password_changed_at"`
-	UpdateAt          null.Time     `json:"update_at"`
+	BarberID uuid.UUID   `json:"barber_id" binding:"required"`
+	ShopID   uuid.NullUUID   `json:"shop_id"`
+	NickName string      `json:"nick_name"`
+	FullName string      `json:"full_name"`
+	Phone    string      `json:"phone" `
+	Email    string      `json:"email" `
+	Gender   int         `json:"gender" `
+	Role     int         `json:"role" `
+	Avatar   null.String `json:"avatar"`
+	Status   null.Int    `json:"status"`
+	UpdateAt null.Time   `json:"update_at"`
 }
 
 func (server *Server) UpdateBarber(ctx *gin.Context) {
@@ -247,15 +247,17 @@ func (server *Server) UpdateBarber(ctx *gin.Context) {
 	}
 
 	params := db.UpdateBarberParams{
-		Username:   req.Username,
-		Status:     req.Status,
-		FullName:   req.FullName,
-		Role:       req.Role,
-		StoreWork:  req.StoreWork,
-		TypeBarber: req.TypeBarber,
-		Email:      req.Email,
-		Avatar:     req.Avatar,
-		UpdateAt:   null.TimeFrom(time.Now()),
+		BarberID: req.BarberID,
+		ShopID:   req.ShopID,
+		NickName: req.NickName,
+		Status:   req.Status,
+		FullName: req.FullName,
+		Role:     int32(req.Role),
+		Phone:    req.Phone,
+		Gender:   int32(req.Gender),
+		Email:    req.Email,
+		Avatar:   req.Avatar,
+		UpdateAt: null.TimeFrom(time.Now()),
 	}
 	barber, err := server.queries.UpdateBarber(ctx, params)
 	if err != nil {

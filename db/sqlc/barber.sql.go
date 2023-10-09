@@ -13,48 +13,68 @@ import (
 )
 
 const createBarber = `-- name: CreateBarber :one
-INSERT INTO barber(username, full_name, email, hashed_password, role, store_work, type_barber)
-VALUES ($1,
-        $2,
-        $3,
-        $4,
-        $5,
-        $6,
-        $7
-        ) RETURNING username, full_name, email, hashed_password, avatar, role, status, store_work, type_barber, password_changed_at, created_at, update_at
+INSERT INTO "Barbers" (
+    shop_id,
+    nick_name,
+    full_name,
+    phone,
+    email,
+    gender,
+    "role",
+    hashed_password,
+    avatar
+  )
+VALUES (
+    $1,
+    $2,
+    $3,
+    $4,
+    $5,
+    $6,
+    $7,
+    $8,
+    $9
+  )
+RETURNING barber_id, shop_id, nick_name, full_name, phone, email, gender, role, hashed_password, avatar, status, password_changed_at, created_at, update_at
 `
 
 type CreateBarberParams struct {
-	Username       string        `json:"username"`
+	ShopID         uuid.NullUUID `json:"shop_id"`
+	NickName       string        `json:"nick_name"`
 	FullName       string        `json:"full_name"`
+	Phone          string        `json:"phone"`
 	Email          string        `json:"email"`
-	HashedPassword string        `json:"hashed_password"`
+	Gender         int32         `json:"gender"`
 	Role           int32         `json:"role"`
-	StoreWork      uuid.NullUUID `json:"store_work"`
-	TypeBarber     int32         `json:"type_barber"`
+	HashedPassword string        `json:"hashed_password"`
+	Avatar         null.String   `json:"avatar"`
 }
 
 func (q *Queries) CreateBarber(ctx context.Context, arg CreateBarberParams) (Barber, error) {
 	row := q.db.QueryRowContext(ctx, createBarber,
-		arg.Username,
+		arg.ShopID,
+		arg.NickName,
 		arg.FullName,
+		arg.Phone,
 		arg.Email,
-		arg.HashedPassword,
+		arg.Gender,
 		arg.Role,
-		arg.StoreWork,
-		arg.TypeBarber,
+		arg.HashedPassword,
+		arg.Avatar,
 	)
 	var i Barber
 	err := row.Scan(
-		&i.Username,
+		&i.BarberID,
+		&i.ShopID,
+		&i.NickName,
 		&i.FullName,
+		&i.Phone,
 		&i.Email,
+		&i.Gender,
+		&i.Role,
 		&i.HashedPassword,
 		&i.Avatar,
-		&i.Role,
 		&i.Status,
-		&i.StoreWork,
-		&i.TypeBarber,
 		&i.PasswordChangedAt,
 		&i.CreatedAt,
 		&i.UpdateAt,
@@ -62,27 +82,28 @@ func (q *Queries) CreateBarber(ctx context.Context, arg CreateBarberParams) (Bar
 	return i, err
 }
 
-const getBarber = `-- name: GetBarber :one
-
-SELECT username, full_name, email, hashed_password, avatar, role, status, store_work, type_barber, password_changed_at, created_at, update_at
-FROM barber
-WHERE username = $1
+const getEmailBarber = `-- name: GetEmailBarber :one
+SELECT barber_id, shop_id, nick_name, full_name, phone, email, gender, role, hashed_password, avatar, status, password_changed_at, created_at, update_at
+FROM "Barbers"
+WHERE email = $1
 LIMIT 1
 `
 
-func (q *Queries) GetBarber(ctx context.Context, username string) (Barber, error) {
-	row := q.db.QueryRowContext(ctx, getBarber, username)
+func (q *Queries) GetEmailBarber(ctx context.Context, email string) (Barber, error) {
+	row := q.db.QueryRowContext(ctx, getEmailBarber, email)
 	var i Barber
 	err := row.Scan(
-		&i.Username,
+		&i.BarberID,
+		&i.ShopID,
+		&i.NickName,
 		&i.FullName,
+		&i.Phone,
 		&i.Email,
+		&i.Gender,
+		&i.Role,
 		&i.HashedPassword,
 		&i.Avatar,
-		&i.Role,
 		&i.Status,
-		&i.StoreWork,
-		&i.TypeBarber,
 		&i.PasswordChangedAt,
 		&i.CreatedAt,
 		&i.UpdateAt,
@@ -91,56 +112,96 @@ func (q *Queries) GetBarber(ctx context.Context, username string) (Barber, error
 }
 
 const updateBarber = `-- name: UpdateBarber :one
-
-UPDATE "barber"
-set 
-  status = $2,
+UPDATE "Barbers"
+set shop_id = $1,
+  nick_name = $2,
   full_name = $3,
-  "role" = $4,
-  store_work = $5,
-  type_barber = $6,
-  email = $7,
-  update_at = $8,
-  avatar = $9
-WHERE username = $1
-RETURNING username, full_name, email, hashed_password, avatar, role, status, store_work, type_barber, password_changed_at, created_at, update_at
+  phone = $4,
+  email = $5,
+  gender = $6,
+  "role" = $7,
+  avatar = $8,
+  "status" = $9,
+  "update_at" = $10
+WHERE barber_id = $11
+RETURNING barber_id, shop_id, nick_name, full_name, phone, email, gender, role, hashed_password, avatar, status, password_changed_at, created_at, update_at
 `
 
 type UpdateBarberParams struct {
-	Username   string        `json:"username"`
-	Status     null.Int      `json:"status"`
-	FullName   string        `json:"full_name"`
-	Role       int32         `json:"role"`
-	StoreWork  uuid.NullUUID `json:"store_work"`
-	TypeBarber int32         `json:"type_barber"`
-	Email      string        `json:"email"`
-	UpdateAt   null.Time     `json:"update_at"`
-	Avatar     null.String   `json:"avatar"`
+	ShopID   uuid.NullUUID `json:"shop_id"`
+	NickName string        `json:"nick_name"`
+	FullName string        `json:"full_name"`
+	Phone    string        `json:"phone"`
+	Email    string        `json:"email"`
+	Gender   int32         `json:"gender"`
+	Role     int32         `json:"role"`
+	Avatar   null.String   `json:"avatar"`
+	Status   null.Int      `json:"status"`
+	UpdateAt null.Time     `json:"update_at"`
+	BarberID uuid.UUID     `json:"barber_id"`
 }
 
 func (q *Queries) UpdateBarber(ctx context.Context, arg UpdateBarberParams) (Barber, error) {
 	row := q.db.QueryRowContext(ctx, updateBarber,
-		arg.Username,
-		arg.Status,
+		arg.ShopID,
+		arg.NickName,
 		arg.FullName,
-		arg.Role,
-		arg.StoreWork,
-		arg.TypeBarber,
+		arg.Phone,
 		arg.Email,
-		arg.UpdateAt,
+		arg.Gender,
+		arg.Role,
 		arg.Avatar,
+		arg.Status,
+		arg.UpdateAt,
+		arg.BarberID,
 	)
 	var i Barber
 	err := row.Scan(
-		&i.Username,
+		&i.BarberID,
+		&i.ShopID,
+		&i.NickName,
 		&i.FullName,
+		&i.Phone,
 		&i.Email,
+		&i.Gender,
+		&i.Role,
 		&i.HashedPassword,
 		&i.Avatar,
-		&i.Role,
 		&i.Status,
-		&i.StoreWork,
-		&i.TypeBarber,
+		&i.PasswordChangedAt,
+		&i.CreatedAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}
+
+const updateStatusBarber = `-- name: UpdateStatusBarber :one
+UPDATE "Barbers"
+set "status" = $1
+WHERE barber_id = $2
+RETURNING barber_id, shop_id, nick_name, full_name, phone, email, gender, role, hashed_password, avatar, status, password_changed_at, created_at, update_at
+`
+
+type UpdateStatusBarberParams struct {
+	Status   null.Int  `json:"status"`
+	BarberID uuid.UUID `json:"barber_id"`
+}
+
+func (q *Queries) UpdateStatusBarber(ctx context.Context, arg UpdateStatusBarberParams) (Barber, error) {
+	row := q.db.QueryRowContext(ctx, updateStatusBarber, arg.Status, arg.BarberID)
+	var i Barber
+	err := row.Scan(
+		&i.BarberID,
+		&i.ShopID,
+		&i.NickName,
+		&i.FullName,
+		&i.Phone,
+		&i.Email,
+		&i.Gender,
+		&i.Role,
+		&i.HashedPassword,
+		&i.Avatar,
+		&i.Status,
 		&i.PasswordChangedAt,
 		&i.CreatedAt,
 		&i.UpdateAt,

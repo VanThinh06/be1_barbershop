@@ -1,7 +1,7 @@
 -- name: CreateSessionBarber :one
-INSERT INTO "sessions_barber" (
+INSERT INTO "SessionsBarber" (
                                id,
-                               username,
+                               barber_id,
                                refresh_token,
                                user_agent,
                                client_ip,
@@ -18,14 +18,14 @@ VALUES ($1,
         $8
         ) RETURNING *;
 
--- name: GetSession :one
+-- name: GetSessionsBarber :one
 SELECT *
-FROM "sessions_barber"
+FROM "SessionsBarber"
 WHERE id = $1
 LIMIT 1;
 
--- name: UpdateRefreshToken :one
-UPDATE "sessions_barber"
+-- name: UpdateRefreshTokenSessionsBarber :one
+UPDATE "SessionsBarber"
 set refresh_token = $2,
     expires_at = $3
 WHERE id = $1
