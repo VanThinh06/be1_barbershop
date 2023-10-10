@@ -6,6 +6,7 @@ import (
 	"barbershop/util"
 	"fmt"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -46,6 +47,12 @@ func (server *Server) Start(address string) error {
 // / Router
 func (server *Server) setupRouter() {
 	router := gin.Default()
+
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:4200"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
+	config.AllowHeaders = []string{"Origin", "Content-Type"}
+	router.Use(cors.New(config))
 
 	barberRoutes := router.Group("/barber")
 	barberRoutes.POST("/authentication", server.LoginBarber)

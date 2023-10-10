@@ -29,7 +29,7 @@ func CatchErrorParams(err error) map[string]any {
 	var validateError validator.ValidationErrors
 	if errors.As(err, &validateError) {
 		for _, fe := range validateError {
-			return gin.H{"errors": messageErrorParams(fe.Tag())}
+			return gin.H{"error": messageErrorParams(fe.Tag())}
 		}
 	}
 	return nil

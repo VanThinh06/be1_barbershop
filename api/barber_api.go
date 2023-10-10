@@ -14,18 +14,18 @@ import (
 )
 
 type barberResponse struct {
-	BarberID  uuid.UUID   `json:"barber_id"`
-	ShopID    uuid.NullUUID   `json:"shop_id"`
-	NickName  string      `json:"nick_name"`
-	FullName  string      `json:"full_name"`
-	Phone     string      `json:"phone"`
-	Email     string      `json:"email"`
-	Gender    int32       `json:"gender"`
-	Role      int32       `json:"role"`
-	Avatar    null.String `json:"avatar"`
-	Status    null.Int    `json:"status"`
-	CreatedAt time.Time   `json:"created_at"`
-	UpdateAt  null.Time   `json:"update_at"`
+	BarberID  uuid.UUID     `json:"barber_id"`
+	ShopID    uuid.NullUUID `json:"shop_id"`
+	NickName  string        `json:"nick_name"`
+	FullName  string        `json:"full_name"`
+	Phone     string        `json:"phone"`
+	Email     string        `json:"email"`
+	Gender    int32         `json:"gender"`
+	Role      int32         `json:"role"`
+	Avatar    null.String   `json:"avatar"`
+	Status    null.Int      `json:"status"`
+	CreatedAt time.Time     `json:"created_at"`
+	UpdateAt  null.Time     `json:"update_at"`
 }
 
 func newBarberResponse(barber db.Barber) barberResponse {
@@ -64,15 +64,15 @@ func (server *Server) GetBarber(ctx *gin.Context) {
 // * auth register
 // create barber
 type authNewBarberParams struct {
-	ShopID   uuid.NullUUID   `json:"shop_id"`
-	NickName string      `json:"nickname" binding:"required"`
-	FullName string      `json:"full_name" binding:"required"`
-	Phone    string      `json:"phone" binding:"required"`
-	Email    string      `json:"email" binding:"email,required"`
-	Gender   int         `json:"gender" binding:"required"`
-	Role     int         `json:"role" binding:"required"`
-	Password string      `json:"password" binding:"required,min=6"`
-	Avatar   null.String `json:"avatar"`
+	ShopID   uuid.NullUUID `json:"shop_id"`
+	NickName string        `json:"nickname" binding:"required"`
+	FullName string        `json:"full_name" binding:"required"`
+	Phone    string        `json:"phone" binding:"required"`
+	Email    string        `json:"email" binding:"email,required"`
+	Gender   int           `json:"gender" binding:"required"`
+	Role     int           `json:"role" binding:"required"`
+	Password string        `json:"password" binding:"required,min=6"`
+	Avatar   null.String   `json:"avatar"`
 }
 
 // * auth register
@@ -226,17 +226,17 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 
 // update
 type updateBarberParams struct {
-	BarberID uuid.UUID   `json:"barber_id" binding:"required"`
-	ShopID   uuid.NullUUID   `json:"shop_id"`
-	NickName string      `json:"nick_name"`
-	FullName string      `json:"full_name"`
-	Phone    string      `json:"phone" `
-	Email    string      `json:"email" `
-	Gender   int         `json:"gender" `
-	Role     int         `json:"role" `
-	Avatar   null.String `json:"avatar"`
-	Status   null.Int    `json:"status"`
-	UpdateAt null.Time   `json:"update_at"`
+	BarberID uuid.UUID     `json:"barber_id" binding:"required"`
+	ShopID   uuid.NullUUID `json:"shop_id"`
+	NickName string        `json:"nick_name"`
+	FullName string        `json:"full_name"`
+	Phone    string        `json:"phone" `
+	Email    string        `json:"email" `
+	Gender   int           `json:"gender" `
+	Role     int           `json:"role" `
+	Avatar   null.String   `json:"avatar"`
+	Status   null.Int      `json:"status"`
+	UpdateAt null.Time     `json:"update_at"`
 }
 
 func (server *Server) UpdateBarber(ctx *gin.Context) {
