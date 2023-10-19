@@ -85,3 +85,4 @@ func (server *Server) setupRouter() {
 
 	server.Router = router
 }
+	
