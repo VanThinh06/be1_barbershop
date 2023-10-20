@@ -31,7 +31,6 @@ func (server *Server) AddMiddleWare(tokenMaker token.Maker) gin.HandlerFunc {
 			err := errors.New("invalid authorization header format")
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err))
 			return
-
 		}
 
 		authorizationType := strings.ToLower(fileds[0])
@@ -39,7 +38,6 @@ func (server *Server) AddMiddleWare(tokenMaker token.Maker) gin.HandlerFunc {
 			err := fmt.Errorf("unsupported authorization type %s", authorizationType)
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err))
 			return
-
 		}
 
 		accessToken := fileds[1]
@@ -50,7 +48,7 @@ func (server *Server) AddMiddleWare(tokenMaker token.Maker) gin.HandlerFunc {
 			return
 		}
 		server.payload = payload
-
+		
 		ctx.Set(authorizationPayloadKey, payload)
 		ctx.Next()
 	}

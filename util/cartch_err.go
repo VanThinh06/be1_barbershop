@@ -23,7 +23,7 @@ func MessageResponse(err string) gin.H {
 	return gin.H{"error": err}
 }
 
-var MessageInternalServer = "Internal Server Error"
+var MessageInternalServer = gin.H{"error": "Internal Server Error"}
 
 func CatchErrorParams(err error) map[string]any {
 	var validateError validator.ValidationErrors
