@@ -2,7 +2,7 @@ package api
 
 import (
 	db "barbershop/db/sqlc"
-	"barbershop/util"
+	"barbershop/utils"
 	"database/sql"
 	"net/http"
 	"time"
@@ -51,10 +51,10 @@ func (server *Server) GetBarber(ctx *gin.Context) {
 	barber, err := server.queries.GetEmailBarber(ctx, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, util.MessageResponse("This account does not exist"))
+			ctx.JSON(http.StatusNotFound, utils.MessageResponse("This account does not exist"))
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
 		return
 	}
 	response := newBarberResponse(barber)
@@ -82,12 +82,12 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 	// check login
 	var req authBarberParams
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		err := util.CatchErrorParams(err)
+		err := utils.CatchErrorParams(err)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, err)
 			return
 		}
-		ctx.JSON(http.StatusBadRequest, util.MessageResponse("Login information is incorrect"))
+		ctx.JSON(http.StatusBadRequest, utils.MessageResponse("Login information is incorrect"))
 		return
 	}
 
@@ -95,17 +95,17 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 	barber, err := server.queries.GetEmailBarber(ctx, req.Email)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, util.MessageResponse("Incorrect account or password"))
+			ctx.JSON(http.StatusNotFound, utils.MessageResponse("Incorrect account or password"))
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
 		return
 	}
 
 	// check password
-	err = util.CheckPassword(req.Password, barber.HashedPassword)
+	err = utils.CheckPassword(req.Password, barber.HashedPassword)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, util.MessageResponse("Incorrect account or password"))
+		ctx.JSON(http.StatusUnauthorized, utils.MessageResponse("Incorrect account or password"))
 		return
 	}
 
@@ -116,7 +116,7 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 	)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
 		return
 	}
 
@@ -127,7 +127,7 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 	)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
 		return
 	}
 
@@ -142,7 +142,7 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 	})
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
 		return
 	}
 
@@ -160,37 +160,43 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 // * auth register
 // create barber
 type newBarberParams struct {
-	ShopID   uuid.UUID `json:"shop_id" binding:"required"`
-	NickName string    `json:"nickname" binding:"required"`
-	FullName string    `json:"full_name" binding:"required"`
-	Phone    string    `json:"phone" binding:"required"`
-	Email    string    `json:"email" binding:"email,required"`
-	Gender   int       `json:"gender" binding:"required"`
-	Password string    `json:"password" binding:"required,min=6"`
+	NickName       string `json:"nickname" binding:"required"`
+	FullName       string `json:"full_name" binding:"required"`
+	Phone          string `json:"phone" binding:"required"`
+	Email          string `json:"email" binding:"email,required"`
+	Gender         int    `json:"gender" binding:"required"`
+	Password       string `json:"password" binding:"required,min=6"`
+	CodeBarberShop string `json:"code_barber_shop" binding:"required"`
 }
 
 // * auth register barber
 func (server *Server) AuthNewBarber(ctx *gin.Context) {
 	var req newBarberParams
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		err := util.CatchErrorParams(err)
+		err := utils.CatchErrorParams(err)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, err)
 			return
 		}
-		ctx.JSON(http.StatusBadRequest, util.MessageResponse("The request was invalid"))
+		ctx.JSON(http.StatusBadRequest, utils.MessageResponse("The request was invalid"))
 		return
 	}
 
-	hashedPassword, err := util.HashPassword(req.Password)
+	hashedPassword, err := utils.HashPassword(req.Password)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
+		return
+	}
+
+	shop_id, err := server.queries.GetCodeBarberShop(ctx, req.CodeBarberShop)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, utils.MessageResponse("Not found barber shop"))
 		return
 	}
 
 	arg := db.CreateBarberParams{
 		ShopID: uuid.NullUUID{
-			UUID:  req.ShopID,
+			UUID:  shop_id,
 			Valid: true,
 		},
 		NickName:       req.NickName,
@@ -198,7 +204,7 @@ func (server *Server) AuthNewBarber(ctx *gin.Context) {
 		Phone:          req.Phone,
 		Email:          req.Email,
 		Gender:         int32(req.Gender),
-		Role:           int32(util.HairStylist),
+		Role:           int32(utils.HairStylist),
 		HashedPassword: hashedPassword,
 	}
 
@@ -221,7 +227,7 @@ func (server *Server) AuthNewBarber(ctx *gin.Context) {
 				}
 			}
 		}
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
 		return
 	}
 	response := newBarberResponse(barber)
@@ -241,18 +247,18 @@ type newManagerParams struct {
 func (server *Server) AuthNewManager(ctx *gin.Context) {
 	var req newManagerParams
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		err := util.CatchErrorParams(err)
+		err := utils.CatchErrorParams(err)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, err)
 			return
 		}
-		ctx.JSON(http.StatusBadRequest, util.MessageResponse("The request was invalid"))
+		ctx.JSON(http.StatusBadRequest, utils.MessageResponse("The request was invalid"))
 		return
 	}
 
-	hashedPassword, err := util.HashPassword(req.Password)
+	hashedPassword, err := utils.HashPassword(req.Password)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
 		return
 	}
 
@@ -262,7 +268,7 @@ func (server *Server) AuthNewManager(ctx *gin.Context) {
 		Phone:          req.Phone,
 		Email:          req.Email,
 		Gender:         int32(req.Gender),
-		Role:           int32(util.Manager),
+		Role:           int32(utils.Manager),
 		HashedPassword: hashedPassword,
 	}
 
@@ -285,7 +291,7 @@ func (server *Server) AuthNewManager(ctx *gin.Context) {
 				}
 			}
 		}
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
 		return
 	}
 	response := newBarberResponse(barber)
@@ -330,10 +336,10 @@ func (server *Server) UpdateBarber(ctx *gin.Context) {
 	barber, err := server.queries.UpdateBarber(ctx, params)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, util.MessageResponse("Update invalid information"))
+			ctx.JSON(http.StatusNotFound, utils.MessageResponse("Update invalid information"))
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
 		return
 	}
 	response := newBarberResponse(barber)

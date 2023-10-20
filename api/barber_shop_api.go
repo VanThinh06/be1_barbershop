@@ -2,7 +2,7 @@ package api
 
 import (
 	db "barbershop/db/sqlc"
-	"barbershop/util"
+	"barbershop/utils"
 	"database/sql"
 	"fmt"
 	"net/http"
@@ -12,15 +12,15 @@ import (
 )
 
 // * api get barber
-func (server *Server) GetBarberShop(ctx *gin.Context) {
+func (server *Server) GetCodeBarberShop(ctx *gin.Context) {
 	id := ctx.Param("id")
-	barberShop, err := server.queries.GetBarberShop(ctx, id)
+	barberShop, err := server.queries.GetCodeBarberShop(ctx, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, util.MessageResponse("This account does not exist"))
+			ctx.JSON(http.StatusNotFound, utils.MessageResponse("This account does not exist"))
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
 		return
 	}
 	response := barberShop
@@ -37,12 +37,12 @@ type barberShopsParams struct {
 func (server *Server) NewBarberShop(ctx *gin.Context) {
 	var req barberShopsParams
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		err := util.CatchErrorParams(err)
+		err := utils.CatchErrorParams(err)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, err)
 			return
 		}
-		ctx.JSON(http.StatusBadRequest, util.MessageResponse("The request was invalid"))
+		ctx.JSON(http.StatusBadRequest, utils.MessageResponse("The request was invalid"))
 		return
 	}
 	fmt.Println(server.payload.BarberID)
@@ -56,14 +56,14 @@ func (server *Server) NewBarberShop(ctx *gin.Context) {
 
 	barberShop, err := server.queries.CreateBarberShops(ctx, arg)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
 		return
 	}
 
 	requestBarber := db.UpdateIDShopManagerParams{BarberID: server.payload.BarberID, ShopID: uuid.NullUUID{UUID: barberShop.ShopID, Valid: true}}
 	_, errUpdateBarber := server.queries.UpdateIDShopManager(ctx, requestBarber)
 	if errUpdateBarber != nil {
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
 		return
 	}
 

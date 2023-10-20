@@ -1,7 +1,7 @@
 package token
 
 import (
-	"barbershop/util"
+	"barbershop/utils"
 	"testing"
 	"time"
 
@@ -10,7 +10,7 @@ import (
 )
 
 func TestPasetoMaker(t *testing.T) {
-	maker, err := NewPasetoMaker(util.RandomString(32))
+	maker, err := NewPasetoMaker(utils.RandomString(32))
 	require.NoError(t, err)
 
 	barber_id, err := uuid.NewUUID()
@@ -38,7 +38,7 @@ func TestPasetoMaker(t *testing.T) {
 }
 
 func TestExpiredPasetoToken(t *testing.T) {
-	maker, err := NewPasetoMaker(util.RandomString(32))
+	maker, err := NewPasetoMaker(utils.RandomString(32))
 	require.NoError(t, err)
 	barber_id, err := uuid.NewUUID()
 	if err != nil {

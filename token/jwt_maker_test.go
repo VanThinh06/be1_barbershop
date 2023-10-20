@@ -1,7 +1,7 @@
 package token
 
 import (
-	"barbershop/util"
+	"barbershop/utils"
 	"testing"
 	"time"
 
@@ -11,7 +11,7 @@ import (
 )
 
 func TestJWTMaker(t *testing.T) {
-	maker, err := NewJWTMaker(util.RandomString(32))
+	maker, err := NewJWTMaker(utils.RandomString(32))
 	require.NoError(t, err)
 
 	barber_id, err := uuid.NewUUID()
@@ -39,7 +39,7 @@ func TestJWTMaker(t *testing.T) {
 }
 
 func TestExpiredJWTToken(t *testing.T) {
-	maker, err := NewJWTMaker(util.RandomString(32))
+	maker, err := NewJWTMaker(utils.RandomString(32))
 	require.NoError(t, err)
 
 	barber_id, err := uuid.NewUUID()
@@ -69,7 +69,7 @@ func TestInvalidJWTTokenAlgNone(t *testing.T) {
 	token, err := jwtToken.SignedString(jwt.UnsafeAllowNoneSignatureType)
 	require.NoError(t, err)
 
-	maker, err := NewJWTMaker(util.RandomString(32))
+	maker, err := NewJWTMaker(utils.RandomString(32))
 	require.NoError(t, err)
 
 	payload, err = maker.VerifyToken(token)

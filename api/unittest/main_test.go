@@ -3,7 +3,7 @@ package unittest
 import (
 	"barbershop/api"
 	db "barbershop/db/sqlc"
-	"barbershop/util"
+	"barbershop/utils"
 	"os"
 	"testing"
 	"time"
@@ -19,8 +19,8 @@ func TestMain(m *testing.M) {
 }
 
 func NewTestServer(t *testing.T, store db.StoreMain) *api.Server {
-	config := util.Config{
-		TokenSymmetricKey:   util.RandomString(32),
+	config := utils.Config{
+		TokenSymmetricKey:   utils.RandomString(32),
 		AccessTokenDuration: time.Minute,
 	}
 

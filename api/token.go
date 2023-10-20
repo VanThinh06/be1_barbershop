@@ -2,7 +2,7 @@ package api
 
 import (
 	db "barbershop/db/sqlc"
-	"barbershop/util"
+	"barbershop/utils"
 	"database/sql"
 	"fmt"
 	"net/http"
@@ -25,12 +25,12 @@ type ReNewAccessTokenResponse struct {
 func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 	var req ReNewAccessTokenRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		err := util.CatchErrorParams(err)
+		err := utils.CatchErrorParams(err)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, err)
 			return
 		}
-		ctx.JSON(http.StatusBadRequest, util.MessageResponse("The request was invalid"))
+		ctx.JSON(http.StatusBadRequest, utils.MessageResponse("The request was invalid"))
 		return
 	}
 	payload, err := server.tokenMaker.VerifyToken(req.RefreshToken)
@@ -105,7 +105,7 @@ func (server *Server) ReNewAccessToken(ctx *gin.Context) {
 		ExpiresAt:    refreshPayload.ExpiredAt,
 	})
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
 		return
 	}
 

@@ -1,7 +1,7 @@
 package db
 
 // import (
-// 	"barbershop/util"
+// 	"barbershop/utils"
 // 	"context"
 // 	"testing"
 
@@ -10,9 +10,9 @@ package db
 
 // func TestCreateStore(t *testing.T) {
 // 	arg := CreateStoreParams{
-// 		NameID:    util.RandomString(5),
-// 		NameStore: util.RandomName(),
-// 		Address:   util.RandomName(),
+// 		NameID:    utils.RandomString(5),
+// 		NameStore: utils.RandomName(),
+// 		Address:   utils.RandomName(),
 // 		Location:  0.999,
 // 		Status:    1,
 // 		ManagerID: []string{"VanThinhDuong"},

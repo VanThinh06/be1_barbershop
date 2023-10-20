@@ -3,7 +3,7 @@ package api
 import (
 	db "barbershop/db/sqlc"
 	"barbershop/token"
-	"barbershop/util"
+	"barbershop/utils"
 	"fmt"
 
 	"github.com/gin-contrib/cors"
@@ -11,14 +11,14 @@ import (
 )
 
 type Server struct {
-	config     util.Config
+	config     utils.Config
 	queries    db.StoreMain
 	tokenMaker token.Maker
 	Router     *gin.Engine
 	payload    *token.Payload
 }
 
-func NewServer(config util.Config, queries db.StoreMain) (*Server, error) {
+func NewServer(config utils.Config, queries db.StoreMain) (*Server, error) {
 	tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
 	if err != nil {
 		return nil, fmt.Errorf("cannot create token maker: %w", err)
@@ -65,7 +65,8 @@ func (server *Server) setupRouter() {
 
 	barberShopRoutes := router.Group("/barberShop").Use(server.AddMiddleWare(server.tokenMaker))
 	barberShopRoutes.POST("/newBarberShop", server.NewBarberShop)
-	barberShopRoutes.GET("/:id", server.GetBarberShop)
+	barberShopRoutes.GET("/:id", server.GetCodeBarberShop)
+
 	// router.POST("/image", server.uploadImage)
 	// router.Static("/assets", "./assets/upload")
 	// router.POST("/users", server.createUser)

@@ -3,7 +3,7 @@ package unittest
 // import (
 // 	mockdb "barbershop/db/mock"
 // 	db "barbershop/db/sqlc"
-// 	"barbershop/util"
+// 	"barbershop/utils"
 // 	"bytes"
 // 	"database/sql"
 // 	"encoding/json"
@@ -117,12 +117,12 @@ package unittest
 
 // func createBarber() db.Barber {
 // 	return db.Barber{
-// 		FullName:  util.RandomName(),
-// 		Email:     util.RandomEmail(),
-// 		Avatar:    null.StringFrom(util.RandomName()),
-// 		Status:    null.IntFrom(int64(util.RandomNumber(5))),
-// 		Username:  util.RandomName(),
-// 		Role:      int32(util.RandomNumber(3)),
+// 		FullName:  utils.RandomName(),
+// 		Email:     utils.RandomEmail(),
+// 		Avatar:    null.StringFrom(utils.RandomName()),
+// 		Status:    null.IntFrom(int64(utils.RandomNumber(5))),
+// 		Username:  utils.RandomName(),
+// 		Role:      int32(utils.RandomNumber(3)),
 // 		StoreWork: uuid.NullUUID{},
 // 	}
 // }

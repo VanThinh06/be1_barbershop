@@ -3,7 +3,7 @@ package main
 import (
 	"barbershop/api"
 	db "barbershop/db/sqlc"
-	"barbershop/util"
+	"barbershop/utils"
 	"database/sql"
 	"log"
 
@@ -13,7 +13,7 @@ import (
 func main() {
 
 	// Load file config
-	config, err := util.LoadConfig(".") // . vì nằm cùng vị trí với thư mục hiện tại app.env
+	config, err := utils.LoadConfig(".") // . vì nằm cùng vị trí với thư mục hiện tại app.env
 	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}

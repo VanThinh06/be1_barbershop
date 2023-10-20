@@ -1,19 +1,25 @@
 -- name: CreateBarberShops :one
-INSERT INTO "BarberShops" (
-        code_barber_shop,
-        owner_id,
-        name,
-        location,
-        address,
-        image
-    )
-VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING *;
--- name: GetBarberShop :one
-SELECT *
+
+INSERT INTO "BarberShops" (code_barber_shop,
+                           owner_id,
+                           name,
+                           location,
+                           address,
+                           image)
+VALUES ($1,
+        $2,
+        $3,
+        $4,
+        $5,
+        $6) RETURNING *;
+
+-- name: GetCodeBarberShop :one
+
+SELECT "shop_id"
 FROM "BarberShops"
 WHERE code_barber_shop = $1
 LIMIT 1;
+
 -- -- name: UpdateStore :one
 -- UPDATE store
 -- set name_id = $2,

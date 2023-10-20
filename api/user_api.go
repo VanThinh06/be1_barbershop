@@ -2,7 +2,7 @@ package api
 
 // import (
 // 	db "barbershop/db/sqlc"
-// 	"barbershop/util"
+// 	"barbershop/utils"
 // 	"database/sql"
 // 	"errors"
 // 	"net/http"
@@ -73,7 +73,7 @@ package api
 // 		return
 // 	}
 
-// 	hashedPassword, err := util.HashPassword(req.Password)
+// 	hashedPassword, err := utils.HashPassword(req.Password)
 // 	if err != nil {
 // 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 // 		return
@@ -146,7 +146,7 @@ package api
 // 		return
 // 	}
 
-// 	err = util.CheckPassword(req.Password, users.HashedPassword)
+// 	err = utils.CheckPassword(req.Password, users.HashedPassword)
 // 	if err != nil {
 // 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 // 		return

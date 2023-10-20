@@ -2,7 +2,7 @@ package api
 
 // import (
 // 	db "barbershop/db/sqlc"
-// 	"barbershop/util"
+// 	"barbershop/utils"
 // 	"database/sql"
 // 	"strconv"
 // 	"time"
@@ -31,12 +31,12 @@ package api
 // 	var req newStoreParams
 
 // 	if err := ctx.ShouldBindJSON(&req); err != nil {
-// 		err := util.CatchErrorParams(err)
+// 		err := utils.CatchErrorParams(err)
 // 		if err != nil {
 // 			ctx.JSON(http.StatusBadRequest, err)
 // 			return
 // 		}
-// 		ctx.JSON(http.StatusBadRequest, util.MessageResponse("The request was invalid"))
+// 		ctx.JSON(http.StatusBadRequest, utils.MessageResponse("The request was invalid"))
 // 		return
 // 	}
 // 	response := db.CreateStoreParams{
@@ -184,7 +184,7 @@ package api
 // 		return
 // 	}
 
-// 	if util.IsAvailable(store.ManagerID, server.payload.Username) {
+// 	if utils.IsAvailable(store.ManagerID, server.payload.Username) {
 // 		store, err := server.queries.DeleteStore(ctx, uuid.MustParse(id))
 // 		if err != nil {
 // 			if err == sql.ErrNoRows {
