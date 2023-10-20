@@ -56,16 +56,20 @@ func (server *Server) setupRouter() {
 
 	barberRoutes := router.Group("/barber")
 	barberRoutes.POST("/authentication", server.LoginBarber)
-	barberRoutes.POST("/new", server.AuthRegister)
+	barberRoutes.POST("/newBarber", server.AuthNewBarber)
+	barberRoutes.POST("/newManager", server.AuthNewManager)
 	barberRoutes.GET("/:id", server.GetBarber)
+
 	barberRoutes.Use(server.AddMiddleWare(server.tokenMaker)).POST("/updateBarber", server.UpdateBarber)
 	barberRoutes.POST("/token/refresh_access", server.ReNewAccessToken)
 
+	barberShopRoutes := router.Group("/barberShop").Use(server.AddMiddleWare(server.tokenMaker))
+	barberShopRoutes.POST("/newBarberShop", server.NewBarberShop)
+	barberShopRoutes.GET("/:id", server.GetBarberShop)
 	// router.POST("/image", server.uploadImage)
 	// router.Static("/assets", "./assets/upload")
 	// router.POST("/users", server.createUser)
 
-	// authRoutes := router.Group("/").Use(server.AddMiddleWare(server.tokenMaker))
 	// authRoutes.POST("/store", server.NewStore)
 	// authRoutes.GET("/store/:id", server.GetStore)
 	// authRoutes.GET("/store", server.GetListStore)

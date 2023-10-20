@@ -41,16 +41,17 @@ type Barber struct {
 }
 
 type BarberShop struct {
-	ShopID    uuid.UUID   `json:"shop_id"`
-	OwnerID   uuid.UUID   `json:"owner_id"`
-	Name      string      `json:"name"`
-	Location  float32     `json:"location"`
-	Address   string      `json:"address"`
-	Image     null.String `json:"image"`
-	ListImage []string    `json:"list_image"`
-	Status    int32       `json:"status"`
-	CreatedAt time.Time   `json:"created_at"`
-	UpdateAt  null.Time   `json:"update_at"`
+	ShopID         uuid.UUID   `json:"shop_id"`
+	CodeBarberShop string      `json:"code_barber_shop"`
+	OwnerID        uuid.UUID   `json:"owner_id"`
+	Name           string      `json:"name"`
+	Location       float32     `json:"location"`
+	Address        string      `json:"address"`
+	Image          null.String `json:"image"`
+	ListImage      []string    `json:"list_image"`
+	Status         int32       `json:"status"`
+	CreatedAt      time.Time   `json:"created_at"`
+	UpdateAt       null.Time   `json:"update_at"`
 }
 
 type Customer struct {

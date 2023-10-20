@@ -41,6 +41,11 @@ set shop_id = $1,
   "update_at" = $10
 WHERE barber_id = $11
 RETURNING *;
+-- name: UpdateIDShopManager :one
+UPDATE "Barbers"
+set shop_id = $1
+WHERE barber_id = $2
+RETURNING *;
 -- name: UpdateStatusBarber :one
 UPDATE "Barbers"
 set "status" = $1

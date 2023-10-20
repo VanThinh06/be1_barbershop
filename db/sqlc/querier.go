@@ -12,10 +12,13 @@ import (
 
 type Querier interface {
 	CreateBarber(ctx context.Context, arg CreateBarberParams) (Barber, error)
+	CreateBarberShops(ctx context.Context, arg CreateBarberShopsParams) (BarberShop, error)
 	CreateSessionBarber(ctx context.Context, arg CreateSessionBarberParams) (SessionsBarber, error)
+	GetBarberShop(ctx context.Context, codeBarberShop string) (BarberShop, error)
 	GetEmailBarber(ctx context.Context, email string) (Barber, error)
 	GetSessionsBarber(ctx context.Context, id uuid.UUID) (SessionsBarber, error)
 	UpdateBarber(ctx context.Context, arg UpdateBarberParams) (Barber, error)
+	UpdateIDShopManager(ctx context.Context, arg UpdateIDShopManagerParams) (Barber, error)
 	UpdateRefreshTokenSessionsBarber(ctx context.Context, arg UpdateRefreshTokenSessionsBarberParams) (SessionsBarber, error)
 	UpdateStatusBarber(ctx context.Context, arg UpdateStatusBarberParams) (Barber, error)
 }
