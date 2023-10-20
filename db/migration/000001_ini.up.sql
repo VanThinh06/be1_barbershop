@@ -1,5 +1,6 @@
 CREATE TABLE "BarberShops" (
   "shop_id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "code_barber_shop" varchar UNIQUE NOT NULL,
   "owner_id" uuid NOT NULL,
   "name" varchar NOT NULL,
   "location" real NOT NULL,
@@ -16,7 +17,7 @@ CREATE TABLE "Barbers" (
   "shop_id" uuid,
   "nick_name" varchar NOT NULL,
   "full_name" varchar NOT NULL,
-  "phone" varchar NOT NULL,
+  "phone" varchar UNIQUE NOT NULL,
   "email" varchar UNIQUE NOT NULL,
   "gender" integer NOT NULL,
   "role" integer NOT NULL,
@@ -96,11 +97,11 @@ CREATE TABLE "Appointments" (
   "update_at" timestamptz
 );
 
-CREATE INDEX ON "BarberShops" ("shop_id");
-
 CREATE INDEX ON "BarberShops" ("owner_id");
 
 CREATE INDEX ON "BarberShops" ("name");
+
+CREATE INDEX ON "BarberShops" ("code_barber_shop");
 
 CREATE INDEX ON "Barbers" ("barber_id");
 

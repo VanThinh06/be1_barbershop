@@ -47,79 +47,12 @@ func newBarberResponse(barber db.Barber) barberResponse {
 
 // * api get barber
 func (server *Server) GetBarber(ctx *gin.Context) {
-	id := ctx.Param("email")
+	id := ctx.Param("id")
 	barber, err := server.queries.GetEmailBarber(ctx, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, util.MessageResponse("This account does not exist"))
 			return
-		}
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
-		return
-	}
-	response := newBarberResponse(barber)
-	ctx.JSON(http.StatusOK, response)
-}
-
-// * auth register
-// create barber
-type authNewBarberParams struct {
-	ShopID   uuid.NullUUID `json:"shop_id"`
-	NickName string        `json:"nickname" binding:"required"`
-	FullName string        `json:"full_name" binding:"required"`
-	Phone    string        `json:"phone" binding:"required"`
-	Email    string        `json:"email" binding:"email,required"`
-	Gender   int           `json:"gender" binding:"required"`
-	Role     int           `json:"role" binding:"required"`
-	Password string        `json:"password" binding:"required,min=6"`
-	Avatar   null.String   `json:"avatar"`
-}
-
-// * auth register
-func (server *Server) AuthRegister(ctx *gin.Context) {
-	var req authNewBarberParams
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		err := util.CatchErrorParams(err)
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, err)
-			return
-		}
-		ctx.JSON(http.StatusBadRequest, util.MessageResponse("The request was invalid"))
-		return
-	}
-
-	hashedPassword, err := util.HashPassword(req.Password)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
-		return
-	}
-
-	arg := db.CreateBarberParams{
-		ShopID:         req.ShopID,
-		NickName:       req.NickName,
-		FullName:       req.FullName,
-		Phone:          req.Phone,
-		Email:          req.Email,
-		Gender:         int32(req.Gender),
-		Role:           int32(req.Role),
-		HashedPassword: hashedPassword,
-		Avatar:         req.Avatar,
-	}
-
-	barber, err := server.queries.CreateBarber(ctx, arg)
-	if err != nil {
-		if pqErr, ok := err.(*pq.Error); ok {
-			switch pqErr.Code.Name() {
-			case "unique_violation":
-				if pqErr.Constraint == "Barbers_pkey" {
-					ctx.JSON(http.StatusForbidden, "This account has already existed")
-					return
-				}
-				if pqErr.Constraint == "Barbers_email_key" {
-					ctx.JSON(http.StatusForbidden, "This email has already existed")
-					return
-				}
-			}
 		}
 		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
 		return
@@ -221,6 +154,141 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 		RefreshTokenExpiresAt: refreshPayload.ExpiredAt,
 		Barber:                newBarberResponse(barber),
 	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+// * auth register
+// create barber
+type newBarberParams struct {
+	ShopID   uuid.UUID `json:"shop_id" binding:"required"`
+	NickName string    `json:"nickname" binding:"required"`
+	FullName string    `json:"full_name" binding:"required"`
+	Phone    string    `json:"phone" binding:"required"`
+	Email    string    `json:"email" binding:"email,required"`
+	Gender   int       `json:"gender" binding:"required"`
+	Password string    `json:"password" binding:"required,min=6"`
+}
+
+// * auth register barber
+func (server *Server) AuthNewBarber(ctx *gin.Context) {
+	var req newBarberParams
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		err := util.CatchErrorParams(err)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, err)
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, util.MessageResponse("The request was invalid"))
+		return
+	}
+
+	hashedPassword, err := util.HashPassword(req.Password)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		return
+	}
+
+	arg := db.CreateBarberParams{
+		ShopID: uuid.NullUUID{
+			UUID:  req.ShopID,
+			Valid: true,
+		},
+		NickName:       req.NickName,
+		FullName:       req.FullName,
+		Phone:          req.Phone,
+		Email:          req.Email,
+		Gender:         int32(req.Gender),
+		Role:           int32(util.HairStylist),
+		HashedPassword: hashedPassword,
+	}
+
+	barber, err := server.queries.CreateBarber(ctx, arg)
+	if err != nil {
+		if pqErr, ok := err.(*pq.Error); ok {
+			switch pqErr.Code.Name() {
+			case "unique_violation":
+				if pqErr.Constraint == "Barbers_pkey" {
+					ctx.JSON(http.StatusForbidden, "This account has already existed")
+					return
+				}
+				if pqErr.Constraint == "Barbers_phone_key" {
+					ctx.JSON(http.StatusForbidden, "This phone has already existed")
+					return
+				}
+				if pqErr.Constraint == "Barbers_email_key" {
+					ctx.JSON(http.StatusForbidden, "This email has already existed")
+					return
+				}
+			}
+		}
+		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		return
+	}
+	response := newBarberResponse(barber)
+	ctx.JSON(http.StatusOK, response)
+}
+
+type newManagerParams struct {
+	NickName string `json:"nickname" binding:"required"`
+	FullName string `json:"full_name" binding:"required"`
+	Phone    string `json:"phone" binding:"required"`
+	Email    string `json:"email" binding:"email,required"`
+	Gender   int    `json:"gender" binding:"required"`
+	Password string `json:"password" binding:"required,min=6"`
+}
+
+// * auth register manager
+func (server *Server) AuthNewManager(ctx *gin.Context) {
+	var req newManagerParams
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		err := util.CatchErrorParams(err)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, err)
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, util.MessageResponse("The request was invalid"))
+		return
+	}
+
+	hashedPassword, err := util.HashPassword(req.Password)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		return
+	}
+
+	arg := db.CreateBarberParams{
+		NickName:       req.NickName,
+		FullName:       req.FullName,
+		Phone:          req.Phone,
+		Email:          req.Email,
+		Gender:         int32(req.Gender),
+		Role:           int32(util.Manager),
+		HashedPassword: hashedPassword,
+	}
+
+	barber, err := server.queries.CreateBarber(ctx, arg)
+	if err != nil {
+		if pqErr, ok := err.(*pq.Error); ok {
+			switch pqErr.Code.Name() {
+			case "unique_violation":
+				if pqErr.Constraint == "Barbers_pkey" {
+					ctx.JSON(http.StatusForbidden, "This account has already existed")
+					return
+				}
+				if pqErr.Constraint == "Barbers_email_key" {
+					ctx.JSON(http.StatusForbidden, "This email has already existed")
+					return
+				}
+				if pqErr.Constraint == "Barbers_phone_key" {
+					ctx.JSON(http.StatusForbidden, "This phone has already existed")
+					return
+				}
+			}
+		}
+		ctx.JSON(http.StatusInternalServerError, util.MessageInternalServer)
+		return
+	}
+	response := newBarberResponse(barber)
 	ctx.JSON(http.StatusOK, response)
 }
 

@@ -175,6 +175,40 @@ func (q *Queries) UpdateBarber(ctx context.Context, arg UpdateBarberParams) (Bar
 	return i, err
 }
 
+const updateIDShopManager = `-- name: UpdateIDShopManager :one
+UPDATE "Barbers"
+set shop_id = $1
+WHERE barber_id = $2
+RETURNING barber_id, shop_id, nick_name, full_name, phone, email, gender, role, hashed_password, avatar, status, password_changed_at, created_at, update_at
+`
+
+type UpdateIDShopManagerParams struct {
+	ShopID   uuid.NullUUID `json:"shop_id"`
+	BarberID uuid.UUID     `json:"barber_id"`
+}
+
+func (q *Queries) UpdateIDShopManager(ctx context.Context, arg UpdateIDShopManagerParams) (Barber, error) {
+	row := q.db.QueryRowContext(ctx, updateIDShopManager, arg.ShopID, arg.BarberID)
+	var i Barber
+	err := row.Scan(
+		&i.BarberID,
+		&i.ShopID,
+		&i.NickName,
+		&i.FullName,
+		&i.Phone,
+		&i.Email,
+		&i.Gender,
+		&i.Role,
+		&i.HashedPassword,
+		&i.Avatar,
+		&i.Status,
+		&i.PasswordChangedAt,
+		&i.CreatedAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}
+
 const updateStatusBarber = `-- name: UpdateStatusBarber :one
 UPDATE "Barbers"
 set "status" = $1
