@@ -5,6 +5,7 @@ import (
 	"barbershop/utils"
 	"database/sql"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -162,7 +163,7 @@ func (server *Server) LoginBarber(ctx *gin.Context) {
 type newBarberParams struct {
 	NickName       string `json:"nickname" binding:"required"`
 	FullName       string `json:"full_name" binding:"required"`
-	Phone          string `json:"phone" binding:"required"`
+	Phone          string `json:"phone" binding:"phone,required"`
 	Email          string `json:"email" binding:"email,required"`
 	Gender         int    `json:"gender" binding:"required"`
 	Password       string `json:"password" binding:"required,min=6"`
@@ -202,7 +203,7 @@ func (server *Server) AuthNewBarber(ctx *gin.Context) {
 		NickName:       req.NickName,
 		FullName:       req.FullName,
 		Phone:          req.Phone,
-		Email:          req.Email,
+		Email:          strings.ToLower(req.Email),
 		Gender:         int32(req.Gender),
 		Role:           int32(utils.HairStylist),
 		HashedPassword: hashedPassword,
@@ -237,7 +238,7 @@ func (server *Server) AuthNewBarber(ctx *gin.Context) {
 type newManagerParams struct {
 	NickName string `json:"nickname" binding:"required"`
 	FullName string `json:"full_name" binding:"required"`
-	Phone    string `json:"phone" binding:"required"`
+	Phone    string `json:"phone" binding:"phone,required"`
 	Email    string `json:"email" binding:"email,required"`
 	Gender   int    `json:"gender" binding:"required"`
 	Password string `json:"password" binding:"required,min=6"`

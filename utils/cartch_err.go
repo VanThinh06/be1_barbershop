@@ -15,6 +15,8 @@ func messageErrorParams(tag string) string {
 		return "Password must be more than 6 characters"
 	case "email":
 		return "Invalid email account"
+	case "phone":
+		return "Invalid phone account"
 	}
 	return ""
 }

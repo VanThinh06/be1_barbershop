@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pb;
+
+import "barber.proto";
+import "rpc_create_barber.proto";
+import "rpc_login_barber.proto";
+
+
+option go_package = "barbershop/pb";
+
+service BarberShop {
+    rpc CreateBarber (CreateBarberRequest) returns (CreateBarberResponse){}
+    rpc LoginBarber (LoginBarberRequest) returns (LoginBarberResponse){}
+
+}
+
