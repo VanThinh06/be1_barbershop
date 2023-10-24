@@ -8,7 +8,7 @@ sql:
         package: "db"
         out: "./db/sqlc"
         emit_json_tags: true
-        emit_empty_slices: true  
+        emit_empty_slices: true
         emit_prepared_queries: false
         emit_exact_table_names: false
         emit_interface: true
@@ -17,7 +17,7 @@ sql:
         - db_type: "pg_catalog.varchar"
           nullable: true
           engine: "postgresql"
-          go_type: 
+          go_type:
             import: "gopkg.in/guregu/null.v4"
             package: "null"
             type: "String"

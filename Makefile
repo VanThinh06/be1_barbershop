@@ -37,12 +37,6 @@ proto:
 				proto/*.proto
 
 evans:
-				docker run --rm -v "$(pwd):/mount:ro" \
-				ghcr.io/ktr0731/evans:latest \
-				--path ./proto/files \
-				--proto file-name.proto \
-				--host example.com \
-				--port 50051 \
-				repl
+				evans --host 192.168.1.15 --port 9999 -r repl
 
-.PHONY: postgres createdb dropdb migrateup migratedown test sqlc proto
+.PHONY: postgres createdb dropdb migrateup migratedown test sqlc proto evans
