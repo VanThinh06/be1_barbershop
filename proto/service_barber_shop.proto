@@ -2,16 +2,25 @@ syntax = "proto3";
 
 package pb;
 
-import "barber.proto";
+import "google/api/annotations.proto";
 import "rpc_create_barber.proto";
 import "rpc_login_barber.proto";
-
 
 option go_package = "barbershop/pb";
 
 service BarberShop {
-    rpc CreateBarber (CreateBarberRequest) returns (CreateBarberResponse){}
-    rpc LoginBarber (LoginBarberRequest) returns (LoginBarberResponse){}
+    rpc CreateBarber (CreateBarberRequest) returns (CreateBarberResponse){
+        option (google.api.http) = {
+                  post: "/v1/create_barber"
+                  body: "*"
+                };
+    }
+    rpc LoginBarber (LoginBarberRequest) returns (LoginBarberResponse){
+        option (google.api.http) = {
+            post: "/v1/authenticate_barber"
+            body: "*"
+          };
+    }
 
 }
 
