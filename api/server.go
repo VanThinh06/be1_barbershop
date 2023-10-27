@@ -2,15 +2,12 @@ package api
 
 import (
 	db "barbershop/db/sqlc"
-	"barbershop/helpers"
 	"barbershop/token"
 	"barbershop/utils"
 	"fmt"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"github.com/go-playground/validator/v10"
 )
 
 type Server struct {
@@ -32,9 +29,9 @@ func NewServer(config utils.Config, queries db.StoreMain) (*Server, error) {
 		tokenMaker: tokenMaker,
 	}
 
-	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		v.RegisterValidation("phone", helpers.ValidatePhoneNumber)
-	}
+	// if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+	// 	v.RegisterValidation("phone", val.ValidatePhoneNumber)
+	// }
 	server.setupRouter()
 	return server, nil
 }

@@ -12,10 +12,15 @@ import (
 	"net"
 	"net/http"
 
+	_ "barbershop/docs/statik"
+
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/rakyll/statik/fs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
+
+//go:generate statik -src=./docs/swagger -dest=./docs
 
 func main() {
 
@@ -54,8 +59,12 @@ func runGatewayServer(config utils.Config, store db.StoreMain) {
 	mux := http.NewServeMux()
 	mux.Handle("/", grpcMux)
 
-	fs := http.FileServer(http.Dir("./docs/swagger"))
-	mux.Handle("/swagger/", http.StripPrefix("/swagger/", fs))
+	statikFS, err := fs.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+	swaggerHandler := http.StripPrefix("/swagger/", http.FileServer(statikFS))
+	mux.Handle("/swagger/", swaggerHandler)
 
 	listener, err := net.Listen("tcp", config.HTTPServerAddress)
 	if err != nil {

@@ -78,3 +78,4 @@ func (server *Server) LoginBarber(ctx context.Context, req *pb.LoginBarberReques
 	}
 	return rsp, nil
 }
+

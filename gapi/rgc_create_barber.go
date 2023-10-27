@@ -4,16 +4,32 @@ import (
 	db "barbershop/db/sqlc"
 	"barbershop/pb"
 	"barbershop/utils"
+	"barbershop/val"
 	"context"
 	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 func (server *Server) CreateBarber(ctx context.Context, req *pb.CreateBarberRequest) (*pb.CreateBarberResponse, error) {
+
+	validations := validateCreateBarber(req)
+	if validations != nil {
+		badRequest := &errdetails.BadRequest{
+			FieldViolations: validations,
+		}
+		statusInvalid := status.New(codes.InvalidArgument, "invalid parameters")
+		statusDetail, err := statusInvalid.WithDetails(badRequest)
+		if err != nil {
+			return nil, statusInvalid.Err()
+		}
+		return nil, statusDetail.Err()
+	}
+
 	// Hash the password provided in the request
 	hashedPassword, err := utils.HashPassword(req.GetPassword())
 	if err != nil {
@@ -78,4 +94,28 @@ func (server *Server) CreateBarber(ctx context.Context, req *pb.CreateBarberRequ
 		Barber: convertBarber(barber),
 	}
 	return rsp, nil
+}
+
+func validateCreateBarber(req *pb.CreateBarberRequest) (validations []*errdetails.BadRequest_FieldViolation) {
+	if err := val.ValidateEmail(req.Email); err != nil {
+		validations = append(validations, fieldValidation("email", err))
+	}
+
+	if err := val.ValidatePhoneNumber(req.Phone); err != nil {
+		validations = append(validations, fieldValidation("phone", err))
+	}
+
+	if err := val.ValidatePassword(req.Password); err != nil {
+		validations = append(validations, fieldValidation("password", err))
+	}
+
+	if err := val.ValidateNickname(req.Nickname); err != nil {
+		validations = append(validations, fieldValidation("nickname", err))
+	}
+
+	if err := val.ValidateFullName(req.FullName); err != nil {
+		validations = append(validations, fieldValidation("full_name", err))
+	}
+
+	return validations
 }
