@@ -51,13 +51,14 @@ func (server *Server) LoginBarber(ctx context.Context, req *pb.LoginBarberReques
 		return nil, status.Errorf(codes.Internal, "failed to create refresh token %s", err)
 	}
 
+	mtdt := server.extractMetadata(ctx)
 	// Create a session for the barber
 	session, err := server.store.CreateSessionBarber(ctx, db.CreateSessionBarberParams{
 		ID:           refreshPayload.ID,
 		BarberID:     refreshPayload.BarberID,
 		RefreshToken: refreshToken,
-		UserAgent:    "",
-		ClientIp:     "",
+		UserAgent:    mtdt.UserAgent,
+		ClientIp:     mtdt.ClientIP,
 		IsBlocked:    false,
 		ExpiresAt:    refreshPayload.ExpiredAt,
 	})
