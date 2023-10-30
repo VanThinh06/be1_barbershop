@@ -11,7 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
-	"gopkg.in/guregu/null.v4"
 )
 
 type barberResponse struct {
@@ -23,10 +22,10 @@ type barberResponse struct {
 	Email     string        `json:"email"`
 	Gender    int32         `json:"gender"`
 	Role      int32         `json:"role"`
-	Avatar    null.String   `json:"avatar"`
-	Status    null.Int      `json:"status"`
+	Avatar    sql.NullString   `json:"avatar"`
+	Status    sql.NullInt32      `json:"status"`
 	CreatedAt time.Time     `json:"created_at"`
-	UpdateAt  null.Time     `json:"update_at"`
+	UpdateAt  sql.NullTime     `json:"update_at"`
 }
 
 func newBarberResponse(barber db.Barber) barberResponse {
@@ -300,49 +299,49 @@ func (server *Server) AuthNewManager(ctx *gin.Context) {
 }
 
 // update
-type updateBarberParams struct {
-	BarberID uuid.UUID     `json:"barber_id" binding:"required"`
-	ShopID   uuid.NullUUID `json:"shop_id"`
-	NickName string        `json:"nick_name"`
-	FullName string        `json:"full_name"`
-	Phone    string        `json:"phone" `
-	Email    string        `json:"email" `
-	Gender   int           `json:"gender" `
-	Role     int           `json:"role" `
-	Avatar   null.String   `json:"avatar"`
-	Status   null.Int      `json:"status"`
-	UpdateAt null.Time     `json:"update_at"`
-}
+// type updateBarberParams struct {
+// 	BarberID uuid.UUID     `json:"barber_id" binding:"required"`
+// 	ShopID   uuid.NullUUID `json:"shop_id"`
+// 	NickName string        `json:"nick_name"`
+// 	FullName string        `json:"full_name"`
+// 	Phone    string        `json:"phone" `
+// 	Email    string        `json:"email" `
+// 	Gender   int           `json:"gender" `
+// 	Role     int           `json:"role" `
+// 	Avatar   sql.NullString   `json:"avatar"`
+// 	Status   sql.NullInt32      `json:"status"`
+// 	UpdateAt sql.NullTime     `json:"update_at"`
+// }
 
-func (server *Server) UpdateBarber(ctx *gin.Context) {
-	var req updateBarberParams
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, "Update invalid information")
-		return
-	}
+// func (server *Server) UpdateBarber(ctx *gin.Context) {
+// 	var req updateBarberParams
+// 	if err := ctx.ShouldBindJSON(&req); err != nil {
+// 		ctx.JSON(http.StatusBadRequest, "Update invalid information")
+// 		return
+// 	}
 
-	params := db.UpdateBarberParams{
-		BarberID: req.BarberID,
-		ShopID:   req.ShopID,
-		NickName: req.NickName,
-		Status:   req.Status,
-		FullName: req.FullName,
-		Role:     int32(req.Role),
-		Phone:    req.Phone,
-		Gender:   int32(req.Gender),
-		Email:    req.Email,
-		Avatar:   req.Avatar,
-		UpdateAt: null.TimeFrom(time.Now()),
-	}
-	barber, err := server.queries.UpdateBarber(ctx, params)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, utils.MessageResponse("Update invalid information"))
-			return
-		}
-		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
-		return
-	}
-	response := newBarberResponse(barber)
-	ctx.JSON(http.StatusOK, response)
-}
+// 	params := db.UpdateBarberParams{
+// 		BarberID: req.BarberID,
+// 		ShopID:   req.ShopID,
+// 		NickName: req.NickName,
+// 		Status:   req.Status,
+// 		FullName: req.FullName,
+// 		Role:     int32(req.Role),
+// 		Phone:    req.Phone,
+// 		Gender:   int32(req.Gender),
+// 		Email:    req.Email,
+// 		Avatar:   req.Avatar,
+// 		UpdateAt: null.TimeFrom(time.Now()),
+// 	}
+// 	barber, err := server.queries.UpdateBarber(ctx, params)
+// 	if err != nil {
+// 		if err == sql.ErrNoRows {
+// 			ctx.JSON(http.StatusNotFound, utils.MessageResponse("Update invalid information"))
+// 			return
+// 		}
+// 		ctx.JSON(http.StatusInternalServerError, utils.MessageInternalServer)
+// 		return
+// 	}
+// 	response := newBarberResponse(barber)
+// 	ctx.JSON(http.StatusOK, response)
+// }

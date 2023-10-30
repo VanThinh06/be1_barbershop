@@ -13,36 +13,9 @@ sql:
         emit_exact_table_names: false
         emit_interface: true
         overrides:
-
-        - db_type: "pg_catalog.varchar"
-          nullable: true
-          engine: "postgresql"
-          go_type:
-            import: "gopkg.in/guregu/null.v4"
-            package: "null"
-            type: "String"
-
-        - db_type: "uuid"
-          nullable: true
-          engine: "postgresql"
-          go_type: 
-            import: "github.com/google/uuid"
-            type: "NullUUID"
-      
-        - db_type: "pg_catalog.int4"
-          nullable: true
-          engine: "postgresql"
-          go_type: 
-            import: "gopkg.in/guregu/null.v4"
-            package: "null"
-            type: "Int"
-        
-        - db_type: "timestamptz"
-          nullable: true
-          engine: "postgresql"
-          go_type: 
-            import: "gopkg.in/guregu/null.v4"
-            package: "null"
-            type: "Time"
-
-        
+          - db_type: "uuid"
+            nullable: true
+            engine: "postgresql"
+            go_type:
+              import: "github.com/google/uuid"
+              type: "NullUUID"

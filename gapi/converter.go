@@ -9,15 +9,17 @@ import (
 
 func convertBarber(barber db.Barber) *pb.Barber {
 	return &pb.Barber{
-		BarberId:  barber.BarberID.String(),
-		ShopId:    barber.ShopID.UUID.String(),
-		NickName:  barber.NickName,
-		FullName:  barber.FullName,
-		Phone:     barber.Phone,
-		Email:     barber.Email,
-		Gender:    barber.Gender,
-		Role:      barber.Role,
-		Status:    int32(barber.Status.Int64),
-		CreatedAt: timestamppb.New(barber.CreatedAt),
+		BarberId:          barber.BarberID.String(),
+		ShopId:            barber.ShopID.UUID.String(),
+		NickName:          barber.NickName,
+		FullName:          barber.FullName,
+		Phone:             barber.Phone,
+		Email:             barber.Email,
+		Gender:            barber.Gender,
+		Role:              barber.Role,
+		Status:            int32(barber.Status.Int32),
+		CreatedAt:         timestamppb.New(barber.CreatedAt),
+		UpdateAt:          timestamppb.New(barber.UpdateAt.Time),
+		PasswordChangedAt: timestamppb.New(barber.PasswordChangedAt),
 	}
 }

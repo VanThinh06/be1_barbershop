@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type BarberShopClient interface {
 	CreateBarber(ctx context.Context, in *CreateBarberRequest, opts ...grpc.CallOption) (*CreateBarberResponse, error)
 	LoginBarber(ctx context.Context, in *LoginBarberRequest, opts ...grpc.CallOption) (*LoginBarberResponse, error)
+	UpdateBarber(ctx context.Context, in *UpdateBarberRequest, opts ...grpc.CallOption) (*UpdateBarberResponse, error)
 }
 
 type barberShopClient struct {
@@ -52,12 +53,22 @@ func (c *barberShopClient) LoginBarber(ctx context.Context, in *LoginBarberReque
 	return out, nil
 }
 
+func (c *barberShopClient) UpdateBarber(ctx context.Context, in *UpdateBarberRequest, opts ...grpc.CallOption) (*UpdateBarberResponse, error) {
+	out := new(UpdateBarberResponse)
+	err := c.cc.Invoke(ctx, "/pb.BarberShop/UpdateBarber", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BarberShopServer is the server API for BarberShop service.
 // All implementations must embed UnimplementedBarberShopServer
 // for forward compatibility
 type BarberShopServer interface {
 	CreateBarber(context.Context, *CreateBarberRequest) (*CreateBarberResponse, error)
 	LoginBarber(context.Context, *LoginBarberRequest) (*LoginBarberResponse, error)
+	UpdateBarber(context.Context, *UpdateBarberRequest) (*UpdateBarberResponse, error)
 	mustEmbedUnimplementedBarberShopServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedBarberShopServer) CreateBarber(context.Context, *CreateBarber
 }
 func (UnimplementedBarberShopServer) LoginBarber(context.Context, *LoginBarberRequest) (*LoginBarberResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoginBarber not implemented")
+}
+func (UnimplementedBarberShopServer) UpdateBarber(context.Context, *UpdateBarberRequest) (*UpdateBarberResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBarber not implemented")
 }
 func (UnimplementedBarberShopServer) mustEmbedUnimplementedBarberShopServer() {}
 
@@ -120,6 +134,24 @@ func _BarberShop_LoginBarber_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BarberShop_UpdateBarber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBarberRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberShopServer).UpdateBarber(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.BarberShop/UpdateBarber",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberShopServer).UpdateBarber(ctx, req.(*UpdateBarberRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BarberShop_ServiceDesc is the grpc.ServiceDesc for BarberShop service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +166,10 @@ var BarberShop_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LoginBarber",
 			Handler:    _BarberShop_LoginBarber_Handler,
+		},
+		{
+			MethodName: "UpdateBarber",
+			Handler:    _BarberShop_UpdateBarber_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

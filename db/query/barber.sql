@@ -29,17 +29,21 @@ WHERE email = $1
 LIMIT 1;
 -- name: UpdateBarber :one
 UPDATE "Barbers"
-set shop_id = $1,
-  nick_name = $2,
-  full_name = $3,
-  phone = $4,
-  email = $5,
-  gender = $6,
-  "role" = $7,
-  avatar = $8,
-  "status" = $9,
-  "update_at" = $10
-WHERE barber_id = $11
+set shop_id = coalesce(sqlc.narg('shop_id'), shop_id),
+  nick_name = coalesce(sqlc.narg('nick_name'), nick_name),
+  full_name = coalesce(sqlc.narg('full_name'), full_name),
+  phone = coalesce(sqlc.narg('phone'), phone),
+  email = coalesce(sqlc.narg('email'), email),
+  gender = coalesce(sqlc.narg('gender'), gender),
+  avatar = coalesce(sqlc.narg('avatar'), avatar),
+  "status" = coalesce(sqlc.narg('status'), status),
+  "hashed_password" = coalesce(sqlc.narg('hashed_password'), hashed_password),
+  "password_changed_at" = coalesce(
+    sqlc.narg('password_changed_at'),
+    password_changed_at
+  ),
+  "update_at" = sqlc.arg('update_at'),
+  WHERE barber_id = sqlc.arg('barber_id')
 RETURNING *;
 -- name: UpdateIDShopManager :one
 UPDATE "Barbers"

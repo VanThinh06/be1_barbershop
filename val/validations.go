@@ -3,6 +3,7 @@ package val
 import (
 	"errors"
 	"fmt"
+	"net/mail"
 	"regexp"
 )
 
@@ -21,9 +22,9 @@ func ValidateEmail(email string) error {
 		return err
 	}
 
-	emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
-	match, _ := regexp.MatchString(emailRegex, email)
-	if !match {
+	// emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	// match, _ := regexp.MatchString(emailRegex, email)
+	if _, err := mail.ParseAddress(email); err == nil {
 		return errors.New("invalid email format")
 	}
 

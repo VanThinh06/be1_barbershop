@@ -19,15 +19,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *pb.CreateBarberRequ
 
 	validations := validateCreateBarber(req)
 	if validations != nil {
-		badRequest := &errdetails.BadRequest{
-			FieldViolations: validations,
-		}
-		statusInvalid := status.New(codes.InvalidArgument, "invalid parameters")
-		statusDetail, err := statusInvalid.WithDetails(badRequest)
-		if err != nil {
-			return nil, statusInvalid.Err()
-		}
-		return nil, statusDetail.Err()
+		return nil, inValidArgumentError(validations)
 	}
 
 	// Hash the password provided in the request
@@ -50,7 +42,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *pb.CreateBarberRequ
 
 	if err != nil {
 		// If there's an error fetching the codeBarberShop, return an internal server error
-		return nil, status.Errorf(codes.Internal, "failed to get codeBarberShop: %s", err)
+		return nil, status.Errorf(codes.NotFound, "code barber shop not found")
 	}
 
 	// Prepare the arguments for creating a new barber
@@ -62,6 +54,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *pb.CreateBarberRequ
 		Gender:         req.GetGender(),
 		Email:          req.GetEmail(),
 		ShopID:         uuid.NullUUID{UUID: codeBarberShop, Valid: true},
+		Role:           int32(utils.HairStylist),
 	}
 
 	// Create the barber using the store

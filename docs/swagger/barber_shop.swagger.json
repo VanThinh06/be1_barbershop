@@ -22,6 +22,8 @@
   "paths": {
     "/v1/authenticate_barber": {
       "post": {
+        "summary": "Authenticate a barber",
+        "description": "API endpoint for barber authentication",
         "operationId": "BarberShop_LoginBarber",
         "responses": {
           "200": {
@@ -50,10 +52,44 @@
         "tags": [
           "BarberShop"
         ]
+      },
+      "patch": {
+        "summary": "Authenticate a barber",
+        "description": "API endpoint for barber authentication",
+        "operationId": "BarberShop_UpdateBarber",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateBarberResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateBarberRequest"
+            }
+          }
+        ],
+        "tags": [
+          "BarberShop"
+        ]
       }
     },
     "/v1/create_barber": {
       "post": {
+        "summary": "Create a barber",
+        "description": "API endpoint to create a new barber",
         "operationId": "BarberShop_CreateBarber",
         "responses": {
           "200": {
@@ -129,6 +165,10 @@
         "updateAt": {
           "type": "string",
           "format": "date-time"
+        },
+        "passwordChangedAt": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -200,6 +240,59 @@
         "refreshTokenExpiresAt": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "pbUpdateBarberRequest": {
+      "type": "object",
+      "properties": {
+        "barberId": {
+          "type": "string"
+        },
+        "shopId": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "fullName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "password": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "passwordChangedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updateAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "pbUpdateBarberResponse": {
+      "type": "object",
+      "properties": {
+        "barber": {
+          "$ref": "#/definitions/pbBarber"
         }
       }
     },

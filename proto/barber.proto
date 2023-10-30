@@ -19,4 +19,5 @@ message Barber {
     int32 status = 10;
     google.protobuf.Timestamp created_at = 11;
     google.protobuf.Timestamp update_at = 12;
+    google.protobuf.Timestamp password_changed_at = 13;
 }
