@@ -35,9 +35,7 @@ proto:
 				protoc --proto_path=src/shared/proto --go_out=src/barber/pb --go_opt=paths=source_relative \
 				--go-grpc_out=src/barber/pb --go-grpc_opt=paths=source_relative \
 				--grpc-gateway_out=src/barber/pb --grpc-gateway_opt=paths=source_relative \
-				--openapiv2_out=docs/swagger --openapiv2_opt=allow_merge=true,merge_file_name=barber_shop \
 				src/shared/proto/*.proto
-				@REM statik -src=./docs/swagger -dest=./docs
 
 evans:
 				evans --host 192.168.1.15 --port 9999 -r repl 
