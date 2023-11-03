@@ -108,7 +108,7 @@ func (x *LoginBarberResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_rpc_login_barber_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
+		if ms.LoadMessageInfo() == nil { 
 			ms.StoreMessageInfo(mi)
 		}
 		return ms

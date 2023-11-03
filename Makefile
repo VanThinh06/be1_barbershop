@@ -32,14 +32,21 @@ sqlc:
 				docker run --rm -v ${pwd}:/src -w /src kjconroy/sqlc generate
 
 proto:
-				protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
-				--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
-				--grpc-gateway_out=pb --grpc-gateway_opt=paths=source_relative \
+				protoc --proto_path=src/shared/proto --go_out=src/barber/pb --go_opt=paths=source_relative \
+				--go-grpc_out=src/barber/pb --go-grpc_opt=paths=source_relative \
+				--grpc-gateway_out=src/barber/pb --grpc-gateway_opt=paths=source_relative \
 				--openapiv2_out=docs/swagger --openapiv2_opt=allow_merge=true,merge_file_name=barber_shop \
-				proto/*.proto
+				src/shared/proto/*.proto
 				@REM statik -src=./docs/swagger -dest=./docs
 
 evans:
 				evans --host 192.168.1.15 --port 9999 -r repl 
+
+gateway:
+				go install \
+				github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway \
+				github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 \
+				google.golang.org/protobuf/cmd/protoc-gen-go \
+				google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
 .PHONY: postgres createdb dropdb migrateup migratedown test sqlc proto evans
