@@ -5,12 +5,15 @@ package pb;
 import "google/api/annotations.proto";
 import "rpc_create_barber.proto";
 import "rpc_login_barber.proto";
+import "rpc_refresh_token_barber.proto";
 import "rpc_update_barber.proto";
+import "rpc_create_barbershop.proto";
+
 
 
 import "protoc-gen-openapiv2/options/annotations.proto";
 
-option go_package = "barbershop/src/barber/pb";
+option go_package = "barbershop/src/pb";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
@@ -55,6 +58,17 @@ service BarberShop {
       };
     }
 
+    rpc RefreshTokenBarber (RefreshTokenBarberRequest) returns (RefreshTokenBarberResponse) {
+      option (google.api.http) = {
+        post: "/v1/refresh_token"
+        body: "*"
+      };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "API endpoint for barber authentication" 
+        summary: "Authenticate a barber"
+      };
+    }
+
     rpc UpdateBarber (UpdateBarberRequest) returns (UpdateBarberResponse) {
       option (google.api.http) = {
         patch: "/v1/authenticate_barber"
@@ -65,5 +79,17 @@ service BarberShop {
         summary: "Authenticate a barber"
       };
     }
+
+
+    rpc NewBarberShops (CreateBarberShopsRequest) returns (CreateBarberShopsResponse){
+      option (google.api.http) = {
+                post: "/v1/create_barber_shop"
+                body: "*"
+              };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "API endpoint to create a new barber"
+        summary: "Create a barber"
+      };
+  }
 }
 

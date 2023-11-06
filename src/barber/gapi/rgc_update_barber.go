@@ -1,10 +1,9 @@
 package gapi
 
 import (
-	db "barbershop/db/sqlc"
-	"barbershop/pb"
-	"barbershop/utils"
-	"barbershop/val"
+	db "barbershop/src/db/sqlc"
+	"barbershop/src/pb"
+	"barbershop/src/shared/utils"
 	"context"
 	"database/sql"
 	"time"
@@ -18,12 +17,12 @@ import (
 func (server *Server) UpdateBarber(ctx context.Context, req *pb.UpdateBarberRequest) (*pb.UpdateBarberResponse, error) {
 	authPayload, err := server.authorizeUser(ctx)
 	if err != nil {
-		return nil, unauthenticatedError(err)
+		return nil, pb.UnauthenticatedError(err)
 	}
 
 	validations := validateUpdateBarber(req)
 	if validations != nil {
-		return nil, inValidArgumentError(validations)
+		return nil, pb.InValidArgumentError(validations)
 	}
 
 	if authPayload.BarberID.String() != req.BarberId {
@@ -112,16 +111,16 @@ func validateUpdateBarber(req *pb.UpdateBarberRequest) (validations []*errdetail
 	validateField := func(value, fieldName string, validateFunc func(string) error) {
 		if value != "" {
 			if err := validateFunc(value); err != nil {
-				validations = append(validations, fieldValidation(fieldName, err))
+				validations = append(validations, pb.FieldValidation(fieldName, err))
 			}
 		}
 	}
 
-	validateField(req.GetEmail(), "email", val.ValidateEmail)
-	validateField(req.GetPhone(), "phone", val.ValidatePhoneNumber)
-	validateField(req.GetPassword(), "password", val.ValidatePassword)
-	validateField(req.GetNickname(), "nickname", val.ValidateNickname)
-	validateField(req.GetFullName(), "full_name", val.ValidateFullName)
+	validateField(req.GetEmail(), "email", utils.ValidateEmail)
+	validateField(req.GetPhone(), "phone", utils.ValidatePhoneNumber)
+	validateField(req.GetPassword(), "password", utils.ValidatePassword)
+	validateField(req.GetNickname(), "nickname", utils.ValidateNickname)
+	validateField(req.GetFullName(), "full_name", utils.ValidateFullName)
 
 	return validations
 }

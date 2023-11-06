@@ -4,7 +4,7 @@ package pb;
 import "barber.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "barbershop/src/barber/pb";
+option go_package = "barbershop/src/pb";
 
 
 message LoginBarberRequest{

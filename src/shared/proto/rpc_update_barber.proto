@@ -4,8 +4,7 @@ package pb;
 import "google/protobuf/timestamp.proto";
 import "barber.proto";
 
-
-option go_package = "barbershop/src/barber/pb";
+option go_package = "barbershop/src/pb";
 
 message UpdateBarberRequest {
     string barber_id = 1;

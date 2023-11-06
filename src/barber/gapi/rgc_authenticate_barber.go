@@ -1,9 +1,9 @@
 package gapi
 
 import (
-	db "barbershop/db/sqlc"
-	"barbershop/pb"
-	"barbershop/utils"
+	db "barbershop/src/db/sqlc"
+	"barbershop/src/pb"
+	"barbershop/src/shared/utils"
 	"context"
 	"database/sql"
 

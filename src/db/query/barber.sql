@@ -42,16 +42,6 @@ set shop_id = coalesce(sqlc.narg('shop_id'), shop_id),
     sqlc.narg('password_changed_at'),
     password_changed_at
   ),
-  "update_at" = sqlc.arg('update_at'),
-  WHERE barber_id = sqlc.arg('barber_id')
-RETURNING *;
--- name: UpdateIDShopManager :one
-UPDATE "Barbers"
-set shop_id = $1
-WHERE barber_id = $2
-RETURNING *;
--- name: UpdateStatusBarber :one
-UPDATE "Barbers"
-set "status" = $1
-WHERE barber_id = $2
+  "update_at" = sqlc.arg('update_at')
+  WHERE "barber_id" = sqlc.arg('barber_id')
 RETURNING *;

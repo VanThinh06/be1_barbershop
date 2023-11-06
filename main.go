@@ -1,18 +1,18 @@
 package main
 
 import (
-	"barbershop/api"
-	db "barbershop/db/sqlc"
-	"barbershop/gapi"
-	"barbershop/pb"
-	"barbershop/utils"
+	"barbershop/src/barber/gapi"
+	customergapi "barbershop/src/customer/customer_gapi"
+	db "barbershop/src/db/sqlc"
+	"barbershop/src/pb"
+	"barbershop/src/shared/utils"
 	"context"
 	"database/sql"
 	"log"
 	"net"
 	"net/http"
 
-	_ "barbershop/docs/statik"
+	_ "barbershop/src/shared/doc/statik"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rakyll/statik/fs"
@@ -39,7 +39,10 @@ func main() {
 	//
 	store := db.NewStore(conn)
 	go runGatewayServer(config, store)
+	go runGatewayServerCustomer(config, store)
+	go runGrpcServerCustomer(config, store)
 	runGrpcServer(config, store)
+
 }
 
 func runGatewayServer(config utils.Config, store db.StoreMain) {
@@ -76,7 +79,6 @@ func runGatewayServer(config utils.Config, store db.StoreMain) {
 	if err != nil {
 		log.Fatal("cannot start HTTP gateway server: ", err)
 	}
-
 }
 
 func runGrpcServer(config utils.Config, store db.StoreMain) {
@@ -101,14 +103,60 @@ func runGrpcServer(config utils.Config, store db.StoreMain) {
 	}
 }
 
-func runGinServer(config utils.Config, store db.StoreMain) {
-	server, err := api.NewServer(config, store)
+func runGatewayServerCustomer(config utils.Config, store db.StoreMain) {
+	server, err := customergapi.NewServer(config, store)
+	if err != nil {
+		log.Fatal("cannot create server:", err)
+	}
+	grpcMux := runtime.NewServeMux()
+	ctx, cancel := context.WithCancel(context.Background()) // create context
+	defer cancel()                                          // trì hoãn lệnh cancel trước khi exit khỏi func này
+
+	err = pb.RegisterAuthCustomerBarberShopHandlerServer(ctx, grpcMux, server)
+	if err != nil {
+		log.Fatal("cannot register handler server:", err)
+	}
+
+	mux := http.NewServeMux()
+	mux.Handle("/", grpcMux)
+
+	statikFS, err := fs.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+	swaggerHandler := http.StripPrefix("/swagger/", http.FileServer(statikFS))
+	mux.Handle("/swagger/", swaggerHandler)
+
+	listener, err := net.Listen("tcp", config.HTTPServerAddressCustomer)
+	if err != nil {
+		log.Fatal("cannot create listener: ", err)
+	}
+
+	log.Printf("start HTTP gateway server at %s", listener.Addr().String())
+	err = http.Serve(listener, mux)
+	if err != nil {
+		log.Fatal("cannot start HTTP gateway server: ", err)
+	}
+}
+
+func runGrpcServerCustomer(config utils.Config, store db.StoreMain) {
+	server, err := customergapi.NewServer(config, store)
 	if err != nil {
 		log.Fatal("cannot create server:", err)
 	}
 
-	err = server.Start(config.HTTPServerAddress)
+	grpcServer := grpc.NewServer()
+	pb.RegisterAuthCustomerBarberShopServer(grpcServer, server)
+	reflection.Register(grpcServer)
+
+	listener, err := net.Listen("tcp", config.GRPCServerAddressCustomer)
 	if err != nil {
-		log.Fatal("cannot start server:", err)
+		log.Fatal("cannot create listener: ", err)
+	}
+
+	log.Printf("start gRPC server at %s", config.GRPCServerAddressCustomer)
+	err = grpcServer.Serve(listener)
+	if err != nil {
+		log.Fatal("cannot start gRPC: ", err)
 	}
 }

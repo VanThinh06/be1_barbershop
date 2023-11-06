@@ -4,139 +4,139 @@
 // Package mockdb is a generated GoMock package.
 package mockdb
 
-import (
-	db "barbershop/db/sqlc"
-	context "context"
-	reflect "reflect"
+// import (
+// 	db "barbershop/src/db/sqlc"
+// 	context "context"
+// 	reflect "reflect"
 
-	uuid "github.com/google/uuid"
-	gomock "go.uber.org/mock/gomock"
-)
+// 	uuid "github.com/google/uuid"
+// 	gomock "go.uber.org/mock/gomock"
+// )
 
-// MockStoreMain is a mock of StoreMain interface.
-type MockStoreMain struct {
-	ctrl     *gomock.Controller
-	recorder *MockStoreMainMockRecorder
-}
+// // MockStoreMain is a mock of StoreMain interface.
+// type MockStoreMain struct {
+// 	ctrl     *gomock.Controller
+// 	recorder *MockStoreMainMockRecorder
+// }
 
-// MockStoreMainMockRecorder is the mock recorder for MockStoreMain.
-type MockStoreMainMockRecorder struct {
-	mock *MockStoreMain
-}
+// // MockStoreMainMockRecorder is the mock recorder for MockStoreMain.
+// type MockStoreMainMockRecorder struct {
+// 	mock *MockStoreMain
+// }
 
-// NewMockStoreMain creates a new mock instance.
-func NewMockStoreMain(ctrl *gomock.Controller) *MockStoreMain {
-	mock := &MockStoreMain{ctrl: ctrl}
-	mock.recorder = &MockStoreMainMockRecorder{mock}
-	return mock
-}
+// // NewMockStoreMain creates a new mock instance.
+// func NewMockStoreMain(ctrl *gomock.Controller) *MockStoreMain {
+// 	mock := &MockStoreMain{ctrl: ctrl}
+// 	mock.recorder = &MockStoreMainMockRecorder{mock}
+// 	return mock
+// }
 
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockStoreMain) EXPECT() *MockStoreMainMockRecorder {
-	return m.recorder
-}
+// // EXPECT returns an object that allows the caller to indicate expected use.
+// func (m *MockStoreMain) EXPECT() *MockStoreMainMockRecorder {
+// 	return m.recorder
+// }
 
-// CreateBarber mocks base method.
-func (m *MockStoreMain) CreateBarber(arg0 context.Context, arg1 db.CreateBarberParams) (db.Barber, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateBarber", arg0, arg1)
-	ret0, _ := ret[0].(db.Barber)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
+// // CreateBarber mocks base method.
+// func (m *MockStoreMain) CreateBarber(arg0 context.Context, arg1 db.CreateBarberParams) (db.Barber, error) {
+// 	m.ctrl.T.Helper()
+// 	ret := m.ctrl.Call(m, "CreateBarber", arg0, arg1)
+// 	ret0, _ := ret[0].(db.Barber)
+// 	ret1, _ := ret[1].(error)
+// 	return ret0, ret1
+// }
 
-// CreateBarber indicates an expected call of CreateBarber.
-func (mr *MockStoreMainMockRecorder) CreateBarber(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateBarber", reflect.TypeOf((*MockStoreMain)(nil).CreateBarber), arg0, arg1)
-}
+// // CreateBarber indicates an expected call of CreateBarber.
+// func (mr *MockStoreMainMockRecorder) CreateBarber(arg0, arg1 interface{}) *gomock.Call {
+// 	mr.mock.ctrl.T.Helper()
+// 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateBarber", reflect.TypeOf((*MockStoreMain)(nil).CreateBarber), arg0, arg1)
+// }
 
-// CreateSessionBarber mocks base method.
-func (m *MockStoreMain) CreateSessionBarber(arg0 context.Context, arg1 db.CreateSessionBarberParams) (db.SessionsBarber, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateSessionBarber", arg0, arg1)
-	ret0, _ := ret[0].(db.SessionsBarber)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
+// // CreateSessionBarber mocks base method.
+// func (m *MockStoreMain) CreateSessionBarber(arg0 context.Context, arg1 db.CreateSessionBarberParams) (db.SessionsBarber, error) {
+// 	m.ctrl.T.Helper()
+// 	ret := m.ctrl.Call(m, "CreateSessionBarber", arg0, arg1)
+// 	ret0, _ := ret[0].(db.SessionsBarber)
+// 	ret1, _ := ret[1].(error)
+// 	return ret0, ret1
+// }
 
-// CreateSessionBarber indicates an expected call of CreateSessionBarber.
-func (mr *MockStoreMainMockRecorder) CreateSessionBarber(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSessionBarber", reflect.TypeOf((*MockStoreMain)(nil).CreateSessionBarber), arg0, arg1)
-}
+// // CreateSessionBarber indicates an expected call of CreateSessionBarber.
+// func (mr *MockStoreMainMockRecorder) CreateSessionBarber(arg0, arg1 interface{}) *gomock.Call {
+// 	mr.mock.ctrl.T.Helper()
+// 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSessionBarber", reflect.TypeOf((*MockStoreMain)(nil).CreateSessionBarber), arg0, arg1)
+// }
 
-// GetEmailBarber mocks base method.
-func (m *MockStoreMain) GetEmailBarber(arg0 context.Context, arg1 string) (db.Barber, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEmailBarber", arg0, arg1)
-	ret0, _ := ret[0].(db.Barber)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
+// // GetEmailBarber mocks base method.
+// func (m *MockStoreMain) GetEmailBarber(arg0 context.Context, arg1 string) (db.Barber, error) {
+// 	m.ctrl.T.Helper()
+// 	ret := m.ctrl.Call(m, "GetEmailBarber", arg0, arg1)
+// 	ret0, _ := ret[0].(db.Barber)
+// 	ret1, _ := ret[1].(error)
+// 	return ret0, ret1
+// }
 
-// GetEmailBarber indicates an expected call of GetEmailBarber.
-func (mr *MockStoreMainMockRecorder) GetEmailBarber(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEmailBarber", reflect.TypeOf((*MockStoreMain)(nil).GetEmailBarber), arg0, arg1)
-}
+// // GetEmailBarber indicates an expected call of GetEmailBarber.
+// func (mr *MockStoreMainMockRecorder) GetEmailBarber(arg0, arg1 interface{}) *gomock.Call {
+// 	mr.mock.ctrl.T.Helper()
+// 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEmailBarber", reflect.TypeOf((*MockStoreMain)(nil).GetEmailBarber), arg0, arg1)
+// }
 
-// GetSessionsBarber mocks base method.
-func (m *MockStoreMain) GetSessionsBarber(arg0 context.Context, arg1 uuid.UUID) (db.SessionsBarber, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetSessionsBarber", arg0, arg1)
-	ret0, _ := ret[0].(db.SessionsBarber)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
+// // GetSessionsBarber mocks base method.
+// func (m *MockStoreMain) GetSessionsBarber(arg0 context.Context, arg1 uuid.UUID) (db.SessionsBarber, error) {
+// 	m.ctrl.T.Helper()
+// 	ret := m.ctrl.Call(m, "GetSessionsBarber", arg0, arg1)
+// 	ret0, _ := ret[0].(db.SessionsBarber)
+// 	ret1, _ := ret[1].(error)
+// 	return ret0, ret1
+// }
 
-// GetSessionsBarber indicates an expected call of GetSessionsBarber.
-func (mr *MockStoreMainMockRecorder) GetSessionsBarber(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSessionsBarber", reflect.TypeOf((*MockStoreMain)(nil).GetSessionsBarber), arg0, arg1)
-}
+// // GetSessionsBarber indicates an expected call of GetSessionsBarber.
+// func (mr *MockStoreMainMockRecorder) GetSessionsBarber(arg0, arg1 interface{}) *gomock.Call {
+// 	mr.mock.ctrl.T.Helper()
+// 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSessionsBarber", reflect.TypeOf((*MockStoreMain)(nil).GetSessionsBarber), arg0, arg1)
+// }
 
-// UpdateBarber mocks base method.
-func (m *MockStoreMain) UpdateBarber(arg0 context.Context, arg1 db.UpdateBarberParams) (db.Barber, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateBarber", arg0, arg1)
-	ret0, _ := ret[0].(db.Barber)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
+// // UpdateBarber mocks base method.
+// func (m *MockStoreMain) UpdateBarber(arg0 context.Context, arg1 db.UpdateBarberParams) (db.Barber, error) {
+// 	m.ctrl.T.Helper()
+// 	ret := m.ctrl.Call(m, "UpdateBarber", arg0, arg1)
+// 	ret0, _ := ret[0].(db.Barber)
+// 	ret1, _ := ret[1].(error)
+// 	return ret0, ret1
+// }
 
-// UpdateBarber indicates an expected call of UpdateBarber.
-func (mr *MockStoreMainMockRecorder) UpdateBarber(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateBarber", reflect.TypeOf((*MockStoreMain)(nil).UpdateBarber), arg0, arg1)
-}
+// // UpdateBarber indicates an expected call of UpdateBarber.
+// func (mr *MockStoreMainMockRecorder) UpdateBarber(arg0, arg1 interface{}) *gomock.Call {
+// 	mr.mock.ctrl.T.Helper()
+// 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateBarber", reflect.TypeOf((*MockStoreMain)(nil).UpdateBarber), arg0, arg1)
+// }
 
-// UpdateRefreshTokenSessionsBarber mocks base method.
-func (m *MockStoreMain) UpdateRefreshTokenSessionsBarber(arg0 context.Context, arg1 db.UpdateRefreshTokenSessionsBarberParams) (db.SessionsBarber, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateRefreshTokenSessionsBarber", arg0, arg1)
-	ret0, _ := ret[0].(db.SessionsBarber)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
+// // UpdateRefreshTokenSessionsBarber mocks base method.
+// func (m *MockStoreMain) UpdateRefreshTokenSessionsBarber(arg0 context.Context, arg1 db.UpdateRefreshTokenSessionsBarberParams) (db.SessionsBarber, error) {
+// 	m.ctrl.T.Helper()
+// 	ret := m.ctrl.Call(m, "UpdateRefreshTokenSessionsBarber", arg0, arg1)
+// 	ret0, _ := ret[0].(db.SessionsBarber)
+// 	ret1, _ := ret[1].(error)
+// 	return ret0, ret1
+// }
 
-// UpdateRefreshTokenSessionsBarber indicates an expected call of UpdateRefreshTokenSessionsBarber.
-func (mr *MockStoreMainMockRecorder) UpdateRefreshTokenSessionsBarber(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateRefreshTokenSessionsBarber", reflect.TypeOf((*MockStoreMain)(nil).UpdateRefreshTokenSessionsBarber), arg0, arg1)
-}
+// // UpdateRefreshTokenSessionsBarber indicates an expected call of UpdateRefreshTokenSessionsBarber.
+// func (mr *MockStoreMainMockRecorder) UpdateRefreshTokenSessionsBarber(arg0, arg1 interface{}) *gomock.Call {
+// 	mr.mock.ctrl.T.Helper()
+// 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateRefreshTokenSessionsBarber", reflect.TypeOf((*MockStoreMain)(nil).UpdateRefreshTokenSessionsBarber), arg0, arg1)
+// }
 
-// UpdateStatusBarber mocks base method.
-func (m *MockStoreMain) UpdateStatusBarber(arg0 context.Context, arg1 db.UpdateStatusBarberParams) (db.Barber, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateStatusBarber", arg0, arg1)
-	ret0, _ := ret[0].(db.Barber)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
+// // UpdateStatusBarber mocks base method.
+// func (m *MockStoreMain) UpdateStatusBarber(arg0 context.Context, arg1 db.UpdateStatusBarberParams) (db.Barber, error) {
+// 	m.ctrl.T.Helper()
+// 	ret := m.ctrl.Call(m, "UpdateStatusBarber", arg0, arg1)
+// 	ret0, _ := ret[0].(db.Barber)
+// 	ret1, _ := ret[1].(error)
+// 	return ret0, ret1
+// }
 
-// UpdateStatusBarber indicates an expected call of UpdateStatusBarber.
-func (mr *MockStoreMainMockRecorder) UpdateStatusBarber(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateStatusBarber", reflect.TypeOf((*MockStoreMain)(nil).UpdateStatusBarber), arg0, arg1)
-}
+// // UpdateStatusBarber indicates an expected call of UpdateStatusBarber.
+// func (mr *MockStoreMainMockRecorder) UpdateStatusBarber(arg0, arg1 interface{}) *gomock.Call {
+// 	mr.mock.ctrl.T.Helper()
+// 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateStatusBarber", reflect.TypeOf((*MockStoreMain)(nil).UpdateStatusBarber), arg0, arg1)
+// }

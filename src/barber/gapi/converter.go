@@ -1,8 +1,8 @@
 package gapi
 
 import (
-	db "barbershop/db/sqlc"
-	"barbershop/pb"
+	db "barbershop/src/db/sqlc"
+	"barbershop/src/pb"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -21,5 +21,19 @@ func convertBarber(barber db.Barber) *pb.Barber {
 		CreatedAt:         timestamppb.New(barber.CreatedAt),
 		UpdateAt:          timestamppb.New(barber.UpdateAt.Time),
 		PasswordChangedAt: timestamppb.New(barber.PasswordChangedAt),
+	}
+}
+
+func convertBarberShop(barberShop db.BarberShop) *pb.BarberShops {
+	return &pb.BarberShops{
+		OwnerId:   barberShop.OwnerID.String(),
+		ShopId:    barberShop.ShopID.String(),
+		Status:    barberShop.Status,
+		Name:      barberShop.Name,
+		Location:  uint32(barberShop.Location),
+		Address:   barberShop.Address,
+		Image:     barberShop.Image.String,
+		ListImage: barberShop.ListImage,
+		CreatedAt: timestamppb.New(barberShop.CreatedAt),
 	}
 }

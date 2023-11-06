@@ -1,12 +1,10 @@
 package gapi
 
 import (
-	db "barbershop/db/sqlc"
-	"barbershop/pb"
-	"barbershop/utils"
-	"barbershop/val"
+	db "barbershop/src/db/sqlc"
+	"barbershop/src/pb"
+	"barbershop/src/shared/utils"
 	"context"
-	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
@@ -19,7 +17,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *pb.CreateBarberRequ
 
 	validations := validateCreateBarber(req)
 	if validations != nil {
-		return nil, inValidArgumentError(validations)
+		return nil, pb.InValidArgumentError(validations)
 	}
 
 	// Hash the password provided in the request
@@ -30,19 +28,25 @@ func (server *Server) CreateBarber(ctx context.Context, req *pb.CreateBarberRequ
 	}
 
 	// Create a channel to receive the result of fetching the codeBarberShop
-	resultChan := make(chan uuid.UUID)
-	var codeBarberShop uuid.UUID
+	resultChan := make(chan uuid.NullUUID)
+	var codeBarberShop uuid.NullUUID
 
 	// Fetch the codeBarberShop asynchronously and send the result to the channel
-	go func() {
-		codeBarberShop, err = server.store.GetCodeBarberShop(ctx, req.CodeBarberShop)
-		resultChan <- codeBarberShop
-	}()
-	codeBarberShop = <-resultChan
+	if req.Role != int32(utils.Manager) {
+		go func() {
+			uuidBarberShop, err := server.store.GetCodeBarberShop(ctx, req.CodeBarberShop)
+			if err != nil {
+				resultChan <- uuid.NullUUID{Valid: false}
+			} else {
+				resultChan <- uuid.NullUUID{Valid: true, UUID: uuidBarberShop}
+			}
+		}()
+		codeBarberShop = <-resultChan
 
-	if err != nil {
-		// If there's an error fetching the codeBarberShop, return an internal server error
-		return nil, status.Errorf(codes.NotFound, "code barber shop not found")
+		if !codeBarberShop.Valid {
+			// If there's an error fetching the codeBarberShop, return an internal server error
+			return nil, status.Errorf(codes.NotFound, "code barber shop not found")
+		}
 	}
 
 	// Prepare the arguments for creating a new barber
@@ -53,10 +57,9 @@ func (server *Server) CreateBarber(ctx context.Context, req *pb.CreateBarberRequ
 		FullName:       req.GetEmail(),
 		Gender:         req.GetGender(),
 		Email:          req.GetEmail(),
-		ShopID:         uuid.NullUUID{UUID: codeBarberShop, Valid: true},
-		Role:           int32(utils.HairStylist),
+		ShopID:         codeBarberShop,
+		Role:           req.GetRole(),
 	}
-
 	// Create the barber using the store
 	barber, err := server.store.CreateBarber(ctx, arg)
 	if err != nil {
@@ -79,7 +82,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *pb.CreateBarberRequ
 			}
 		}
 		// If the error is not a specific case, return a forbidden error
-		return nil, status.Errorf(http.StatusForbidden, "failed to create account %s", err)
+		return nil, status.Errorf(codes.Internal, "failed to create account %s", err)
 	}
 
 	// Prepare the response with the newly created barber
@@ -90,24 +93,24 @@ func (server *Server) CreateBarber(ctx context.Context, req *pb.CreateBarberRequ
 }
 
 func validateCreateBarber(req *pb.CreateBarberRequest) (validations []*errdetails.BadRequest_FieldViolation) {
-	if err := val.ValidateEmail(req.Email); err != nil {
-		validations = append(validations, fieldValidation("email", err))
+	if err := utils.ValidateEmail(req.Email); err != nil {
+		validations = append(validations, pb.FieldValidation("email", err))
 	}
 
-	if err := val.ValidatePhoneNumber(req.Phone); err != nil {
-		validations = append(validations, fieldValidation("phone", err))
+	if err := utils.ValidatePhoneNumber(req.Phone); err != nil {
+		validations = append(validations, pb.FieldValidation("phone", err))
 	}
 
-	if err := val.ValidatePassword(req.Password); err != nil {
-		validations = append(validations, fieldValidation("password", err))
+	if err := utils.ValidatePassword(req.Password); err != nil {
+		validations = append(validations, pb.FieldValidation("password", err))
 	}
 
-	if err := val.ValidateNickname(req.Nickname); err != nil {
-		validations = append(validations, fieldValidation("nickname", err))
+	if err := utils.ValidateNickname(req.Nickname); err != nil {
+		validations = append(validations, pb.FieldValidation("nickname", err))
 	}
 
-	if err := val.ValidateFullName(req.FullName); err != nil {
-		validations = append(validations, fieldValidation("full_name", err))
+	if err := utils.ValidateFullName(req.FullName); err != nil {
+		validations = append(validations, pb.FieldValidation("full_name", err))
 	}
 
 	return validations

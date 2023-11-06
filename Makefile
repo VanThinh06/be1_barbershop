@@ -11,13 +11,13 @@ migratecreate:
 				migrate create -ext sql -dir db/migration -seq barbershop
 				
 migrateup:
-				migrate -path db/migration -database "postgresql://mtt16:Vanthinh11@localhost:5432/BarberShop?sslmode=disable" -verbose up
+				migrate -path src/db/migration -database "postgresql://mtt16:Vanthinh11@localhost:5432/BarberShop?sslmode=disable" -verbose up
 
 migratedown:
-				migrate -path db/migration -database "postgresql://mtt16:Vanthinh11@localhost:5432/BarberShop?sslmode=disable" -verbose down
+				migrate -path src/db/migration -database "postgresql://mtt16:Vanthinh11@localhost:5432/BarberShop?sslmode=disable" -verbose down
 
 mock: 
-				mockgen -package mockdb  -destination db/mock/store.go  barbershop/db/sqlc StoreMain
+				mockgen -package mockdb  -destination barbershop/src/db/mock/store.go  barbershop/src/db/sqlc StoreMain
 
 test:   
 				go test -v -cover ./...
@@ -31,20 +31,18 @@ dropcontainer:
 sqlc:
 				docker run --rm -v ${pwd}:/src -w /src kjconroy/sqlc generate
 
+sqlc_linux:
+				sudo docker run --rm -v "$(pwd):/src" -w /src sqlc/sqlc generate
+
 proto:
-				protoc --proto_path=src/shared/proto --go_out=src/barber/pb --go_opt=paths=source_relative \
-				--go-grpc_out=src/barber/pb --go-grpc_opt=paths=source_relative \
-				--grpc-gateway_out=src/barber/pb --grpc-gateway_opt=paths=source_relative \
+				protoc --proto_path=src/shared/proto --go_out=src/pb --go_opt=paths=source_relative \
+				--go-grpc_out=src/pb --go-grpc_opt=paths=source_relative \
+				--grpc-gateway_out=src/pb --grpc-gateway_opt=paths=source_relative \
+				--openapiv2_out=src/shared/doc/swagger --openapiv2_opt=allow_merge=true,merge_file_name=barbershop \
 				src/shared/proto/*.proto
+				statik -f -src=src/shared/doc/swagger -dest=src/shared/doc/ 
 
 evans:
 				evans --host 192.168.1.15 --port 9999 -r repl 
 
-gateway:
-				go install \
-				github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway \
-				github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 \
-				google.golang.org/protobuf/cmd/protoc-gen-go \
-				google.golang.org/grpc/cmd/protoc-gen-go-grpc
-
-.PHONY: postgres createdb dropdb migrateup migratedown test sqlc proto evans
+.PHONY: postgres createdb dropdb migrateup migratedown test sqlc sqlc_linux proto proto_customer evans

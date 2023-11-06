@@ -64,8 +64,8 @@ CREATE TABLE "Services" (
 CREATE TABLE "Customers" (
   "customer_id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" varchar NOT NULL,
-  "email" varchar NOT NULL,
-  "phone" varchar NOT NULL,
+  "email" varchar UNIQUE NOT NULL,
+  "phone" varchar UNIQUE NOT NULL,
   "gender" integer NOT NULL DEFAULT 1,
   "hashed_password" varchar NOT NULL,
   "avatar" varchar,

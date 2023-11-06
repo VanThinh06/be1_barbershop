@@ -1,7 +1,7 @@
 package gapi
 
 import (
-	"barbershop/token"
+	"barbershop/src/shared/token"
 	"context"
 	"fmt"
 	"strings"
