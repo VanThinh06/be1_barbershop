@@ -29,6 +29,7 @@ CREATE TABLE "Barbers" (
   "update_at" timestamptz
 );
 
+
 CREATE TABLE "SessionsBarber" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "barber_id" uuid NOT NULL,
@@ -92,7 +93,7 @@ CREATE TABLE "Appointments" (
   "barber_id" uuid NOT NULL,
   "service_id" uuid UNIQUE NOT NULL,
   "appointment_datetime" timestamptz NOT NULL,
-  "status" varchar,
+  "status" integer NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz
 );

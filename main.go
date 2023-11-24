@@ -14,6 +14,7 @@ import (
 
 	_ "barbershop/src/shared/doc/statik"
 
+	firebase "firebase.google.com/go/v4"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rakyll/statik/fs"
 	"google.golang.org/grpc"
@@ -36,17 +37,23 @@ func main() {
 		log.Fatal("cannot connect to db:", err)
 	}
 
+	// Khởi tạo ứng dụng Firebase sử dụng ADC
+	app, err := firebase.NewApp(context.Background(), nil)
+	if err != nil {
+		log.Fatalf("Khởi tạo ứng dụng Firebase thất bại: %v", err)
+	}
+
 	//
 	store := db.NewStore(conn)
-	go runGatewayServer(config, store)
-	go runGatewayServerCustomer(config, store)
-	go runGrpcServerCustomer(config, store)
-	runGrpcServer(config, store)
-
+	firebaseApp := db.NewFirebase(app)
+	go runGatewayServer(config, store, firebaseApp)
+	go runGatewayServerCustomer(config, store, firebaseApp)
+	go runGrpcServerCustomer(config, store, firebaseApp)
+	runGrpcServer(config, store, firebaseApp)
 }
 
-func runGatewayServer(config utils.Config, store db.StoreMain) {
-	server, err := gapi.NewServer(config, store)
+func runGatewayServer(config utils.Config, store db.StoreMain, firebase db.FirebaseApp) {
+	server, err := gapi.NewServer(config, store, firebase)
 	if err != nil {
 		log.Fatal("cannot create server:", err)
 	}
@@ -81,8 +88,8 @@ func runGatewayServer(config utils.Config, store db.StoreMain) {
 	}
 }
 
-func runGrpcServer(config utils.Config, store db.StoreMain) {
-	server, err := gapi.NewServer(config, store)
+func runGrpcServer(config utils.Config, store db.StoreMain, firebase db.FirebaseApp) {
+	server, err := gapi.NewServer(config, store, firebase)
 	if err != nil {
 		log.Fatal("cannot create server:", err)
 	}
@@ -103,8 +110,8 @@ func runGrpcServer(config utils.Config, store db.StoreMain) {
 	}
 }
 
-func runGatewayServerCustomer(config utils.Config, store db.StoreMain) {
-	server, err := customergapi.NewServer(config, store)
+func runGatewayServerCustomer(config utils.Config, store db.StoreMain, firebase db.FirebaseApp) {
+	server, err := customergapi.NewServer(config, store, firebase)
 	if err != nil {
 		log.Fatal("cannot create server:", err)
 	}
@@ -135,12 +142,12 @@ func runGatewayServerCustomer(config utils.Config, store db.StoreMain) {
 	log.Printf("start HTTP gateway server at %s", listener.Addr().String())
 	err = http.Serve(listener, mux)
 	if err != nil {
-		log.Fatal("cannot start HTTP gateway server: ", err)
+		log.Fatal("cannot start HTTP gateway server Customer: ", err)
 	}
 }
 
-func runGrpcServerCustomer(config utils.Config, store db.StoreMain) {
-	server, err := customergapi.NewServer(config, store)
+func runGrpcServerCustomer(config utils.Config, store db.StoreMain, firebase db.FirebaseApp) {
+	server, err := customergapi.NewServer(config, store, firebase)
 	if err != nil {
 		log.Fatal("cannot create server:", err)
 	}

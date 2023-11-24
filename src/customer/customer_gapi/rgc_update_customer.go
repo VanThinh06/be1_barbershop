@@ -25,7 +25,7 @@ func (server *Server) UpdateCustomer(ctx context.Context, req *pb.UpdateCustomer
 		return nil, pb.InValidArgumentError(validations)
 	}
 
-	if authPayload.BarberID.String() != req.CustomerId {
+	if authPayload.Barber.BarberID.String() != req.CustomerId {
 		return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to update barber")
 	}
 

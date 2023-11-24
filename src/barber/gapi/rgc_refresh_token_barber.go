@@ -19,7 +19,7 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *pb.RefreshTok
 		return nil, status.Errorf(codes.Unauthenticated, "Unauthenticated", err)
 	}
 
-	session, err := server.store.GetSessionsBarber(ctx, payload.ID)
+	session, err := server.Store.GetSessionsBarber(ctx, payload.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			if err != nil {
@@ -38,7 +38,7 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *pb.RefreshTok
 
 	}
 
-	if session.BarberID != payload.BarberID {
+	if session.BarberID != payload.Barber.BarberID {
 		err := fmt.Errorf("incorrect session user")
 
 		return nil, status.Errorf(codes.Unauthenticated, "Unauthenticated", err)
@@ -65,9 +65,9 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *pb.RefreshTok
 			return nil, status.Errorf(codes.Unauthenticated, "Unauthenticated", err)
 		}
 	}
-
+	
 	access_token, accessPayload, err := server.tokenMaker.CreateToken(
-		payload.BarberID,
+		payload.Barber,
 		server.config.AccessTokenDuration,
 	)
 
@@ -77,7 +77,7 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *pb.RefreshTok
 	}
 
 	refresh_token, refreshPayload, err := server.tokenMaker.CreateToken(
-		payload.BarberID,
+		payload.Barber,
 		server.config.RefreshTokenDuration,
 	)
 
@@ -86,7 +86,7 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *pb.RefreshTok
 
 	}
 
-	ssUpdate, err := server.store.UpdateRefreshTokenSessionsBarber(ctx, db.UpdateRefreshTokenSessionsBarberParams{
+	ssUpdate, err := server.Store.UpdateRefreshTokenSessionsBarber(ctx, db.UpdateRefreshTokenSessionsBarberParams{
 		ID:           payload.ID,
 		RefreshToken: refresh_token,
 		ExpiresAt:    refreshPayload.ExpiredAt,

@@ -13,20 +13,20 @@ import (
 
 func (server *Server) NewBarberShops(ctx context.Context, req *pb.CreateBarberShopsRequest) (*pb.CreateBarberShopsResponse, error) {
 
-	authPayload, err := server.authorizeUser(ctx)
+	authPayload, err := server.AuthorizeUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
 	arg := db.CreateBarberShopsParams{
 		CodeBarberShop: req.GetCodeBarberShop(),
-		OwnerID:        authPayload.BarberID,
+		OwnerID:        authPayload.Barber.BarberID,
 		Name:           req.GetName(),
 		Location:       float32(req.GetLocation()),
 		Address:        req.GetAddress(),
 	}
 
-	barberShop, err := server.store.CreateBarberShops(ctx, arg)
+	barberShop, err := server.Store.CreateBarberShops(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
@@ -37,8 +37,8 @@ func (server *Server) NewBarberShops(ctx context.Context, req *pb.CreateBarberSh
 		return nil, status.Errorf(codes.Internal, "failed to create barber shop")
 	}
 
-	requestBarber := db.UpdateBarberParams{BarberID: authPayload.BarberID, ShopID: uuid.NullUUID{UUID: barberShop.ShopID, Valid: true}}
-	_, errUpdateBarber := server.store.UpdateBarber(ctx, requestBarber)
+	requestBarber := db.UpdateBarberParams{BarberID: authPayload.Barber.BarberID, ShopID: uuid.NullUUID{UUID: barberShop.ShopID, Valid: true}}
+	_, errUpdateBarber := server.Store.UpdateBarber(ctx, requestBarber)
 	if errUpdateBarber != nil {
 		return nil, status.Errorf(codes.Internal, "Intenal")
 	}

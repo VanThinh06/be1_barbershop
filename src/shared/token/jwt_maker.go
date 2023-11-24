@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/google/uuid"
 )
 
 type JWTMaker struct {
@@ -22,7 +21,7 @@ func NewJWTMaker(secretKey string) (Maker,  error) {
 	return &JWTMaker{secretKey}, nil
 }
 
-func (maker *JWTMaker) CreateToken(username uuid.UUID, duration time.Duration) (string, *Payload, error) {
+func (maker *JWTMaker) CreateToken(username BarberPayload, duration time.Duration) (string, *Payload, error) {
 	payload, err := NewPayload(username, duration)
 	if err != nil {
 		return "", payload,  err

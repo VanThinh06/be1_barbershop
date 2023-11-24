@@ -6,15 +6,21 @@ import (
 
 	"github.com/google/uuid"
 )
-
-type Payload struct {
-	ID        uuid.UUID `json:"id"`
-	BarberID  uuid.UUID    `json:"username"`
-	IssuedAt  time.Time `json:"issued_at"`
-	ExpiredAt time.Time `json:"expired_at"`
+type BarberPayload struct {
+	BarberID uuid.UUID `json:"username"`
+	Role     int32     `json:"role"`
+	Phone    string    `json:"phone"`
+	Email    string    `json:"email"`
 }
 
-func NewPayload(barber_id uuid.UUID, duration time.Duration) (*Payload, error) {
+type Payload struct {
+	ID        uuid.UUID     `json:"id"`
+	Barber    BarberPayload `json:"barber"`
+	IssuedAt  time.Time     `json:"issued_at"`
+	ExpiredAt time.Time     `json:"expired_at"`
+}
+
+func NewPayload(barber BarberPayload, duration time.Duration) (*Payload, error) {
 	tokenID, err := uuid.NewRandom()
 	if err != nil {
 		return nil, err
@@ -22,7 +28,7 @@ func NewPayload(barber_id uuid.UUID, duration time.Duration) (*Payload, error) {
 
 	payload := &Payload{
 		ID:        tokenID,
-		BarberID:  barber_id,
+		Barber:  barber,
 		IssuedAt:  time.Now(),
 		ExpiredAt: time.Now().Add(duration),
 	}

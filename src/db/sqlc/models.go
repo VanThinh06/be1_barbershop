@@ -12,14 +12,14 @@ import (
 )
 
 type Appointment struct {
-	AppointmentID       uuid.UUID      `json:"appointment_id"`
-	CustomerID          uuid.UUID      `json:"customer_id"`
-	BarberID            uuid.UUID      `json:"barber_id"`
-	ServiceID           uuid.UUID      `json:"service_id"`
-	AppointmentDatetime time.Time      `json:"appointment_datetime"`
-	Status              sql.NullString `json:"status"`
-	CreatedAt           time.Time      `json:"created_at"`
-	UpdateAt            sql.NullTime   `json:"update_at"`
+	AppointmentID       uuid.UUID    `json:"appointment_id"`
+	CustomerID          uuid.UUID    `json:"customer_id"`
+	BarberID            uuid.UUID    `json:"barber_id"`
+	ServiceID           uuid.UUID    `json:"service_id"`
+	AppointmentDatetime time.Time    `json:"appointment_datetime"`
+	Status              int32        `json:"status"`
+	CreatedAt           time.Time    `json:"created_at"`
+	UpdateAt            sql.NullTime `json:"update_at"`
 }
 
 type Barber struct {

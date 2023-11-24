@@ -37,3 +37,28 @@ func convertBarberShop(barberShop db.BarberShop) *pb.BarberShops {
 		CreatedAt: timestamppb.New(barberShop.CreatedAt),
 	}
 }
+
+
+func ConvertServiceCategory(servicecategory db.ServiceCategory) *pb.ServiceCategory {
+	return &pb.ServiceCategory{
+		Id: servicecategory.ID.String(),
+		ShopId: servicecategory.ShopID.String(),
+		Name: servicecategory.Name,
+		CreatedAt: timestamppb.New(servicecategory.CreatedAt),
+		UpdateAt: timestamppb.New(servicecategory.UpdateAt.Time),
+	}
+}
+
+func ConvertServices(service db.Service) *pb.Services {
+	return &pb.Services{
+		Id: service.ID.String(),
+		CategoryId: service.CategoryID.String(),
+		Name: service.Name,
+		Timer: &service.Timer.Int32,
+		Price: &service.Timer.Int32,
+		Description: &service.Description.String,
+		Image: &service.Image.String,
+		CreatedAt: timestamppb.New(service.CreatedAt),
+		UpdateAt: timestamppb.New(service.UpdateAt.Time),
+	}
+}

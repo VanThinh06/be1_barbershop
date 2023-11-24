@@ -24,6 +24,8 @@ const (
 	BarberShop_RefreshTokenBarber_FullMethodName = "/pb.BarberShop/RefreshTokenBarber"
 	BarberShop_UpdateBarber_FullMethodName       = "/pb.BarberShop/UpdateBarber"
 	BarberShop_NewBarberShops_FullMethodName     = "/pb.BarberShop/NewBarberShops"
+	BarberShop_NewServiceCategory_FullMethodName = "/pb.BarberShop/NewServiceCategory"
+	BarberShop_NewServices_FullMethodName        = "/pb.BarberShop/NewServices"
 )
 
 // BarberShopClient is the client API for BarberShop service.
@@ -35,6 +37,8 @@ type BarberShopClient interface {
 	RefreshTokenBarber(ctx context.Context, in *RefreshTokenBarberRequest, opts ...grpc.CallOption) (*RefreshTokenBarberResponse, error)
 	UpdateBarber(ctx context.Context, in *UpdateBarberRequest, opts ...grpc.CallOption) (*UpdateBarberResponse, error)
 	NewBarberShops(ctx context.Context, in *CreateBarberShopsRequest, opts ...grpc.CallOption) (*CreateBarberShopsResponse, error)
+	NewServiceCategory(ctx context.Context, in *CreateServiceCategoryRequest, opts ...grpc.CallOption) (*CreateServiceCategoryResponse, error)
+	NewServices(ctx context.Context, in *CreateServicesRequest, opts ...grpc.CallOption) (*CreateServicesResponse, error)
 }
 
 type barberShopClient struct {
@@ -90,6 +94,24 @@ func (c *barberShopClient) NewBarberShops(ctx context.Context, in *CreateBarberS
 	return out, nil
 }
 
+func (c *barberShopClient) NewServiceCategory(ctx context.Context, in *CreateServiceCategoryRequest, opts ...grpc.CallOption) (*CreateServiceCategoryResponse, error) {
+	out := new(CreateServiceCategoryResponse)
+	err := c.cc.Invoke(ctx, BarberShop_NewServiceCategory_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *barberShopClient) NewServices(ctx context.Context, in *CreateServicesRequest, opts ...grpc.CallOption) (*CreateServicesResponse, error) {
+	out := new(CreateServicesResponse)
+	err := c.cc.Invoke(ctx, BarberShop_NewServices_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BarberShopServer is the server API for BarberShop service.
 // All implementations must embed UnimplementedBarberShopServer
 // for forward compatibility
@@ -99,6 +121,8 @@ type BarberShopServer interface {
 	RefreshTokenBarber(context.Context, *RefreshTokenBarberRequest) (*RefreshTokenBarberResponse, error)
 	UpdateBarber(context.Context, *UpdateBarberRequest) (*UpdateBarberResponse, error)
 	NewBarberShops(context.Context, *CreateBarberShopsRequest) (*CreateBarberShopsResponse, error)
+	NewServiceCategory(context.Context, *CreateServiceCategoryRequest) (*CreateServiceCategoryResponse, error)
+	NewServices(context.Context, *CreateServicesRequest) (*CreateServicesResponse, error)
 	mustEmbedUnimplementedBarberShopServer()
 }
 
@@ -120,6 +144,12 @@ func (UnimplementedBarberShopServer) UpdateBarber(context.Context, *UpdateBarber
 }
 func (UnimplementedBarberShopServer) NewBarberShops(context.Context, *CreateBarberShopsRequest) (*CreateBarberShopsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NewBarberShops not implemented")
+}
+func (UnimplementedBarberShopServer) NewServiceCategory(context.Context, *CreateServiceCategoryRequest) (*CreateServiceCategoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NewServiceCategory not implemented")
+}
+func (UnimplementedBarberShopServer) NewServices(context.Context, *CreateServicesRequest) (*CreateServicesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NewServices not implemented")
 }
 func (UnimplementedBarberShopServer) mustEmbedUnimplementedBarberShopServer() {}
 
@@ -224,6 +254,42 @@ func _BarberShop_NewBarberShops_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BarberShop_NewServiceCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateServiceCategoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberShopServer).NewServiceCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberShop_NewServiceCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberShopServer).NewServiceCategory(ctx, req.(*CreateServiceCategoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BarberShop_NewServices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateServicesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberShopServer).NewServices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberShop_NewServices_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberShopServer).NewServices(ctx, req.(*CreateServicesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BarberShop_ServiceDesc is the grpc.ServiceDesc for BarberShop service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -250,6 +316,14 @@ var BarberShop_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "NewBarberShops",
 			Handler:    _BarberShop_NewBarberShops_Handler,
+		},
+		{
+			MethodName: "NewServiceCategory",
+			Handler:    _BarberShop_NewServiceCategory_Handler,
+		},
+		{
+			MethodName: "NewServices",
+			Handler:    _BarberShop_NewServices_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

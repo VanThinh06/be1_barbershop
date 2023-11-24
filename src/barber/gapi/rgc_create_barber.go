@@ -34,7 +34,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *pb.CreateBarberRequ
 	// Fetch the codeBarberShop asynchronously and send the result to the channel
 	if req.Role != int32(utils.Manager) {
 		go func() {
-			uuidBarberShop, err := server.store.GetCodeBarberShop(ctx, req.CodeBarberShop)
+			uuidBarberShop, err := server.Store.GetCodeBarberShop(ctx, req.CodeBarberShop)
 			if err != nil {
 				resultChan <- uuid.NullUUID{Valid: false}
 			} else {
@@ -61,7 +61,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *pb.CreateBarberRequ
 		Role:           req.GetRole(),
 	}
 	// Create the barber using the store
-	barber, err := server.store.CreateBarber(ctx, arg)
+	barber, err := server.Store.CreateBarber(ctx, arg)
 	if err != nil {
 		// If there's an error creating the barber, handle specific error cases
 		if pqErr, ok := err.(*pq.Error); ok {

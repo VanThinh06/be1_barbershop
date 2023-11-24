@@ -15,7 +15,7 @@ import (
 )
 
 func (server *Server) UpdateBarber(ctx context.Context, req *pb.UpdateBarberRequest) (*pb.UpdateBarberResponse, error) {
-	authPayload, err := server.authorizeUser(ctx)
+	authPayload, err := server.AuthorizeUser(ctx)
 	if err != nil {
 		return nil, pb.UnauthenticatedError(err)
 	}
@@ -25,7 +25,7 @@ func (server *Server) UpdateBarber(ctx context.Context, req *pb.UpdateBarberRequ
 		return nil, pb.InValidArgumentError(validations)
 	}
 
-	if authPayload.BarberID.String() != req.BarberId {
+	if authPayload.Barber.BarberID.String() != req.BarberId {
 		return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to update barber")
 	}
 
@@ -92,7 +92,7 @@ func (server *Server) UpdateBarber(ctx context.Context, req *pb.UpdateBarberRequ
 		}
 	}
 
-	barber, err := server.store.UpdateBarber(ctx, arg)
+	barber, err := server.Store.UpdateBarber(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, status.Errorf(codes.NotFound, "barber not found")

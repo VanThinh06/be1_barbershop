@@ -6,7 +6,7 @@ import "google/api/annotations.proto";
 import "rpc_create_customer.proto";
 import "rpc_login_customer.proto";
 import "rpc_update_customer.proto";
-
+import "rpc_appointment.proto";
 
 import "protoc-gen-openapiv2/options/annotations.proto";
 
@@ -63,6 +63,17 @@ service AuthCustomerBarberShop {
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         description: "API endpoint for user authentication" 
         summary: "Authenticate a user"
+      };
+    }
+
+    rpc NewAppointment (CreateAppointmentRequest) returns (CreateAppointmentResponse){
+      option (google.api.http) = {
+                post: "/v1/create_appointment"
+                body: "*"
+              };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "API endpoint to create a new barber"
+        summary: "Create a service Appointments"
       };
     }
 }

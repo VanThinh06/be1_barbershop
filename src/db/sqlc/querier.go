@@ -11,9 +11,12 @@ import (
 )
 
 type Querier interface {
+	CreateAppointment(ctx context.Context, arg CreateAppointmentParams) (Appointment, error)
 	CreateBarber(ctx context.Context, arg CreateBarberParams) (Barber, error)
 	CreateBarberShops(ctx context.Context, arg CreateBarberShopsParams) (BarberShop, error)
 	CreateCustomer(ctx context.Context, arg CreateCustomerParams) (Customer, error)
+	CreateService(ctx context.Context, arg CreateServiceParams) (Service, error)
+	CreateServiceCategory(ctx context.Context, arg CreateServiceCategoryParams) (ServiceCategory, error)
 	CreateSessionBarber(ctx context.Context, arg CreateSessionBarberParams) (SessionsBarber, error)
 	CreateSessionsCustomer(ctx context.Context, arg CreateSessionsCustomerParams) (SessionsCustomer, error)
 	GetCodeBarberShop(ctx context.Context, codeBarberShop string) (uuid.UUID, error)

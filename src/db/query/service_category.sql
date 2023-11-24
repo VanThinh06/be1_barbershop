@@ -1,13 +1,12 @@
 
--- -- name: CreateServiceCategory :one
--- INSERT INTO service_category (
--- store_id,
--- work,
--- description
--- ) VALUES (
---   $1, $2, $3
--- )
--- RETURNING *;
+-- name: CreateServiceCategory :one
+INSERT INTO "ServiceCategory" (
+shop_id,
+"name"
+) VALUES (
+  $1, $2
+)
+RETURNING *;
 
 -- -- name: GetServiceCategory :one
 -- SELECT *

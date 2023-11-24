@@ -20,3 +20,16 @@ func convertCustomer(customer db.Customer) *pb.Customer {
 		PasswordChangedAt: timestamppb.New(customer.PasswordChangedAt),
 	}
 }
+
+func convertAppointment(appointment db.Appointment) *pb.Appointment {
+	return &pb.Appointment{
+		AppointmentId:       appointment.AppointmentID.String(),
+		CustomerId:          appointment.CustomerID.String(),
+		BarberId:            appointment.BarberID.String(),
+		ServiceId:           appointment.ServiceID.String(),
+		AppointmentDatetime: timestamppb.New(appointment.AppointmentDatetime),
+		Status:              appointment.Status,
+		CreatedAt:           timestamppb.New(appointment.CreatedAt),
+		UpdateAt:            timestamppb.New(appointment.UpdateAt.Time),
+	}
+}

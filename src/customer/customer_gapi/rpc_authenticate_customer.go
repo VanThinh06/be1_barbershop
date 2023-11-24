@@ -3,6 +3,7 @@ package customergapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb"
+	"barbershop/src/shared/token"
 	"barbershop/src/shared/utils"
 	"context"
 	"database/sql"
@@ -43,9 +44,15 @@ func (server *Server) LoginCustomer(ctx context.Context, req *pb.LoginCustomerRe
 		return nil, status.Errorf(codes.Unauthenticated, "failed to check the password for %s", err)
 	}
 
+	customerPayload := token.BarberPayload{
+		BarberID: customer.CustomerID,
+		Role: 0,
+		Phone: customer.Phone,
+		Email: customer.Email,
+	}
 	// Create an access token for the authenticated barber
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
-		customer.CustomerID,
+		customerPayload,
 		server.config.AccessTokenDuration,
 	)
 	if err != nil {
@@ -53,9 +60,10 @@ func (server *Server) LoginCustomer(ctx context.Context, req *pb.LoginCustomerRe
 		return nil, status.Errorf(codes.Internal, "failed to create token %s", err)
 	}
 
+	
 	// Create a refresh token for the authenticated barber
 	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
-		customer.CustomerID,
+		customerPayload,
 		server.config.RefreshTokenDuration,
 	)
 	if err != nil {
@@ -67,7 +75,7 @@ func (server *Server) LoginCustomer(ctx context.Context, req *pb.LoginCustomerRe
 	// Create a session for the barber
 	session, err := server.store.CreateSessionsCustomer(ctx, db.CreateSessionsCustomerParams{
 		ID:           refreshPayload.ID,
-		CustomerID:     refreshPayload.BarberID,
+		CustomerID:     refreshPayload.Barber.BarberID,
 		RefreshToken: refreshToken,
 		UserAgent:    mtdt.UserAgent,
 		ClientIp:     mtdt.ClientIP,

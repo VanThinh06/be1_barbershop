@@ -22,6 +22,7 @@ const (
 	AuthCustomerBarberShop_CreateCustomer_FullMethodName = "/pb.AuthCustomerBarberShop/CreateCustomer"
 	AuthCustomerBarberShop_LoginCustomer_FullMethodName  = "/pb.AuthCustomerBarberShop/LoginCustomer"
 	AuthCustomerBarberShop_UpdateCustomer_FullMethodName = "/pb.AuthCustomerBarberShop/UpdateCustomer"
+	AuthCustomerBarberShop_NewAppointment_FullMethodName = "/pb.AuthCustomerBarberShop/NewAppointment"
 )
 
 // AuthCustomerBarberShopClient is the client API for AuthCustomerBarberShop service.
@@ -31,6 +32,7 @@ type AuthCustomerBarberShopClient interface {
 	CreateCustomer(ctx context.Context, in *CreateCustomerRequest, opts ...grpc.CallOption) (*CreateCustomerResponse, error)
 	LoginCustomer(ctx context.Context, in *LoginCustomerRequest, opts ...grpc.CallOption) (*LoginCustomerResponse, error)
 	UpdateCustomer(ctx context.Context, in *UpdateCustomerRequest, opts ...grpc.CallOption) (*UpdateCustomerResponse, error)
+	NewAppointment(ctx context.Context, in *CreateAppointmentRequest, opts ...grpc.CallOption) (*CreateAppointmentResponse, error)
 }
 
 type authCustomerBarberShopClient struct {
@@ -68,6 +70,15 @@ func (c *authCustomerBarberShopClient) UpdateCustomer(ctx context.Context, in *U
 	return out, nil
 }
 
+func (c *authCustomerBarberShopClient) NewAppointment(ctx context.Context, in *CreateAppointmentRequest, opts ...grpc.CallOption) (*CreateAppointmentResponse, error) {
+	out := new(CreateAppointmentResponse)
+	err := c.cc.Invoke(ctx, AuthCustomerBarberShop_NewAppointment_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthCustomerBarberShopServer is the server API for AuthCustomerBarberShop service.
 // All implementations must embed UnimplementedAuthCustomerBarberShopServer
 // for forward compatibility
@@ -75,6 +86,7 @@ type AuthCustomerBarberShopServer interface {
 	CreateCustomer(context.Context, *CreateCustomerRequest) (*CreateCustomerResponse, error)
 	LoginCustomer(context.Context, *LoginCustomerRequest) (*LoginCustomerResponse, error)
 	UpdateCustomer(context.Context, *UpdateCustomerRequest) (*UpdateCustomerResponse, error)
+	NewAppointment(context.Context, *CreateAppointmentRequest) (*CreateAppointmentResponse, error)
 	mustEmbedUnimplementedAuthCustomerBarberShopServer()
 }
 
@@ -90,6 +102,9 @@ func (UnimplementedAuthCustomerBarberShopServer) LoginCustomer(context.Context, 
 }
 func (UnimplementedAuthCustomerBarberShopServer) UpdateCustomer(context.Context, *UpdateCustomerRequest) (*UpdateCustomerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCustomer not implemented")
+}
+func (UnimplementedAuthCustomerBarberShopServer) NewAppointment(context.Context, *CreateAppointmentRequest) (*CreateAppointmentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NewAppointment not implemented")
 }
 func (UnimplementedAuthCustomerBarberShopServer) mustEmbedUnimplementedAuthCustomerBarberShopServer() {
 }
@@ -159,6 +174,24 @@ func _AuthCustomerBarberShop_UpdateCustomer_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthCustomerBarberShop_NewAppointment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateAppointmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthCustomerBarberShopServer).NewAppointment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthCustomerBarberShop_NewAppointment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthCustomerBarberShopServer).NewAppointment(ctx, req.(*CreateAppointmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthCustomerBarberShop_ServiceDesc is the grpc.ServiceDesc for AuthCustomerBarberShop service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -177,6 +210,10 @@ var AuthCustomerBarberShop_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateCustomer",
 			Handler:    _AuthCustomerBarberShop_UpdateCustomer_Handler,
+		},
+		{
+			MethodName: "NewAppointment",
+			Handler:    _AuthCustomerBarberShop_NewAppointment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -2,6 +2,7 @@ package gapi
 
 import (
 	"barbershop/src/shared/token"
+	"barbershop/src/shared/utils"
 	"context"
 	"fmt"
 	"strings"
@@ -14,7 +15,7 @@ const (
 	authorizationBearer = "bearer"
 )
 
-func (server *Server) authorizeUser(ctx context.Context) (*token.Payload, error) {
+func (server *Server) AuthorizeUser(ctx context.Context) (*token.Payload, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, fmt.Errorf("missing metadata") // Return an error if metadata is missing in the context
@@ -43,4 +44,11 @@ func (server *Server) authorizeUser(ctx context.Context) (*token.Payload, error)
 	}
 
 	return payload, nil
+}
+
+func (server *Server) IsManager(ctx context.Context, payload *token.Payload) error {
+	if payload.Barber.Role != int32(utils.Manager) {
+		return fmt.Errorf("PermissionDenied")
+	}
+	return nil
 }

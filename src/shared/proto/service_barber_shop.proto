@@ -8,6 +8,9 @@ import "rpc_login_barber.proto";
 import "rpc_refresh_token_barber.proto";
 import "rpc_update_barber.proto";
 import "rpc_create_barbershop.proto";
+import "rpc_create_service_category.proto";
+import "rpc_create_services.proto";
+
 
 
 
@@ -91,5 +94,27 @@ service BarberShop {
         summary: "Create a barber"
       };
   }
+
+  rpc NewServiceCategory (CreateServiceCategoryRequest) returns (CreateServiceCategoryResponse){
+    option (google.api.http) = {
+              post: "/v1/create_category_service"
+              body: "*"
+            };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "API endpoint to create a new barber"
+      summary: "Create a service category"
+    };
+  }
+  
+  rpc NewServices (CreateServicesRequest) returns (CreateServicesResponse){
+      option (google.api.http) = {
+                post: "/v1/create_services"
+                body: "*"
+              };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "API endpoint to create a new barber"
+        summary: "Create a service category"
+      };
+}
 }
 

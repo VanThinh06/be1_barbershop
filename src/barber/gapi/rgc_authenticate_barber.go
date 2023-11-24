@@ -3,6 +3,7 @@ package gapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb"
+	"barbershop/src/shared/token"
 	"barbershop/src/shared/utils"
 	"context"
 	"database/sql"
@@ -14,7 +15,7 @@ import (
 
 func (server *Server) LoginBarber(ctx context.Context, req *pb.LoginBarberRequest) (*pb.LoginBarberResponse, error) {
 	// Retrieve barber information from the store
-	barber, err := server.store.GetEmailBarber(ctx, req.Username)
+	barber, err := server.Store.GetEmailBarber(ctx, req.Username)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			// If barber does not exist, return a 404 error
@@ -31,9 +32,15 @@ func (server *Server) LoginBarber(ctx context.Context, req *pb.LoginBarberReques
 		return nil, status.Errorf(codes.Unauthenticated, "failed to check the password for %s", err)
 	}
 
+	barberPayload := token.BarberPayload{
+		BarberID: barber.BarberID,
+		Role: barber.Role,
+		Phone: barber.Phone,
+		Email: barber.Email,
+	}
 	// Create an access token for the authenticated barber
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
-		barber.BarberID,
+		barberPayload,
 		server.config.AccessTokenDuration,
 	)
 	if err != nil {
@@ -43,7 +50,7 @@ func (server *Server) LoginBarber(ctx context.Context, req *pb.LoginBarberReques
 
 	// Create a refresh token for the authenticated barber
 	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
-		barber.BarberID,
+		barberPayload,
 		server.config.RefreshTokenDuration,
 	)
 	if err != nil {
@@ -53,9 +60,9 @@ func (server *Server) LoginBarber(ctx context.Context, req *pb.LoginBarberReques
 
 	mtdt := server.extractMetadata(ctx)
 	// Create a session for the barber
-	session, err := server.store.CreateSessionBarber(ctx, db.CreateSessionBarberParams{
+	session, err := server.Store.CreateSessionBarber(ctx, db.CreateSessionBarberParams{
 		ID:           refreshPayload.ID,
-		BarberID:     refreshPayload.BarberID,
+		BarberID:     refreshPayload.Barber.BarberID,
 		RefreshToken: refreshToken,
 		UserAgent:    mtdt.UserAgent,
 		ClientIp:     mtdt.ClientIP,
