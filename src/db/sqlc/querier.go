@@ -19,6 +19,7 @@ type Querier interface {
 	CreateServiceCategory(ctx context.Context, arg CreateServiceCategoryParams) (ServiceCategory, error)
 	CreateSessionBarber(ctx context.Context, arg CreateSessionBarberParams) (SessionsBarber, error)
 	CreateSessionsCustomer(ctx context.Context, arg CreateSessionsCustomerParams) (SessionsCustomer, error)
+	FindBarberShopNearbyLocations(ctx context.Context, arg FindBarberShopNearbyLocationsParams) ([]FindBarberShopNearbyLocationsRow, error)
 	GetCodeBarberShop(ctx context.Context, codeBarberShop string) (uuid.UUID, error)
 	GetContactCustomer(ctx context.Context, arg GetContactCustomerParams) (Customer, error)
 	GetEmailBarber(ctx context.Context, email string) (Barber, error)

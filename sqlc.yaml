@@ -19,3 +19,8 @@ sql:
             go_type:
               import: "github.com/google/uuid"
               type: "NullUUID"
+
+          - db_type: "geography"
+            go_type:
+              type: "string"
+          

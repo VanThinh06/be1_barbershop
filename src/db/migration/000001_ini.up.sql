@@ -1,9 +1,11 @@
+-- CREATE EXTENSION IF NOT EXISTS "postgis";
+-- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE "BarberShops" (
   "shop_id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "code_barber_shop" varchar UNIQUE NOT NULL,
   "owner_id" uuid NOT NULL,
   "name" varchar NOT NULL,
-  "location" real NOT NULL,
+  "coordinates" GEOGRAPHY(Point, 4326) NOT NULL,
   "address" varchar NOT NULL,
   "image" varchar,
   "list_image" varchar[],
@@ -82,6 +84,7 @@ CREATE TABLE "SessionsCustomer" (
   "user_agent" varchar NOT NULL,
   "client_ip" varchar NOT NULL,
   "fcm_device" varchar NOT NULL,
+  "coordinates" GEOGRAPHY(Point, 4326) NOT NULL,
   "is_blocked" bool NOT NULL DEFAULT false,
   "expires_at" timestamptz NOT NULL,
   "create_at" timestamptz NOT NULL DEFAULT (now())

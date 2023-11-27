@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+message Services {
+    string id = 1;
+    string category_id = 2;
+    string name = 3;
+    optional int32 timer = 4;
+    optional int32 price = 5;
+    optional string description = 6;
+    optional string image = 7;
+    google.protobuf.Timestamp created_at = 8;
+    google.protobuf.Timestamp update_at = 9;
+}

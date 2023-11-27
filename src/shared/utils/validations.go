@@ -6,6 +6,14 @@ import (
 	"regexp"
 )
 
+var (
+	fullNameRegex = `^[a-zA-Z\s]+$`
+	nicknameRegex = "^[a-zA-Z0-9" + regexp.QuoteMeta(".#@-_") + "]+$"
+	emailRegex    = `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	e164Regex     = regexp.MustCompile(`^\+84\d{9,10}$`)
+	vietnamRegex  = regexp.MustCompile(`^0\d{9}$`)
+)
+
 // ValidateString kiểm tra độ dài của một chuỗi.
 func ValidateString(value string, minLength, maxLength int) error {
 	n := len(value)
@@ -21,7 +29,6 @@ func ValidateEmail(email string) error {
 		return err
 	}
 
-	emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
 	match, _ := regexp.MatchString(emailRegex, email)
 	if !match {
 		return errors.New("invalid email format")
@@ -42,13 +49,10 @@ func ValidatePassword(password string) error {
 // ValidatePhoneNumber kiểm tra tính hợp lệ của số điện thoại.
 func ValidatePhoneNumber(phoneNumber string) error {
 	normalizedNumber := regexp.MustCompile(`\D`).ReplaceAllString(phoneNumber, "")
-
-	e164Regex := regexp.MustCompile(`^\+84\d{9,10}$`)
 	if e164Regex.MatchString(normalizedNumber) {
 		return nil
 	}
 
-	vietnamRegex := regexp.MustCompile(`^0\d{9}$`)
 	if vietnamRegex.MatchString(normalizedNumber) {
 		return nil
 	}
@@ -62,7 +66,6 @@ func ValidateFullName(fullName string) error {
 		return err
 	}
 
-	fullNameRegex := `^[a-zA-Z\s]+$`
 	match, _ := regexp.MatchString(fullNameRegex, fullName)
 	if !match {
 		return errors.New("invalid full name format")
@@ -77,7 +80,6 @@ func ValidateNickname(nickname string) error {
 		return err
 	}
 
-	nicknameRegex := "^[a-zA-Z0-9" + regexp.QuoteMeta(".#@-_") + "]+$"
 	match, _ := regexp.MatchString(nicknameRegex, nickname)
 	if !match {
 		return errors.New("invalid nickname format")

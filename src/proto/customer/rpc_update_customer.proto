@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package pb;
+import "google/protobuf/timestamp.proto";
+import "customer/customer.proto";
+
+
+option go_package = "barbershop/src/pb/customer";
+
+message UpdateCustomerRequest {
+    string customer_id= 9;
+    optional string name = 1;
+    optional string email = 2;
+    optional string phone = 3;
+    optional int32 gender = 4;
+    optional string password = 5;
+    optional string avatar = 6;
+    optional google.protobuf.Timestamp password_changed_at = 7;
+    google.protobuf.Timestamp update_at = 8;
+}
+
+message UpdateCustomerResponse {
+    Customer customer = 1;
+}

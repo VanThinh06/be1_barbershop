@@ -3,15 +3,15 @@
 INSERT INTO "BarberShops" (code_barber_shop,
                            owner_id,
                            name,
-                           location,
+                           coordinates,
                            address,
                            image)
-VALUES ($1,
-        $2,
-        $3,
-        $4,
-        $5,
-        $6) RETURNING *;
+VALUES (sqlc.arg(code_barber_shop),
+        sqlc.arg(owner_id),
+         sqlc.arg(name),
+        ST_GeographyFromText(sqlc.arg(coordinates)::text),
+        sqlc.arg(address),
+        sqlc.narg(image)) RETURNING *;
 
 -- name: GetCodeBarberShop :one
 
@@ -19,6 +19,27 @@ SELECT "shop_id"
 FROM "BarberShops"
 WHERE code_barber_shop = $1
 LIMIT 1;
+
+-- name: FindBarberShopNearbyLocations :many
+
+SELECT
+    owner_id,
+    shop_id,
+    status,
+    name,
+    coordinates,
+    address,
+    image,
+    list_image,
+    created_at,
+    CAST(ST_Distance(
+        ST_SetSRID(ST_MakePoint(sqlc.arg(current_longitude)::float, sqlc.arg(current_latitude)::float), 4326),
+        coordinates::geography
+    ) AS float) AS distance
+FROM "BarberShops"
+WHERE  ST_Distance(coordinates, ST_SetSRID(ST_MakePoint(sqlc.arg(current_longitude)::float, sqlc.arg(current_latitude)::float), 4326)) <= sqlc.arg(distance_in_meters)::int
+ORDER BY ST_Distance(coordinates, ST_SetSRID(ST_MakePoint(sqlc.arg(current_longitude)::float, sqlc.arg(current_latitude)::float), 4326));
+
 
 -- -- name: UpdateStore :one
 -- UPDATE store

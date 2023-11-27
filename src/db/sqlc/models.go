@@ -44,7 +44,7 @@ type BarberShop struct {
 	CodeBarberShop string         `json:"code_barber_shop"`
 	OwnerID        uuid.UUID      `json:"owner_id"`
 	Name           string         `json:"name"`
-	Location       float32        `json:"location"`
+	Coordinates    string         `json:"coordinates"`
 	Address        string         `json:"address"`
 	Image          sql.NullString `json:"image"`
 	ListImage      []string       `json:"list_image"`
@@ -110,6 +110,7 @@ type SessionsCustomer struct {
 	UserAgent    string    `json:"user_agent"`
 	ClientIp     string    `json:"client_ip"`
 	FcmDevice    string    `json:"fcm_device"`
+	Coordinates  string    `json:"coordinates"`
 	IsBlocked    bool      `json:"is_blocked"`
 	ExpiresAt    time.Time `json:"expires_at"`
 	CreateAt     time.Time `json:"create_at"`

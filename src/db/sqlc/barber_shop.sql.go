@@ -8,6 +8,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
@@ -18,22 +19,22 @@ const createBarberShops = `-- name: CreateBarberShops :one
 INSERT INTO "BarberShops" (code_barber_shop,
                            owner_id,
                            name,
-                           location,
+                           coordinates,
                            address,
                            image)
 VALUES ($1,
         $2,
-        $3,
-        $4,
+         $3,
+        ST_GeographyFromText($4::text),
         $5,
-        $6) RETURNING shop_id, code_barber_shop, owner_id, name, location, address, image, list_image, status, created_at, update_at
+        $6) RETURNING shop_id, code_barber_shop, owner_id, name, coordinates, address, image, list_image, status, created_at, update_at
 `
 
 type CreateBarberShopsParams struct {
 	CodeBarberShop string         `json:"code_barber_shop"`
 	OwnerID        uuid.UUID      `json:"owner_id"`
 	Name           string         `json:"name"`
-	Location       float32        `json:"location"`
+	Coordinates    string         `json:"coordinates"`
 	Address        string         `json:"address"`
 	Image          sql.NullString `json:"image"`
 }
@@ -43,7 +44,7 @@ func (q *Queries) CreateBarberShops(ctx context.Context, arg CreateBarberShopsPa
 		arg.CodeBarberShop,
 		arg.OwnerID,
 		arg.Name,
-		arg.Location,
+		arg.Coordinates,
 		arg.Address,
 		arg.Image,
 	)
@@ -53,7 +54,7 @@ func (q *Queries) CreateBarberShops(ctx context.Context, arg CreateBarberShopsPa
 		&i.CodeBarberShop,
 		&i.OwnerID,
 		&i.Name,
-		&i.Location,
+		&i.Coordinates,
 		&i.Address,
 		&i.Image,
 		pq.Array(&i.ListImage),
@@ -62,6 +63,80 @@ func (q *Queries) CreateBarberShops(ctx context.Context, arg CreateBarberShopsPa
 		&i.UpdateAt,
 	)
 	return i, err
+}
+
+const findBarberShopNearbyLocations = `-- name: FindBarberShopNearbyLocations :many
+
+SELECT
+    owner_id,
+    shop_id,
+    status,
+    name,
+    coordinates,
+    address,
+    image,
+    list_image,
+    created_at,
+    CAST(ST_Distance(
+        ST_SetSRID(ST_MakePoint($1::float, $2::float), 4326),
+        coordinates::geography
+    ) AS float) AS distance
+FROM "BarberShops"
+WHERE  ST_Distance(coordinates, ST_SetSRID(ST_MakePoint($1::float, $2::float), 4326)) <= $3::int
+ORDER BY ST_Distance(coordinates, ST_SetSRID(ST_MakePoint($1::float, $2::float), 4326))
+`
+
+type FindBarberShopNearbyLocationsParams struct {
+	CurrentLongitude float64 `json:"current_longitude"`
+	CurrentLatitude  float64 `json:"current_latitude"`
+	DistanceInMeters int32   `json:"distance_in_meters"`
+}
+
+type FindBarberShopNearbyLocationsRow struct {
+	OwnerID     uuid.UUID      `json:"owner_id"`
+	ShopID      uuid.UUID      `json:"shop_id"`
+	Status      int32          `json:"status"`
+	Name        string         `json:"name"`
+	Coordinates string         `json:"coordinates"`
+	Address     string         `json:"address"`
+	Image       sql.NullString `json:"image"`
+	ListImage   []string       `json:"list_image"`
+	CreatedAt   time.Time      `json:"created_at"`
+	Distance    float64        `json:"distance"`
+}
+
+func (q *Queries) FindBarberShopNearbyLocations(ctx context.Context, arg FindBarberShopNearbyLocationsParams) ([]FindBarberShopNearbyLocationsRow, error) {
+	rows, err := q.db.QueryContext(ctx, findBarberShopNearbyLocations, arg.CurrentLongitude, arg.CurrentLatitude, arg.DistanceInMeters)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []FindBarberShopNearbyLocationsRow{}
+	for rows.Next() {
+		var i FindBarberShopNearbyLocationsRow
+		if err := rows.Scan(
+			&i.OwnerID,
+			&i.ShopID,
+			&i.Status,
+			&i.Name,
+			&i.Coordinates,
+			&i.Address,
+			&i.Image,
+			pq.Array(&i.ListImage),
+			&i.CreatedAt,
+			&i.Distance,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getCodeBarberShop = `-- name: GetCodeBarberShop :one

@@ -57,3 +57,30 @@ func (maker *JWTMaker) VerifyToken(token string) (*Payload, error) {
 	return payload, nil
 }
 
+//!
+func (maker *JWTMaker) VerifyTokenCustomer(token string) (*CustomerPayload, error) {
+	keyFunc := func(token *jwt.Token) (interface{}, error) {
+		_, ok := token.Method.(*jwt.SigningMethodHMAC)
+		if !ok {
+			return nil, ErrInvalidToken
+		}
+		return []byte(maker.secretKey), nil
+	}
+
+	_, err := jwt.ParseWithClaims(token, &Payload{}, keyFunc)
+	if err != nil {
+		verr, ok := err.(*jwt.ValidationError)
+		if ok && errors.Is(verr.Inner, ErrExpiredToken) {
+			return nil, ErrExpiredToken
+		}
+		return nil, ErrInvalidToken
+	}
+	// payload, ok := jwtToken.Claims.(*Payload)
+	// if !ok {
+	// 	return nil, ErrInvalidToken
+	// }
+	payload := &CustomerPayload{}
+
+	return payload, nil
+}
+
