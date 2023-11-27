@@ -38,56 +38,56 @@ service CustomerBarberShop {
   // authencation
     rpc CreateCustomer (CreateCustomerRequest) returns (CreateCustomerResponse){
         option (google.api.http) = {
-                  post: "/v1/create_customer"
+                  post: "/v1/customers"
                   body: "*"
                 };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-          description: "API endpoint to create a account"
-          summary: "Create a account"
+          summary: "Create a customer"
+          description: "API endpoint to create a customer account"
         };
-    }
-
-    rpc LoginCustomer (LoginCustomerRequest) returns (LoginCustomerResponse) {
-      option (google.api.http) = {
-        post: "/v1/authenticate_customer"
-        body: "*"
-      };
-      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-        description: "API endpoint for customer authentication" 
-        summary: "Authenticate a customer"
-      };
     }
 
     rpc UpdateCustomer (UpdateCustomerRequest) returns (UpdateCustomerResponse) {
       option (google.api.http) = {
-        patch: "/v1/authenticate_customer"
+        patch: "/v1/customers"
         body: "*"
       };
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-        description: "API endpoint for user authentication" 
-        summary: "Authenticate a user"
+        summary: "Update a customer"
+        description: "API endpoint to update customer information" 
+      };
+    }
+
+    rpc LoginCustomer (LoginCustomerRequest) returns (LoginCustomerResponse) {
+      option (google.api.http) = {
+        post: "/v1/customers/login"
+        body: "*"
+      };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        summary: "Customer login"
+        description: "API endpoint for customer authentication" 
       };
     }
 
     rpc RefreshTokenCustomer (RefreshTokenCustomerRequest) returns (RefreshTokenCustomerResponse) {
       option (google.api.http) = {
-        post: "/v1/refresh_token_customer"
+        post: "/v1/customers/refresh-token"
         body: "*"
       };
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-        description: "API endpoint for user authentication" 
-        summary: "Authenticate a user"
+        summary: "Refresh customer token"
+        description: "API endpoint to refresh the authentication token for a customer" 
       };
     }
 
     rpc NewAppointment (CreateAppointmentRequest) returns (CreateAppointmentResponse){
       option (google.api.http) = {
-                post: "/v1/create_appointment"
+                post: "/v1/customers/appointments"
                 body: "*"
               };
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-        description: "API endpoint to create a new barber"
-        summary: "Create a service Appointments"
+        summary: "Create a new appointment"
+        description: "API endpoint to create a new appointment for a customer"
       };
     }
 }
