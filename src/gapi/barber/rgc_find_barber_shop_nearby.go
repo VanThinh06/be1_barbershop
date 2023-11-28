@@ -20,12 +20,11 @@ func (server *Server) FindBarberShopsNearby(ctx context.Context, req *barber.Fin
 		if err != nil {
 			return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 		}
+
 		_, err = server.tokenMaker.VerifyTokenCustomer(accessToken)
 		if err != nil {
 			return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 		}
-
-		//TODO check err AuthorizeUser
 	}
 
 	arg := db.FindBarberShopNearbyLocationsParams{

@@ -65,40 +65,6 @@ func local_request_CustomerBarberShop_CreateCustomer_0(ctx context.Context, mars
 
 }
 
-func request_CustomerBarberShop_LoginCustomer_0(ctx context.Context, marshaler runtime.Marshaler, client CustomerBarberShopClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq LoginCustomerRequest
-	var metadata runtime.ServerMetadata
-
-	newReader, berr := utilities.IOReaderFactory(req.Body)
-	if berr != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
-	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-
-	msg, err := client.LoginCustomer(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-
-}
-
-func local_request_CustomerBarberShop_LoginCustomer_0(ctx context.Context, marshaler runtime.Marshaler, server CustomerBarberShopServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq LoginCustomerRequest
-	var metadata runtime.ServerMetadata
-
-	newReader, berr := utilities.IOReaderFactory(req.Body)
-	if berr != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
-	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-
-	msg, err := server.LoginCustomer(ctx, &protoReq)
-	return msg, metadata, err
-
-}
-
 func request_CustomerBarberShop_UpdateCustomer_0(ctx context.Context, marshaler runtime.Marshaler, client CustomerBarberShopClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq UpdateCustomerRequest
 	var metadata runtime.ServerMetadata
@@ -129,6 +95,40 @@ func local_request_CustomerBarberShop_UpdateCustomer_0(ctx context.Context, mars
 	}
 
 	msg, err := server.UpdateCustomer(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+func request_CustomerBarberShop_LoginCustomer_0(ctx context.Context, marshaler runtime.Marshaler, client CustomerBarberShopClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq LoginCustomerRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.LoginCustomer(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_CustomerBarberShop_LoginCustomer_0(ctx context.Context, marshaler runtime.Marshaler, server CustomerBarberShopServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq LoginCustomerRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.LoginCustomer(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -215,7 +215,7 @@ func RegisterCustomerBarberShopHandlerServer(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.CustomerBarberShop/CreateCustomer", runtime.WithHTTPPathPattern("/v1/create_customer"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.CustomerBarberShop/CreateCustomer", runtime.WithHTTPPathPattern("/v1/customers"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -232,31 +232,6 @@ func RegisterCustomerBarberShopHandlerServer(ctx context.Context, mux *runtime.S
 
 	})
 
-	mux.Handle("POST", pattern_CustomerBarberShop_LoginCustomer_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		var stream runtime.ServerTransportStream
-		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.CustomerBarberShop/LoginCustomer", runtime.WithHTTPPathPattern("/v1/authenticate_customer"))
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := local_request_CustomerBarberShop_LoginCustomer_0(annotatedContext, inboundMarshaler, server, req, pathParams)
-		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
-		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
-		if err != nil {
-			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_CustomerBarberShop_LoginCustomer_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
 	mux.Handle("PATCH", pattern_CustomerBarberShop_UpdateCustomer_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -265,7 +240,7 @@ func RegisterCustomerBarberShopHandlerServer(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.CustomerBarberShop/UpdateCustomer", runtime.WithHTTPPathPattern("/v1/authenticate_customer"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.CustomerBarberShop/UpdateCustomer", runtime.WithHTTPPathPattern("/v1/customers"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -282,6 +257,31 @@ func RegisterCustomerBarberShopHandlerServer(ctx context.Context, mux *runtime.S
 
 	})
 
+	mux.Handle("POST", pattern_CustomerBarberShop_LoginCustomer_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.CustomerBarberShop/LoginCustomer", runtime.WithHTTPPathPattern("/v1/customers/login"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_CustomerBarberShop_LoginCustomer_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_CustomerBarberShop_LoginCustomer_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("POST", pattern_CustomerBarberShop_RefreshTokenCustomer_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -290,7 +290,7 @@ func RegisterCustomerBarberShopHandlerServer(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.CustomerBarberShop/RefreshTokenCustomer", runtime.WithHTTPPathPattern("/v1/refresh_token_customer"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.CustomerBarberShop/RefreshTokenCustomer", runtime.WithHTTPPathPattern("/v1/customers/refresh-token"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -315,7 +315,7 @@ func RegisterCustomerBarberShopHandlerServer(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.CustomerBarberShop/NewAppointment", runtime.WithHTTPPathPattern("/v1/create_appointment"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.CustomerBarberShop/NewAppointment", runtime.WithHTTPPathPattern("/v1/customers/appointments"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -379,7 +379,7 @@ func RegisterCustomerBarberShopHandlerClient(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.CustomerBarberShop/CreateCustomer", runtime.WithHTTPPathPattern("/v1/create_customer"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.CustomerBarberShop/CreateCustomer", runtime.WithHTTPPathPattern("/v1/customers"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -395,35 +395,13 @@ func RegisterCustomerBarberShopHandlerClient(ctx context.Context, mux *runtime.S
 
 	})
 
-	mux.Handle("POST", pattern_CustomerBarberShop_LoginCustomer_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.CustomerBarberShop/LoginCustomer", runtime.WithHTTPPathPattern("/v1/authenticate_customer"))
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_CustomerBarberShop_LoginCustomer_0(annotatedContext, inboundMarshaler, client, req, pathParams)
-		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
-		if err != nil {
-			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_CustomerBarberShop_LoginCustomer_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
 	mux.Handle("PATCH", pattern_CustomerBarberShop_UpdateCustomer_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.CustomerBarberShop/UpdateCustomer", runtime.WithHTTPPathPattern("/v1/authenticate_customer"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.CustomerBarberShop/UpdateCustomer", runtime.WithHTTPPathPattern("/v1/customers"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -439,13 +417,35 @@ func RegisterCustomerBarberShopHandlerClient(ctx context.Context, mux *runtime.S
 
 	})
 
+	mux.Handle("POST", pattern_CustomerBarberShop_LoginCustomer_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.CustomerBarberShop/LoginCustomer", runtime.WithHTTPPathPattern("/v1/customers/login"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_CustomerBarberShop_LoginCustomer_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_CustomerBarberShop_LoginCustomer_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("POST", pattern_CustomerBarberShop_RefreshTokenCustomer_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.CustomerBarberShop/RefreshTokenCustomer", runtime.WithHTTPPathPattern("/v1/refresh_token_customer"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.CustomerBarberShop/RefreshTokenCustomer", runtime.WithHTTPPathPattern("/v1/customers/refresh-token"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -467,7 +467,7 @@ func RegisterCustomerBarberShopHandlerClient(ctx context.Context, mux *runtime.S
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.CustomerBarberShop/NewAppointment", runtime.WithHTTPPathPattern("/v1/create_appointment"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.CustomerBarberShop/NewAppointment", runtime.WithHTTPPathPattern("/v1/customers/appointments"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -487,23 +487,23 @@ func RegisterCustomerBarberShopHandlerClient(ctx context.Context, mux *runtime.S
 }
 
 var (
-	pattern_CustomerBarberShop_CreateCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "create_customer"}, ""))
+	pattern_CustomerBarberShop_CreateCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "customers"}, ""))
 
-	pattern_CustomerBarberShop_LoginCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "authenticate_customer"}, ""))
+	pattern_CustomerBarberShop_UpdateCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "customers"}, ""))
 
-	pattern_CustomerBarberShop_UpdateCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "authenticate_customer"}, ""))
+	pattern_CustomerBarberShop_LoginCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "customers", "login"}, ""))
 
-	pattern_CustomerBarberShop_RefreshTokenCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "refresh_token_customer"}, ""))
+	pattern_CustomerBarberShop_RefreshTokenCustomer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "customers", "refresh-token"}, ""))
 
-	pattern_CustomerBarberShop_NewAppointment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "create_appointment"}, ""))
+	pattern_CustomerBarberShop_NewAppointment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "customers", "appointments"}, ""))
 )
 
 var (
 	forward_CustomerBarberShop_CreateCustomer_0 = runtime.ForwardResponseMessage
 
-	forward_CustomerBarberShop_LoginCustomer_0 = runtime.ForwardResponseMessage
-
 	forward_CustomerBarberShop_UpdateCustomer_0 = runtime.ForwardResponseMessage
+
+	forward_CustomerBarberShop_LoginCustomer_0 = runtime.ForwardResponseMessage
 
 	forward_CustomerBarberShop_RefreshTokenCustomer_0 = runtime.ForwardResponseMessage
 

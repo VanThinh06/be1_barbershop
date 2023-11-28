@@ -7,6 +7,7 @@ import (
 	"barbershop/src/shared/utils"
 	"context"
 	"database/sql"
+	"fmt"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -14,17 +15,16 @@ import (
 )
 
 func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCustomerRequest) (*customer.LoginCustomerResponse, error) {
-	
+
 	contact := db.GetContactCustomerParams{
 		Column1: "phone",
 		Email:   req.Username,
 	}
-	// validate 
+	// validate
 	err := utils.ValidatePhoneNumber(req.Username)
-	if err != nil{
+	if err != nil {
 		contact.Column1 = "email"
 	}
-	
 
 	// Retrieve barber information from the store
 	res, err := server.store.GetContactCustomer(ctx, contact)
@@ -46,9 +46,9 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 
 	customerPayload := token.Customer{
 		CustomerID: res.CustomerID,
-		Role: 0,
-		Phone: res.Phone,
-		Email: res.Email,
+		Role:       0,
+		Phone:      res.Phone,
+		Email:      res.Email,
 	}
 	// Create an access token for the authenticated barber
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
@@ -60,7 +60,6 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 		return nil, status.Errorf(codes.Internal, "failed to create token %s", err)
 	}
 
-	
 	// Create a refresh token for the authenticated barber
 	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
 		customerPayload,
@@ -73,14 +72,17 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 
 	mtdt := server.extractMetadata(ctx)
 	// Create a session for the barber
+	coordinates := fmt.Sprintf("POINT(%.7f %.7f)", 16.059663965551348, 108.21712790268852)
 	session, err := server.store.CreateSessionsCustomer(ctx, db.CreateSessionsCustomerParams{
 		ID:           refreshPayload.ID,
-		CustomerID:     refreshPayload.Customer.CustomerID,
+		CustomerID:   refreshPayload.Customer.CustomerID,
 		RefreshToken: refreshToken,
 		UserAgent:    mtdt.UserAgent,
 		ClientIp:     mtdt.ClientIP,
 		IsBlocked:    false,
 		ExpiresAt:    refreshPayload.ExpiredAt,
+		FcmDevice:    "FcmDevice",
+		Coordinates:  coordinates,
 	})
 	if err != nil {
 		// If there's an error creating the session, return an internal server error

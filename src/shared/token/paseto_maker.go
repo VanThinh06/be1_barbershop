@@ -1,6 +1,7 @@
 package token
 
 import (
+	"barbershop/src/shared/utils"
 	"fmt"
 	"time"
 
@@ -54,8 +55,17 @@ func (maker *PasetoMaker) VerifyToken(token string) (*Payload, error) {
 }
 func (maker *PasetoMaker) VerifyTokenCustomer(token string) (*CustomerPayload, error) {
 	payload := &CustomerPayload{}
+	config, err := utils.LoadConfig(".")
+	if err != nil {
+		return nil, ErrInvalidToken
+	}
+	
+	maker = &PasetoMaker{
+		paseto:       paseto.NewV2(),
+		symmetricKey: []byte(config.TokenSymmetricKeyCustomer),
+	}
 
-	err := maker.paseto.Decrypt(token, maker.symmetricKey, payload, nil)
+	err = maker.paseto.Decrypt(token, maker.symmetricKey, payload, nil)
 	if err != nil {
 		return nil, ErrInvalidToken
 	}
@@ -67,7 +77,6 @@ func (maker *PasetoMaker) VerifyTokenCustomer(token string) (*CustomerPayload, e
 
 	return payload, nil
 }
-
 
 // / paseto customer
 type PasetoMakerCustomer struct {
@@ -113,7 +122,6 @@ func (maker *PasetoMakerCustomer) VerifyToken(token string) (*CustomerPayload, e
 
 	return payload, nil
 }
-
 
 func (maker *PasetoMakerCustomer) RefreshToken(id uuid.UUID, customer Customer, duration time.Duration) (string, *CustomerPayload, error) {
 	payload, err := RePayloadCustomer(id, customer, duration)

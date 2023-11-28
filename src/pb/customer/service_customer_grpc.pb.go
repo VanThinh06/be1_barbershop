@@ -20,8 +20,8 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	CustomerBarberShop_CreateCustomer_FullMethodName       = "/pb.CustomerBarberShop/CreateCustomer"
-	CustomerBarberShop_LoginCustomer_FullMethodName        = "/pb.CustomerBarberShop/LoginCustomer"
 	CustomerBarberShop_UpdateCustomer_FullMethodName       = "/pb.CustomerBarberShop/UpdateCustomer"
+	CustomerBarberShop_LoginCustomer_FullMethodName        = "/pb.CustomerBarberShop/LoginCustomer"
 	CustomerBarberShop_RefreshTokenCustomer_FullMethodName = "/pb.CustomerBarberShop/RefreshTokenCustomer"
 	CustomerBarberShop_NewAppointment_FullMethodName       = "/pb.CustomerBarberShop/NewAppointment"
 )
@@ -32,8 +32,8 @@ const (
 type CustomerBarberShopClient interface {
 	// authencation
 	CreateCustomer(ctx context.Context, in *CreateCustomerRequest, opts ...grpc.CallOption) (*CreateCustomerResponse, error)
-	LoginCustomer(ctx context.Context, in *LoginCustomerRequest, opts ...grpc.CallOption) (*LoginCustomerResponse, error)
 	UpdateCustomer(ctx context.Context, in *UpdateCustomerRequest, opts ...grpc.CallOption) (*UpdateCustomerResponse, error)
+	LoginCustomer(ctx context.Context, in *LoginCustomerRequest, opts ...grpc.CallOption) (*LoginCustomerResponse, error)
 	RefreshTokenCustomer(ctx context.Context, in *RefreshTokenCustomerRequest, opts ...grpc.CallOption) (*RefreshTokenCustomerResponse, error)
 	NewAppointment(ctx context.Context, in *CreateAppointmentRequest, opts ...grpc.CallOption) (*CreateAppointmentResponse, error)
 }
@@ -55,18 +55,18 @@ func (c *customerBarberShopClient) CreateCustomer(ctx context.Context, in *Creat
 	return out, nil
 }
 
-func (c *customerBarberShopClient) LoginCustomer(ctx context.Context, in *LoginCustomerRequest, opts ...grpc.CallOption) (*LoginCustomerResponse, error) {
-	out := new(LoginCustomerResponse)
-	err := c.cc.Invoke(ctx, CustomerBarberShop_LoginCustomer_FullMethodName, in, out, opts...)
+func (c *customerBarberShopClient) UpdateCustomer(ctx context.Context, in *UpdateCustomerRequest, opts ...grpc.CallOption) (*UpdateCustomerResponse, error) {
+	out := new(UpdateCustomerResponse)
+	err := c.cc.Invoke(ctx, CustomerBarberShop_UpdateCustomer_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *customerBarberShopClient) UpdateCustomer(ctx context.Context, in *UpdateCustomerRequest, opts ...grpc.CallOption) (*UpdateCustomerResponse, error) {
-	out := new(UpdateCustomerResponse)
-	err := c.cc.Invoke(ctx, CustomerBarberShop_UpdateCustomer_FullMethodName, in, out, opts...)
+func (c *customerBarberShopClient) LoginCustomer(ctx context.Context, in *LoginCustomerRequest, opts ...grpc.CallOption) (*LoginCustomerResponse, error) {
+	out := new(LoginCustomerResponse)
+	err := c.cc.Invoke(ctx, CustomerBarberShop_LoginCustomer_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -97,8 +97,8 @@ func (c *customerBarberShopClient) NewAppointment(ctx context.Context, in *Creat
 type CustomerBarberShopServer interface {
 	// authencation
 	CreateCustomer(context.Context, *CreateCustomerRequest) (*CreateCustomerResponse, error)
-	LoginCustomer(context.Context, *LoginCustomerRequest) (*LoginCustomerResponse, error)
 	UpdateCustomer(context.Context, *UpdateCustomerRequest) (*UpdateCustomerResponse, error)
+	LoginCustomer(context.Context, *LoginCustomerRequest) (*LoginCustomerResponse, error)
 	RefreshTokenCustomer(context.Context, *RefreshTokenCustomerRequest) (*RefreshTokenCustomerResponse, error)
 	NewAppointment(context.Context, *CreateAppointmentRequest) (*CreateAppointmentResponse, error)
 	mustEmbedUnimplementedCustomerBarberShopServer()
@@ -111,11 +111,11 @@ type UnimplementedCustomerBarberShopServer struct {
 func (UnimplementedCustomerBarberShopServer) CreateCustomer(context.Context, *CreateCustomerRequest) (*CreateCustomerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCustomer not implemented")
 }
-func (UnimplementedCustomerBarberShopServer) LoginCustomer(context.Context, *LoginCustomerRequest) (*LoginCustomerResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method LoginCustomer not implemented")
-}
 func (UnimplementedCustomerBarberShopServer) UpdateCustomer(context.Context, *UpdateCustomerRequest) (*UpdateCustomerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCustomer not implemented")
+}
+func (UnimplementedCustomerBarberShopServer) LoginCustomer(context.Context, *LoginCustomerRequest) (*LoginCustomerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoginCustomer not implemented")
 }
 func (UnimplementedCustomerBarberShopServer) RefreshTokenCustomer(context.Context, *RefreshTokenCustomerRequest) (*RefreshTokenCustomerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefreshTokenCustomer not implemented")
@@ -154,24 +154,6 @@ func _CustomerBarberShop_CreateCustomer_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CustomerBarberShop_LoginCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginCustomerRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CustomerBarberShopServer).LoginCustomer(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CustomerBarberShop_LoginCustomer_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CustomerBarberShopServer).LoginCustomer(ctx, req.(*LoginCustomerRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _CustomerBarberShop_UpdateCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateCustomerRequest)
 	if err := dec(in); err != nil {
@@ -186,6 +168,24 @@ func _CustomerBarberShop_UpdateCustomer_Handler(srv interface{}, ctx context.Con
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CustomerBarberShopServer).UpdateCustomer(ctx, req.(*UpdateCustomerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CustomerBarberShop_LoginCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginCustomerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CustomerBarberShopServer).LoginCustomer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CustomerBarberShop_LoginCustomer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CustomerBarberShopServer).LoginCustomer(ctx, req.(*LoginCustomerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -238,12 +238,12 @@ var CustomerBarberShop_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CustomerBarberShop_CreateCustomer_Handler,
 		},
 		{
-			MethodName: "LoginCustomer",
-			Handler:    _CustomerBarberShop_LoginCustomer_Handler,
-		},
-		{
 			MethodName: "UpdateCustomer",
 			Handler:    _CustomerBarberShop_UpdateCustomer_Handler,
+		},
+		{
+			MethodName: "LoginCustomer",
+			Handler:    _CustomerBarberShop_LoginCustomer_Handler,
 		},
 		{
 			MethodName: "RefreshTokenCustomer",
