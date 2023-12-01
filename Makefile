@@ -4,7 +4,7 @@ networdcreate:
 				docker network create my-network
 
 postgrespostgis:
-				docker run --name my-postgres -p 5432:5432 --network my-network -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=mypassword -e POSTGRES_DB=mydatabase -d postgis/postgis
+				docker run --name my-postgres -p 5433:5432 --network my-network -e POSTGRES_USER=mtt16 -e POSTGRES_PASSWORD=Vanthinh11 -e POSTGRES_DB=BarberShop -d postgis/postgis
 postgis:
 				docker run --name postgis1 -e POSTGRES_PASSWORD=Vanthinh11 -d -p 5433:5432 postgis/postgis
 

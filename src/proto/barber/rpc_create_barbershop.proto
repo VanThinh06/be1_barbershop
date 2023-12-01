@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package pb;
 import "barber/barber_shops.proto";
-
+import "google/protobuf/wrappers.proto";
 
 option go_package = "barbershop/src/pb/barber";
 
@@ -11,8 +11,8 @@ message CreateBarberShopsRequest {
     string code_barber_shop = 1;
     string name = 2;
     string address = 3;
-    float longitude = 4;
-    float latitude = 5;
+    google.protobuf.DoubleValue longitude = 4;
+    google.protobuf.DoubleValue latitude = 5;
     optional string image = 6;
 }
 

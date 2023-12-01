@@ -5,6 +5,7 @@ import (
 	"barbershop/src/pb/barber"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 func convertBarber(res db.Barber) *barber.Barber {
@@ -77,6 +78,8 @@ func ConvertListBarberShopsNearby(res []db.FindBarberShopNearbyLocationsRow) []*
 			ListImage:   barberShop.ListImage,
 			CreatedAt:   timestamppb.New(barberShop.CreatedAt),
 			Distance:    float32(barberShop.Distance),
+			Longitude:   wrapperspb.Double(barberShop.Longitude),
+			Latitude:    wrapperspb.Double(barberShop.Latitude),
 		}
 
 		barberShops = append(barberShops, barberShopPB)

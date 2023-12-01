@@ -8,11 +8,10 @@ INSERT INTO "BarberShops" (code_barber_shop,
                            image)
 VALUES (sqlc.arg(code_barber_shop),
         sqlc.arg(owner_id),
-         sqlc.arg(name),
-        ST_GeographyFromText(sqlc.arg(coordinates)::text),
+        sqlc.arg(name),
+        ST_GeographyFromText('POINT(' || sqlc.arg(longitude)::float8 || ' ' || sqlc.arg(latitude)::float8 || ')'),
         sqlc.arg(address),
         sqlc.narg(image)) RETURNING *;
-
 -- name: GetCodeBarberShop :one
 
 SELECT "shop_id"
@@ -32,6 +31,8 @@ SELECT
     image,
     list_image,
     created_at,
+    CAST(ST_X(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS longitude,
+    CAST(ST_Y(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS latitude,
     CAST(ST_Distance(
         ST_SetSRID(ST_MakePoint(sqlc.arg(current_longitude)::float, sqlc.arg(current_latitude)::float), 4326),
         coordinates::geography

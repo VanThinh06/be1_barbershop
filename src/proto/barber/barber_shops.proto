@@ -3,6 +3,7 @@ syntax = "proto3";
 package pb;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
 
 option go_package = "barbershop/src/pb/barber";
 
@@ -17,4 +18,8 @@ message BarberShops {
     repeated string list_image = 8;
     google.protobuf.Timestamp created_at = 9;
     float distance = 10;
+    google.protobuf.DoubleValue longitude = 11;
+    google.protobuf.DoubleValue latitude = 12;
+    bool is_reputation = 13;
+    
 }

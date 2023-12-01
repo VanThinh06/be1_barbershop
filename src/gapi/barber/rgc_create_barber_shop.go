@@ -5,7 +5,6 @@ import (
 	"barbershop/src/pb/barber"
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgconn"
@@ -20,13 +19,12 @@ func (server *Server) NewBarberShops(ctx context.Context, req *barber.CreateBarb
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
-	coordinates := fmt.Sprintf("POINT(%.7f %.7f)", req.Longitude, req.Latitude)
-
 	arg := db.CreateBarberShopsParams{
 		CodeBarberShop: req.GetCodeBarberShop(),
 		OwnerID:        authPayload.Barber.BarberID,
 		Name:           req.GetName(),
-		Coordinates:    coordinates,
+		Longitude:      req.Longitude.Value,
+		Latitude:       req.Latitude.Value,
 		Address:        req.GetAddress(),
 		Image: sql.NullString{
 			String: req.GetImage(),
