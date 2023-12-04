@@ -391,6 +391,14 @@
         },
         "isReputation": {
           "type": "boolean"
+        },
+        "rate": {
+          "type": "number",
+          "format": "float"
+        },
+        "facility": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

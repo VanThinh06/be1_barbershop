@@ -21,5 +21,6 @@ message BarberShops {
     google.protobuf.DoubleValue longitude = 11;
     google.protobuf.DoubleValue latitude = 12;
     bool is_reputation = 13;
-    
+    float rate = 14;
+    int32 facility = 15;
 }
