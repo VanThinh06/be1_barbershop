@@ -18,16 +18,18 @@ INSERT INTO "Customers" (
     email,
     phone,
     gender,
-    hashed_password
+    hashed_password,
+    is_social_auth
   )
 VALUES (
     $1,
     $2,
     $3,
     $4,
-    $5
+    $5,
+    $6::bool
   )
-RETURNING customer_id, name, email, phone, gender, hashed_password, avatar, password_changed_at, create_at, update_at
+RETURNING customer_id, name, email, phone, gender, hashed_password, avatar, password_changed_at, create_at, update_at, is_social_auth
 `
 
 type CreateCustomerParams struct {
@@ -36,6 +38,7 @@ type CreateCustomerParams struct {
 	Phone          string `json:"phone"`
 	Gender         int32  `json:"gender"`
 	HashedPassword string `json:"hashed_password"`
+	IsSocialAuth   bool   `json:"is_social_auth"`
 }
 
 func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) (Customer, error) {
@@ -45,6 +48,7 @@ func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) 
 		arg.Phone,
 		arg.Gender,
 		arg.HashedPassword,
+		arg.IsSocialAuth,
 	)
 	var i Customer
 	err := row.Scan(
@@ -58,29 +62,30 @@ func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) 
 		&i.PasswordChangedAt,
 		&i.CreateAt,
 		&i.UpdateAt,
+		&i.IsSocialAuth,
 	)
 	return i, err
 }
 
 const getContactCustomer = `-- name: GetContactCustomer :one
-SELECT customer_id, name, email, phone, gender, hashed_password, avatar, password_changed_at, create_at, update_at
+SELECT customer_id, name, email, phone, gender, hashed_password, avatar, password_changed_at, create_at, update_at, is_social_auth
 FROM "Customers"
 WHERE
     (
-        ($1 = 'email' AND email = $2)
+        ($2::varchar = 'email' AND email = $1)
         OR
-        ($1 = 'phone' AND phone = $2)
+        ($2::varchar = 'phone' AND phone = $1)
     )
 LIMIT 1
 `
 
 type GetContactCustomerParams struct {
-	Column1 interface{} `json:"column_1"`
-	Email   string      `json:"email"`
+	Email        string `json:"email"`
+	TypeUsername string `json:"type_username"`
 }
 
 func (q *Queries) GetContactCustomer(ctx context.Context, arg GetContactCustomerParams) (Customer, error) {
-	row := q.db.QueryRowContext(ctx, getContactCustomer, arg.Column1, arg.Email)
+	row := q.db.QueryRowContext(ctx, getContactCustomer, arg.Email, arg.TypeUsername)
 	var i Customer
 	err := row.Scan(
 		&i.CustomerID,
@@ -93,6 +98,7 @@ func (q *Queries) GetContactCustomer(ctx context.Context, arg GetContactCustomer
 		&i.PasswordChangedAt,
 		&i.CreateAt,
 		&i.UpdateAt,
+		&i.IsSocialAuth,
 	)
 	return i, err
 }
@@ -111,7 +117,7 @@ set name = coalesce($1, name),
   ),
   "update_at" = $8
   WHERE "customer_id" = $9
-RETURNING customer_id, name, email, phone, gender, hashed_password, avatar, password_changed_at, create_at, update_at
+RETURNING customer_id, name, email, phone, gender, hashed_password, avatar, password_changed_at, create_at, update_at, is_social_auth
 `
 
 type UpdateCustomerParams struct {
@@ -150,6 +156,7 @@ func (q *Queries) UpdateCustomer(ctx context.Context, arg UpdateCustomerParams) 
 		&i.PasswordChangedAt,
 		&i.CreateAt,
 		&i.UpdateAt,
+		&i.IsSocialAuth,
 	)
 	return i, err
 }

@@ -13,6 +13,7 @@ message CreateCustomerRequest{
     string phone = 3;
     int32 gender = 4;
     string password = 5;
+    bool is_social_auth = 6;
 }
 
 message CreateCustomerResponse {

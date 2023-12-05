@@ -67,6 +67,7 @@ type Customer struct {
 	PasswordChangedAt time.Time      `json:"password_changed_at"`
 	CreateAt          time.Time      `json:"create_at"`
 	UpdateAt          sql.NullTime   `json:"update_at"`
+	IsSocialAuth      sql.NullBool   `json:"is_social_auth"`
 }
 
 type Service struct {
@@ -117,4 +118,5 @@ type SessionsCustomer struct {
 	IsBlocked    bool      `json:"is_blocked"`
 	ExpiresAt    time.Time `json:"expires_at"`
 	CreateAt     time.Time `json:"create_at"`
+	Timezone     string    `json:"timezone"`
 }

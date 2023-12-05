@@ -8,7 +8,9 @@ INSERT INTO "SessionsCustomer" (
                                fcm_device,
                                is_blocked,
                                coordinates,
-                               expires_at)
+                               expires_at,
+                               timezone,
+                               )
 VALUES ($1,
         $2,
         $3,
@@ -17,7 +19,8 @@ VALUES ($1,
         $6,
         $7,
         $8,
-        $9
+        $9,
+        $10,
         ) RETURNING *;
 
 -- name: GetSessionsCustomer :one

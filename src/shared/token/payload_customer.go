@@ -5,18 +5,21 @@ import (
 
 	"github.com/google/uuid"
 )
+
 type Customer struct {
 	CustomerID uuid.UUID `json:"username"`
-	Role     int32     `json:"role"`
-	Phone    string    `json:"phone"`
-	Email    string    `json:"email"`
+	Gender     int32     `json:"gender"`
+	Phone      string    `json:"phone"`
+	Email      string    `json:"email"`
+	FcmDevice  string    `json:"fcm_device"`
+	Timezone   string    `json:"timezone"`
 }
 
 type CustomerPayload struct {
-	ID        uuid.UUID     `json:"id"`
-	Customer    Customer `json:"customer"`
-	IssuedAt  time.Time     `json:"issued_at"`
-	ExpiredAt time.Time     `json:"expired_at"`
+	ID        uuid.UUID `json:"id"`
+	Customer  Customer  `json:"customer"`
+	IssuedAt  time.Time `json:"issued_at"`
+	ExpiredAt time.Time `json:"expired_at"`
 }
 
 func NewPayloadCustomer(customer Customer, duration time.Duration) (*CustomerPayload, error) {

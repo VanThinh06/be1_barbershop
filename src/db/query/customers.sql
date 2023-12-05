@@ -4,14 +4,16 @@ INSERT INTO "Customers" (
     email,
     phone,
     gender,
-    hashed_password
+    hashed_password,
+    is_social_auth
   )
 VALUES (
     $1,
     $2,
     $3,
     $4,
-    $5
+    $5,
+    sqlc.arg(is_social_auth)::bool
   )
 RETURNING *;
 
@@ -20,9 +22,9 @@ SELECT *
 FROM "Customers"
 WHERE
     (
-        ($1 = 'email' AND email = $2)
+        (sqlc.arg(type_username)::varchar = 'email' AND email = $1)
         OR
-        ($1 = 'phone' AND phone = $2)
+        (sqlc.arg(type_username)::varchar = 'phone' AND phone = $1)
     )
 LIMIT 1;
 

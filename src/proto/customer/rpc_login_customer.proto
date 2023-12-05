@@ -3,13 +3,17 @@ syntax = "proto3";
 package pb;
 import "customer/customer.proto";
 import "google/protobuf/timestamp.proto";
-
+import "google/protobuf/wrappers.proto";
 option go_package = "barbershop/src/pb/customer";
 
 
 message LoginCustomerRequest{
     string username = 1;
     string password = 2;
+    bool is_social_auth = 3;
+    string fcm_device = 4;
+    string timezone = 5;
+    string coordinates = 6; 
 }
 
 message LoginCustomerResponse {
@@ -19,4 +23,6 @@ message LoginCustomerResponse {
     google.protobuf.Timestamp access_token_expires_at =4;
     string refresh_token = 5; 
     google.protobuf.Timestamp  refresh_token_expires_at = 6;
+    google.protobuf.DoubleValue longitude = 7;
+    google.protobuf.DoubleValue latitude = 8;
 }

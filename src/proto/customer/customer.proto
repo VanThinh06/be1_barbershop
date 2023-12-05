@@ -16,4 +16,5 @@ message Customer {
     google.protobuf.Timestamp created_at = 8;
     google.protobuf.Timestamp update_at = 9;
     google.protobuf.Timestamp password_changed_at = 10;
+    bool is_social_auth = 11;
 }

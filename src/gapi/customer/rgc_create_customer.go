@@ -24,7 +24,7 @@ func (server *Server) CreateCustomer(ctx context.Context, req *customer.CreateCu
 	hashedPassword, err := utils.HashPassword(req.GetPassword())
 	if err != nil {
 		// If there's an error hashing the password, return an unimplemented error
-		return nil, status.Errorf(codes.Unimplemented, "failed to password %s", err)
+		return nil, status.Error(codes.Unimplemented, "login account is incorrect")
 	}
 
 	// Prepare the arguments for creating a new barber
@@ -33,6 +33,7 @@ func (server *Server) CreateCustomer(ctx context.Context, req *customer.CreateCu
 		Phone:          req.GetPhone(),
 		Gender:         req.GetGender(),
 		Email:          req.GetEmail(),
+		IsSocialAuth:   req.GetIsSocialAuth(),
 		HashedPassword: hashedPassword,
 	}
 
@@ -45,20 +46,20 @@ func (server *Server) CreateCustomer(ctx context.Context, req *customer.CreateCu
 			case "unique_violation":
 				if pqErr.Constraint == "Customers_pkey" {
 					// If the barber account already exists, return an already exists error
-					return nil, status.Errorf(codes.AlreadyExists, "This account has already existed")
+					return nil, status.Errorf(codes.AlreadyExists, "this account has already existed")
 				}
 				if pqErr.Constraint == "Customers_phone_key" {
 					// If the phone number already exists, return an already exists error
-					return nil, status.Errorf(codes.AlreadyExists, "This phone has already existed")
+					return nil, status.Errorf(codes.AlreadyExists, "this phone has already existed")
 				}
 				if pqErr.Constraint == "Customers_email_key" {
 					// If the email already exists, return an already exists error
-					return nil, status.Errorf(codes.AlreadyExists, "This email has already existed")
+					return nil, status.Errorf(codes.AlreadyExists, "this email has already existed")
 				}
 			}
 		}
 		// If the error is not a specific case, return a forbidden error
-		return nil, status.Errorf(http.StatusForbidden, "failed to create account %s", err)
+		return nil, status.Error(http.StatusForbidden, "account creation failed")
 	}
 
 	// Prepare the response with the newly created barber

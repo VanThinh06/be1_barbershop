@@ -18,6 +18,7 @@ func convertCustomer(res db.Customer) *customer.Customer {
 		CreatedAt:         timestamppb.New(res.CreateAt),
 		UpdateAt:          timestamppb.New(res.UpdateAt.Time),
 		PasswordChangedAt: timestamppb.New(res.PasswordChangedAt),
+		IsSocialAuth:      res.IsSocialAuth.Bool,
 	}
 }
 

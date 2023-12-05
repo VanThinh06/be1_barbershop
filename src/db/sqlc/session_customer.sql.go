@@ -22,7 +22,9 @@ INSERT INTO "SessionsCustomer" (
                                fcm_device,
                                is_blocked,
                                coordinates,
-                               expires_at)
+                               expires_at,
+                               timezone
+                               )
 VALUES ($1,
         $2,
         $3,
@@ -31,8 +33,9 @@ VALUES ($1,
         $6,
         $7,
         $8,
-        $9
-        ) RETURNING id, customer_id, refresh_token, user_agent, client_ip, fcm_device, coordinates, is_blocked, expires_at, create_at
+        $9,
+        $10
+        ) RETURNING id, customer_id, refresh_token, user_agent, client_ip, fcm_device, coordinates, is_blocked, expires_at, create_at, timezone
 `
 
 type CreateSessionsCustomerParams struct {
@@ -45,6 +48,7 @@ type CreateSessionsCustomerParams struct {
 	IsBlocked    bool      `json:"is_blocked"`
 	Coordinates  string    `json:"coordinates"`
 	ExpiresAt    time.Time `json:"expires_at"`
+	Timezone     string    `json:"timezone"`
 }
 
 func (q *Queries) CreateSessionsCustomer(ctx context.Context, arg CreateSessionsCustomerParams) (SessionsCustomer, error) {
@@ -58,6 +62,7 @@ func (q *Queries) CreateSessionsCustomer(ctx context.Context, arg CreateSessions
 		arg.IsBlocked,
 		arg.Coordinates,
 		arg.ExpiresAt,
+		arg.Timezone,
 	)
 	var i SessionsCustomer
 	err := row.Scan(
@@ -71,12 +76,13 @@ func (q *Queries) CreateSessionsCustomer(ctx context.Context, arg CreateSessions
 		&i.IsBlocked,
 		&i.ExpiresAt,
 		&i.CreateAt,
+		&i.Timezone,
 	)
 	return i, err
 }
 
 const getSessionsCustomer = `-- name: GetSessionsCustomer :one
-SELECT id, customer_id, refresh_token, user_agent, client_ip, fcm_device, coordinates, is_blocked, expires_at, create_at
+SELECT id, customer_id, refresh_token, user_agent, client_ip, fcm_device, coordinates, is_blocked, expires_at, create_at, timezone
 FROM "SessionsCustomer"
 WHERE id = $1
 LIMIT 1
@@ -96,6 +102,7 @@ func (q *Queries) GetSessionsCustomer(ctx context.Context, id uuid.UUID) (Sessio
 		&i.IsBlocked,
 		&i.ExpiresAt,
 		&i.CreateAt,
+		&i.Timezone,
 	)
 	return i, err
 }
@@ -105,7 +112,7 @@ UPDATE "SessionsCustomer"
 set refresh_token = $2,
     expires_at = $3
 WHERE id = $1
-RETURNING id, customer_id, refresh_token, user_agent, client_ip, fcm_device, coordinates, is_blocked, expires_at, create_at
+RETURNING id, customer_id, refresh_token, user_agent, client_ip, fcm_device, coordinates, is_blocked, expires_at, create_at, timezone
 `
 
 type UpdateRefreshTokenSessionsCustomerParams struct {
@@ -128,6 +135,7 @@ func (q *Queries) UpdateRefreshTokenSessionsCustomer(ctx context.Context, arg Up
 		&i.IsBlocked,
 		&i.ExpiresAt,
 		&i.CreateAt,
+		&i.Timezone,
 	)
 	return i, err
 }
