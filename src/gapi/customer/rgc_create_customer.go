@@ -5,6 +5,7 @@ import (
 	"barbershop/src/pb/customer"
 	"barbershop/src/shared/utils"
 	"context"
+	"database/sql"
 	"net/http"
 
 	"github.com/lib/pq"
@@ -20,21 +21,26 @@ func (server *Server) CreateCustomer(ctx context.Context, req *customer.CreateCu
 		return nil, InValidArgumentError(validations)
 	}
 
-	// Hash the password provided in the request
 	hashedPassword, err := utils.HashPassword(req.GetPassword())
 	if err != nil {
 		// If there's an error hashing the password, return an unimplemented error
 		return nil, status.Error(codes.Unimplemented, "login account is incorrect")
 	}
+	if req.IsSocialAuth {
+		hashedPassword = ""
+	}
 
 	// Prepare the arguments for creating a new barber
 	arg := db.CreateCustomerParams{
-		Name:           req.GetName(),
-		Phone:          req.GetPhone(),
+		Name: req.GetName(),
+		Phone: sql.NullString{
+			String: req.GetPhone(),
+			Valid:  req.Phone != nil,
+		},
 		Gender:         req.GetGender(),
 		Email:          req.GetEmail(),
 		IsSocialAuth:   req.GetIsSocialAuth(),
-		HashedPassword: hashedPassword,
+		HashedPassword: sql.NullString{String: hashedPassword, Valid: hashedPassword != ""},
 	}
 
 	// Create the barber using the store
@@ -74,12 +80,16 @@ func validateCreateCustomer(req *customer.CreateCustomerRequest) (validations []
 		validations = append(validations, FieldValidation("email", err))
 	}
 
-	if err := utils.ValidatePhoneNumber(req.Phone); err != nil {
-		validations = append(validations, FieldValidation("phone", err))
+	if req.Phone != nil {
+		if err := utils.ValidatePhoneNumber(req.GetPhone()); err != nil {
+			validations = append(validations, FieldValidation("phone", err))
+		}
 	}
 
-	if err := utils.ValidatePassword(req.Password); err != nil {
-		validations = append(validations, FieldValidation("password", err))
+	if req.IsSocialAuth == false {
+		if err := utils.ValidatePassword(req.GetPassword()); err != nil {
+			validations = append(validations, FieldValidation("password", err))
+		}
 	}
 
 	if err := utils.ValidateFullName(req.Name); err != nil {

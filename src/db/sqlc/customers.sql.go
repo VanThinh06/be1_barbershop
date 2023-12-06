@@ -33,12 +33,12 @@ RETURNING customer_id, name, email, phone, gender, hashed_password, avatar, pass
 `
 
 type CreateCustomerParams struct {
-	Name           string `json:"name"`
-	Email          string `json:"email"`
-	Phone          string `json:"phone"`
-	Gender         int32  `json:"gender"`
-	HashedPassword string `json:"hashed_password"`
-	IsSocialAuth   bool   `json:"is_social_auth"`
+	Name           string         `json:"name"`
+	Email          string         `json:"email"`
+	Phone          sql.NullString `json:"phone"`
+	Gender         int32          `json:"gender"`
+	HashedPassword sql.NullString `json:"hashed_password"`
+	IsSocialAuth   bool           `json:"is_social_auth"`
 }
 
 func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) (Customer, error) {

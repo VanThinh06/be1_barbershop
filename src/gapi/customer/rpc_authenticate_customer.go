@@ -31,11 +31,6 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 
 	// Retrieve barber information from the store
 	res, err := server.store.GetContactCustomer(ctx, contact)
-	if req.IsSocialAuth {
-		if req.IsSocialAuth != res.IsSocialAuth.Bool {
-			return nil, status.Errorf(codes.NotFound, "unregistered account")
-		}
-	}
 
 	// If barber does not exist, return a 404 error
 	if err != nil {
@@ -45,10 +40,24 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 		return nil, status.Errorf(codes.Internal, "failed to get email barber %s", err)
 	}
 
+	if req.IsSocialAuth {
+		email, err := server.authVerifyJWTGG(ctx)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to get email barber %s", err)
+		}
+		if email != req.Username {
+			return nil, status.Errorf(codes.Internal, "failed to get email barber %s", err)
+		}
+	}
+
+	
+
 	// Check the password provided against the stored hashed password
-	err = utils.CheckPassword(req.Password, res.HashedPassword)
-	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, "failed to check the password for")
+	if req.IsSocialAuth == false {
+		err = utils.CheckPassword(req.Password, res.HashedPassword.String)
+		if err != nil {
+			return nil, status.Error(codes.Unauthenticated, "failed to check the password for")
+		}
 	}
 
 	customerPayload := token.Customer{

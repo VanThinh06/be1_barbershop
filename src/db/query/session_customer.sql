@@ -9,7 +9,7 @@ INSERT INTO "SessionsCustomer" (
                                is_blocked,
                                coordinates,
                                expires_at,
-                               timezone,
+                               timezone
                                )
 VALUES ($1,
         $2,
@@ -20,7 +20,7 @@ VALUES ($1,
         $7,
         $8,
         $9,
-        $10,
+        $10
         ) RETURNING *;
 
 -- name: GetSessionsCustomer :one

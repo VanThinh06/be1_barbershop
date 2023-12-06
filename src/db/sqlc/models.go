@@ -60,9 +60,9 @@ type Customer struct {
 	CustomerID        uuid.UUID      `json:"customer_id"`
 	Name              string         `json:"name"`
 	Email             string         `json:"email"`
-	Phone             string         `json:"phone"`
+	Phone             sql.NullString `json:"phone"`
 	Gender            int32          `json:"gender"`
-	HashedPassword    string         `json:"hashed_password"`
+	HashedPassword    sql.NullString `json:"hashed_password"`
 	Avatar            sql.NullString `json:"avatar"`
 	PasswordChangedAt time.Time      `json:"password_changed_at"`
 	CreateAt          time.Time      `json:"create_at"`
