@@ -43,3 +43,4 @@ func RandomNumber(r int) int {
 
 	return rand.Intn(r)
 }
+

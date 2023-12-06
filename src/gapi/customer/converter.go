@@ -9,7 +9,7 @@ import (
 
 func convertCustomer(res db.Customer) *customer.Customer {
 	return &customer.Customer{
-		Phone:             res.Phone,
+		Phone:             res.Phone.String,
 		Email:             res.Email,
 		Gender:            res.Gender,
 		Name:              res.Name,

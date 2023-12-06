@@ -1,6 +1,7 @@
 package token
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -9,7 +10,7 @@ import (
 type Customer struct {
 	CustomerID uuid.UUID `json:"username"`
 	Gender     int32     `json:"gender"`
-	Phone      string    `json:"phone"`
+	Phone      sql.NullString    `json:"phone"`
 	Email      string    `json:"email"`
 	FcmDevice  string    `json:"fcm_device"`
 	Timezone   string    `json:"timezone"`

@@ -40,6 +40,7 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 		return nil, status.Errorf(codes.Internal, "failed to get email barber %s", err)
 	}
 
+	/// check social
 	if req.IsSocialAuth {
 		email, err := server.authVerifyJWTGG(ctx)
 		if err != nil {
@@ -49,8 +50,6 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 			return nil, status.Errorf(codes.Internal, "failed to get email barber %s", err)
 		}
 	}
-
-	
 
 	// Check the password provided against the stored hashed password
 	if req.IsSocialAuth == false {

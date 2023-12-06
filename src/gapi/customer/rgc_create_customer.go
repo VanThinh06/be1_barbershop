@@ -80,7 +80,7 @@ func validateCreateCustomer(req *customer.CreateCustomerRequest) (validations []
 		validations = append(validations, FieldValidation("email", err))
 	}
 
-	if req.Phone != nil {
+	if req.Phone != nil && *req.Phone != "" {
 		if err := utils.ValidatePhoneNumber(req.GetPhone()); err != nil {
 			validations = append(validations, FieldValidation("phone", err))
 		}

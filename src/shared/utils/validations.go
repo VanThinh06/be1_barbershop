@@ -4,10 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strings"
+	"unicode"
 )
 
 var (
-	fullNameRegex = `^[a-zA-Z\s]+$`
 	nicknameRegex = "^[a-zA-Z0-9" + regexp.QuoteMeta(".#@-_") + "]+$"
 	emailRegex    = `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
 	e164Regex     = regexp.MustCompile(`^\+84\d{9,10}$`)
@@ -16,7 +17,7 @@ var (
 
 // ValidateString kiểm tra độ dài của một chuỗi.
 func ValidateString(value string, minLength, maxLength int) error {
-	n := len(value)
+	n := len(strings.TrimSpace(value))
 	if n < minLength || n > maxLength {
 		return fmt.Errorf("length must be between %d and %d characters", minLength, maxLength)
 	}
@@ -66,9 +67,10 @@ func ValidateFullName(fullName string) error {
 		return err
 	}
 
-	match, _ := regexp.MatchString(fullNameRegex, fullName)
-	if !match {
-		return errors.New("invalid full name format")
+	for _, char := range fullName {
+		if !isVietnameseLetter(char) && !unicode.IsSpace(char) {
+			return errors.New("invalid full name format")
+		}
 	}
 
 	return nil
