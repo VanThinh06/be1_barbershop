@@ -7,9 +7,9 @@ INSERT INTO "SessionsCustomer" (
                                client_ip,
                                fcm_device,
                                is_blocked,
-                               coordinates,
                                expires_at,
-                               timezone
+                               timezone,
+                               coordinates
                                )
 VALUES ($1,
         $2,
@@ -20,7 +20,7 @@ VALUES ($1,
         $7,
         $8,
         $9,
-        $10
+        ST_GeographyFromText('POINT(' || sqlc.arg(longitude)::float8 || ' ' || sqlc.arg(latitude)::float8 || ')')
         ) RETURNING *;
 
 -- name: GetSessionsCustomer :one

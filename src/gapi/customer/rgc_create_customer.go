@@ -26,8 +26,17 @@ func (server *Server) CreateCustomer(ctx context.Context, req *customer.CreateCu
 		// If there's an error hashing the password, return an unimplemented error
 		return nil, status.Error(codes.Unimplemented, "login account is incorrect")
 	}
+
+	// login social
 	if req.IsSocialAuth {
 		hashedPassword = ""
+		email, err := server.authVerifyJWTGG(ctx)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to get email barber %s", err)
+		}
+		if email != req.Email {
+			return nil, status.Errorf(codes.Internal, "failed to get email barber %s", err)
+		}
 	}
 
 	// Prepare the arguments for creating a new barber

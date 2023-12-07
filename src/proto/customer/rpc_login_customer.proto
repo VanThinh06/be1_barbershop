@@ -12,8 +12,9 @@ message LoginCustomerRequest{
     string password = 2;
     bool is_social_auth = 3;
     string fcm_device = 4;
-    string timezone = 5;
-    string coordinates = 6; 
+    string timezone = 5; 
+    optional google.protobuf.DoubleValue longitude = 6;
+    optional google.protobuf.DoubleValue latitude = 7;
 }
 
 message LoginCustomerResponse {

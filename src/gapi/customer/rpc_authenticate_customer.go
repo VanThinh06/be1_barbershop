@@ -7,15 +7,10 @@ import (
 	"barbershop/src/shared/utils"
 	"context"
 	"database/sql"
-	"encoding/hex"
-	"fmt"
 
-	"github.com/paulmach/orb"
-	"github.com/paulmach/orb/encoding/wkb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCustomerRequest) (*customer.LoginCustomerResponse, error) {
@@ -27,12 +22,11 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 	err := utils.ValidatePhoneNumber(req.Username)
 	if err != nil {
 		contact.TypeUsername = "email"
+		contact.Email = req.Username
 	}
 
 	// Retrieve barber information from the store
 	res, err := server.store.GetContactCustomer(ctx, contact)
-
-	// If barber does not exist, return a 404 error
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, status.Errorf(codes.NotFound, "failed to get email barber %s", err)
@@ -59,6 +53,7 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 		}
 	}
 
+	// create token
 	customerPayload := token.Customer{
 		CustomerID: res.CustomerID,
 		Gender:     res.Gender,
@@ -67,8 +62,6 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 		FcmDevice:  req.GetFcmDevice(),
 		Timezone:   req.GetTimezone(),
 	}
-
-	// Create an access token for the authenticated barber
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
 		customerPayload,
 		server.config.AccessTokenDuration,
@@ -86,9 +79,8 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 		return nil, status.Error(codes.Internal, "failed to create refresh token")
 	}
 
-	mtdt := server.extractMetadata(ctx)
 	// Create a session for the barber
-	coordinates := fmt.Sprintf("POINT(%s)", req.GetCoordinates())
+	mtdt := server.extractMetadata(ctx)
 	session, err := server.store.CreateSessionsCustomer(ctx, db.CreateSessionsCustomerParams{
 		ID:           refreshPayload.ID,
 		CustomerID:   refreshPayload.Customer.CustomerID,
@@ -98,22 +90,11 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 		IsBlocked:    false,
 		ExpiresAt:    refreshPayload.ExpiredAt,
 		FcmDevice:    req.GetFcmDevice(),
-		Coordinates:  coordinates,
+		Longitude:    req.GetLatitude().GetValue(),
+		Latitude:     req.GetLatitude().GetValue(),
 		Timezone:     req.GetTimezone(),
 	})
-	// If there's an error creating the session, return an internal server error
 	if err != nil {
-		return nil, status.Error(codes.Internal, "failed to create session")
-	}
-
-	byteSlice, err := hex.DecodeString(session.Coordinates)
-	// get longitude, latitude
-	geometry, err := wkb.Unmarshal(byteSlice)
-	if err != nil {
-		return nil, status.Error(codes.Internal, "failed to create session")
-	}
-	point, ok := geometry.(orb.Point)
-	if !ok {
 		return nil, status.Error(codes.Internal, "failed to create session")
 	}
 
@@ -124,8 +105,8 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 		RefreshToken:          refreshToken,
 		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiredAt),
 		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiredAt),
-		Longitude:             wrapperspb.Double(point.X()),
-		Latitude:              wrapperspb.Double(point.Y()),
+		Longitude:             req.Longitude,
+		Latitude:              req.Latitude,
 	}
 	return rsp, nil
 }

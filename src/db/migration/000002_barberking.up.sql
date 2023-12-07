@@ -4,6 +4,7 @@ ALTER TABLE "Customers"
     ALTER COLUMN phone DROP NOT NULL;
 
 ALTER TABLE "SessionsCustomer"
-ADD COLUMN  timezone VARCHAR(255) NOT NULL;
+ADD COLUMN  timezone VARCHAR(255) NOT NULL,
+ALTER COLUMN coordinates DROP NOT NULL;
 
 CREATE INDEX idx_customers_email ON "Customers" (email);

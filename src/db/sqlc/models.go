@@ -108,15 +108,15 @@ type SessionsBarber struct {
 }
 
 type SessionsCustomer struct {
-	ID           uuid.UUID `json:"id"`
-	CustomerID   uuid.UUID `json:"customer_id"`
-	RefreshToken string    `json:"refresh_token"`
-	UserAgent    string    `json:"user_agent"`
-	ClientIp     string    `json:"client_ip"`
-	FcmDevice    string    `json:"fcm_device"`
-	Coordinates  string    `json:"coordinates"`
-	IsBlocked    bool      `json:"is_blocked"`
-	ExpiresAt    time.Time `json:"expires_at"`
-	CreateAt     time.Time `json:"create_at"`
-	Timezone     string    `json:"timezone"`
+	ID           uuid.UUID   `json:"id"`
+	CustomerID   uuid.UUID   `json:"customer_id"`
+	RefreshToken string      `json:"refresh_token"`
+	UserAgent    string      `json:"user_agent"`
+	ClientIp     string      `json:"client_ip"`
+	FcmDevice    string      `json:"fcm_device"`
+	Coordinates  interface{} `json:"coordinates"`
+	IsBlocked    bool        `json:"is_blocked"`
+	ExpiresAt    time.Time   `json:"expires_at"`
+	CreateAt     time.Time   `json:"create_at"`
+	Timezone     string      `json:"timezone"`
 }

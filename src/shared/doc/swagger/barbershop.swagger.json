@@ -345,8 +345,13 @@
         "timezone": {
           "type": "string"
         },
-        "coordinates": {
-          "type": "string"
+        "longitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double"
         }
       }
     },

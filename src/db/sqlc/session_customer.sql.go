@@ -21,9 +21,9 @@ INSERT INTO "SessionsCustomer" (
                                client_ip,
                                fcm_device,
                                is_blocked,
-                               coordinates,
                                expires_at,
-                               timezone
+                               timezone,
+                               coordinates
                                )
 VALUES ($1,
         $2,
@@ -34,7 +34,7 @@ VALUES ($1,
         $7,
         $8,
         $9,
-        $10
+        ST_GeographyFromText('POINT(' || $10::float8 || ' ' || $11::float8 || ')')
         ) RETURNING id, customer_id, refresh_token, user_agent, client_ip, fcm_device, coordinates, is_blocked, expires_at, create_at, timezone
 `
 
@@ -46,9 +46,10 @@ type CreateSessionsCustomerParams struct {
 	ClientIp     string    `json:"client_ip"`
 	FcmDevice    string    `json:"fcm_device"`
 	IsBlocked    bool      `json:"is_blocked"`
-	Coordinates  string    `json:"coordinates"`
 	ExpiresAt    time.Time `json:"expires_at"`
 	Timezone     string    `json:"timezone"`
+	Longitude    float64   `json:"longitude"`
+	Latitude     float64   `json:"latitude"`
 }
 
 func (q *Queries) CreateSessionsCustomer(ctx context.Context, arg CreateSessionsCustomerParams) (SessionsCustomer, error) {
@@ -60,9 +61,10 @@ func (q *Queries) CreateSessionsCustomer(ctx context.Context, arg CreateSessions
 		arg.ClientIp,
 		arg.FcmDevice,
 		arg.IsBlocked,
-		arg.Coordinates,
 		arg.ExpiresAt,
 		arg.Timezone,
+		arg.Longitude,
+		arg.Latitude,
 	)
 	var i SessionsCustomer
 	err := row.Scan(
