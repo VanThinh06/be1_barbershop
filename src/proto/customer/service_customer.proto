@@ -7,6 +7,7 @@ import "customer/rpc_login_customer.proto";
 import "customer/rpc_update_customer.proto";
 import "customer/rpc_appointment.proto";
 import "customer/rpc_refresh_token_customer.proto";
+import "customer/rpc_change_password_customer.proto";
 
 import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
@@ -55,6 +56,17 @@ service CustomerBarberShop {
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         summary: "Update a customer"
         description: "API endpoint to update customer information" 
+      };
+    }
+
+    rpc ChangePasswordCustomer (ChangePasswordCustomerRequest) returns (ChangePasswordCustomerResponse) {
+      option (google.api.http) = {
+        patch: "/v1/customers/change-password"
+        body: "*"
+      };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        summary: "Change password a customer"
+        description: "API endpoint to change password information" 
       };
     }
 

@@ -58,24 +58,6 @@ func (server *Server) UpdateCustomer(ctx context.Context, req *customer.UpdateCu
 		},
 	}
 
-	// Hash the password provided in the request
-	if req.Password != nil {
-		hashedPassword, err := utils.HashPassword(req.GetPassword())
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "failed to hash password")
-		}
-
-		arg.HashedPassword = sql.NullString{
-			String: hashedPassword,
-			Valid:  true,
-		}
-
-		arg.PasswordChangedAt = sql.NullTime{
-			Time:  time.Now(),
-			Valid: true,
-		}
-	}
-
 	res, err := server.store.UpdateCustomer(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {

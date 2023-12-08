@@ -120,6 +120,40 @@
         ]
       }
     },
+    "/v1/customers/change-password": {
+      "patch": {
+        "summary": "Change password a customer",
+        "description": "API endpoint to change password information",
+        "operationId": "CustomerBarberShop_ChangePasswordCustomer",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbChangePasswordCustomerResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbChangePasswordCustomerRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CustomerBarberShop"
+        ]
+      }
+    },
     "/v1/customers/login": {
       "post": {
         "summary": "Customer login",
@@ -220,6 +254,28 @@
         "updateAt": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "pbChangePasswordCustomerRequest": {
+      "type": "object",
+      "properties": {
+        "idCustomer": {
+          "type": "string"
+        },
+        "currentPassword": {
+          "type": "string"
+        },
+        "newPassword": {
+          "type": "string"
+        }
+      }
+    },
+    "pbChangePasswordCustomerResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "boolean"
         }
       }
     },
