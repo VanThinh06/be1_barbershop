@@ -11,6 +11,7 @@ import "barber/rpc_create_barbershop.proto";
 import "barber/rpc_create_service_category.proto";
 import "barber/rpc_create_services.proto";
 import "barber/rpc_find_barber_shop_nearby.proto";
+import "barber/rpc_code_barbershop.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "barbershop/src/pb/barber";
@@ -81,17 +82,6 @@ service BarberShop {
     }
 
 
-  rpc NewBarberShops (CreateBarberShopsRequest) returns (CreateBarberShopsResponse){
-      option (google.api.http) = {
-                post: "/v1/create_barber_shop"
-                body: "*"
-              };
-      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-        description: "API endpoint to create a new barber"
-        summary: "Create a barber"
-      };
-  }
-
   rpc FindBarberShopsNearby (FindBarberShopsNearbyRequest) returns (FindBarberShopsNearbyResponse){
     option (google.api.http) = {
               post: "/v1/find_barber_shop_nearby"
@@ -123,6 +113,26 @@ service BarberShop {
         description: "API endpoint to create a new barber"
         summary: "Create a service category"
       };
-}
-}
+    }
+  rpc NewBarberShops (CreateBarberShopsRequest) returns (CreateBarberShopsResponse){
+        option (google.api.http) = {
+                  post: "/v1/manager/create-barber-shop"
+                  body: "*"
+                };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+          description: "API endpoint to create a new barber"
+          summary: "Create a barber"
+        };
+    }
 
+  rpc GenerateCodeBarberShop (CodeBarberShopRequest) returns (CodeBarberShopResponse){
+      option (google.api.http) = {
+                post: "/v1/manager/generate-code"
+                body: "*"
+              };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "API endpoint to create a new barber"
+        summary: "Create a service category"
+};
+}
+}

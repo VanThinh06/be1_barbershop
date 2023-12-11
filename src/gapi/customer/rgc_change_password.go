@@ -74,7 +74,7 @@ func validateChangePasswordCustomer(req *customer.ChangePasswordCustomerRequest)
 		}
 	}
 
-	validateField(&req.CurrentPassword, "password", utils.ValidatePassword)
-	validateField(&req.NewPassword, "password", utils.ValidatePassword)
+	validateField(&req.CurrentPassword, "current_password", utils.ValidatePassword)
+	validateField(&req.NewPassword, "new_password", utils.ValidatePassword)
 	return validations
 }

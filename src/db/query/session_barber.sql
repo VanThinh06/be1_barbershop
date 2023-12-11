@@ -1,13 +1,15 @@
 -- name: CreateSessionBarber :one
 INSERT INTO "SessionsBarber" (
-                               id,
+    id,
                                barber_id,
                                refresh_token,
                                user_agent,
                                client_ip,
                                fcm_device,
                                is_blocked,
-                               expires_at)
+                               expires_at,
+                               timezone
+                               )
 VALUES ($1,
         $2,
         $3,
@@ -15,7 +17,8 @@ VALUES ($1,
         $5,
         $6,
         $7,
-        $8
+        $8,
+        sqlc.arg(timezone)::varchar
         ) RETURNING *;
 
 -- name: GetSessionsBarber :one

@@ -1,17 +1,22 @@
 package utils
 
-type Gender int
-
+type gender int
 const (
-	Male Gender = iota + 1
+	Male gender = iota + 1
 	Female
 	Other
 )
+func GetGender() gender {
+	return Male
+}
 
-type Role int
-
+// role 
+type role int
 const (
-	HairStylist Role = iota + 1
+	HairStylist role = iota + 1
 	ServiceProvider
 	Manager
 )
+func GetRole() role {
+	return HairStylist
+}

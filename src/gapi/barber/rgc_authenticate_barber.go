@@ -18,34 +18,33 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 	res, err := server.Store.GetEmailBarber(ctx, req.Username)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			// If barber does not exist, return a 404 error
-			return nil, status.Errorf(codes.NotFound, "failed to get email barber %s", err)
+			return nil, status.Error(codes.NotFound, "failed to get email barber ")
 		}
-		// If there's an error getting the barber, return an internal server error
-		return nil, status.Errorf(codes.Internal, "failed to get email barber %s", err)
+		return nil, status.Error(codes.Internal, "failed to get email barber")
 	}
 
 	// Check the password provided against the stored hashed password
 	err = utils.CheckPassword(req.Password, res.HashedPassword)
 	if err != nil {
-		// If the password check fails, return an unauthenticated error
-		return nil, status.Errorf(codes.Unauthenticated, "failed to check the password for %s", err)
+		return nil, status.Error(codes.Unauthenticated, "failed to check the password for")
 	}
 
 	barberPayload := token.BarberPayload{
-		BarberID: res.BarberID,
-		Role: res.Role,
-		Phone: res.Phone,
-		Email: res.Email,
+		BarberID:  res.BarberID,
+		Role:      res.Role,
+		Phone:     res.Phone,
+		Email:     res.Email,
+		FcmDevice: req.FcmDevice,
+		Timezone:  req.Timezone,
 	}
+
 	// Create an access token for the authenticated barber
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
 		barberPayload,
 		server.config.AccessTokenDuration,
 	)
 	if err != nil {
-		// If there's an error creating the access token, return an internal server error
-		return nil, status.Errorf(codes.Internal, "failed to create token %s", err)
+		return nil, status.Error(codes.Internal, "failed to create token")
 	}
 
 	// Create a refresh token for the authenticated barber
@@ -54,12 +53,10 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 		server.config.RefreshTokenDuration,
 	)
 	if err != nil {
-		// If there's an error creating the refresh token, return an internal server error
-		return nil, status.Errorf(codes.Internal, "failed to create refresh token %s", err)
+		return nil, status.Error(codes.Internal, "failed to create refresh token %s")
 	}
 
 	mtdt := server.extractMetadata(ctx)
-	// Create a session for the barber
 	session, err := server.Store.CreateSessionBarber(ctx, db.CreateSessionBarberParams{
 		ID:           refreshPayload.ID,
 		BarberID:     refreshPayload.Barber.BarberID,
@@ -68,10 +65,12 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 		ClientIp:     mtdt.ClientIP,
 		IsBlocked:    false,
 		ExpiresAt:    refreshPayload.ExpiredAt,
+		FcmDevice:    req.FcmDevice,
+		Timezone:     req.Timezone,
 	})
 	if err != nil {
 		// If there's an error creating the session, return an internal server error
-		return nil, status.Errorf(codes.Internal, "failed to create session %s", err)
+		return nil, status.Error(codes.Internal, "failed to create session")
 	}
 
 	// Prepare the response with barber and session information
@@ -85,4 +84,3 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 	}
 	return rsp, nil
 }
-

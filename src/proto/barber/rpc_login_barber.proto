@@ -10,6 +10,9 @@ option go_package = "barbershop/src/pb/barber";
 message LoginBarberRequest{
     string username = 1;
     string password = 2;
+    bool is_social_auth = 3;
+    string fcm_device = 4;
+    string timezone = 5; 
 }
 
 message LoginBarberResponse {

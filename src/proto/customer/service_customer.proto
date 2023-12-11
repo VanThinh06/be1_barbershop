@@ -61,7 +61,7 @@ service CustomerBarberShop {
 
     rpc ChangePasswordCustomer (ChangePasswordCustomerRequest) returns (ChangePasswordCustomerResponse) {
       option (google.api.http) = {
-        patch: "/v1/customers/change-password"
+        post: "/v1/customers/change-password"
         body: "*"
       };
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

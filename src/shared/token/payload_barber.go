@@ -6,11 +6,14 @@ import (
 
 	"github.com/google/uuid"
 )
+
 type BarberPayload struct {
-	BarberID uuid.UUID `json:"username"`
-	Role     int32     `json:"role"`
-	Phone    string    `json:"phone"`
-	Email    string    `json:"email"`
+	BarberID  uuid.UUID `json:"username"`
+	Role      int32     `json:"role"`
+	Phone     string    `json:"phone"`
+	Email     string    `json:"email"`
+	FcmDevice string    `json:"fcm_device"`
+	Timezone  string    `json:"timezone"`
 }
 
 type Payload struct {
@@ -28,7 +31,7 @@ func NewPayload(barber BarberPayload, duration time.Duration) (*Payload, error) 
 
 	payload := &Payload{
 		ID:        tokenID,
-		Barber:  barber,
+		Barber:    barber,
 		IssuedAt:  time.Now(),
 		ExpiredAt: time.Now().Add(duration),
 	}

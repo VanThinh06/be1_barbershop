@@ -3,8 +3,10 @@ package gapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
+	"barbershop/src/shared/token"
 	"barbershop/src/shared/utils"
 	"context"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
@@ -23,29 +25,47 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 	// Hash the password provided in the request
 	hashedPassword, err := utils.HashPassword(req.GetPassword())
 	if err != nil {
-		// If there's an error hashing the password, return an unimplemented error
-		return nil, status.Errorf(codes.Unimplemented, "failed to password %s", err)
+		return nil, status.Errorf(codes.Unimplemented, "failed to password")
 	}
 
-	// Create a channel to receive the result of fetching the codeBarberShop
-	resultChan := make(chan uuid.NullUUID)
-	var codeBarberShop uuid.NullUUID
-
-	// Fetch the codeBarberShop asynchronously and send the result to the channel
+	var managerId uuid.NullUUID
+	var barberShopId uuid.NullUUID
+	var roleBarber = int(req.GetRole())
 	if req.Role != int32(utils.Manager) {
-		go func() {
-			uuidBarberShop, err := server.Store.GetCodeBarberShop(ctx, req.CodeBarberShop)
-			if err != nil {
-				resultChan <- uuid.NullUUID{Valid: false}
-			} else {
-				resultChan <- uuid.NullUUID{Valid: true, UUID: uuidBarberShop}
-			}
-		}()
-		codeBarberShop = <-resultChan
+		var code, err = token.DecodeAESString(server.config.AesKey, req.CodeBarberShop)
+		if err != nil {
+			return nil, status.Error(codes.Unimplemented, "failed to password")
+		}
+		var listCode = splitExpression(code)
 
-		if !codeBarberShop.Valid {
-			// If there's an error fetching the codeBarberShop, return an internal server error
-			return nil, status.Errorf(codes.NotFound, "code barber shop not found")
+		strRoleBarber, err := utils.GetValueAtIndex(listCode, 0)
+		if err != nil {
+			return nil, status.Error(codes.Unimplemented, "failed to password")
+		}
+		roleBarber, err = utils.ConvertStringToInt(strRoleBarber)
+		if err != nil {
+			return nil, status.Error(codes.Unimplemented, "failed to password")
+		}
+		// e77152a9-e23c-482a-920e-104ad45520a0
+		valueIdBarberShop, err := utils.GetValueAtIndex(listCode, 1)
+		if err != nil {
+			return nil, status.Error(codes.Unimplemented, "failed to password")
+		}
+		if valueIdBarberShop != "" {
+			barberShopId = uuid.NullUUID{
+				UUID:  uuid.MustParse(valueIdBarberShop),
+				Valid: valueIdBarberShop != "",
+			}
+		}
+		valueIdManager, err := utils.GetValueAtIndex(listCode, 2)
+		if err != nil {
+			return nil, status.Error(codes.Unimplemented, "failed to password")
+		}
+		if valueIdManager != "" {
+			managerId = uuid.NullUUID{
+				UUID:  uuid.MustParse(valueIdManager),
+				Valid: valueIdManager != "",
+			}
 		}
 	}
 
@@ -57,8 +77,9 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 		FullName:       req.GetEmail(),
 		Gender:         req.GetGender(),
 		Email:          req.GetEmail(),
-		ShopID:         codeBarberShop,
-		Role:           req.GetRole(),
+		ShopID:         barberShopId,
+		Role:           int32(roleBarber),
+		ManagerID:      managerId,
 	}
 	// Create the barber using the store
 	res, err := server.Store.CreateBarber(ctx, arg)
@@ -68,21 +89,19 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 			switch pqErr.Code.Name() {
 			case "unique_violation":
 				if pqErr.Constraint == "Barbers_pkey" {
-					// If the barber account already exists, return an already exists error
 					return nil, status.Errorf(codes.AlreadyExists, "This account has already existed")
 				}
 				if pqErr.Constraint == "Barbers_phone_key" {
-					// If the phone number already exists, return an already exists error
 					return nil, status.Errorf(codes.AlreadyExists, "This phone has already existed")
 				}
 				if pqErr.Constraint == "Barbers_email_key" {
-					// If the email already exists, return an already exists error
 					return nil, status.Errorf(codes.AlreadyExists, "This email has already existed")
 				}
 			}
 		}
+
 		// If the error is not a specific case, return a forbidden error
-		return nil, status.Errorf(codes.Internal, "failed to create account %s", err)
+		return nil, status.Errorf(codes.Internal, "internal")
 	}
 
 	// Prepare the response with the newly created barber
@@ -114,4 +133,16 @@ func validateCreateBarber(req *barber.CreateBarberRequest) (validations []*errde
 	}
 
 	return validations
+}
+
+func splitExpression(expression string) []string {
+	// Tách chuỗi bằng dấu cộng
+	parts := strings.Split(expression, "+")
+
+	// Loại bỏ khoảng trắng xung quanh mỗi phần tử
+	for i, part := range parts {
+		parts[i] = strings.TrimSpace(part)
+	}
+
+	return parts
 }

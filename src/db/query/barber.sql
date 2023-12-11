@@ -8,7 +8,8 @@ INSERT INTO "Barbers" (
     gender,
     "role",
     hashed_password,
-    avatar
+    avatar,
+    manager_id
   )
 VALUES (
     $1,
@@ -19,7 +20,8 @@ VALUES (
     $6,
     $7,
     $8,
-    $9
+    $9,
+    $10
   )
 RETURNING *;
 -- name: GetEmailBarber :one
@@ -45,3 +47,9 @@ set shop_id = coalesce(sqlc.narg('shop_id'), shop_id),
   "update_at" = sqlc.arg('update_at')
   WHERE "barber_id" = sqlc.arg('barber_id')
 RETURNING *;
+
+-- name: BarberGetIdShop :one
+SELECT shop_id::varchar, "role"
+FROM "Barbers"
+WHERE barber_id = $1
+LIMIT 1;

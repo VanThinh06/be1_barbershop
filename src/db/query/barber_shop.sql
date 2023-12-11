@@ -1,22 +1,22 @@
 -- name: CreateBarberShops :one
 
-INSERT INTO "BarberShops" (code_barber_shop,
+INSERT INTO "BarberShops" (
                            owner_id,
                            name,
                            coordinates,
                            address,
                            image)
-VALUES (sqlc.arg(code_barber_shop),
+VALUES (
         sqlc.arg(owner_id),
         sqlc.arg(name),
         ST_GeographyFromText('POINT(' || sqlc.arg(longitude)::float8 || ' ' || sqlc.arg(latitude)::float8 || ')'),
         sqlc.arg(address),
-        sqlc.narg(image)) RETURNING *;
--- name: GetCodeBarberShop :one
+        sqlc.narg(image)) RETURNING *; 
+-- name: GetBarberShop :one
 
 SELECT "shop_id"
 FROM "BarberShops"
-WHERE code_barber_shop = $1
+WHERE shop_id = $1
 LIMIT 1;
 
 -- name: FindBarberShopNearbyLocations :many

@@ -13,7 +13,26 @@ var (
 	emailRegex    = `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
 	e164Regex     = regexp.MustCompile(`^\+84\d{9,10}$`)
 	vietnamRegex  = regexp.MustCompile(`^0\d{9}$`)
+	numberRegex = regexp.MustCompile(`^\d+$`)
 )
+
+const (
+	minNumberLength = 1
+	maxNumberLength = 10 // Thay đổi giới hạn tùy thuộc vào yêu cầu cụ thể
+)
+
+func ValidateNumber(number string) error {
+	if err := ValidateString(number, minNumberLength, maxNumberLength); err != nil {
+		return err
+	}
+
+	match := numberRegex.MatchString(number)
+	if !match {
+		return errors.New("invalid number format")
+	}
+
+	return nil
+}
 
 // ValidateString kiểm tra độ dài của một chuỗi.
 func ValidateString(value string, minLength, maxLength int) error {

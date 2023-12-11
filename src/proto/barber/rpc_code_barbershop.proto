@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "barbershop/src/pb/barber";
+
+message CodeBarberShopRequest {
+    int32 role = 1 ;
+}
+
+message CodeBarberShopResponse {
+    string code_manager = 1;
+}
