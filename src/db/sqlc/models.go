@@ -13,6 +13,7 @@ import (
 
 type Appointment struct {
 	AppointmentID       uuid.UUID    `json:"appointment_id"`
+	BarbershopsID       uuid.UUID    `json:"barbershops_id"`
 	CustomerID          uuid.UUID    `json:"customer_id"`
 	BarberID            uuid.UUID    `json:"barber_id"`
 	ServiceID           uuid.UUID    `json:"service_id"`

@@ -6,6 +6,7 @@ package db
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -22,6 +23,7 @@ type Querier interface {
 	CreateSessionBarber(ctx context.Context, arg CreateSessionBarberParams) (SessionsBarber, error)
 	CreateSessionsCustomer(ctx context.Context, arg CreateSessionsCustomerParams) (SessionsCustomer, error)
 	FindBarberShopNearbyLocations(ctx context.Context, arg FindBarberShopNearbyLocationsParams) ([]FindBarberShopNearbyLocationsRow, error)
+	GetAppointmentBarber(ctx context.Context, appointmentDatetime time.Time) (Appointment, error)
 	GetBarberShop(ctx context.Context, shopID uuid.UUID) (uuid.UUID, error)
 	GetContactCustomer(ctx context.Context, arg GetContactCustomerParams) (Customer, error)
 	GetCustomer(ctx context.Context, customerID uuid.UUID) (Customer, error)

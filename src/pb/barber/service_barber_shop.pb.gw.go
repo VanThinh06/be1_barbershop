@@ -476,7 +476,7 @@ func RegisterBarberShopHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.BarberShop/NewServiceCategory", runtime.WithHTTPPathPattern("/v1/create_category_service"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.BarberShop/NewServiceCategory", runtime.WithHTTPPathPattern("/v1/manager/create-category-service"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -501,7 +501,7 @@ func RegisterBarberShopHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.BarberShop/NewServices", runtime.WithHTTPPathPattern("/v1/create_services"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.BarberShop/NewServices", runtime.WithHTTPPathPattern("/v1/manager/create-services"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -725,7 +725,7 @@ func RegisterBarberShopHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.BarberShop/NewServiceCategory", runtime.WithHTTPPathPattern("/v1/create_category_service"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.BarberShop/NewServiceCategory", runtime.WithHTTPPathPattern("/v1/manager/create-category-service"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -747,7 +747,7 @@ func RegisterBarberShopHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.BarberShop/NewServices", runtime.WithHTTPPathPattern("/v1/create_services"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.BarberShop/NewServices", runtime.WithHTTPPathPattern("/v1/manager/create-services"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -821,9 +821,9 @@ var (
 
 	pattern_BarberShop_FindBarberShopsNearby_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "find_barber_shop_nearby"}, ""))
 
-	pattern_BarberShop_NewServiceCategory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "create_category_service"}, ""))
+	pattern_BarberShop_NewServiceCategory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "manager", "create-category-service"}, ""))
 
-	pattern_BarberShop_NewServices_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "create_services"}, ""))
+	pattern_BarberShop_NewServices_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "manager", "create-services"}, ""))
 
 	pattern_BarberShop_NewBarberShops_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "manager", "create-barber-shop"}, ""))
 

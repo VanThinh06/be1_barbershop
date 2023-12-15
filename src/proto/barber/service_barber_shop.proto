@@ -95,7 +95,7 @@ service BarberShop {
 
   rpc NewServiceCategory (CreateServiceCategoryRequest) returns (CreateServiceCategoryResponse){
     option (google.api.http) = {
-              post: "/v1/create_category_service"
+              post: "/v1/manager/create-category-service"
               body: "*"
             };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -106,7 +106,7 @@ service BarberShop {
   
   rpc NewServices (CreateServicesRequest) returns (CreateServicesResponse){
       option (google.api.http) = {
-                post: "/v1/create_services"
+                post: "/v1/manager/create-services"
                 body: "*"
               };
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -114,6 +114,7 @@ service BarberShop {
         summary: "Create a service category"
       };
     }
+    
   rpc NewBarberShops (CreateBarberShopsRequest) returns (CreateBarberShopsResponse){
         option (google.api.http) = {
                   post: "/v1/manager/create-barber-shop"

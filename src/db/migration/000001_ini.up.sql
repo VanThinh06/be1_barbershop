@@ -97,6 +97,7 @@ CREATE TABLE "SessionsCustomer" (
 
 CREATE TABLE "Appointments" (
   "appointment_id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "barbershops_id" uuid NOT NULL,
   "customer_id" uuid NOT NULL,
   "barber_id" uuid NOT NULL,
   "service_id" uuid UNIQUE NOT NULL,
@@ -147,6 +148,8 @@ ALTER TABLE "ServiceCategory" ADD FOREIGN KEY ("shop_id") REFERENCES "BarberShop
 ALTER TABLE "Services" ADD FOREIGN KEY ("category_id") REFERENCES "ServiceCategory" ("id");
 
 ALTER TABLE "SessionsCustomer" ADD FOREIGN KEY ("customer_id") REFERENCES "Customers" ("customer_id");
+
+ALTER TABLE "Appointments" ADD FOREIGN KEY ("barbershops_id") REFERENCES "BarberShops" ("shop_id");
 
 ALTER TABLE "Appointments" ADD FOREIGN KEY ("customer_id") REFERENCES "Customers" ("customer_id");
 

@@ -14,17 +14,19 @@ import (
 
 const createAppointment = `-- name: CreateAppointment :one
 INSERT INTO "Appointments" (
+    barbershops_id,
     customer_id,
     barber_id,    
     service_id,    
     appointment_datetime,
     "status"  
     )
-VALUES ($1, $2, $3, $4, $5)
-RETURNING appointment_id, customer_id, barber_id, service_id, appointment_datetime, status, created_at, update_at
+VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING appointment_id, barbershops_id, customer_id, barber_id, service_id, appointment_datetime, status, created_at, update_at
 `
 
 type CreateAppointmentParams struct {
+	BarbershopsID       uuid.UUID `json:"barbershops_id"`
 	CustomerID          uuid.UUID `json:"customer_id"`
 	BarberID            uuid.UUID `json:"barber_id"`
 	ServiceID           uuid.UUID `json:"service_id"`
@@ -34,6 +36,7 @@ type CreateAppointmentParams struct {
 
 func (q *Queries) CreateAppointment(ctx context.Context, arg CreateAppointmentParams) (Appointment, error) {
 	row := q.db.QueryRowContext(ctx, createAppointment,
+		arg.BarbershopsID,
 		arg.CustomerID,
 		arg.BarberID,
 		arg.ServiceID,
@@ -43,6 +46,31 @@ func (q *Queries) CreateAppointment(ctx context.Context, arg CreateAppointmentPa
 	var i Appointment
 	err := row.Scan(
 		&i.AppointmentID,
+		&i.BarbershopsID,
+		&i.CustomerID,
+		&i.BarberID,
+		&i.ServiceID,
+		&i.AppointmentDatetime,
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}
+
+const getAppointmentBarber = `-- name: GetAppointmentBarber :one
+SELECT appointment_id, barbershops_id, customer_id, barber_id, service_id, appointment_datetime, status, created_at, update_at FROM "Appointments"
+WHERE DATE(appointment_datetime) = $1
+AND employee_id = $1
+ORDER BY appointment_datetime
+`
+
+func (q *Queries) GetAppointmentBarber(ctx context.Context, appointmentDatetime time.Time) (Appointment, error) {
+	row := q.db.QueryRowContext(ctx, getAppointmentBarber, appointmentDatetime)
+	var i Appointment
+	err := row.Scan(
+		&i.AppointmentID,
+		&i.BarbershopsID,
 		&i.CustomerID,
 		&i.BarberID,
 		&i.ServiceID,
