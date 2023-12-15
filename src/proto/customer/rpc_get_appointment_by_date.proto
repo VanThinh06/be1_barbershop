@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pb;
+
+import "customer/appointment.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "barbershop/src/pb/customer";
+
+message GetAppointmentByDateRequest {
+    google.protobuf.Timestamp day_appointment = 1;
+    string barber_id = 2;
+}
+
+message GetAppointmentByDateResponse {
+    repeated Appointment appointment = 1;
+}

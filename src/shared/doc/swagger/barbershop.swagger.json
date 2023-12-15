@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Barber Shop API",
-    "version": "1.0",
+    "version": "1.1",
     "contact": {
       "name": "Thinh Kai",
       "email": "dvanthinh06@gmail.com"
@@ -10,7 +10,7 @@
   },
   "tags": [
     {
-      "name": "BarberShop"
+      "name": "CustomerBarberShop"
     }
   ],
   "consumes": [
@@ -20,16 +20,16 @@
     "application/json"
   ],
   "paths": {
-    "/v1/authenticate_barber": {
+    "/v1/customers": {
       "post": {
-        "summary": "Authenticate a barber",
-        "description": "API endpoint for barber authentication",
-        "operationId": "BarberShop_LoginBarber",
+        "summary": "Create a customer",
+        "description": "API endpoint to create a customer account",
+        "operationId": "CustomerBarberShop_CreateCustomer",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbLoginBarberResponse"
+              "$ref": "#/definitions/pbCreateCustomerResponse"
             }
           },
           "default": {
@@ -45,23 +45,23 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbLoginBarberRequest"
+              "$ref": "#/definitions/pbCreateCustomerRequest"
             }
           }
         ],
         "tags": [
-          "BarberShop"
+          "CustomerBarberShop"
         ]
       },
       "patch": {
-        "summary": "Authenticate a barber",
-        "description": "API endpoint for barber authentication",
-        "operationId": "BarberShop_UpdateBarber",
+        "summary": "Update a customer",
+        "description": "API endpoint to update customer information",
+        "operationId": "CustomerBarberShop_UpdateCustomer",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbUpdateBarberResponse"
+              "$ref": "#/definitions/pbUpdateCustomerResponse"
             }
           },
           "default": {
@@ -77,25 +77,25 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbUpdateBarberRequest"
+              "$ref": "#/definitions/pbUpdateCustomerRequest"
             }
           }
         ],
         "tags": [
-          "BarberShop"
+          "CustomerBarberShop"
         ]
       }
     },
-    "/v1/create_barber": {
+    "/v1/customers/appointments": {
       "post": {
-        "summary": "Create a barber",
-        "description": "API endpoint to create a new barber",
-        "operationId": "BarberShop_CreateBarber",
+        "summary": "Create a new appointment",
+        "description": "API endpoint to create a new appointment for a customer",
+        "operationId": "CustomerBarberShop_NewAppointment",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbCreateBarberResponse"
+              "$ref": "#/definitions/pbCreateAppointmentResponse"
             }
           },
           "default": {
@@ -111,25 +111,25 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbCreateBarberRequest"
+              "$ref": "#/definitions/pbCreateAppointmentRequest"
             }
           }
         ],
         "tags": [
-          "BarberShop"
+          "CustomerBarberShop"
         ]
       }
     },
-    "/v1/find_barber_shop_nearby": {
+    "/v1/customers/change-password": {
       "post": {
-        "summary": "find barber shop nearby",
-        "description": "API endpoint to create a new barber",
-        "operationId": "BarberShop_FindBarberShopsNearby",
+        "summary": "Change password a customer",
+        "description": "API endpoint to change password information",
+        "operationId": "CustomerBarberShop_ChangePasswordCustomer",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbFindBarberShopsNearbyResponse"
+              "$ref": "#/definitions/pbChangePasswordCustomerResponse"
             }
           },
           "default": {
@@ -145,25 +145,25 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbFindBarberShopsNearbyRequest"
+              "$ref": "#/definitions/pbChangePasswordCustomerRequest"
             }
           }
         ],
         "tags": [
-          "BarberShop"
+          "CustomerBarberShop"
         ]
       }
     },
-    "/v1/manager/create-barber-shop": {
+    "/v1/customers/login": {
       "post": {
-        "summary": "Create a barber",
-        "description": "API endpoint to create a new barber",
-        "operationId": "BarberShop_NewBarberShops",
+        "summary": "Customer login",
+        "description": "API endpoint for customer authentication",
+        "operationId": "CustomerBarberShop_LoginCustomer",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbCreateBarberShopsResponse"
+              "$ref": "#/definitions/pbLoginCustomerResponse"
             }
           },
           "default": {
@@ -179,25 +179,25 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbCreateBarberShopsRequest"
+              "$ref": "#/definitions/pbLoginCustomerRequest"
             }
           }
         ],
         "tags": [
-          "BarberShop"
+          "CustomerBarberShop"
         ]
       }
     },
-    "/v1/manager/create-category-service": {
+    "/v1/customers/refresh-token": {
       "post": {
-        "summary": "Create a service category",
-        "description": "API endpoint to create a new barber",
-        "operationId": "BarberShop_NewServiceCategory",
+        "summary": "Refresh customer token",
+        "description": "API endpoint to refresh the authentication token for a customer",
+        "operationId": "CustomerBarberShop_RefreshTokenCustomer",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbCreateServiceCategoryResponse"
+              "$ref": "#/definitions/pbRefreshTokenCustomerResponse"
             }
           },
           "default": {
@@ -213,59 +213,25 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbCreateServiceCategoryRequest"
+              "$ref": "#/definitions/pbRefreshTokenCustomerRequest"
             }
           }
         ],
         "tags": [
-          "BarberShop"
+          "CustomerBarberShop"
         ]
       }
     },
-    "/v1/manager/create-services": {
-      "post": {
-        "summary": "Create a service category",
-        "description": "API endpoint to create a new barber",
-        "operationId": "BarberShop_NewServices",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbCreateServicesResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbCreateServicesRequest"
-            }
-          }
-        ],
-        "tags": [
-          "BarberShop"
-        ]
-      }
-    },
-    "/v1/manager/generate-code": {
+    "/v1/get-appointment-by-date": {
       "post": {
         "summary": "Create a service category",
         "description": "API endpoint to create a new barber",
-        "operationId": "BarberShop_GenerateCodeBarberShop",
+        "operationId": "CustomerBarberShop_GetAppointmentByDate",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbCodeBarberShopResponse"
+              "$ref": "#/definitions/pbGetAppointmentByDateResponse"
             }
           },
           "default": {
@@ -281,82 +247,35 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbCodeBarberShopRequest"
+              "$ref": "#/definitions/pbGetAppointmentByDateRequest"
             }
           }
         ],
         "tags": [
-          "BarberShop"
-        ]
-      }
-    },
-    "/v1/refresh_token": {
-      "post": {
-        "summary": "Authenticate a barber",
-        "description": "API endpoint for barber authentication",
-        "operationId": "BarberShop_RefreshTokenBarber",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbRefreshTokenBarberResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbRefreshTokenBarberRequest"
-            }
-          }
-        ],
-        "tags": [
-          "BarberShop"
+          "CustomerBarberShop"
         ]
       }
     }
   },
   "definitions": {
-    "pbBarber": {
+    "pbAppointment": {
       "type": "object",
       "properties": {
+        "appointmentId": {
+          "type": "string"
+        },
+        "customerId": {
+          "type": "string"
+        },
         "barberId": {
           "type": "string"
         },
-        "shopId": {
+        "serviceId": {
           "type": "string"
         },
-        "nickName": {
-          "type": "string"
-        },
-        "fullName": {
-          "type": "string"
-        },
-        "phone": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "gender": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "role": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "avatar": {
-          "type": "string"
+        "appointmentDatetime": {
+          "type": "string",
+          "format": "date-time"
         },
         "status": {
           "type": "integer",
@@ -369,103 +288,74 @@
         "updateAt": {
           "type": "string",
           "format": "date-time"
-        },
-        "passwordChangedAt": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },
-    "pbBarberShops": {
+    "pbChangePasswordCustomerRequest": {
       "type": "object",
       "properties": {
-        "shopId": {
+        "idCustomer": {
           "type": "string"
+        },
+        "currentPassword": {
+          "type": "string"
+        },
+        "newPassword": {
+          "type": "string"
+        }
+      }
+    },
+    "pbChangePasswordCustomerResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "boolean"
+        }
+      }
+    },
+    "pbCreateAppointmentRequest": {
+      "type": "object",
+      "properties": {
+        "appointmentId": {
+          "type": "string"
+        },
+        "customerId": {
+          "type": "string"
+        },
+        "barberId": {
+          "type": "string"
+        },
+        "serviceId": {
+          "type": "string"
+        },
+        "appointmentDatetime": {
+          "type": "string",
+          "format": "date-time"
         },
         "status": {
           "type": "integer",
           "format": "int32"
-        },
-        "ownerId": {
-          "type": "string"
-        },
+        }
+      }
+    },
+    "pbCreateAppointmentResponse": {
+      "type": "object",
+      "properties": {
+        "appointment": {
+          "$ref": "#/definitions/pbAppointment"
+        }
+      }
+    },
+    "pbCreateCustomerRequest": {
+      "type": "object",
+      "properties": {
         "name": {
           "type": "string"
         },
-        "coordinates": {
-          "type": "string"
-        },
-        "address": {
-          "type": "string"
-        },
-        "image": {
-          "type": "string"
-        },
-        "listImage": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "distance": {
-          "type": "number",
-          "format": "float"
-        },
-        "longitude": {
-          "type": "number",
-          "format": "double"
-        },
-        "latitude": {
-          "type": "number",
-          "format": "double"
-        },
-        "isReputation": {
-          "type": "boolean"
-        },
-        "rate": {
-          "type": "number",
-          "format": "float"
-        },
-        "facility": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "pbCodeBarberShopRequest": {
-      "type": "object",
-      "properties": {
-        "role": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "pbCodeBarberShopResponse": {
-      "type": "object",
-      "properties": {
-        "codeManager": {
-          "type": "string"
-        }
-      }
-    },
-    "pbCreateBarberRequest": {
-      "type": "object",
-      "properties": {
-        "nickname": {
-          "type": "string"
-        },
-        "fullName": {
+        "email": {
           "type": "string"
         },
         "phone": {
-          "type": "string"
-        },
-        "email": {
           "type": "string"
         },
         "gender": {
@@ -475,141 +365,83 @@
         "password": {
           "type": "string"
         },
-        "codeBarberShop": {
-          "type": "string"
-        },
-        "role": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "pbCreateBarberResponse": {
-      "type": "object",
-      "properties": {
-        "barber": {
-          "$ref": "#/definitions/pbBarber"
-        }
-      }
-    },
-    "pbCreateBarberShopsRequest": {
-      "type": "object",
-      "properties": {
-        "codeBarberShop": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "address": {
-          "type": "string"
-        },
-        "longitude": {
-          "type": "number",
-          "format": "double"
-        },
-        "latitude": {
-          "type": "number",
-          "format": "double"
-        },
-        "image": {
-          "type": "string"
-        },
-        "isMainBranch": {
+        "isSocialAuth": {
           "type": "boolean"
         }
       }
     },
-    "pbCreateBarberShopsResponse": {
+    "pbCreateCustomerResponse": {
       "type": "object",
       "properties": {
-        "barberShop": {
-          "$ref": "#/definitions/pbBarberShops"
+        "customer": {
+          "$ref": "#/definitions/pbCustomer"
         }
       }
     },
-    "pbCreateServiceCategoryRequest": {
+    "pbCustomer": {
       "type": "object",
       "properties": {
-        "barberShopId": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "pbCreateServiceCategoryResponse": {
-      "type": "object",
-      "properties": {
-        "barber": {
-          "$ref": "#/definitions/pbServiceCategory"
-        }
-      }
-    },
-    "pbCreateServicesRequest": {
-      "type": "object",
-      "properties": {
-        "categoryId": {
+        "customerId": {
           "type": "string"
         },
         "name": {
           "type": "string"
         },
-        "timer": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "price": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "description": {
+        "email": {
           "type": "string"
         },
-        "image": {
+        "phone": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updateAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "passwordChangedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "isSocialAuth": {
+          "type": "boolean"
+        }
+      }
+    },
+    "pbGetAppointmentByDateRequest": {
+      "type": "object",
+      "properties": {
+        "dayAppointment": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "barberId": {
           "type": "string"
         }
       }
     },
-    "pbCreateServicesResponse": {
+    "pbGetAppointmentByDateResponse": {
       "type": "object",
       "properties": {
-        "services": {
-          "$ref": "#/definitions/pbServices"
-        }
-      }
-    },
-    "pbFindBarberShopsNearbyRequest": {
-      "type": "object",
-      "properties": {
-        "longitude": {
-          "type": "number",
-          "format": "double"
-        },
-        "latitude": {
-          "type": "number",
-          "format": "double"
-        },
-        "distanceInMeters": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "pbFindBarberShopsNearbyResponse": {
-      "type": "object",
-      "properties": {
-        "barberShop": {
+        "appointment": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/pbBarberShops"
+            "$ref": "#/definitions/pbAppointment"
           }
         }
       }
     },
-    "pbLoginBarberRequest": {
+    "pbLoginCustomerRequest": {
       "type": "object",
       "properties": {
         "username": {
@@ -626,14 +458,22 @@
         },
         "timezone": {
           "type": "string"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double"
         }
       }
     },
-    "pbLoginBarberResponse": {
+    "pbLoginCustomerResponse": {
       "type": "object",
       "properties": {
-        "barber": {
-          "$ref": "#/definitions/pbBarber"
+        "customer": {
+          "$ref": "#/definitions/pbCustomer"
         },
         "sessionId": {
           "type": "string"
@@ -651,10 +491,18 @@
         "refreshTokenExpiresAt": {
           "type": "string",
           "format": "date-time"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double"
         }
       }
     },
-    "pbRefreshTokenBarberRequest": {
+    "pbRefreshTokenCustomerRequest": {
       "type": "object",
       "properties": {
         "refreshToken": {
@@ -662,7 +510,7 @@
         }
       }
     },
-    "pbRefreshTokenBarberResponse": {
+    "pbRefreshTokenCustomerResponse": {
       "type": "object",
       "properties": {
         "accessToken": {
@@ -681,83 +529,19 @@
         }
       }
     },
-    "pbServiceCategory": {
+    "pbUpdateCustomerRequest": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "shopId": {
+        "customerId": {
           "type": "string"
         },
         "name": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updateAt": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "pbServices": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "categoryId": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "timer": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "price": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "description": {
-          "type": "string"
-        },
-        "image": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updateAt": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "pbUpdateBarberRequest": {
-      "type": "object",
-      "properties": {
-        "barberId": {
-          "type": "string"
-        },
-        "shopId": {
-          "type": "string"
-        },
-        "nickname": {
-          "type": "string"
-        },
-        "fullName": {
-          "type": "string"
-        },
-        "phone": {
           "type": "string"
         },
         "email": {
+          "type": "string"
+        },
+        "phone": {
           "type": "string"
         },
         "gender": {
@@ -770,10 +554,6 @@
         "avatar": {
           "type": "string"
         },
-        "status": {
-          "type": "integer",
-          "format": "int32"
-        },
         "passwordChangedAt": {
           "type": "string",
           "format": "date-time"
@@ -784,11 +564,11 @@
         }
       }
     },
-    "pbUpdateBarberResponse": {
+    "pbUpdateCustomerResponse": {
       "type": "object",
       "properties": {
-        "barber": {
-          "$ref": "#/definitions/pbBarber"
+        "customer": {
+          "$ref": "#/definitions/pbCustomer"
         }
       }
     },

@@ -8,7 +8,7 @@ import "customer/rpc_update_customer.proto";
 import "customer/rpc_appointment.proto";
 import "customer/rpc_refresh_token_customer.proto";
 import "customer/rpc_change_password_customer.proto";
-
+import "customer/rpc_get_appointment_by_date.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
@@ -101,6 +101,17 @@ service CustomerBarberShop {
         summary: "Create a new appointment"
         description: "API endpoint to create a new appointment for a customer"
       };
+    }
+
+    rpc GetAppointmentByDate (GetAppointmentByDateRequest) returns (GetAppointmentByDateResponse){
+      option (google.api.http) = {
+                post: "/v1/get-appointment-by-date"
+                body: "*"
+              };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "API endpoint to create a new barber"
+        summary: "Create a service category"
+    };
     }
 }
 

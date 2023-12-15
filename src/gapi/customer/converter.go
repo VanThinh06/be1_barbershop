@@ -34,3 +34,22 @@ func convertAppointment(appointment db.Appointment) *customer.Appointment {
 		UpdateAt:            timestamppb.New(appointment.UpdateAt.Time),
 	}
 }
+
+func convertGetAppointmentByDate(res []db.Appointment) []*customer.Appointment {
+	var appointments []*customer.Appointment
+	for _, appointment := range res {
+		appointment := &customer.Appointment{
+			AppointmentId:       appointment.AppointmentID.String(),
+			CustomerId:          appointment.CustomerID.String(),
+			BarberId:            appointment.BarbershopsID.String(),
+			ServiceId:           appointment.ServiceID.String(),
+			Status:              appointment.Status,
+			AppointmentDatetime: timestamppb.New(appointment.AppointmentDatetime),
+			CreatedAt:           timestamppb.New(appointment.CreatedAt),
+			UpdateAt:            timestamppb.New(appointment.UpdateAt.Time),
+		}
+
+		appointments = append(appointments, appointment)
+	}
+	return appointments
+}

@@ -87,5 +87,3 @@ func ConvertListBarberShopsNearby(res []db.FindBarberShopNearbyLocationsRow) []*
 
 	return barberShops
 }
-
-

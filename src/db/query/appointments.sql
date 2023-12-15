@@ -10,8 +10,8 @@ INSERT INTO "Appointments" (
 VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING *;
 
--- name: GetAppointmentBarber :one
+-- name: GetAppointmentByDate :many
 SELECT * FROM "Appointments"
 WHERE DATE(appointment_datetime) = $1
-AND employee_id = $1
+AND barber_id = $2
 ORDER BY appointment_datetime;
