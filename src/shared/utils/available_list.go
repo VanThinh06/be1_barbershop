@@ -24,3 +24,4 @@ func isVietnameseLetter(char rune) bool {
 
 	return false
 }
+

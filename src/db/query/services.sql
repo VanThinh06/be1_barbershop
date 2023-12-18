@@ -1,14 +1,53 @@
--- name: CreateService :one
+-- name: CreateServicesPublic :one
 INSERT INTO "Services" (
     category_id,
+    "chain_id",
     "name",
     timer,
     price,
     "description",
     "image"
   )
-VALUES ($1, $2, $3, $4, $5, $6)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING *;
+
+-- name: CreateServicesPrivate :one
+INSERT INTO "Services" (
+    category_id,
+    "shop_id",
+    "name",
+    timer,
+    price,
+    "description",
+    "image"
+  )
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+RETURNING *;
+
+-- name: UpdateServicesPublicSeparate :one
+INSERT INTO "Services" (
+    category_id,
+    "shop_id",
+    "chain_id",
+    "name",
+    timer,
+    price,
+    "description",
+    "image"
+  )
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+RETURNING *;
+
+-- GetServicesBarberShops :many
+SELECT * FROM "Services" AS s1
+WHERE s1."category_id" = $1 AND s1."chain_id" = $2
+
+UNION
+
+SELECT * FROM "Services" AS s2
+WHERE s2."category_id" = $1 AND s2."chain_id" = $2 AND s2."shop_id" IS NOT NULL AND s2."chain_id" IS NOT NULL;
+
+
 
 -- -- name: GetListServicewithCategory :many
 -- SELECT *

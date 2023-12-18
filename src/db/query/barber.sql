@@ -9,7 +9,8 @@ INSERT INTO "Barbers" (
     "role",
     hashed_password,
     avatar,
-    manager_id
+    manager_id,
+    "haircut"
   )
 VALUES (
     $1,
@@ -21,14 +22,17 @@ VALUES (
     $7,
     $8,
     $9,
-    $10
+    $10,
+    $11
   )
 RETURNING *;
+
 -- name: GetEmailBarber :one
 SELECT *
 FROM "Barbers"
 WHERE email = $1
 LIMIT 1;
+
 -- name: UpdateBarber :one
 UPDATE "Barbers"
 set shop_id = coalesce(sqlc.narg('shop_id'), shop_id),
@@ -44,7 +48,8 @@ set shop_id = coalesce(sqlc.narg('shop_id'), shop_id),
     sqlc.narg('password_changed_at'),
     password_changed_at
   ),
-  "update_at" = sqlc.arg('update_at')
+  "update_at" = sqlc.arg('update_at'),
+  "haircut" = coalesce(sqlc.narg('haircut'), haircut)
   WHERE "barber_id" = sqlc.arg('barber_id')
 RETURNING *;
 
@@ -53,3 +58,8 @@ SELECT shop_id::varchar, "role"
 FROM "Barbers"
 WHERE barber_id = $1
 LIMIT 1;
+
+-- name: GetBarberInBarberShop :many
+SELECT *
+FROM "Barbers"
+WHERE shop_id =sqlc.arg('shop_id') AND "haircut" = true;

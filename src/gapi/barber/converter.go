@@ -22,6 +22,7 @@ func convertBarber(res db.Barber) *barber.Barber {
 		CreatedAt:         timestamppb.New(res.CreatedAt),
 		UpdateAt:          timestamppb.New(res.UpdateAt.Time),
 		PasswordChangedAt: timestamppb.New(res.PasswordChangedAt),
+		Haircut:           res.Haircut,
 	}
 }
 
@@ -42,7 +43,7 @@ func convertBarberShop(barberShop db.BarberShop) *barber.BarberShops {
 func ConvertServiceCategory(servicecategory db.ServiceCategory) *barber.ServiceCategory {
 	return &barber.ServiceCategory{
 		Id:        servicecategory.ID.String(),
-		ShopId:    servicecategory.ShopID.String(),
+		ShopId:    servicecategory.ShopID.UUID.String(),
 		Name:      servicecategory.Name,
 		CreatedAt: timestamppb.New(servicecategory.CreatedAt),
 		UpdateAt:  timestamppb.New(servicecategory.UpdateAt.Time),

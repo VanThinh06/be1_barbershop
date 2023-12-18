@@ -3,6 +3,7 @@
 CREATE TABLE "BarberShops" (
   "shop_id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "owner_id" uuid NOT NULL,
+  "chain_id" uuid,
   "name" varchar NOT NULL,
   "facility" integer NOT NULL DEFAULT 1,
   "address" varchar NOT NULL,
@@ -26,6 +27,7 @@ CREATE TABLE "Barbers" (
   "email" varchar UNIQUE NOT NULL,
   "gender" integer NOT NULL,
   "role" integer NOT NULL,
+  "haircut" bool NOT NULL DEFAULT false,
   "hashed_password" varchar NOT NULL,
   "avatar" varchar,
   "status" integer DEFAULT 1,
@@ -49,7 +51,8 @@ CREATE TABLE "SessionsBarber" (
 
 CREATE TABLE "ServiceCategory" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "shop_id" uuid NOT NULL,
+  "chain_id" uuid,
+  "shop_id" uuid,
   "name" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz
@@ -58,6 +61,8 @@ CREATE TABLE "ServiceCategory" (
 CREATE TABLE "Services" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "category_id" uuid NOT NULL,
+  "chain_id" uuid,
+  "shop_id" uuid,
   "name" varchar NOT NULL,
   "timer" integer,
   "price" real,
@@ -89,7 +94,7 @@ CREATE TABLE "SessionsCustomer" (
   "client_ip" varchar NOT NULL,
   "fcm_device" varchar NOT NULL,
   "timezone" varchar NOT NULL,
-  "coordinates" GEOGRAPHY(Point, 4326) NOT NULL,
+  "coordinates" GEOGRAPHY(Point, 4326),
   "is_blocked" bool NOT NULL DEFAULT false,
   "expires_at" timestamptz NOT NULL,
   "create_at" timestamptz NOT NULL DEFAULT (now())
@@ -100,24 +105,34 @@ CREATE TABLE "Appointments" (
   "barbershops_id" uuid NOT NULL,
   "customer_id" uuid NOT NULL,
   "barber_id" uuid NOT NULL,
-  "service_id" uuid UNIQUE NOT NULL,
   "appointment_datetime" timestamptz NOT NULL,
   "status" integer NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz
 );
 
+CREATE TABLE "Chains" (
+  "chain_id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "owner_id" uuid NOT NULL,
+  "name" varchar NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "update_at" timestamptz
+);
+
+
 CREATE INDEX ON "BarberShops" ("owner_id");
 
-CREATE INDEX ON "BarberShops" ("name");
+CREATE INDEX ON "BarberShops" ("chain_id");
 
-CREATE INDEX ON "Barbers" ("barber_id");
+CREATE INDEX ON "BarberShops" ("name");
 
 CREATE INDEX ON "Barbers" ("shop_id");
 
 CREATE INDEX ON "Barbers" ("nick_name");
 
-CREATE INDEX ON "ServiceCategory" ("id");
+CREATE INDEX ON "Barbers" ("email");
+
+CREATE INDEX ON "Barbers" ("phone");
 
 CREATE INDEX ON "ServiceCategory" ("shop_id");
 
@@ -125,17 +140,19 @@ CREATE INDEX ON "Services" ("id");
 
 CREATE INDEX ON "Services" ("category_id");
 
-CREATE INDEX ON "Customers" ("customer_id");
-
 CREATE INDEX ON "Customers" ("email");
 
-CREATE INDEX ON "Appointments" ("appointment_id");
+CREATE INDEX ON "Customers" ("phone");
 
 CREATE INDEX ON "Appointments" ("barber_id");
 
 CREATE INDEX ON "Appointments" ("customer_id");
 
+CREATE UNIQUE INDEX ON "Appointments" ("barber_id", "appointment_datetime");
+
 ALTER TABLE "BarberShops" ADD FOREIGN KEY ("owner_id") REFERENCES "Barbers" ("barber_id");
+
+ALTER TABLE "BarberShops" ADD FOREIGN KEY ("chain_id") REFERENCES "Chains" ("chain_id");
 
 ALTER TABLE "Barbers" ADD FOREIGN KEY ("shop_id") REFERENCES "BarberShops" ("shop_id");
 
@@ -143,9 +160,15 @@ ALTER TABLE "Barbers" ADD FOREIGN KEY ("manager_id") REFERENCES "Barbers" ("barb
 
 ALTER TABLE "SessionsBarber" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("barber_id");
 
+ALTER TABLE "ServiceCategory" ADD FOREIGN KEY ("chain_id") REFERENCES "Chains" ("chain_id");
+
 ALTER TABLE "ServiceCategory" ADD FOREIGN KEY ("shop_id") REFERENCES "BarberShops" ("shop_id");
 
 ALTER TABLE "Services" ADD FOREIGN KEY ("category_id") REFERENCES "ServiceCategory" ("id");
+
+ALTER TABLE "Services" ADD FOREIGN KEY ("chain_id") REFERENCES "Chains" ("chain_id");
+
+ALTER TABLE "Services" ADD FOREIGN KEY ("shop_id") REFERENCES "BarberShops" ("shop_id");
 
 ALTER TABLE "SessionsCustomer" ADD FOREIGN KEY ("customer_id") REFERENCES "Customers" ("customer_id");
 
@@ -163,5 +186,6 @@ CREATE TABLE "Services_Appointments" (
 
 ALTER TABLE "Services_Appointments" ADD FOREIGN KEY ("Services_id") REFERENCES "Services" ("id");
 
-ALTER TABLE "Services_Appointments" ADD FOREIGN KEY ("Appointments_service_id") REFERENCES "Appointments" ("service_id");
+ALTER TABLE "Services_Appointments" ADD FOREIGN KEY ("Appointments_service_id") REFERENCES "Appointments" ("appointment_id");
 
+ALTER TABLE "Chains" ADD FOREIGN KEY ("owner_id") REFERENCES "Barbers" ("barber_id");

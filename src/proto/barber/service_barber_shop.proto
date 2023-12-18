@@ -93,7 +93,7 @@ service BarberShop {
     };
   }
 
-  rpc NewServiceCategory (CreateServiceCategoryRequest) returns (CreateServiceCategoryResponse){
+  rpc NewServicesCategory (CreateServicesCategoryPublicRequest) returns (CreateServicesCategoryResponse){
     option (google.api.http) = {
               post: "/v1/manager/create-category-service"
               body: "*"
@@ -103,8 +103,30 @@ service BarberShop {
       summary: "Create a service category"
     };
   }
+
+  rpc NewServiceCategoryPrivate (CreateServicesCategoryPrivateRequest) returns (CreateServicesCategoryResponse){
+    option (google.api.http) = {
+              post: "/v1/manager/create-category-service-private"
+              body: "*"
+            };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "API endpoint to create a new barber"
+      summary: "Create a service category"
+    };
+  }
+
+  rpc UpdateServicesCategoryPublicSeparate (UpdateServicesCategoryPublicSeparateRequest) returns (CreateServicesCategoryResponse){
+    option (google.api.http) = {
+              post: "/v1/manager/update-category-service"
+              body: "*"
+            };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "API endpoint to create a new barber"
+      summary: "Create a service category"
+    };
+  }
   
-  rpc NewServices (CreateServicesRequest) returns (CreateServicesResponse){
+  rpc NewServices (CreateServicesPublicRequest) returns (CreateServicesResponse){
       option (google.api.http) = {
                 post: "/v1/manager/create-services"
                 body: "*"
@@ -115,6 +137,26 @@ service BarberShop {
       };
     }
     
+    rpc NewServicesPrivate (CreateServicesPrivateRequest) returns (CreateServicesResponse){
+      option (google.api.http) = {
+                post: "/v1/manager/create-services-private"
+                body: "*"
+              };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "API endpoint to create a new barber"
+        summary: "Create a service category"
+      };
+    }
+    rpc UpdateServicesPublicSeparate (UpdateServicesPublicSeparateRequest) returns (CreateServicesResponse){
+      option (google.api.http) = {
+                post: "/v1/manager/update-services"
+                body: "*"
+              };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "API endpoint to create a new barber"
+        summary: "Create a service category"
+      };
+    }
   rpc NewBarberShops (CreateBarberShopsRequest) returns (CreateBarberShopsResponse){
         option (google.api.http) = {
                   post: "/v1/manager/create-barber-shop"

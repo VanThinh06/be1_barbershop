@@ -5,7 +5,7 @@ package pb;
 option go_package = "barbershop/src/pb/barber";
 
 message CodeBarberShopRequest {
-    int32 role = 1 ;
+    int32 role = 1;
 }
 
 message CodeBarberShopResponse {

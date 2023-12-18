@@ -19,6 +19,7 @@ message UpdateBarberRequest {
     optional int32 status = 10;
     optional google.protobuf.Timestamp password_changed_at = 11;
     google.protobuf.Timestamp update_at = 12;
+    bool haircut = 13;
 }
 
 message UpdateBarberResponse {
