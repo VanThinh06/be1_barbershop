@@ -19,6 +19,6 @@ message Barber {
     int32 status = 10;
     bool haircut = 14;
     google.protobuf.Timestamp created_at = 11;
-    google.protobuf.Timestamp update_at = 12;
+    google.protobuf.Timestamp updated_at = 12;
     google.protobuf.Timestamp password_changed_at = 13;
 }

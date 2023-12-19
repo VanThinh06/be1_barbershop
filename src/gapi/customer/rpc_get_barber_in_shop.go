@@ -15,7 +15,7 @@ func (server *Server) GetBarberInShop(ctx context.Context, req *customer.GetBarb
 		return nil, UnauthenticatedError(err)
 	}
 
-	res, err := server.store.GetBarberInBarberShop(ctx, uuid.NullUUID{
+	res, err := server.store.GetBarbersInBarberShop(ctx, uuid.NullUUID{
 		UUID:  uuid.MustParse(req.BarbershopId),
 		Valid: req.BarbershopId != "",
 	})

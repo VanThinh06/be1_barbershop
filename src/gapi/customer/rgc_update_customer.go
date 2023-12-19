@@ -52,7 +52,7 @@ func (server *Server) UpdateCustomer(ctx context.Context, req *customer.UpdateCu
 			String: req.GetAvatar(),
 			Valid:  req.Avatar != nil,
 		},
-		UpdateAt: sql.NullTime{
+		UpdatedAt: sql.NullTime{
 			Time:  time.Now(),
 			Valid: true,
 		},

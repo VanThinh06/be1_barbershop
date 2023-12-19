@@ -33,7 +33,7 @@ VALUES ($1,
         $7,
         $8,
         $9::varchar
-        ) RETURNING id, barber_id, refresh_token, user_agent, client_ip, fcm_device, is_blocked, timezone, expires_at, create_at
+        ) RETURNING id, barber_id, refresh_token, user_agent, client_ip, fcm_device, is_blocked, timezone, expires_at, created_at
 `
 
 type CreateSessionBarberParams struct {
@@ -71,13 +71,13 @@ func (q *Queries) CreateSessionBarber(ctx context.Context, arg CreateSessionBarb
 		&i.IsBlocked,
 		&i.Timezone,
 		&i.ExpiresAt,
-		&i.CreateAt,
+		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const getSessionsBarber = `-- name: GetSessionsBarber :one
-SELECT id, barber_id, refresh_token, user_agent, client_ip, fcm_device, is_blocked, timezone, expires_at, create_at
+SELECT id, barber_id, refresh_token, user_agent, client_ip, fcm_device, is_blocked, timezone, expires_at, created_at
 FROM "SessionsBarber"
 WHERE id = $1
 LIMIT 1
@@ -96,7 +96,7 @@ func (q *Queries) GetSessionsBarber(ctx context.Context, id uuid.UUID) (Sessions
 		&i.IsBlocked,
 		&i.Timezone,
 		&i.ExpiresAt,
-		&i.CreateAt,
+		&i.CreatedAt,
 	)
 	return i, err
 }
@@ -106,7 +106,7 @@ UPDATE "SessionsBarber"
 set refresh_token = $2,
     expires_at = $3
 WHERE id = $1
-RETURNING id, barber_id, refresh_token, user_agent, client_ip, fcm_device, is_blocked, timezone, expires_at, create_at
+RETURNING id, barber_id, refresh_token, user_agent, client_ip, fcm_device, is_blocked, timezone, expires_at, created_at
 `
 
 type UpdateRefreshTokenSessionsBarberParams struct {
@@ -128,7 +128,7 @@ func (q *Queries) UpdateRefreshTokenSessionsBarber(ctx context.Context, arg Upda
 		&i.IsBlocked,
 		&i.Timezone,
 		&i.ExpiresAt,
-		&i.CreateAt,
+		&i.CreatedAt,
 	)
 	return i, err
 }

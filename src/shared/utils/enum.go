@@ -6,9 +6,6 @@ const (
 	Female
 	Other
 )
-func GetGender() gender {
-	return Male
-}
 
 // role 
 type role int
@@ -17,6 +14,3 @@ const (
 	ServiceProvider
 	Manager
 )
-func GetRole() role {
-	return HairStylist
-}

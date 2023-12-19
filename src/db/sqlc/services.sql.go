@@ -12,58 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const createServicesPrivate = `-- name: CreateServicesPrivate :one
-INSERT INTO "Services" (
-    category_id,
-    "shop_id",
-    "name",
-    timer,
-    price,
-    "description",
-    "image"
-  )
-VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, category_id, chain_id, shop_id, name, timer, price, description, image, created_at, update_at
-`
-
-type CreateServicesPrivateParams struct {
-	CategoryID  uuid.UUID       `json:"category_id"`
-	ShopID      uuid.NullUUID   `json:"shop_id"`
-	Name        string          `json:"name"`
-	Timer       sql.NullInt32   `json:"timer"`
-	Price       sql.NullFloat64 `json:"price"`
-	Description sql.NullString  `json:"description"`
-	Image       sql.NullString  `json:"image"`
-}
-
-func (q *Queries) CreateServicesPrivate(ctx context.Context, arg CreateServicesPrivateParams) (Service, error) {
-	row := q.db.QueryRowContext(ctx, createServicesPrivate,
-		arg.CategoryID,
-		arg.ShopID,
-		arg.Name,
-		arg.Timer,
-		arg.Price,
-		arg.Description,
-		arg.Image,
-	)
-	var i Service
-	err := row.Scan(
-		&i.ID,
-		&i.CategoryID,
-		&i.ChainID,
-		&i.ShopID,
-		&i.Name,
-		&i.Timer,
-		&i.Price,
-		&i.Description,
-		&i.Image,
-		&i.CreatedAt,
-		&i.UpdateAt,
-	)
-	return i, err
-}
-
-const createServicesPublic = `-- name: CreateServicesPublic :one
+const createService = `-- name: CreateService :one
 INSERT INTO "Services" (
     category_id,
     "chain_id",
@@ -74,10 +23,10 @@ INSERT INTO "Services" (
     "image"
   )
 VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, category_id, chain_id, shop_id, name, timer, price, description, image, created_at, update_at
+RETURNING id, category_id, chain_id, shop_id, name, timer, price, description, image, hidden, created_at, updated_at
 `
 
-type CreateServicesPublicParams struct {
+type CreateServiceParams struct {
 	CategoryID  uuid.UUID       `json:"category_id"`
 	ChainID     uuid.NullUUID   `json:"chain_id"`
 	Name        string          `json:"name"`
@@ -87,8 +36,8 @@ type CreateServicesPublicParams struct {
 	Image       sql.NullString  `json:"image"`
 }
 
-func (q *Queries) CreateServicesPublic(ctx context.Context, arg CreateServicesPublicParams) (Service, error) {
-	row := q.db.QueryRowContext(ctx, createServicesPublic,
+func (q *Queries) CreateService(ctx context.Context, arg CreateServiceParams) (Service, error) {
+	row := q.db.QueryRowContext(ctx, createService,
 		arg.CategoryID,
 		arg.ChainID,
 		arg.Name,
@@ -108,31 +57,30 @@ func (q *Queries) CreateServicesPublic(ctx context.Context, arg CreateServicesPu
 		&i.Price,
 		&i.Description,
 		&i.Image,
+		&i.Hidden,
 		&i.CreatedAt,
-		&i.UpdateAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
 
-const updateServicesPublicSeparate = `-- name: UpdateServicesPublicSeparate :one
+const createServicePrivate = `-- name: CreateServicePrivate :one
 INSERT INTO "Services" (
     category_id,
     "shop_id",
-    "chain_id",
     "name",
     timer,
     price,
     "description",
     "image"
   )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-RETURNING id, category_id, chain_id, shop_id, name, timer, price, description, image, created_at, update_at
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+RETURNING id, category_id, chain_id, shop_id, name, timer, price, description, image, hidden, created_at, updated_at
 `
 
-type UpdateServicesPublicSeparateParams struct {
+type CreateServicePrivateParams struct {
 	CategoryID  uuid.UUID       `json:"category_id"`
 	ShopID      uuid.NullUUID   `json:"shop_id"`
-	ChainID     uuid.NullUUID   `json:"chain_id"`
 	Name        string          `json:"name"`
 	Timer       sql.NullInt32   `json:"timer"`
 	Price       sql.NullFloat64 `json:"price"`
@@ -140,11 +88,10 @@ type UpdateServicesPublicSeparateParams struct {
 	Image       sql.NullString  `json:"image"`
 }
 
-func (q *Queries) UpdateServicesPublicSeparate(ctx context.Context, arg UpdateServicesPublicSeparateParams) (Service, error) {
-	row := q.db.QueryRowContext(ctx, updateServicesPublicSeparate,
+func (q *Queries) CreateServicePrivate(ctx context.Context, arg CreateServicePrivateParams) (Service, error) {
+	row := q.db.QueryRowContext(ctx, createServicePrivate,
 		arg.CategoryID,
 		arg.ShopID,
-		arg.ChainID,
 		arg.Name,
 		arg.Timer,
 		arg.Price,
@@ -162,8 +109,9 @@ func (q *Queries) UpdateServicesPublicSeparate(ctx context.Context, arg UpdateSe
 		&i.Price,
 		&i.Description,
 		&i.Image,
+		&i.Hidden,
 		&i.CreatedAt,
-		&i.UpdateAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }

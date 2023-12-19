@@ -19,12 +19,10 @@ func GetRemainingString(fullString, subString string) string {
 }
 
 func GetValueAtIndex(arr []string, index int) (string, error) {
-	// Kiểm tra xem chỉ số có nằm trong phạm vi hợp lý hay không
 	if index >= 0 && index < len(arr) {
 		return arr[index], nil
 	}
 
-	// Trả về lỗi nếu chỉ số nằm ngoài phạm vi
 	return "", errors.New("Chỉ số nằm ngoài phạm vi của mảng")
 }
 

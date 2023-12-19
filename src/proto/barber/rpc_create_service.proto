@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package pb;
+import "barber/service.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message CreateServicePrivateRequest{
+    string category_id = 1;
+    string shop_id = 7;
+    string name = 2;
+    optional int32 timer = 3;
+    optional int32  price = 4;
+    optional string  description = 5;
+    optional string  image = 6;
+}
+
+message CreateServiceRequest{
+    string category_id = 1;
+    string name = 2;
+    string chain_id = 7;
+    optional int32 timer = 3;
+    optional int32  price = 4;
+    optional string  description = 5;
+    optional string  image = 6;
+}
+
+message CreateServiceResponse {
+    Service services = 1;
+}

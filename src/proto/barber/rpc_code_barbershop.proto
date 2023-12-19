@@ -9,5 +9,5 @@ message CodeBarberShopRequest {
 }
 
 message CodeBarberShopResponse {
-    string code_manager = 1;
+    string code = 1;
 }

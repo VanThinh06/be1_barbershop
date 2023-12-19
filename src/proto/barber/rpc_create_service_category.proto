@@ -6,22 +6,19 @@ import "barber/service_category.proto";
 option go_package = "barbershop/src/pb/barber";
 
 
-message CreateServicesCategoryPrivateRequest{
+message CreateServiceCategoryPrivateRequest{
     string barber_shop_id = 1;
     string name = 2;
+    int32 gender = 3;
+
 }
 
-message CreateServicesCategoryPublicRequest{
+message CreateServiceCategoryRequest{
     string chain_id = 1;
     string name = 2;
+    int32 gender = 3;
 }
 
-message UpdateServicesCategoryPublicSeparateRequest{
-    string chain_id = 1;
-    string barber_shop_id = 2;
-    string name = 3;
-}
-
-message CreateServicesCategoryResponse {
-    ServiceCategory barber = 1;
+message CreateServiceCategoryResponse {
+    ServiceCategory service_category = 1;
 }

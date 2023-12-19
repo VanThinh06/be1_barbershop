@@ -15,7 +15,7 @@ import (
 )
 
 const getAppointmentByDate = `-- name: GetAppointmentByDate :many
-SELECT appointment_id, barbershops_id, customer_id, barber_id, appointment_datetime, status, created_at, update_at FROM "Appointments"
+SELECT appointment_id, barbershops_id, customer_id, barber_id, appointment_datetime, status, created_at, updated_at FROM "Appointments"
 WHERE DATE(appointment_datetime) = $1
 AND barber_id = $2
 ORDER BY appointment_datetime
@@ -43,7 +43,7 @@ func (q *Queries) GetAppointmentByDate(ctx context.Context, arg GetAppointmentBy
 			&i.AppointmentDatetime,
 			&i.Status,
 			&i.CreatedAt,
-			&i.UpdateAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -67,7 +67,7 @@ INSERT INTO "Appointments" (
     "status"  
     )
 VALUES ($1, $2, $3, $4, $5)
-RETURNING appointment_id, barbershops_id, customer_id, barber_id, appointment_datetime, status, created_at, update_at
+RETURNING appointment_id, barbershops_id, customer_id, barber_id, appointment_datetime, status, created_at, updated_at
 `
 
 type InsertAppointmentParams struct {
@@ -95,7 +95,7 @@ func (q *Queries) InsertAppointment(ctx context.Context, arg InsertAppointmentPa
 		&i.AppointmentDatetime,
 		&i.Status,
 		&i.CreatedAt,
-		&i.UpdateAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
@@ -106,7 +106,7 @@ WITH inserted_services AS (
   SELECT unnest($2::uuid[]), $1
   RETURNING "Services_id", "Appointments_service_id"
 )
-SELECT "Services_id", "Appointments_service_id", s.id, s.category_id, s.chain_id, s.shop_id, s.name, s.timer, s.price, s.description, s.image, s.created_at, s.update_at
+SELECT "Services_id", "Appointments_service_id", s.id, s.category_id, s.chain_id, s.shop_id, s.name, s.timer, s.price, s.description, s.image, s.hidden, s.created_at, s.updated_at
 FROM inserted_services
 JOIN "Services" s ON "Services_id" = s."id"
 `
@@ -128,8 +128,9 @@ type InsertServicesForAppointmentRow struct {
 	Price                 sql.NullFloat64 `json:"price"`
 	Description           sql.NullString  `json:"description"`
 	Image                 sql.NullString  `json:"image"`
+	Hidden                bool            `json:"hidden"`
 	CreatedAt             time.Time       `json:"created_at"`
-	UpdateAt              sql.NullTime    `json:"update_at"`
+	UpdatedAt             sql.NullTime    `json:"updated_at"`
 }
 
 func (q *Queries) InsertServicesForAppointment(ctx context.Context, arg InsertServicesForAppointmentParams) ([]InsertServicesForAppointmentRow, error) {
@@ -153,8 +154,9 @@ func (q *Queries) InsertServicesForAppointment(ctx context.Context, arg InsertSe
 			&i.Price,
 			&i.Description,
 			&i.Image,
+			&i.Hidden,
 			&i.CreatedAt,
-			&i.UpdateAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}

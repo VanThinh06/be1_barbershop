@@ -35,7 +35,7 @@ VALUES ($1,
         $8,
         $9,
         ST_GeographyFromText('POINT(' || $10::float8 || ' ' || $11::float8 || ')')
-        ) RETURNING id, customer_id, refresh_token, user_agent, client_ip, fcm_device, timezone, coordinates, is_blocked, expires_at, create_at
+        ) RETURNING id, customer_id, refresh_token, user_agent, client_ip, fcm_device, timezone, coordinates, is_blocked, expires_at, created_at
 `
 
 type CreateSessionsCustomerParams struct {
@@ -78,13 +78,13 @@ func (q *Queries) CreateSessionsCustomer(ctx context.Context, arg CreateSessions
 		&i.Coordinates,
 		&i.IsBlocked,
 		&i.ExpiresAt,
-		&i.CreateAt,
+		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const getSessionsCustomer = `-- name: GetSessionsCustomer :one
-SELECT id, customer_id, refresh_token, user_agent, client_ip, fcm_device, timezone, coordinates, is_blocked, expires_at, create_at
+SELECT id, customer_id, refresh_token, user_agent, client_ip, fcm_device, timezone, coordinates, is_blocked, expires_at, created_at
 FROM "SessionsCustomer"
 WHERE id = $1
 LIMIT 1
@@ -104,7 +104,7 @@ func (q *Queries) GetSessionsCustomer(ctx context.Context, id uuid.UUID) (Sessio
 		&i.Coordinates,
 		&i.IsBlocked,
 		&i.ExpiresAt,
-		&i.CreateAt,
+		&i.CreatedAt,
 	)
 	return i, err
 }
@@ -114,7 +114,7 @@ UPDATE "SessionsCustomer"
 set refresh_token = $2,
     expires_at = $3
 WHERE id = $1
-RETURNING id, customer_id, refresh_token, user_agent, client_ip, fcm_device, timezone, coordinates, is_blocked, expires_at, create_at
+RETURNING id, customer_id, refresh_token, user_agent, client_ip, fcm_device, timezone, coordinates, is_blocked, expires_at, created_at
 `
 
 type UpdateRefreshTokenSessionsCustomerParams struct {
@@ -137,7 +137,7 @@ func (q *Queries) UpdateRefreshTokenSessionsCustomer(ctx context.Context, arg Up
 		&i.Coordinates,
 		&i.IsBlocked,
 		&i.ExpiresAt,
-		&i.CreateAt,
+		&i.CreatedAt,
 	)
 	return i, err
 }

@@ -108,3 +108,17 @@ func ValidateNickname(nickname string) error {
 
 	return nil
 }
+
+func isVietnameseLetter(char rune) bool {
+	vietnameseCharset := []*unicode.RangeTable{
+		unicode.Letter,
+	}
+
+	for _, charset := range vietnameseCharset {
+		if unicode.In(char, charset) {
+			return true
+		}
+	}
+
+	return false
+}

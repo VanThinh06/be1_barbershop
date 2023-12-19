@@ -15,8 +15,8 @@ func convertCustomer(res db.Customer) *customer.Customer {
 		Name:              res.Name,
 		Avatar:            res.Avatar.String,
 		CustomerId:        res.CustomerID.String(),
-		CreatedAt:         timestamppb.New(res.CreateAt),
-		UpdateAt:          timestamppb.New(res.UpdateAt.Time),
+		CreatedAt:         timestamppb.New(res.CreatedAt),
+		UpdateAt:          timestamppb.New(res.UpdatedAt.Time),
 		PasswordChangedAt: timestamppb.New(res.PasswordChangedAt),
 		IsSocialAuth:      res.IsSocialAuth.Bool,
 	}
@@ -30,7 +30,7 @@ func convertAppointment(appointment db.Appointment) *customer.Appointment {
 		AppointmentDatetime: timestamppb.New(appointment.AppointmentDatetime),
 		Status:              appointment.Status,
 		CreatedAt:           timestamppb.New(appointment.CreatedAt),
-		UpdateAt:            timestamppb.New(appointment.UpdateAt.Time),
+		UpdateAt:            timestamppb.New(appointment.UpdatedAt.Time),
 	}
 }
 
@@ -44,7 +44,7 @@ func convertGetAppointmentByDate(res []db.Appointment) []*customer.Appointment {
 			Status:              appointment.Status,
 			AppointmentDatetime: timestamppb.New(appointment.AppointmentDatetime),
 			CreatedAt:           timestamppb.New(appointment.CreatedAt),
-			UpdateAt:            timestamppb.New(appointment.UpdateAt.Time),
+			UpdateAt:            timestamppb.New(appointment.UpdatedAt.Time),
 		}
 		appointments = append(appointments, appointment)
 	}

@@ -19,7 +19,7 @@ type Appointment struct {
 	AppointmentDatetime time.Time    `json:"appointment_datetime"`
 	Status              int32        `json:"status"`
 	CreatedAt           time.Time    `json:"created_at"`
-	UpdateAt            sql.NullTime `json:"update_at"`
+	UpdatedAt           sql.NullTime `json:"updated_at"`
 }
 
 type Barber struct {
@@ -38,7 +38,7 @@ type Barber struct {
 	Status            sql.NullInt32  `json:"status"`
 	PasswordChangedAt time.Time      `json:"password_changed_at"`
 	CreatedAt         time.Time      `json:"created_at"`
-	UpdateAt          sql.NullTime   `json:"update_at"`
+	UpdatedAt         sql.NullTime   `json:"updated_at"`
 }
 
 type BarberShop struct {
@@ -55,7 +55,7 @@ type BarberShop struct {
 	Rate         sql.NullFloat64 `json:"rate"`
 	IsReputation sql.NullBool    `json:"is_reputation"`
 	CreatedAt    time.Time       `json:"created_at"`
-	UpdateAt     sql.NullTime    `json:"update_at"`
+	UpdatedAt    sql.NullTime    `json:"updated_at"`
 }
 
 type Chain struct {
@@ -63,7 +63,7 @@ type Chain struct {
 	OwnerID   uuid.UUID    `json:"owner_id"`
 	Name      string       `json:"name"`
 	CreatedAt time.Time    `json:"created_at"`
-	UpdateAt  sql.NullTime `json:"update_at"`
+	UpdatedAt sql.NullTime `json:"updated_at"`
 }
 
 type Customer struct {
@@ -76,8 +76,8 @@ type Customer struct {
 	Avatar            sql.NullString `json:"avatar"`
 	IsSocialAuth      sql.NullBool   `json:"is_social_auth"`
 	PasswordChangedAt time.Time      `json:"password_changed_at"`
-	CreateAt          time.Time      `json:"create_at"`
-	UpdateAt          sql.NullTime   `json:"update_at"`
+	CreatedAt         time.Time      `json:"created_at"`
+	UpdatedAt         sql.NullTime   `json:"updated_at"`
 }
 
 type Service struct {
@@ -90,17 +90,20 @@ type Service struct {
 	Price       sql.NullFloat64 `json:"price"`
 	Description sql.NullString  `json:"description"`
 	Image       sql.NullString  `json:"image"`
+	Hidden      bool            `json:"hidden"`
 	CreatedAt   time.Time       `json:"created_at"`
-	UpdateAt    sql.NullTime    `json:"update_at"`
+	UpdatedAt   sql.NullTime    `json:"updated_at"`
 }
 
 type ServiceCategory struct {
 	ID        uuid.UUID     `json:"id"`
 	ChainID   uuid.NullUUID `json:"chain_id"`
 	ShopID    uuid.NullUUID `json:"shop_id"`
+	Gender    int32         `json:"gender"`
 	Name      string        `json:"name"`
 	CreatedAt time.Time     `json:"created_at"`
-	UpdateAt  sql.NullTime  `json:"update_at"`
+	UpdatedAt sql.NullTime  `json:"updated_at"`
+	Hidden    bool          `json:"hidden"`
 }
 
 type ServicesAppointment struct {
@@ -118,7 +121,7 @@ type SessionsBarber struct {
 	IsBlocked    bool      `json:"is_blocked"`
 	Timezone     string    `json:"timezone"`
 	ExpiresAt    time.Time `json:"expires_at"`
-	CreateAt     time.Time `json:"create_at"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 type SessionsCustomer struct {
@@ -132,5 +135,5 @@ type SessionsCustomer struct {
 	Coordinates  interface{} `json:"coordinates"`
 	IsBlocked    bool        `json:"is_blocked"`
 	ExpiresAt    time.Time   `json:"expires_at"`
-	CreateAt     time.Time   `json:"create_at"`
+	CreatedAt    time.Time   `json:"created_at"`
 }

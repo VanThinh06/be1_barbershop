@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) NewServices(ctx context.Context, req *barber.CreateServicesPublicRequest) (*barber.CreateServicesResponse, error) {
+func (server *Server) CreateService(ctx context.Context, req *barber.CreateServiceRequest) (*barber.CreateServiceResponse, error) {
 
 	payload, err := server.AuthorizeUser(ctx)
 	if err != nil {
@@ -24,7 +24,7 @@ func (server *Server) NewServices(ctx context.Context, req *barber.CreateService
 		return nil, status.Errorf(codes.PermissionDenied, "No permission")
 	}
 
-	arg := db.CreateServicesPublicParams{
+	arg := db.CreateServiceParams{
 		CategoryID: uuid.MustParse(req.GetCategoryId()),
 		Timer: sql.NullInt32{
 			Int32: req.GetTimer(),
@@ -50,7 +50,7 @@ func (server *Server) NewServices(ctx context.Context, req *barber.CreateService
 		},
 	}
 
-	services, err := server.Store.CreateServicesPublic(ctx, arg)
+	services, err := server.Store.CreateService(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
@@ -61,7 +61,7 @@ func (server *Server) NewServices(ctx context.Context, req *barber.CreateService
 		return nil, status.Errorf(codes.Internal, "failed to create barber shop")
 	}
 
-	rsp := &barber.CreateServicesResponse{
+	rsp := &barber.CreateServiceResponse{
 		Services: ConvertServices(services),
 	}
 	return rsp, nil

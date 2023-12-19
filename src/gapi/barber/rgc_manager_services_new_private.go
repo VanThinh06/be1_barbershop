@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) NewServicesPrivate(ctx context.Context, req *barber.CreateServicesPrivateRequest) (*barber.CreateServicesResponse, error) {
+func (server *Server) NewServicesPrivate(ctx context.Context, req *barber.CreateServicePrivateRequest) (*barber.CreateServiceResponse, error) {
 
 	payload, err := server.AuthorizeUser(ctx)
 	if err != nil {
@@ -24,8 +24,9 @@ func (server *Server) NewServicesPrivate(ctx context.Context, req *barber.Create
 		return nil, status.Errorf(codes.PermissionDenied, "No permission")
 	}
 
-	arg := db.CreateServicesPrivateParams{
+	arg := db.CreateServicePrivateParams{
 		CategoryID: uuid.MustParse(req.GetCategoryId()),
+
 		Timer: sql.NullInt32{
 			Int32: req.GetTimer(),
 			Valid: req.Timer != nil,
@@ -43,14 +44,13 @@ func (server *Server) NewServicesPrivate(ctx context.Context, req *barber.Create
 			Valid:  req.Image != nil,
 		},
 		Name: req.Name,
-
 		ShopID: uuid.NullUUID{
 			UUID:  uuid.MustParse(req.GetShopId()),
 			Valid: req.ShopId != "",
 		},
 	}
 
-	services, err := server.Store.CreateServicesPrivate(ctx, arg)
+	services, err := server.Store.CreateServicePrivate(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
@@ -61,7 +61,7 @@ func (server *Server) NewServicesPrivate(ctx context.Context, req *barber.Create
 		return nil, status.Errorf(codes.Internal, "failed to create barber shop")
 	}
 
-	rsp := &barber.CreateServicesResponse{
+	rsp := &barber.CreateServiceResponse{
 		Services: ConvertServices(services),
 	}
 	return rsp, nil

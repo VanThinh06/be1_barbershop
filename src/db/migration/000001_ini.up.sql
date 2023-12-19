@@ -14,7 +14,7 @@ CREATE TABLE "BarberShops" (
   "rate" float,
   "is_reputation" bool DEFAULT false,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz
+  "updated_at" timestamptz
 );
 
 CREATE TABLE "Barbers" (
@@ -33,7 +33,7 @@ CREATE TABLE "Barbers" (
   "status" integer DEFAULT 1,
   "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
   "created_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz
+  "updated_at" timestamptz
 );
 
 CREATE TABLE "SessionsBarber" (
@@ -46,16 +46,18 @@ CREATE TABLE "SessionsBarber" (
   "is_blocked" bool NOT NULL DEFAULT false,
   "timezone" varchar NOT NULL,
   "expires_at" timestamptz NOT NULL,
-  "create_at" timestamptz NOT NULL DEFAULT (now())
+  "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "ServiceCategory" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "chain_id" uuid,
   "shop_id" uuid,
+  "gender" integer NOT NULL DEFAULT 1,
   "name" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz
+  "updated_at" timestamptz,
+  "hidden" boolean NOT NULL DEFAULT true
 );
 
 CREATE TABLE "Services" (
@@ -68,8 +70,9 @@ CREATE TABLE "Services" (
   "price" real,
   "description" varchar,
   "image" varchar,
+  "hidden" boolean NOT NULL DEFAULT true,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz
+  "updated_at" timestamptz
 );
 
 CREATE TABLE "Customers" (
@@ -82,8 +85,8 @@ CREATE TABLE "Customers" (
   "avatar" varchar,
   "is_social_auth" bool DEFAULT false,
   "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
-  "create_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz
 );
 
 CREATE TABLE "SessionsCustomer" (
@@ -97,7 +100,7 @@ CREATE TABLE "SessionsCustomer" (
   "coordinates" GEOGRAPHY(Point, 4326),
   "is_blocked" bool NOT NULL DEFAULT false,
   "expires_at" timestamptz NOT NULL,
-  "create_at" timestamptz NOT NULL DEFAULT (now())
+  "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "Appointments" (
@@ -108,17 +111,16 @@ CREATE TABLE "Appointments" (
   "appointment_datetime" timestamptz NOT NULL,
   "status" integer NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz
+  "updated_at" timestamptz
 );
 
 CREATE TABLE "Chains" (
   "chain_id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "owner_id" uuid NOT NULL,
+  "owner_id" uuid UNIQUE NOT NULL,
   "name" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz
+  "updated_at" timestamptz
 );
-
 
 CREATE INDEX ON "BarberShops" ("owner_id");
 
@@ -136,9 +138,23 @@ CREATE INDEX ON "Barbers" ("phone");
 
 CREATE INDEX ON "ServiceCategory" ("shop_id");
 
-CREATE INDEX ON "Services" ("id");
+CREATE INDEX ON "ServiceCategory" ("chain_id");
+
+CREATE UNIQUE INDEX ON "ServiceCategory" ("chain_id", "name");
+
+CREATE UNIQUE INDEX ON "ServiceCategory" ("shop_id", "name");
 
 CREATE INDEX ON "Services" ("category_id");
+
+CREATE INDEX ON "Services" ("chain_id");
+
+CREATE INDEX ON "Services" ("shop_id");
+
+CREATE UNIQUE INDEX ON "Services" ("category_id", "name");
+
+CREATE UNIQUE INDEX ON "Services" ("chain_id", "name");
+
+CREATE UNIQUE INDEX ON "Services" ("shop_id", "name");
 
 CREATE INDEX ON "Customers" ("email");
 

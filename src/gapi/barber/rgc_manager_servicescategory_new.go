@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) NewServicesCategory(ctx context.Context, req *barber.CreateServicesCategoryPublicRequest) (*barber.CreateServicesCategoryResponse, error) {
+func (server *Server) NewServicesCategory(ctx context.Context, req *barber.CreateServiceCategoryRequest) (*barber.CreateServiceCategoryResponse, error) {
 
 	payload, err := server.AuthorizeUser(ctx)
 	if err != nil {
@@ -23,7 +23,7 @@ func (server *Server) NewServicesCategory(ctx context.Context, req *barber.Creat
 		return nil, status.Errorf(codes.PermissionDenied, "No permission")
 	}
 
-	arg := db.CreateServicesCategoryPublicParams{
+	arg := db.CreateServiceCategoryParams{
 		ChainID: uuid.NullUUID{
 			UUID:  uuid.MustParse(req.GetChainId()),
 			Valid: req.ChainId != "",
@@ -31,7 +31,7 @@ func (server *Server) NewServicesCategory(ctx context.Context, req *barber.Creat
 		Name: req.GetName(),
 	}
 
-	servicecategory, err := server.Store.CreateServicesCategoryPublic(ctx, arg)
+	servicecategory, err := server.Store.CreateServiceCategory(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
@@ -42,8 +42,8 @@ func (server *Server) NewServicesCategory(ctx context.Context, req *barber.Creat
 		return nil, status.Errorf(codes.Internal, "failed to create barber shop")
 	}
 
-	rsp := &barber.CreateServicesCategoryResponse{
-		Barber: ConvertServiceCategory(servicecategory),
+	rsp := &barber.CreateServiceCategoryResponse{
+		ServiceCategory:  ConvertServiceCategory(servicecategory),
 	}
 	return rsp, nil
 }

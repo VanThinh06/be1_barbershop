@@ -13,7 +13,7 @@ import (
 
 // Server servers gRPC requests for our barbershop
 type Server struct {
-	barber.UnimplementedBarberShopServer
+	barber.UnimplementedBarberServiceServer
 	config     utils.Config
 	Store      db.StoreMain
 	tokenMaker token.Maker

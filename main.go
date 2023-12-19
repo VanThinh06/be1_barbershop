@@ -64,7 +64,7 @@ func runGatewayServer(config utils.Config, store db.StoreMain, firebase db.Fireb
 	if err != nil {
 		log.Fatal("cannot create server:", err)
 	}
-	err = barber.RegisterBarberShopHandlerServer(ctx, grpcMux, server)
+	err = barber.RegisterBarberServiceHandlerServer(ctx, grpcMux, server)
 	if err != nil {
 		log.Fatal("cannot register handler server:", err)
 	}
@@ -107,7 +107,7 @@ func runGrpcServer(config utils.Config, store db.StoreMain, firebase db.Firebase
 	if err != nil {
 		log.Fatal("cannot create service:", err)
 	}
-	barber.RegisterBarberShopServer(grpcServer, server)
+	barber.RegisterBarberServiceServer(grpcServer, server)
 
 	serverCustomer, err := customergapi.NewServer(config, store, firebase)
 	if err != nil {

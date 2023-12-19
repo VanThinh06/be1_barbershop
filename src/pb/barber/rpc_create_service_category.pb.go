@@ -20,17 +20,18 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type CreateServicesCategoryPrivateRequest struct {
+type CreateServiceCategoryPrivateRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	BarberShopId string `protobuf:"bytes,1,opt,name=barber_shop_id,json=barberShopId,proto3" json:"barber_shop_id,omitempty"`
 	Name         string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Gender       int32  `protobuf:"varint,3,opt,name=gender,proto3" json:"gender,omitempty"`
 }
 
-func (x *CreateServicesCategoryPrivateRequest) Reset() {
-	*x = CreateServicesCategoryPrivateRequest{}
+func (x *CreateServiceCategoryPrivateRequest) Reset() {
+	*x = CreateServiceCategoryPrivateRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_barber_rpc_create_service_category_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -38,13 +39,13 @@ func (x *CreateServicesCategoryPrivateRequest) Reset() {
 	}
 }
 
-func (x *CreateServicesCategoryPrivateRequest) String() string {
+func (x *CreateServiceCategoryPrivateRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateServicesCategoryPrivateRequest) ProtoMessage() {}
+func (*CreateServiceCategoryPrivateRequest) ProtoMessage() {}
 
-func (x *CreateServicesCategoryPrivateRequest) ProtoReflect() protoreflect.Message {
+func (x *CreateServiceCategoryPrivateRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_barber_rpc_create_service_category_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -56,36 +57,44 @@ func (x *CreateServicesCategoryPrivateRequest) ProtoReflect() protoreflect.Messa
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateServicesCategoryPrivateRequest.ProtoReflect.Descriptor instead.
-func (*CreateServicesCategoryPrivateRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateServiceCategoryPrivateRequest.ProtoReflect.Descriptor instead.
+func (*CreateServiceCategoryPrivateRequest) Descriptor() ([]byte, []int) {
 	return file_barber_rpc_create_service_category_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CreateServicesCategoryPrivateRequest) GetBarberShopId() string {
+func (x *CreateServiceCategoryPrivateRequest) GetBarberShopId() string {
 	if x != nil {
 		return x.BarberShopId
 	}
 	return ""
 }
 
-func (x *CreateServicesCategoryPrivateRequest) GetName() string {
+func (x *CreateServiceCategoryPrivateRequest) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-type CreateServicesCategoryPublicRequest struct {
+func (x *CreateServiceCategoryPrivateRequest) GetGender() int32 {
+	if x != nil {
+		return x.Gender
+	}
+	return 0
+}
+
+type CreateServiceCategoryRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	ChainId string `protobuf:"bytes,1,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
 	Name    string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Gender  int32  `protobuf:"varint,3,opt,name=gender,proto3" json:"gender,omitempty"`
 }
 
-func (x *CreateServicesCategoryPublicRequest) Reset() {
-	*x = CreateServicesCategoryPublicRequest{}
+func (x *CreateServiceCategoryRequest) Reset() {
+	*x = CreateServiceCategoryRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_barber_rpc_create_service_category_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -93,13 +102,13 @@ func (x *CreateServicesCategoryPublicRequest) Reset() {
 	}
 }
 
-func (x *CreateServicesCategoryPublicRequest) String() string {
+func (x *CreateServiceCategoryRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateServicesCategoryPublicRequest) ProtoMessage() {}
+func (*CreateServiceCategoryRequest) ProtoMessage() {}
 
-func (x *CreateServicesCategoryPublicRequest) ProtoReflect() protoreflect.Message {
+func (x *CreateServiceCategoryRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_barber_rpc_create_service_category_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -111,37 +120,42 @@ func (x *CreateServicesCategoryPublicRequest) ProtoReflect() protoreflect.Messag
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateServicesCategoryPublicRequest.ProtoReflect.Descriptor instead.
-func (*CreateServicesCategoryPublicRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateServiceCategoryRequest.ProtoReflect.Descriptor instead.
+func (*CreateServiceCategoryRequest) Descriptor() ([]byte, []int) {
 	return file_barber_rpc_create_service_category_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CreateServicesCategoryPublicRequest) GetChainId() string {
+func (x *CreateServiceCategoryRequest) GetChainId() string {
 	if x != nil {
 		return x.ChainId
 	}
 	return ""
 }
 
-func (x *CreateServicesCategoryPublicRequest) GetName() string {
+func (x *CreateServiceCategoryRequest) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-type UpdateServicesCategoryPublicSeparateRequest struct {
+func (x *CreateServiceCategoryRequest) GetGender() int32 {
+	if x != nil {
+		return x.Gender
+	}
+	return 0
+}
+
+type CreateServiceCategoryResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ChainId      string `protobuf:"bytes,1,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
-	BarberShopId string `protobuf:"bytes,2,opt,name=barber_shop_id,json=barberShopId,proto3" json:"barber_shop_id,omitempty"`
-	Name         string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	ServiceCategory *ServiceCategory `protobuf:"bytes,1,opt,name=service_category,json=serviceCategory,proto3" json:"service_category,omitempty"`
 }
 
-func (x *UpdateServicesCategoryPublicSeparateRequest) Reset() {
-	*x = UpdateServicesCategoryPublicSeparateRequest{}
+func (x *CreateServiceCategoryResponse) Reset() {
+	*x = CreateServiceCategoryResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_barber_rpc_create_service_category_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -149,13 +163,13 @@ func (x *UpdateServicesCategoryPublicSeparateRequest) Reset() {
 	}
 }
 
-func (x *UpdateServicesCategoryPublicSeparateRequest) String() string {
+func (x *CreateServiceCategoryResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateServicesCategoryPublicSeparateRequest) ProtoMessage() {}
+func (*CreateServiceCategoryResponse) ProtoMessage() {}
 
-func (x *UpdateServicesCategoryPublicSeparateRequest) ProtoReflect() protoreflect.Message {
+func (x *CreateServiceCategoryResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_barber_rpc_create_service_category_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -167,75 +181,14 @@ func (x *UpdateServicesCategoryPublicSeparateRequest) ProtoReflect() protoreflec
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateServicesCategoryPublicSeparateRequest.ProtoReflect.Descriptor instead.
-func (*UpdateServicesCategoryPublicSeparateRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateServiceCategoryResponse.ProtoReflect.Descriptor instead.
+func (*CreateServiceCategoryResponse) Descriptor() ([]byte, []int) {
 	return file_barber_rpc_create_service_category_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *UpdateServicesCategoryPublicSeparateRequest) GetChainId() string {
+func (x *CreateServiceCategoryResponse) GetServiceCategory() *ServiceCategory {
 	if x != nil {
-		return x.ChainId
-	}
-	return ""
-}
-
-func (x *UpdateServicesCategoryPublicSeparateRequest) GetBarberShopId() string {
-	if x != nil {
-		return x.BarberShopId
-	}
-	return ""
-}
-
-func (x *UpdateServicesCategoryPublicSeparateRequest) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-type CreateServicesCategoryResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Barber *ServiceCategory `protobuf:"bytes,1,opt,name=barber,proto3" json:"barber,omitempty"`
-}
-
-func (x *CreateServicesCategoryResponse) Reset() {
-	*x = CreateServicesCategoryResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_barber_rpc_create_service_category_proto_msgTypes[3]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CreateServicesCategoryResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateServicesCategoryResponse) ProtoMessage() {}
-
-func (x *CreateServicesCategoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_barber_rpc_create_service_category_proto_msgTypes[3]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateServicesCategoryResponse.ProtoReflect.Descriptor instead.
-func (*CreateServicesCategoryResponse) Descriptor() ([]byte, []int) {
-	return file_barber_rpc_create_service_category_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *CreateServicesCategoryResponse) GetBarber() *ServiceCategory {
-	if x != nil {
-		return x.Barber
+		return x.ServiceCategory
 	}
 	return nil
 }
@@ -247,34 +200,30 @@ var file_barber_rpc_create_service_category_proto_rawDesc = []byte{
 	0x61, 0x74, 0x65, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x63, 0x61, 0x74, 0x65,
 	0x67, 0x6f, 0x72, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x02, 0x70, 0x62, 0x1a, 0x1d,
 	0x62, 0x61, 0x72, 0x62, 0x65, 0x72, 0x2f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x63,
-	0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x60, 0x0a,
-	0x24, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x43,
-	0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x50, 0x72, 0x69, 0x76, 0x61, 0x74, 0x65, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x24, 0x0a, 0x0e, 0x62, 0x61, 0x72, 0x62, 0x65, 0x72, 0x5f,
-	0x73, 0x68, 0x6f, 0x70, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x62,
-	0x61, 0x72, 0x62, 0x65, 0x72, 0x53, 0x68, 0x6f, 0x70, 0x49, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e,
-	0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22,
-	0x54, 0x0a, 0x23, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
-	0x73, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x52,
+	0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x77, 0x0a,
+	0x23, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x43, 0x61,
+	0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x50, 0x72, 0x69, 0x76, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x24, 0x0a, 0x0e, 0x62, 0x61, 0x72, 0x62, 0x65, 0x72, 0x5f, 0x73,
+	0x68, 0x6f, 0x70, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x62, 0x61,
+	0x72, 0x62, 0x65, 0x72, 0x53, 0x68, 0x6f, 0x70, 0x49, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61,
+	0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x16,
+	0x0a, 0x06, 0x67, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x06,
+	0x67, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x22, 0x65, 0x0a, 0x1c, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
+	0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x52,
 	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x5f,
 	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x49,
 	0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x82, 0x01, 0x0a, 0x2b, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79,
-	0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x53, 0x65, 0x70, 0x61, 0x72, 0x61, 0x74, 0x65, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x5f, 0x69,
-	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x49, 0x64,
-	0x12, 0x24, 0x0a, 0x0e, 0x62, 0x61, 0x72, 0x62, 0x65, 0x72, 0x5f, 0x73, 0x68, 0x6f, 0x70, 0x5f,
-	0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x62, 0x61, 0x72, 0x62, 0x65, 0x72,
-	0x53, 0x68, 0x6f, 0x70, 0x49, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x03,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x4d, 0x0a, 0x1e, 0x43, 0x72,
-	0x65, 0x61, 0x74, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x43, 0x61, 0x74, 0x65,
-	0x67, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2b, 0x0a, 0x06,
-	0x62, 0x61, 0x72, 0x62, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x70,
-	0x62, 0x2e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72,
-	0x79, 0x52, 0x06, 0x62, 0x61, 0x72, 0x62, 0x65, 0x72, 0x42, 0x1a, 0x5a, 0x18, 0x62, 0x61, 0x72,
-	0x62, 0x65, 0x72, 0x73, 0x68, 0x6f, 0x70, 0x2f, 0x73, 0x72, 0x63, 0x2f, 0x70, 0x62, 0x2f, 0x62,
-	0x61, 0x72, 0x62, 0x65, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x67, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x18,
+	0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x06, 0x67, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x22, 0x5f, 0x0a,
+	0x1d, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x43, 0x61,
+	0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3e,
+	0x0a, 0x10, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f,
+	0x72, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x70, 0x62, 0x2e, 0x53, 0x65,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x52, 0x0f, 0x73,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x42, 0x1a,
+	0x5a, 0x18, 0x62, 0x61, 0x72, 0x62, 0x65, 0x72, 0x73, 0x68, 0x6f, 0x70, 0x2f, 0x73, 0x72, 0x63,
+	0x2f, 0x70, 0x62, 0x2f, 0x62, 0x61, 0x72, 0x62, 0x65, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (
@@ -289,16 +238,15 @@ func file_barber_rpc_create_service_category_proto_rawDescGZIP() []byte {
 	return file_barber_rpc_create_service_category_proto_rawDescData
 }
 
-var file_barber_rpc_create_service_category_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_barber_rpc_create_service_category_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_barber_rpc_create_service_category_proto_goTypes = []interface{}{
-	(*CreateServicesCategoryPrivateRequest)(nil),        // 0: pb.CreateServicesCategoryPrivateRequest
-	(*CreateServicesCategoryPublicRequest)(nil),         // 1: pb.CreateServicesCategoryPublicRequest
-	(*UpdateServicesCategoryPublicSeparateRequest)(nil), // 2: pb.UpdateServicesCategoryPublicSeparateRequest
-	(*CreateServicesCategoryResponse)(nil),              // 3: pb.CreateServicesCategoryResponse
-	(*ServiceCategory)(nil),                             // 4: pb.ServiceCategory
+	(*CreateServiceCategoryPrivateRequest)(nil), // 0: pb.CreateServiceCategoryPrivateRequest
+	(*CreateServiceCategoryRequest)(nil),        // 1: pb.CreateServiceCategoryRequest
+	(*CreateServiceCategoryResponse)(nil),       // 2: pb.CreateServiceCategoryResponse
+	(*ServiceCategory)(nil),                     // 3: pb.ServiceCategory
 }
 var file_barber_rpc_create_service_category_proto_depIdxs = []int32{
-	4, // 0: pb.CreateServicesCategoryResponse.barber:type_name -> pb.ServiceCategory
+	3, // 0: pb.CreateServiceCategoryResponse.service_category:type_name -> pb.ServiceCategory
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -314,7 +262,7 @@ func file_barber_rpc_create_service_category_proto_init() {
 	file_barber_service_category_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_barber_rpc_create_service_category_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateServicesCategoryPrivateRequest); i {
+			switch v := v.(*CreateServiceCategoryPrivateRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -326,7 +274,7 @@ func file_barber_rpc_create_service_category_proto_init() {
 			}
 		}
 		file_barber_rpc_create_service_category_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateServicesCategoryPublicRequest); i {
+			switch v := v.(*CreateServiceCategoryRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -338,19 +286,7 @@ func file_barber_rpc_create_service_category_proto_init() {
 			}
 		}
 		file_barber_rpc_create_service_category_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateServicesCategoryPublicSeparateRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_barber_rpc_create_service_category_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateServicesCategoryResponse); i {
+			switch v := v.(*CreateServiceCategoryResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -368,7 +304,7 @@ func file_barber_rpc_create_service_category_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_barber_rpc_create_service_category_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
