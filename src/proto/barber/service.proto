@@ -11,7 +11,7 @@ message Service {
     string category_id = 2;
     string name = 3;
     optional int32 timer = 4;
-    optional int32 price = 5;
+    optional float price = 5;
     optional string description = 6;
     optional string image = 7;
     google.protobuf.Timestamp created_at = 8;

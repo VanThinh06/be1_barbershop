@@ -12,6 +12,7 @@ import (
 
 type Querier interface {
 	BarberGetIdShop(ctx context.Context, barberID uuid.UUID) (BarberGetIdShopRow, error)
+	BarberShopInChain(ctx context.Context, ownerID uuid.UUID) (bool, error)
 	ChangePasswordCustomer(ctx context.Context, arg ChangePasswordCustomerParams) (Customer, error)
 	CreateBarber(ctx context.Context, arg CreateBarberParams) (Barber, error)
 	CreateBarberShop(ctx context.Context, arg CreateBarberShopParams) (BarberShop, error)
@@ -30,6 +31,7 @@ type Querier interface {
 	GetContactCustomer(ctx context.Context, arg GetContactCustomerParams) (Customer, error)
 	GetCustomer(ctx context.Context, customerID uuid.UUID) (Customer, error)
 	GetEmailBarber(ctx context.Context, email string) (Barber, error)
+	GetListServices(ctx context.Context, arg GetListServicesParams) ([]Service, error)
 	GetSessionsBarber(ctx context.Context, id uuid.UUID) (SessionsBarber, error)
 	GetSessionsCustomer(ctx context.Context, id uuid.UUID) (SessionsCustomer, error)
 	InsertAppointment(ctx context.Context, arg InsertAppointmentParams) (Appointment, error)

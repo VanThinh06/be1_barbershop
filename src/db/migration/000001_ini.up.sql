@@ -9,7 +9,7 @@ CREATE TABLE "BarberShops" (
   "address" varchar NOT NULL,
   "image" varchar,
   "list_image" varchar[],
-  "status" integer NOT NULL DEFAULT 1,
+  "status" integer NOT NULL DEFAULT 0,
   "coordinates" GEOGRAPHY(Point, 4326) NOT NULL,
   "rate" float,
   "is_reputation" bool DEFAULT false,
@@ -57,7 +57,7 @@ CREATE TABLE "ServiceCategory" (
   "name" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz,
-  "hidden" boolean NOT NULL DEFAULT true
+  "hidden" boolean NOT NULL DEFAULT false
 );
 
 CREATE TABLE "Services" (
@@ -70,7 +70,7 @@ CREATE TABLE "Services" (
   "price" real,
   "description" varchar,
   "image" varchar,
-  "hidden" boolean NOT NULL DEFAULT true,
+  "hidden" boolean NOT NULL DEFAULT false,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz
 );
@@ -127,6 +127,10 @@ CREATE INDEX ON "BarberShops" ("owner_id");
 CREATE INDEX ON "BarberShops" ("chain_id");
 
 CREATE INDEX ON "BarberShops" ("name");
+
+CREATE UNIQUE INDEX ON "BarberShops" ("chain_id", "facility");
+
+CREATE UNIQUE INDEX ON "BarberShops" ("owner_id", "facility");
 
 CREATE INDEX ON "Barbers" ("shop_id");
 

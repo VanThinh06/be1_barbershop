@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) NewServicesCategory(ctx context.Context, req *barber.CreateServiceCategoryRequest) (*barber.CreateServiceCategoryResponse, error) {
+func (server *Server) CreateServiceCategory(ctx context.Context, req *barber.CreateServiceCategoryRequest) (*barber.CreateServiceCategoryResponse, error) {
 
 	payload, err := server.AuthorizeUser(ctx)
 	if err != nil {

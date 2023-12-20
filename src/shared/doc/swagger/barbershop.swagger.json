@@ -222,6 +222,40 @@
         ]
       }
     },
+    "/v1/manager/chain": {
+      "post": {
+        "summary": "Create a service category",
+        "description": "API endpoint to create a new barber",
+        "operationId": "BarberService_CreateChain",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateChainResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateChainRequest"
+            }
+          }
+        ],
+        "tags": [
+          "BarberService"
+        ]
+      }
+    },
     "/v1/manager/generate-code": {
       "post": {
         "summary": "Create a service category",
@@ -391,6 +425,40 @@
           "BarberService"
         ]
       }
+    },
+    "/v1/services": {
+      "post": {
+        "summary": "Create a service category",
+        "description": "API endpoint to create a new barber",
+        "operationId": "BarberService_GetServices",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetServicesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbGetServicesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "BarberService"
+        ]
+      }
     }
   },
   "definitions": {
@@ -510,6 +578,28 @@
         }
       }
     },
+    "pbChain": {
+      "type": "object",
+      "properties": {
+        "chainId": {
+          "type": "string"
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "pbCodeBarberShopRequest": {
       "type": "object",
       "properties": {
@@ -594,6 +684,10 @@
         },
         "isMainBranch": {
           "type": "boolean"
+        },
+        "facility": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -602,6 +696,25 @@
       "properties": {
         "barberShop": {
           "$ref": "#/definitions/pbBarberShop"
+        }
+      }
+    },
+    "pbCreateChainRequest": {
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateChainResponse": {
+      "type": "object",
+      "properties": {
+        "chain": {
+          "$ref": "#/definitions/pbChain"
         }
       }
     },
@@ -736,6 +849,29 @@
         }
       }
     },
+    "pbGetServicesRequest": {
+      "type": "object",
+      "properties": {
+        "chainId": {
+          "type": "string"
+        },
+        "shopId": {
+          "type": "string"
+        }
+      }
+    },
+    "pbGetServicesResponse": {
+      "type": "object",
+      "properties": {
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbService"
+          }
+        }
+      }
+    },
     "pbLoginBarberRequest": {
       "type": "object",
       "properties": {
@@ -825,8 +961,8 @@
           "format": "int32"
         },
         "price": {
-          "type": "integer",
-          "format": "int32"
+          "type": "number",
+          "format": "float"
         },
         "description": {
           "type": "string"

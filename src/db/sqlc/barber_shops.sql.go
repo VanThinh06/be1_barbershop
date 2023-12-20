@@ -14,6 +14,22 @@ import (
 	"github.com/lib/pq"
 )
 
+const barberShopInChain = `-- name: BarberShopInChain :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "BarberShops"
+  WHERE "owner_id" = $1
+    AND "chain_id" IS NULL
+) AS "barbershop_not_in_chain"
+`
+
+func (q *Queries) BarberShopInChain(ctx context.Context, ownerID uuid.UUID) (bool, error) {
+	row := q.db.QueryRowContext(ctx, barberShopInChain, ownerID)
+	var barbershop_not_in_chain bool
+	err := row.Scan(&barbershop_not_in_chain)
+	return barbershop_not_in_chain, err
+}
+
 const createBarberShop = `-- name: CreateBarberShop :one
 
 INSERT INTO "BarberShops" (
@@ -22,14 +38,18 @@ INSERT INTO "BarberShops" (
                            name,
                            coordinates,
                            address,
-                           image)
+                           image,
+                           facility
+                           )
 VALUES (
         $1,
         $2,
         $3,
         ST_GeographyFromText('POINT(' || $4::float8 || ' ' || $5::float8 || ')'),
         $6,
-        $7) RETURNING shop_id, owner_id, chain_id, name, facility, address, image, list_image, status, coordinates, rate, is_reputation, created_at, updated_at
+        $7,
+        $8
+        ) RETURNING shop_id, owner_id, chain_id, name, facility, address, image, list_image, status, coordinates, rate, is_reputation, created_at, updated_at
 `
 
 type CreateBarberShopParams struct {
@@ -40,6 +60,7 @@ type CreateBarberShopParams struct {
 	Latitude  float64        `json:"latitude"`
 	Address   string         `json:"address"`
 	Image     sql.NullString `json:"image"`
+	Facility  int32          `json:"facility"`
 }
 
 func (q *Queries) CreateBarberShop(ctx context.Context, arg CreateBarberShopParams) (BarberShop, error) {
@@ -51,6 +72,7 @@ func (q *Queries) CreateBarberShop(ctx context.Context, arg CreateBarberShopPara
 		arg.Latitude,
 		arg.Address,
 		arg.Image,
+		arg.Facility,
 	)
 	var i BarberShop
 	err := row.Scan(

@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) NewServiceCategoryPrivate(ctx context.Context, req *barber.CreateServiceCategoryPrivateRequest) (*barber.CreateServiceCategoryResponse, error) {
+func (server *Server) CreateServiceCategoryPrivate(ctx context.Context, req *barber.CreateServiceCategoryPrivateRequest) (*barber.CreateServiceCategoryResponse, error) {
 
 	payload, err := server.AuthorizeUser(ctx)
 	if err != nil {
@@ -28,7 +28,7 @@ func (server *Server) NewServiceCategoryPrivate(ctx context.Context, req *barber
 			UUID:  uuid.MustParse(req.GetBarberShopId()),
 			Valid: req.BarberShopId != "",
 		},
-		Name: req.GetName(),
+		Name:   req.GetName(),
 		Gender: req.GetGender(),
 	}
 

@@ -6,14 +6,18 @@ INSERT INTO "BarberShops" (
                            name,
                            coordinates,
                            address,
-                           image)
+                           image,
+                           facility
+                           )
 VALUES (
         sqlc.arg(owner_id),
         sqlc.arg(chain_id),
         sqlc.arg(name),
         ST_GeographyFromText('POINT(' || sqlc.arg(longitude)::float8 || ' ' || sqlc.arg(latitude)::float8 || ')'),
         sqlc.arg(address),
-        sqlc.narg(image)) RETURNING *; 
+        sqlc.narg(image),
+        sqlc.arg(facility)
+        ) RETURNING *; 
 -- name: GetBarberShop :one
 
 SELECT "shop_id"
@@ -42,6 +46,14 @@ SELECT
 FROM "BarberShops"
 WHERE  ST_Distance(coordinates, ST_SetSRID(ST_MakePoint(sqlc.arg(current_longitude)::float, sqlc.arg(current_latitude)::float), 4326)) <= sqlc.arg(distance_in_meters)::int
 ORDER BY ST_Distance(coordinates, ST_SetSRID(ST_MakePoint(sqlc.arg(current_longitude)::float, sqlc.arg(current_latitude)::float), 4326));
+
+-- name: BarberShopInChain :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "BarberShops"
+  WHERE "owner_id" = $1
+    AND "chain_id" IS NULL
+) AS "barbershop_not_in_chain";
 
 
 -- -- name: UpdateStore :one

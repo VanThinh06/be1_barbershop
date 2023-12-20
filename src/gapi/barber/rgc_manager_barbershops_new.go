@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) NewBarberShop(ctx context.Context, req *barber.CreateBarberShopRequest) (*barber.CreateBarberShopResponse, error) {
+func (server *Server) CreateBarberShop(ctx context.Context, req *barber.CreateBarberShopRequest) (*barber.CreateBarberShopResponse, error) {
 
 	authPayload, err := server.AuthorizeUser(ctx)
 	if err != nil {
@@ -20,11 +20,13 @@ func (server *Server) NewBarberShop(ctx context.Context, req *barber.CreateBarbe
 	}
 
 	var chainId uuid.NullUUID
+	var facility = req.Facility
 	if req.ChainId != nil {
 		chainId = uuid.NullUUID{
 			UUID:  uuid.MustParse(req.GetChainId()),
 			Valid: req.ChainId != nil,
 		}
+		facility = req.GetFacility()
 	}
 	arg := db.CreateBarberShopParams{
 		OwnerID:   authPayload.Barber.BarberID,
@@ -37,13 +39,28 @@ func (server *Server) NewBarberShop(ctx context.Context, req *barber.CreateBarbe
 			String: req.GetImage(),
 			Valid:  req.Image != nil,
 		},
+		Facility: facility,
 	}
 
+	isBarberShopInChain, err := server.Store.BarberShopInChain(ctx, authPayload.Barber.BarberID)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "internal")
+	}
+	if isBarberShopInChain {
+		return nil, status.Errorf(codes.PermissionDenied, "account cannot create many other barber shops")
+	}
+	
 	barberShop, err := server.Store.CreateBarberShop(ctx, arg)
 	if err != nil {
 		if pgErr, ok := err.(*pgconn.PgError); ok {
 			switch pgErr.ConstraintName {
-			case "BarberShops_code_barber_shop_key":
+			case "BarberShops_pkey":
+				return nil, status.Errorf(codes.AlreadyExists, "barber shop already existed")
+
+			case "BarberShops_chain_id_facility_idx":
+				return nil, status.Errorf(codes.AlreadyExists, "barber shop already existed")
+
+			case "BarberShops_owner_id_facility_idx":
 				return nil, status.Errorf(codes.AlreadyExists, "barber shop already existed")
 			}
 		}

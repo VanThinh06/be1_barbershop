@@ -14,19 +14,19 @@ import (
 )
 
 func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRequest) (*barber.LoginBarberResponse, error) {
-	// Retrieve barber information from the store
+
 	res, err := server.Store.GetEmailBarber(ctx, req.Username)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, status.Error(codes.NotFound, "failed to get email barber ")
+			return nil, status.Error(codes.NotFound, "you have not created an account yet")
 		}
-		return nil, status.Error(codes.Internal, "failed to get email barber")
+		return nil, status.Error(codes.InvalidArgument, "username or password is incorrect")
 	}
 
-	// Check the password provided against the stored hashed password
+
 	err = utils.CheckPassword(req.Password, res.HashedPassword)
 	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, "failed to check the password for")
+		return nil, status.Error(codes.Unauthenticated, "username or password is incorrect")
 	}
 
 	barberPayload := token.BarberPayload{
@@ -38,22 +38,22 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 		Timezone:  req.Timezone,
 	}
 
-	// Create an access token for the authenticated barber
+
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
 		barberPayload,
 		server.config.AccessTokenDuration,
 	)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "failed to create token")
+		return nil, status.Error(codes.Internal, "internal")
 	}
 
-	// Create a refresh token for the authenticated barber
+
 	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
 		barberPayload,
 		server.config.RefreshTokenDuration,
 	)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "failed to create refresh token %s")
+		return nil, status.Error(codes.Internal, "internal")
 	}
 
 	mtdt := server.extractMetadata(ctx)
@@ -69,11 +69,9 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 		Timezone:     req.Timezone,
 	})
 	if err != nil {
-		// If there's an error creating the session, return an internal server error
-		return nil, status.Error(codes.Internal, "failed to create session")
+		return nil, status.Error(codes.Internal, "internal")
 	}
 
-	// Prepare the response with barber and session information
 	rsp := &barber.LoginBarberResponse{
 		Barber:                convertBarber(res),
 		SessionId:             session.ID.String(),

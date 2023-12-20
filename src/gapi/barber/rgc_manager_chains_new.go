@@ -20,7 +20,7 @@ func (server *Server) CreateChain(ctx context.Context, req *barber.CreateChainRe
 
 	err = server.IsManager(ctx, payload)
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "No permission")
+		return nil, status.Errorf(codes.PermissionDenied, "no permission")
 	}
 
 	arg := db.CreateChainParams{
@@ -32,11 +32,11 @@ func (server *Server) CreateChain(ctx context.Context, req *barber.CreateChainRe
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
-			case "BarberShops_code_barber_shop_key":
-				return nil, status.Errorf(codes.AlreadyExists, "This barber shop has already existed")
+			case "Chains_owner_id_key":
+				return nil, status.Errorf(codes.AlreadyExists, "no permission")
 			}
 		}
-		return nil, status.Errorf(codes.Internal, "failed to create barber shop")
+		return nil, status.Errorf(codes.Internal, "internal")
 	}
 
 	rsp := &barber.CreateChainResponse{

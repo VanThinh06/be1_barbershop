@@ -15,6 +15,7 @@ message CreateBarberShopRequest {
     google.protobuf.DoubleValue latitude = 5;
     optional string image = 6;
     bool is_main_branch = 7;
+    int32 facility = 8;
 }
 
 message CreateBarberShopResponse {

@@ -115,3 +115,51 @@ func (q *Queries) CreateServicePrivate(ctx context.Context, arg CreateServicePri
 	)
 	return i, err
 }
+
+const getListServices = `-- name: GetListServices :many
+SELECT id, category_id, chain_id, shop_id, name, timer, price, description, image, hidden, created_at, updated_at
+FROM "Services"
+WHERE ("chain_id" = $1 OR "shop_id" = $2)
+  AND "hidden" = false
+`
+
+type GetListServicesParams struct {
+	ChainID uuid.NullUUID `json:"chain_id"`
+	ShopID  uuid.NullUUID `json:"shop_id"`
+}
+
+func (q *Queries) GetListServices(ctx context.Context, arg GetListServicesParams) ([]Service, error) {
+	rows, err := q.db.QueryContext(ctx, getListServices, arg.ChainID, arg.ShopID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Service{}
+	for rows.Next() {
+		var i Service
+		if err := rows.Scan(
+			&i.ID,
+			&i.CategoryID,
+			&i.ChainID,
+			&i.ShopID,
+			&i.Name,
+			&i.Timer,
+			&i.Price,
+			&i.Description,
+			&i.Image,
+			&i.Hidden,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

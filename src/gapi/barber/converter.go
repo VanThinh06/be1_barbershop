@@ -3,6 +3,7 @@ package gapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
+	"barbershop/src/shared/utils"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
@@ -59,7 +60,7 @@ func ConvertServices(service db.Service) *barber.Service {
 		CategoryId:  service.CategoryID.String(),
 		Name:        service.Name,
 		Timer:       &service.Timer.Int32,
-		Price:       &service.Timer.Int32,
+		Price:       utils.ConvertFloat64ToFloat32Pointer(service.Price.Float64),
 		Description: &service.Description.String,
 		Image:       &service.Image.String,
 		CreatedAt:   timestamppb.New(service.CreatedAt),
@@ -68,6 +69,31 @@ func ConvertServices(service db.Service) *barber.Service {
 		ChainId:     service.ChainID.UUID.String(),
 		IsHidden:    service.Hidden,
 	}
+}
+
+func ConvertListSerivces(res []db.Service) []*barber.Service {
+	var services []*barber.Service
+
+	for _, service := range res {
+		barberShopPB := &barber.Service{
+
+			ShopId:      service.ShopID.UUID.String(),
+			ChainId:     service.ChainID.UUID.String(),
+			Id:          service.ChainID.UUID.String(),
+			CategoryId:  service.ChainID.UUID.String(),
+			Name:        service.Name,
+			Image:       &service.Image.String,
+			CreatedAt:   timestamppb.New(service.CreatedAt),
+			UpdatedAt:   timestamppb.New(service.UpdatedAt.Time),
+			Timer:       &timestamppb.Now().Nanos,
+			Price:       utils.ConvertFloat64ToFloat32Pointer(service.Price.Float64),
+			Description: &service.Description.String,
+		}
+
+		services = append(services, barberShopPB)
+	}
+
+	return services
 }
 
 func ConvertListBarberShopsNearby(res []db.FindBarberShopsNearbyLocationsRow) []*barber.BarberShop {

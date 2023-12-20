@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) NewServicesPrivate(ctx context.Context, req *barber.CreateServicePrivateRequest) (*barber.CreateServiceResponse, error) {
+func (server *Server) CreateServicePrivate(ctx context.Context, req *barber.CreateServicePrivateRequest) (*barber.CreateServiceResponse, error) {
 
 	payload, err := server.AuthorizeUser(ctx)
 	if err != nil {

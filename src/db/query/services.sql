@@ -24,6 +24,11 @@ INSERT INTO "Services" (
 VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING *;
 
+-- name: GetListServices :many
+SELECT *
+FROM "Services"
+WHERE ("chain_id" = $1 OR "shop_id" = $2)
+  AND "hidden" = false;
 
 -- -- name: GetListServicewithCategory :many
 -- SELECT *

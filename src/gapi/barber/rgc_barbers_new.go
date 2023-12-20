@@ -15,41 +15,43 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) CreatxeBarber(ctx context.Context, req *barber.CreateBarberRequest) (*barber.CreateBarberResponse, error) {
+func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarberRequest) (*barber.CreateBarberResponse, error) {
 
 	validations := validateCreateBarber(req)
 	if validations != nil {
 		return nil, InValidArgumentError(validations)
 	}
 
-	// Hash the password provided in the request
 	hashedPassword, err := utils.HashPassword(req.GetPassword())
 	if err != nil {
-		return nil, status.Errorf(codes.Unimplemented, "failed to password")
+		return nil, status.Errorf(codes.Internal, "internal")
 	}
 
 	var managerId uuid.NullUUID
 	var barberShopId uuid.NullUUID
 	var roleBarber = int(req.GetRole())
 	if req.Role != int32(utils.Manager) {
+		if req.Role == int32(utils.HairStylist) {
+			req.Haircut = true
+		}
 		var code, err = token.DecodeAESString(server.config.AesKey, req.CodeBarberShop)
 		if err != nil {
-			return nil, status.Error(codes.Unimplemented, "failed to password")
+			return nil, status.Error(codes.InvalidArgument, "information is incorrect")
 		}
 		var listCode = splitExpression(code)
 
 		strRoleBarber, err := utils.GetValueAtIndex(listCode, 0)
 		if err != nil {
-			return nil, status.Error(codes.Unimplemented, "failed to password")
+			return nil, status.Error(codes.InvalidArgument, "information is incorrect")
 		}
 		roleBarber, err = utils.ConvertStringToInt(strRoleBarber)
 		if err != nil {
-			return nil, status.Error(codes.Unimplemented, "failed to password")
+			return nil, status.Error(codes.InvalidArgument, "information is incorrect")
 		}
 
 		valueIdBarberShop, err := utils.GetValueAtIndex(listCode, 1)
 		if err != nil {
-			return nil, status.Error(codes.Unimplemented, "failed to password")
+			return nil, status.Error(codes.InvalidArgument, "information is incorrect")
 		}
 		if valueIdBarberShop != "" {
 			barberShopId = uuid.NullUUID{
@@ -57,9 +59,10 @@ func (server *Server) CreatxeBarber(ctx context.Context, req *barber.CreateBarbe
 				Valid: valueIdBarberShop != "",
 			}
 		}
+
 		valueIdManager, err := utils.GetValueAtIndex(listCode, 2)
 		if err != nil {
-			return nil, status.Error(codes.Unimplemented, "failed to password")
+			return nil, status.Error(codes.InvalidArgument, "information is incorrect")
 		}
 		if valueIdManager != "" {
 			managerId = uuid.NullUUID{
@@ -69,7 +72,6 @@ func (server *Server) CreatxeBarber(ctx context.Context, req *barber.CreateBarbe
 		}
 	}
 
-	// Prepare the arguments for creating a new barber
 	arg := db.CreateBarberParams{
 		NickName:       req.GetNickname(),
 		HashedPassword: hashedPassword,
@@ -82,10 +84,10 @@ func (server *Server) CreatxeBarber(ctx context.Context, req *barber.CreateBarbe
 		ManagerID:      managerId,
 		Haircut:        req.Haircut,
 	}
-	// Create the barber using the store
+
 	res, err := server.Store.CreateBarber(ctx, arg)
 	if err != nil {
-		// If there's an error creating the barber, handle specific error cases
+
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
 			case "unique_violation":
@@ -101,11 +103,9 @@ func (server *Server) CreatxeBarber(ctx context.Context, req *barber.CreateBarbe
 			}
 		}
 
-		// If the error is not a specific case, return a forbidden error
 		return nil, status.Errorf(codes.Internal, "internal")
 	}
 
-	// Prepare the response with the newly created barber
 	rsp := &barber.CreateBarberResponse{
 		Barber: convertBarber(res),
 	}
@@ -137,10 +137,9 @@ func validateCreateBarber(req *barber.CreateBarberRequest) (validations []*errde
 }
 
 func splitExpression(expression string) []string {
-	// Tách chuỗi bằng dấu cộng
+
 	parts := strings.Split(expression, "+")
 
-	// Loại bỏ khoảng trắng xung quanh mỗi phần tử
 	for i, part := range parts {
 		parts[i] = strings.TrimSpace(part)
 	}
