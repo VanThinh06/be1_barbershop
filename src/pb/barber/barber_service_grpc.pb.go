@@ -28,6 +28,7 @@ const (
 	BarberService_GenerateCodeBarberShop_FullMethodName       = "/pb.BarberService/GenerateCodeBarberShop"
 	BarberService_CreateServiceCategory_FullMethodName        = "/pb.BarberService/CreateServiceCategory"
 	BarberService_CreateServiceCategoryPrivate_FullMethodName = "/pb.BarberService/CreateServiceCategoryPrivate"
+	BarberService_GetServiceCategories_FullMethodName         = "/pb.BarberService/GetServiceCategories"
 	BarberService_CreateService_FullMethodName                = "/pb.BarberService/CreateService"
 	BarberService_CreateServicePrivate_FullMethodName         = "/pb.BarberService/CreateServicePrivate"
 	BarberService_GetServices_FullMethodName                  = "/pb.BarberService/GetServices"
@@ -48,6 +49,7 @@ type BarberServiceClient interface {
 	// / service
 	CreateServiceCategory(ctx context.Context, in *CreateServiceCategoryRequest, opts ...grpc.CallOption) (*CreateServiceCategoryResponse, error)
 	CreateServiceCategoryPrivate(ctx context.Context, in *CreateServiceCategoryPrivateRequest, opts ...grpc.CallOption) (*CreateServiceCategoryResponse, error)
+	GetServiceCategories(ctx context.Context, in *GetServiceCategoriesRequest, opts ...grpc.CallOption) (*GetServiceCategoriesResponse, error)
 	CreateService(ctx context.Context, in *CreateServiceRequest, opts ...grpc.CallOption) (*CreateServiceResponse, error)
 	CreateServicePrivate(ctx context.Context, in *CreateServicePrivateRequest, opts ...grpc.CallOption) (*CreateServiceResponse, error)
 	GetServices(ctx context.Context, in *GetServicesRequest, opts ...grpc.CallOption) (*GetServicesResponse, error)
@@ -144,6 +146,15 @@ func (c *barberServiceClient) CreateServiceCategoryPrivate(ctx context.Context, 
 	return out, nil
 }
 
+func (c *barberServiceClient) GetServiceCategories(ctx context.Context, in *GetServiceCategoriesRequest, opts ...grpc.CallOption) (*GetServiceCategoriesResponse, error) {
+	out := new(GetServiceCategoriesResponse)
+	err := c.cc.Invoke(ctx, BarberService_GetServiceCategories_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *barberServiceClient) CreateService(ctx context.Context, in *CreateServiceRequest, opts ...grpc.CallOption) (*CreateServiceResponse, error) {
 	out := new(CreateServiceResponse)
 	err := c.cc.Invoke(ctx, BarberService_CreateService_FullMethodName, in, out, opts...)
@@ -194,6 +205,7 @@ type BarberServiceServer interface {
 	// / service
 	CreateServiceCategory(context.Context, *CreateServiceCategoryRequest) (*CreateServiceCategoryResponse, error)
 	CreateServiceCategoryPrivate(context.Context, *CreateServiceCategoryPrivateRequest) (*CreateServiceCategoryResponse, error)
+	GetServiceCategories(context.Context, *GetServiceCategoriesRequest) (*GetServiceCategoriesResponse, error)
 	CreateService(context.Context, *CreateServiceRequest) (*CreateServiceResponse, error)
 	CreateServicePrivate(context.Context, *CreateServicePrivateRequest) (*CreateServiceResponse, error)
 	GetServices(context.Context, *GetServicesRequest) (*GetServicesResponse, error)
@@ -232,6 +244,9 @@ func (UnimplementedBarberServiceServer) CreateServiceCategory(context.Context, *
 }
 func (UnimplementedBarberServiceServer) CreateServiceCategoryPrivate(context.Context, *CreateServiceCategoryPrivateRequest) (*CreateServiceCategoryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateServiceCategoryPrivate not implemented")
+}
+func (UnimplementedBarberServiceServer) GetServiceCategories(context.Context, *GetServiceCategoriesRequest) (*GetServiceCategoriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetServiceCategories not implemented")
 }
 func (UnimplementedBarberServiceServer) CreateService(context.Context, *CreateServiceRequest) (*CreateServiceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateService not implemented")
@@ -420,6 +435,24 @@ func _BarberService_CreateServiceCategoryPrivate_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BarberService_GetServiceCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetServiceCategoriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).GetServiceCategories(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_GetServiceCategories_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).GetServiceCategories(ctx, req.(*GetServiceCategoriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BarberService_CreateService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateServiceRequest)
 	if err := dec(in); err != nil {
@@ -534,6 +567,10 @@ var BarberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateServiceCategoryPrivate",
 			Handler:    _BarberService_CreateServiceCategoryPrivate_Handler,
+		},
+		{
+			MethodName: "GetServiceCategories",
+			Handler:    _BarberService_GetServiceCategories_Handler,
 		},
 		{
 			MethodName: "CreateService",

@@ -55,6 +55,10 @@ SELECT EXISTS (
     AND "chain_id" IS NULL
 ) AS "barbershop_not_in_chain";
 
+-- name: UpdateChainForBarberShops :exec  
+UPDATE "BarberShops"
+SET "chain_id" = sqlc.arg(chain_id)::uuid
+WHERE "owner_id" = $1 AND "chain_id" IS NULL;
 
 -- -- name: UpdateStore :one
 -- UPDATE store

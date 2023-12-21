@@ -17,6 +17,4 @@ message Service {
     google.protobuf.Timestamp created_at = 8;
     google.protobuf.Timestamp updated_at = 9;
     string shop_id = 10;
-    string chain_id = 11;
-    bool is_hidden = 12;
 }

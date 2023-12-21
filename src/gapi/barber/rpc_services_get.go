@@ -14,19 +14,21 @@ func (server *Server) GetServices(ctx context.Context, req *barber.GetServicesRe
 
 	_, err := server.AuthorizeUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+		_, err = server.AuthorizeCustomer(ctx)
+		if err != nil {
+			return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+		}
 	}
-
-	arg := db.GetListServicesParams{
-		ShopID: uuid.NullUUID{
+	var shopId uuid.NullUUID
+	if req.GetShopId() != "" {
+		shopId = uuid.NullUUID{
 			UUID:  uuid.MustParse(req.GetShopId()),
-			Valid: req.ChainId != "",
-		},
-
-		ChainID: uuid.NullUUID{
-			UUID:  uuid.MustParse(req.GetChainId()),
-			Valid: req.ChainId != "",
-		},
+			Valid: req.ShopId != "",
+		}
+	}
+	arg := db.GetListServicesParams{
+		CategoryID: uuid.MustParse(req.GetCategoryId()),
+		ShopID:     shopId,
 	}
 
 	services, err := server.Store.GetListServices(ctx, arg)

@@ -66,22 +66,4 @@ func (server *Server) authVerifyJWTGG(ctx context.Context) (string, error) {
 
 	}
 	return response.Email, nil
-
-	// config, err := google.From(ctx)
-	// if err != nil {
-	// 	return "", fmt.Errorf("Lỗi khi cấu hình: %v", err)
-	// }
-
-	// token := oauth2.Token{
-	// 	AccessToken: accessToken,
-	// 	TokenType:   "Bearer",
-	// }
-
-	// client := config.Client(ctx, &token)
-
-	// _, err = client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
-	// if err != nil {
-	// 	return "", fmt.Errorf("Lỗi khi xác thực: %v", err)
-	// }
-
 }

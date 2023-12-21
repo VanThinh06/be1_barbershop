@@ -25,7 +25,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-//go:generate statik -src=./docs/swagger -dest=./docs
+// go:generate statik -src=barbershop/src/shared/doc/swagger -dest=barbershop/src/shared/doc
 
 func main() {
 

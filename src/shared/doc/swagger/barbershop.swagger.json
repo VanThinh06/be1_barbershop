@@ -320,7 +320,7 @@
           }
         ],
         "tags": [
-          "BarberService"
+          "Service"
         ]
       }
     },
@@ -354,7 +354,7 @@
           }
         ],
         "tags": [
-          "BarberService"
+          "Service"
         ]
       }
     },
@@ -388,7 +388,7 @@
           }
         ],
         "tags": [
-          "BarberService"
+          "Service"
         ]
       }
     },
@@ -422,7 +422,39 @@
           }
         ],
         "tags": [
-          "BarberService"
+          "Service"
+        ]
+      }
+    },
+    "/v1/service-categories/{shopId}": {
+      "get": {
+        "summary": "Create a service category",
+        "description": "API endpoint to create a new barber",
+        "operationId": "BarberService_GetServiceCategories",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetServiceCategoriesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "shopId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Service"
         ]
       }
     },
@@ -456,7 +488,7 @@
           }
         ],
         "tags": [
-          "BarberService"
+          "Service"
         ]
       }
     }
@@ -849,10 +881,22 @@
         }
       }
     },
+    "pbGetServiceCategoriesResponse": {
+      "type": "object",
+      "properties": {
+        "serviceCategories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbServiceCategory"
+          }
+        }
+      }
+    },
     "pbGetServicesRequest": {
       "type": "object",
       "properties": {
-        "chainId": {
+        "categoryId": {
           "type": "string"
         },
         "shopId": {
@@ -980,12 +1024,6 @@
         },
         "shopId": {
           "type": "string"
-        },
-        "chainId": {
-          "type": "string"
-        },
-        "isHidden": {
-          "type": "boolean"
         }
       }
     },
@@ -1002,7 +1040,8 @@
           "type": "string"
         },
         "gender": {
-          "type": "string"
+          "type": "integer",
+          "format": "int32"
         },
         "createdAt": {
           "type": "string",
@@ -1014,9 +1053,6 @@
         },
         "chainId": {
           "type": "string"
-        },
-        "isHidden": {
-          "type": "boolean"
         }
       }
     },

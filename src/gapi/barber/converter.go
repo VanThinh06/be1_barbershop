@@ -48,8 +48,7 @@ func ConvertServiceCategory(servicecategory db.ServiceCategory) *barber.ServiceC
 		Name:      servicecategory.Name,
 		CreatedAt: timestamppb.New(servicecategory.CreatedAt),
 		UpdatedAt: timestamppb.New(servicecategory.UpdatedAt.Time),
-		Gender:    "",
-		IsHidden:  servicecategory.Hidden,
+		Gender:    servicecategory.Gender,
 		ChainId:   servicecategory.ChainID.UUID.String(),
 	}
 }
@@ -66,8 +65,6 @@ func ConvertServices(service db.Service) *barber.Service {
 		CreatedAt:   timestamppb.New(service.CreatedAt),
 		UpdatedAt:   timestamppb.New(service.UpdatedAt.Time),
 		ShopId:      service.ShopID.UUID.String(),
-		ChainId:     service.ChainID.UUID.String(),
-		IsHidden:    service.Hidden,
 	}
 }
 
@@ -76,11 +73,9 @@ func ConvertListSerivces(res []db.Service) []*barber.Service {
 
 	for _, service := range res {
 		barberShopPB := &barber.Service{
-
+			Id:          service.ID.String(),
+			CategoryId:  service.CategoryID.String(),
 			ShopId:      service.ShopID.UUID.String(),
-			ChainId:     service.ChainID.UUID.String(),
-			Id:          service.ChainID.UUID.String(),
-			CategoryId:  service.ChainID.UUID.String(),
 			Name:        service.Name,
 			Image:       &service.Image.String,
 			CreatedAt:   timestamppb.New(service.CreatedAt),
@@ -94,6 +89,26 @@ func ConvertListSerivces(res []db.Service) []*barber.Service {
 	}
 
 	return services
+}
+
+func ConvertListSerivceCategories(res []db.ServiceCategory) []*barber.ServiceCategory {
+	var serviceCategories []*barber.ServiceCategory
+
+	for _, serviceCategory := range res {
+		item := &barber.ServiceCategory{
+			Id:        serviceCategory.ID.String(),
+			ShopId:    serviceCategory.ShopID.UUID.String(),
+			ChainId:   serviceCategory.ChainID.UUID.String(),
+			Name:      serviceCategory.Name,
+			Gender:    serviceCategory.Gender,
+			CreatedAt: timestamppb.New(serviceCategory.CreatedAt),
+			UpdatedAt: timestamppb.New(serviceCategory.UpdatedAt.Time),
+		}
+
+		serviceCategories = append(serviceCategories, item)
+	}
+
+	return serviceCategories
 }
 
 func ConvertListBarberShopsNearby(res []db.FindBarberShopsNearbyLocationsRow) []*barber.BarberShop {

@@ -15,20 +15,18 @@ import (
 const createService = `-- name: CreateService :one
 INSERT INTO "Services" (
     category_id,
-    "chain_id",
     "name",
     timer,
     price,
     "description",
     "image"
   )
-VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, category_id, chain_id, shop_id, name, timer, price, description, image, hidden, created_at, updated_at
+VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id, category_id, shop_id, name, timer, price, description, image, hidden, created_at, updated_at
 `
 
 type CreateServiceParams struct {
 	CategoryID  uuid.UUID       `json:"category_id"`
-	ChainID     uuid.NullUUID   `json:"chain_id"`
 	Name        string          `json:"name"`
 	Timer       sql.NullInt32   `json:"timer"`
 	Price       sql.NullFloat64 `json:"price"`
@@ -39,7 +37,6 @@ type CreateServiceParams struct {
 func (q *Queries) CreateService(ctx context.Context, arg CreateServiceParams) (Service, error) {
 	row := q.db.QueryRowContext(ctx, createService,
 		arg.CategoryID,
-		arg.ChainID,
 		arg.Name,
 		arg.Timer,
 		arg.Price,
@@ -50,7 +47,6 @@ func (q *Queries) CreateService(ctx context.Context, arg CreateServiceParams) (S
 	err := row.Scan(
 		&i.ID,
 		&i.CategoryID,
-		&i.ChainID,
 		&i.ShopID,
 		&i.Name,
 		&i.Timer,
@@ -75,7 +71,7 @@ INSERT INTO "Services" (
     "image"
   )
 VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, category_id, chain_id, shop_id, name, timer, price, description, image, hidden, created_at, updated_at
+RETURNING id, category_id, shop_id, name, timer, price, description, image, hidden, created_at, updated_at
 `
 
 type CreateServicePrivateParams struct {
@@ -102,7 +98,6 @@ func (q *Queries) CreateServicePrivate(ctx context.Context, arg CreateServicePri
 	err := row.Scan(
 		&i.ID,
 		&i.CategoryID,
-		&i.ChainID,
 		&i.ShopID,
 		&i.Name,
 		&i.Timer,
@@ -117,19 +112,19 @@ func (q *Queries) CreateServicePrivate(ctx context.Context, arg CreateServicePri
 }
 
 const getListServices = `-- name: GetListServices :many
-SELECT id, category_id, chain_id, shop_id, name, timer, price, description, image, hidden, created_at, updated_at
+SELECT id, category_id, shop_id, name, timer, price, description, image, hidden, created_at, updated_at
 FROM "Services"
-WHERE ("chain_id" = $1 OR "shop_id" = $2)
+WHERE (("category_id" = $1 AND "shop_id" IS NULL) OR ("category_id" = $1 AND "shop_id" = $2))
   AND "hidden" = false
 `
 
 type GetListServicesParams struct {
-	ChainID uuid.NullUUID `json:"chain_id"`
-	ShopID  uuid.NullUUID `json:"shop_id"`
+	CategoryID uuid.UUID     `json:"category_id"`
+	ShopID     uuid.NullUUID `json:"shop_id"`
 }
 
 func (q *Queries) GetListServices(ctx context.Context, arg GetListServicesParams) ([]Service, error) {
-	rows, err := q.db.QueryContext(ctx, getListServices, arg.ChainID, arg.ShopID)
+	rows, err := q.db.QueryContext(ctx, getListServices, arg.CategoryID, arg.ShopID)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +135,6 @@ func (q *Queries) GetListServices(ctx context.Context, arg GetListServicesParams
 		if err := rows.Scan(
 			&i.ID,
 			&i.CategoryID,
-			&i.ChainID,
 			&i.ShopID,
 			&i.Name,
 			&i.Timer,

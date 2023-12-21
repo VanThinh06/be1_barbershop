@@ -106,7 +106,7 @@ WITH inserted_services AS (
   SELECT unnest($2::uuid[]), $1
   RETURNING "Services_id", "Appointments_service_id"
 )
-SELECT "Services_id", "Appointments_service_id", s.id, s.category_id, s.chain_id, s.shop_id, s.name, s.timer, s.price, s.description, s.image, s.hidden, s.created_at, s.updated_at
+SELECT "Services_id", "Appointments_service_id", s.id, s.category_id, s.shop_id, s.name, s.timer, s.price, s.description, s.image, s.hidden, s.created_at, s.updated_at
 FROM inserted_services
 JOIN "Services" s ON "Services_id" = s."id"
 `
@@ -121,7 +121,6 @@ type InsertServicesForAppointmentRow struct {
 	AppointmentsServiceID uuid.UUID       `json:"Appointments_service_id"`
 	ID                    uuid.UUID       `json:"id"`
 	CategoryID            uuid.UUID       `json:"category_id"`
-	ChainID               uuid.NullUUID   `json:"chain_id"`
 	ShopID                uuid.NullUUID   `json:"shop_id"`
 	Name                  string          `json:"name"`
 	Timer                 sql.NullInt32   `json:"timer"`
@@ -147,7 +146,6 @@ func (q *Queries) InsertServicesForAppointment(ctx context.Context, arg InsertSe
 			&i.AppointmentsServiceID,
 			&i.ID,
 			&i.CategoryID,
-			&i.ChainID,
 			&i.ShopID,
 			&i.Name,
 			&i.Timer,

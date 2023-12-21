@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package pb;
+import "barber/service_category.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message GetServiceCategoriesRequest{
+   
+    string shop_id = 1;
+}
+
+message GetServiceCategoriesResponse{
+    repeated ServiceCategory service_categories = 1;
+}

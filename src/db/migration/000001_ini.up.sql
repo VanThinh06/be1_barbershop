@@ -36,7 +36,7 @@ CREATE TABLE "Barbers" (
   "updated_at" timestamptz
 );
 
-CREATE TABLE "SessionsBarber" (
+CREATE TABLE "SessionsBarbers" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "barber_id" uuid NOT NULL,
   "refresh_token" varchar NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE "SessionsBarber" (
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE TABLE "ServiceCategory" (
+CREATE TABLE "ServiceCategories" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "chain_id" uuid,
   "shop_id" uuid,
@@ -63,7 +63,6 @@ CREATE TABLE "ServiceCategory" (
 CREATE TABLE "Services" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "category_id" uuid NOT NULL,
-  "chain_id" uuid,
   "shop_id" uuid,
   "name" varchar NOT NULL,
   "timer" integer,
@@ -89,7 +88,7 @@ CREATE TABLE "Customers" (
   "updated_at" timestamptz
 );
 
-CREATE TABLE "SessionsCustomer" (
+CREATE TABLE "SessionsCustomers" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "customer_id" uuid NOT NULL,
   "refresh_token" varchar NOT NULL,
@@ -140,23 +139,19 @@ CREATE INDEX ON "Barbers" ("email");
 
 CREATE INDEX ON "Barbers" ("phone");
 
-CREATE INDEX ON "ServiceCategory" ("shop_id");
+CREATE INDEX ON "ServiceCategories" ("shop_id");
 
-CREATE INDEX ON "ServiceCategory" ("chain_id");
+CREATE INDEX ON "ServiceCategories" ("chain_id");
 
-CREATE UNIQUE INDEX ON "ServiceCategory" ("chain_id", "name");
+CREATE UNIQUE INDEX ON "ServiceCategories" ("chain_id", "name");
 
-CREATE UNIQUE INDEX ON "ServiceCategory" ("shop_id", "name");
+CREATE UNIQUE INDEX ON "ServiceCategories" ("shop_id", "name");
 
 CREATE INDEX ON "Services" ("category_id");
-
-CREATE INDEX ON "Services" ("chain_id");
 
 CREATE INDEX ON "Services" ("shop_id");
 
 CREATE UNIQUE INDEX ON "Services" ("category_id", "name");
-
-CREATE UNIQUE INDEX ON "Services" ("chain_id", "name");
 
 CREATE UNIQUE INDEX ON "Services" ("shop_id", "name");
 
@@ -178,19 +173,17 @@ ALTER TABLE "Barbers" ADD FOREIGN KEY ("shop_id") REFERENCES "BarberShops" ("sho
 
 ALTER TABLE "Barbers" ADD FOREIGN KEY ("manager_id") REFERENCES "Barbers" ("barber_id");
 
-ALTER TABLE "SessionsBarber" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("barber_id");
+ALTER TABLE "SessionsBarbers" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("barber_id");
 
-ALTER TABLE "ServiceCategory" ADD FOREIGN KEY ("chain_id") REFERENCES "Chains" ("chain_id");
+ALTER TABLE "ServiceCategories" ADD FOREIGN KEY ("chain_id") REFERENCES "Chains" ("chain_id");
 
-ALTER TABLE "ServiceCategory" ADD FOREIGN KEY ("shop_id") REFERENCES "BarberShops" ("shop_id");
+ALTER TABLE "ServiceCategories" ADD FOREIGN KEY ("shop_id") REFERENCES "BarberShops" ("shop_id");
 
-ALTER TABLE "Services" ADD FOREIGN KEY ("category_id") REFERENCES "ServiceCategory" ("id");
-
-ALTER TABLE "Services" ADD FOREIGN KEY ("chain_id") REFERENCES "Chains" ("chain_id");
+ALTER TABLE "Services" ADD FOREIGN KEY ("category_id") REFERENCES "ServiceCategories" ("id");
 
 ALTER TABLE "Services" ADD FOREIGN KEY ("shop_id") REFERENCES "BarberShops" ("shop_id");
 
-ALTER TABLE "SessionsCustomer" ADD FOREIGN KEY ("customer_id") REFERENCES "Customers" ("customer_id");
+ALTER TABLE "SessionsCustomers" ADD FOREIGN KEY ("customer_id") REFERENCES "Customers" ("customer_id");
 
 ALTER TABLE "Appointments" ADD FOREIGN KEY ("barbershops_id") REFERENCES "BarberShops" ("shop_id");
 

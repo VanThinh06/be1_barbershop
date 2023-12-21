@@ -83,7 +83,6 @@ type Customer struct {
 type Service struct {
 	ID          uuid.UUID       `json:"id"`
 	CategoryID  uuid.UUID       `json:"category_id"`
-	ChainID     uuid.NullUUID   `json:"chain_id"`
 	ShopID      uuid.NullUUID   `json:"shop_id"`
 	Name        string          `json:"name"`
 	Timer       sql.NullInt32   `json:"timer"`

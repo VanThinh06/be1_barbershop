@@ -1,14 +1,13 @@
 -- name: CreateService :one
 INSERT INTO "Services" (
     category_id,
-    "chain_id",
     "name",
     timer,
     price,
     "description",
     "image"
   )
-VALUES ($1, $2, $3, $4, $5, $6, $7)
+VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING *;
 
 -- name: CreateServicePrivate :one
@@ -27,7 +26,7 @@ RETURNING *;
 -- name: GetListServices :many
 SELECT *
 FROM "Services"
-WHERE ("chain_id" = $1 OR "shop_id" = $2)
+WHERE (("category_id" = $1 AND "shop_id" IS NULL) OR ("category_id" = $1 AND "shop_id" = $2))
   AND "hidden" = false;
 
 -- -- name: GetListServicewithCategory :many

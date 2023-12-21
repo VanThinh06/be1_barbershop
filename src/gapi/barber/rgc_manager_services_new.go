@@ -43,11 +43,6 @@ func (server *Server) CreateService(ctx context.Context, req *barber.CreateServi
 			Valid:  req.Image != nil,
 		},
 		Name: req.Name,
-
-		ChainID: uuid.NullUUID{
-			UUID:  uuid.MustParse(req.GetChainId()),
-			Valid: req.ChainId != "",
-		},
 	}
 
 	services, err := server.Store.CreateService(ctx, arg)

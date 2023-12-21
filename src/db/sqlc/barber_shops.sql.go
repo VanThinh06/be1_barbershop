@@ -188,3 +188,19 @@ func (q *Queries) GetBarberShop(ctx context.Context, shopID uuid.UUID) (uuid.UUI
 	err := row.Scan(&shop_id)
 	return shop_id, err
 }
+
+const updateChainForBarberShops = `-- name: UpdateChainForBarberShops :exec
+UPDATE "BarberShops"
+SET "chain_id" = $2::uuid
+WHERE "owner_id" = $1 AND "chain_id" IS NULL
+`
+
+type UpdateChainForBarberShopsParams struct {
+	OwnerID uuid.UUID `json:"owner_id"`
+	ChainID uuid.UUID `json:"chain_id"`
+}
+
+func (q *Queries) UpdateChainForBarberShops(ctx context.Context, arg UpdateChainForBarberShopsParams) error {
+	_, err := q.db.ExecContext(ctx, updateChainForBarberShops, arg.OwnerID, arg.ChainID)
+	return err
+}

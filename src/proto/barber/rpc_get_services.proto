@@ -7,7 +7,7 @@ option go_package = "barbershop/src/pb/barber";
 
 
 message GetServicesRequest{
-    string chain_id = 1;
+    string category_id = 1;
     string shop_id = 2;
 }
 
