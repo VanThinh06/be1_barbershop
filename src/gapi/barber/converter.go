@@ -91,6 +91,27 @@ func ConvertListSerivces(res []db.Service) []*barber.Service {
 	return services
 }
 
+func ConvertListCategorySerivceDetails(res []db.GetListServiceDetailsRow) []*barber.ServiceDetail {
+	var services []*barber.ServiceDetail
+
+	for _, item := range res {
+		serviceDetail := &barber.ServiceDetail{
+			CategoryId:   item.CategoryID.String(),
+			NameCategory: item.CategoryName,
+			Id:           item.ServiceID.String(),
+			Name:         item.ServiceName,
+			Image:        &item.Image.String,
+			Timer:        &timestamppb.Now().Nanos,
+			Price:        utils.ConvertFloat64ToFloat32Pointer(item.Price.Float64),
+			Description:  &item.Description.String,
+		}
+
+		services = append(services, serviceDetail)
+	}
+
+	return services
+}
+
 func ConvertListSerivceCategories(res []db.ServiceCategory) []*barber.ServiceCategory {
 	var serviceCategories []*barber.ServiceCategory
 

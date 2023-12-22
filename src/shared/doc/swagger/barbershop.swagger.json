@@ -50,7 +50,7 @@
           }
         ],
         "tags": [
-          "BarberService"
+          "barber"
         ]
       },
       "patch": {
@@ -82,7 +82,7 @@
           }
         ],
         "tags": [
-          "BarberService"
+          "barber"
         ]
       }
     },
@@ -116,7 +116,7 @@
           }
         ],
         "tags": [
-          "BarberService"
+          "barber"
         ]
       }
     },
@@ -150,7 +150,7 @@
           }
         ],
         "tags": [
-          "BarberService"
+          "barber"
         ]
       }
     },
@@ -184,7 +184,7 @@
           }
         ],
         "tags": [
-          "BarberService"
+          "barbershop"
         ]
       }
     },
@@ -218,7 +218,7 @@
           }
         ],
         "tags": [
-          "BarberService"
+          "barbershop"
         ]
       }
     },
@@ -451,6 +451,40 @@
             "in": "path",
             "required": true,
             "type": "string"
+          }
+        ],
+        "tags": [
+          "Service"
+        ]
+      }
+    },
+    "/v1/service-details": {
+      "post": {
+        "summary": "Create a service category",
+        "description": "API endpoint to create a new barber",
+        "operationId": "BarberService_GetServiceDetails",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetServiceDetailsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbGetServiceDetailsRequest"
+            }
           }
         ],
         "tags": [
@@ -893,6 +927,29 @@
         }
       }
     },
+    "pbGetServiceDetailsRequest": {
+      "type": "object",
+      "properties": {
+        "chainId": {
+          "type": "string"
+        },
+        "shopId": {
+          "type": "string"
+        }
+      }
+    },
+    "pbGetServiceDetailsResponse": {
+      "type": "object",
+      "properties": {
+        "serviceDetails": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbServiceDetail"
+          }
+        }
+      }
+    },
     "pbGetServicesRequest": {
       "type": "object",
       "properties": {
@@ -1052,6 +1109,37 @@
           "format": "date-time"
         },
         "chainId": {
+          "type": "string"
+        }
+      }
+    },
+    "pbServiceDetail": {
+      "type": "object",
+      "properties": {
+        "categoryId": {
+          "type": "string"
+        },
+        "nameCategory": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "timer": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "price": {
+          "type": "number",
+          "format": "float"
+        },
+        "description": {
+          "type": "string"
+        },
+        "image": {
           "type": "string"
         }
       }

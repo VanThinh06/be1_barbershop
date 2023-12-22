@@ -29,6 +29,26 @@ FROM "Services"
 WHERE (("category_id" = $1 AND "shop_id" IS NULL) OR ("category_id" = $1 AND "shop_id" = $2))
   AND "hidden" = false;
 
+-- name: GetListServiceDetails :many
+SELECT
+    sc.id AS category_id,
+    sc.name AS category_name,
+    s.id AS service_id,
+    s.name AS service_name,
+    s.timer,
+    s.price,
+    s.description,
+    s.image
+FROM
+    "ServiceCategories" sc
+JOIN
+    "Services" s ON sc.id = s.category_id
+WHERE
+    (sc.chain_id = $1 OR
+    sc.shop_id = $2) AND
+    sc.hidden = false AND
+    s.hidden = false;
+
 -- -- name: GetListServicewithCategory :many
 -- SELECT *
 -- FROM "service"

@@ -4,6 +4,7 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"context"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
@@ -28,7 +29,7 @@ func (server *Server) CreateServiceCategoryPrivate(ctx context.Context, req *bar
 			UUID:  uuid.MustParse(req.GetBarberShopId()),
 			Valid: req.BarberShopId != "",
 		},
-		Name:   req.GetName(),
+		Name:   strings.TrimSpace(req.GetName()),
 		Gender: req.GetGender(),
 	}
 

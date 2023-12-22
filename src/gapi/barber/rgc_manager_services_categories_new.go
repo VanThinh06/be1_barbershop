@@ -4,6 +4,7 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"context"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
@@ -28,7 +29,7 @@ func (server *Server) CreateServiceCategory(ctx context.Context, req *barber.Cre
 			UUID:  uuid.MustParse(req.GetChainId()),
 			Valid: req.ChainId != "",
 		},
-		Name:   req.GetName(),
+		Name:   strings.TrimSpace(req.GetName()),
 		Gender: req.Gender,
 	}
 

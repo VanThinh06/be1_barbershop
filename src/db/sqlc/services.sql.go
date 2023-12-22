@@ -111,6 +111,75 @@ func (q *Queries) CreateServicePrivate(ctx context.Context, arg CreateServicePri
 	return i, err
 }
 
+const getListServiceDetails = `-- name: GetListServiceDetails :many
+SELECT
+    sc.id AS category_id,
+    sc.name AS category_name,
+    s.id AS service_id,
+    s.name AS service_name,
+    s.timer,
+    s.price,
+    s.description,
+    s.image
+FROM
+    "ServiceCategories" sc
+JOIN
+    "Services" s ON sc.id = s.category_id
+WHERE
+    (sc.chain_id = $1 OR
+    sc.shop_id = $2) AND
+    sc.hidden = false AND
+    s.hidden = false
+`
+
+type GetListServiceDetailsParams struct {
+	ChainID uuid.NullUUID `json:"chain_id"`
+	ShopID  uuid.NullUUID `json:"shop_id"`
+}
+
+type GetListServiceDetailsRow struct {
+	CategoryID   uuid.UUID       `json:"category_id"`
+	CategoryName string          `json:"category_name"`
+	ServiceID    uuid.UUID       `json:"service_id"`
+	ServiceName  string          `json:"service_name"`
+	Timer        sql.NullInt32   `json:"timer"`
+	Price        sql.NullFloat64 `json:"price"`
+	Description  sql.NullString  `json:"description"`
+	Image        sql.NullString  `json:"image"`
+}
+
+func (q *Queries) GetListServiceDetails(ctx context.Context, arg GetListServiceDetailsParams) ([]GetListServiceDetailsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getListServiceDetails, arg.ChainID, arg.ShopID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetListServiceDetailsRow{}
+	for rows.Next() {
+		var i GetListServiceDetailsRow
+		if err := rows.Scan(
+			&i.CategoryID,
+			&i.CategoryName,
+			&i.ServiceID,
+			&i.ServiceName,
+			&i.Timer,
+			&i.Price,
+			&i.Description,
+			&i.Image,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getListServices = `-- name: GetListServices :many
 SELECT id, category_id, shop_id, name, timer, price, description, image, hidden, created_at, updated_at
 FROM "Services"

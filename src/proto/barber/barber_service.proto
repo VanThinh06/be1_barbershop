@@ -15,6 +15,8 @@ import "barber/rpc_code_barbershop.proto";
 import "barber/rpc_create_chain.proto";
 import "barber/rpc_get_services.proto";
 import "barber/rpc_get_service_categories.proto";
+import "barber/rpc_get_service_details.proto";
+
 
 
 import "protoc-gen-openapiv2/options/annotations.proto";
@@ -50,6 +52,8 @@ service BarberService {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
           description: "API endpoint to create a new barber"
           summary: "Create a barber"
+          tags: "barber"
+
         };
     }
 
@@ -61,6 +65,7 @@ service BarberService {
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         description: "API endpoint for barber authentication" 
         summary: "Authenticate a barber"
+        tags: "barber"
       };
     }
 
@@ -72,6 +77,8 @@ service BarberService {
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         description: "API endpoint for barber authentication" 
         summary: "Authenticate a barber"
+        tags: "barber"
+
       };
     }
 
@@ -83,6 +90,7 @@ service BarberService {
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         description: "API endpoint for barber authentication" 
         summary: "Authenticate a barber"
+        tags: "barber"
       };
     }
 
@@ -95,6 +103,7 @@ service BarberService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "API endpoint to create a new barber"
       summary: "find barber shop nearby"
+      tags: "barbershop"
     };
   }
 
@@ -107,6 +116,7 @@ service BarberService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "API endpoint to create a new barber"
       summary: "Create a barber"
+      tags: "barbershop"
     };
 }
 
@@ -184,6 +194,18 @@ rpc GenerateCodeBarberShop (CodeBarberShopRequest) returns (CodeBarberShopRespon
     rpc GetServices (GetServicesRequest) returns (GetServicesResponse){
       option (google.api.http) = {
                 post: "/v1/services"
+                body: "*"
+              };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "API endpoint to create a new barber"
+        summary: "Create a service category"
+        tags: "Service"
+      };
+    }
+
+    rpc GetServiceDetails (GetServiceDetailsRequest) returns (GetServiceDetailsResponse){
+      option (google.api.http) = {
+                post: "/v1/service-details"
                 body: "*"
               };
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

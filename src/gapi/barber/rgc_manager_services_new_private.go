@@ -5,6 +5,7 @@ import (
 	"barbershop/src/pb/barber"
 	"context"
 	"database/sql"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
@@ -43,7 +44,7 @@ func (server *Server) CreateServicePrivate(ctx context.Context, req *barber.Crea
 			String: req.GetImage(),
 			Valid:  req.Image != nil,
 		},
-		Name: req.Name,
+		Name: strings.TrimSpace(req.Name),
 		ShopID: uuid.NullUUID{
 			UUID:  uuid.MustParse(req.GetShopId()),
 			Valid: req.ShopId != "",

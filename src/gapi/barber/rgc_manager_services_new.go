@@ -5,6 +5,7 @@ import (
 	"barbershop/src/pb/barber"
 	"context"
 	"database/sql"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
@@ -42,7 +43,7 @@ func (server *Server) CreateService(ctx context.Context, req *barber.CreateServi
 			String: req.GetImage(),
 			Valid:  req.Image != nil,
 		},
-		Name: req.Name,
+		Name: strings.TrimSpace(req.Name),
 	}
 
 	services, err := server.Store.CreateService(ctx, arg)

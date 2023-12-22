@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pb;
+
+import "barber/service_detail.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message GetServiceDetailsRequest{
+    string chain_id = 1;
+    string shop_id = 2;
+}
+
+message GetServiceDetailsResponse{
+    repeated ServiceDetail service_details = 1;
+}
