@@ -8,12 +8,13 @@ import (
 )
 
 type Customer struct {
-	CustomerID uuid.UUID `json:"username"`
-	Gender     int32     `json:"gender"`
-	Phone      sql.NullString    `json:"phone"`
-	Email      string    `json:"email"`
-	FcmDevice  string    `json:"fcm_device"`
-	Timezone   string    `json:"timezone"`
+	CustomerID uuid.UUID      `json:"customer_id"`
+	Name       string         `json:"name"`
+	Gender     int32          `json:"gender"`
+	Phone      sql.NullString `json:"phone"`
+	Email      string         `json:"email"`
+	FcmDevice  string         `json:"fcm_device"`
+	Timezone   string         `json:"timezone"`
 }
 
 type CustomerPayload struct {

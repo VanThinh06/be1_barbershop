@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgtype"
 	"github.com/lib/pq"
 )
 
@@ -49,7 +50,7 @@ VALUES (
         $6,
         $7,
         $8
-        ) RETURNING shop_id, owner_id, chain_id, name, facility, address, image, list_image, status, coordinates, rate, is_reputation, created_at, updated_at
+        ) RETURNING shop_id, owner_id, chain_id, name, facility, address, coordinates, image, list_image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, is_reputation, created_at, updated_at
 `
 
 type CreateBarberShopParams struct {
@@ -82,11 +83,16 @@ func (q *Queries) CreateBarberShop(ctx context.Context, arg CreateBarberShopPara
 		&i.Name,
 		&i.Facility,
 		&i.Address,
+		&i.Coordinates,
 		&i.Image,
 		pq.Array(&i.ListImage),
 		&i.Status,
-		&i.Coordinates,
 		&i.Rate,
+		&i.StartTime,
+		&i.EndTime,
+		&i.BreakTime,
+		&i.BreakMinutes,
+		&i.IntervalScheduler,
 		&i.IsReputation,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -176,17 +182,109 @@ func (q *Queries) FindBarberShopsNearbyLocations(ctx context.Context, arg FindBa
 
 const getBarberShop = `-- name: GetBarberShop :one
 
-SELECT "shop_id"
+SELECT shop_id, owner_id, chain_id, name, facility, address, coordinates, image, list_image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, is_reputation, created_at, updated_at
 FROM "BarberShops"
 WHERE shop_id = $1
-LIMIT 1
 `
 
-func (q *Queries) GetBarberShop(ctx context.Context, shopID uuid.UUID) (uuid.UUID, error) {
+func (q *Queries) GetBarberShop(ctx context.Context, shopID uuid.UUID) (BarberShop, error) {
 	row := q.db.QueryRowContext(ctx, getBarberShop, shopID)
-	var shop_id uuid.UUID
-	err := row.Scan(&shop_id)
-	return shop_id, err
+	var i BarberShop
+	err := row.Scan(
+		&i.ShopID,
+		&i.OwnerID,
+		&i.ChainID,
+		&i.Name,
+		&i.Facility,
+		&i.Address,
+		&i.Coordinates,
+		&i.Image,
+		pq.Array(&i.ListImage),
+		&i.Status,
+		&i.Rate,
+		&i.StartTime,
+		&i.EndTime,
+		&i.BreakTime,
+		&i.BreakMinutes,
+		&i.IntervalScheduler,
+		&i.IsReputation,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updateBarberShop = `-- name: UpdateBarberShop :one
+UPDATE "BarberShops"
+SET 
+    name = coalesce($2, name),
+    facility = coalesce($3, facility),
+    address = coalesce($4, address),
+    coordinates = coalesce(ST_GeographyFromText('POINT(' || $5::float8 || ' ' || $6::float8 || ')'), coordinates),
+    image = coalesce($7, image),
+    start_time = coalesce($8, start_time),
+    end_time = coalesce($9, end_time),
+    break_time = coalesce($10, break_time),
+    status = coalesce($11, status),
+    interval_scheduler = coalesce($12, interval_scheduler),
+    updated_at = now()
+WHERE "shop_id" = $1
+RETURNING shop_id, owner_id, chain_id, name, facility, address, coordinates, image, list_image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, is_reputation, created_at, updated_at
+`
+
+type UpdateBarberShopParams struct {
+	ShopID            uuid.UUID       `json:"shop_id"`
+	Name              sql.NullString  `json:"name"`
+	Facility          sql.NullInt32   `json:"facility"`
+	Address           sql.NullString  `json:"address"`
+	Longitude         sql.NullFloat64 `json:"longitude"`
+	Latitude          sql.NullFloat64 `json:"latitude"`
+	Image             sql.NullString  `json:"image"`
+	StartTime         pgtype.Time     `json:"start_time"`
+	EndTime           pgtype.Time     `json:"end_time"`
+	BreakTime         pgtype.Time     `json:"break_time"`
+	Status            sql.NullInt32   `json:"status"`
+	IntervalScheduler sql.NullInt32   `json:"interval_scheduler"`
+}
+
+func (q *Queries) UpdateBarberShop(ctx context.Context, arg UpdateBarberShopParams) (BarberShop, error) {
+	row := q.db.QueryRowContext(ctx, updateBarberShop,
+		arg.ShopID,
+		arg.Name,
+		arg.Facility,
+		arg.Address,
+		arg.Longitude,
+		arg.Latitude,
+		arg.Image,
+		arg.StartTime,
+		arg.EndTime,
+		arg.BreakTime,
+		arg.Status,
+		arg.IntervalScheduler,
+	)
+	var i BarberShop
+	err := row.Scan(
+		&i.ShopID,
+		&i.OwnerID,
+		&i.ChainID,
+		&i.Name,
+		&i.Facility,
+		&i.Address,
+		&i.Coordinates,
+		&i.Image,
+		pq.Array(&i.ListImage),
+		&i.Status,
+		&i.Rate,
+		&i.StartTime,
+		&i.EndTime,
+		&i.BreakTime,
+		&i.BreakMinutes,
+		&i.IntervalScheduler,
+		&i.IsReputation,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
 
 const updateChainForBarberShops = `-- name: UpdateChainForBarberShops :exec

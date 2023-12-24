@@ -22,7 +22,7 @@ func convertCustomer(res db.Customer) *customer.Customer {
 	}
 }
 
-func convertAppointment(appointment db.Appointment) *customer.Appointment {
+func convertAppointment(appointment db.InsertAppointmentAndGetInfoRow) *customer.Appointment {
 	return &customer.Appointment{
 		AppointmentId:       appointment.AppointmentID.String(),
 		CustomerId:          appointment.CustomerID.String(),
@@ -34,7 +34,7 @@ func convertAppointment(appointment db.Appointment) *customer.Appointment {
 	}
 }
 
-func convertGetAppointmentByDate(res []db.Appointment) []*customer.Appointment {
+func convertGetAppointmentByDate(res []db.GetAppointmentByDateWithServiceRow) []*customer.Appointment {
 	var appointments []*customer.Appointment
 	for _, appointment := range res {
 		appointment := &customer.Appointment{
@@ -45,27 +45,9 @@ func convertGetAppointmentByDate(res []db.Appointment) []*customer.Appointment {
 			AppointmentDatetime: timestamppb.New(appointment.AppointmentDatetime),
 			CreatedAt:           timestamppb.New(appointment.CreatedAt),
 			UpdateAt:            timestamppb.New(appointment.UpdatedAt.Time),
+			ServiceTimer:        int32(appointment.ServiceTimer),
 		}
 		appointments = append(appointments, appointment)
 	}
 	return appointments
-}
-
-func convertGetBarberInShop(res []db.Barber) []*customer.Barbers {
-	var barbers []*customer.Barbers
-	for _, item := range res {
-		barber := &customer.Barbers{
-			ShopId:   item.ShopID.UUID.String(),
-			NickName: item.NickName,
-			FullName: item.FullName,
-			Phone:    item.Phone,
-			Email:    item.Email,
-			Gender:   item.Gender,
-			Role:     item.Role,
-			Avatar:   item.Avatar.String,
-			Haircut:  item.Haircut,
-		}
-		barbers = append(barbers, barber)
-	}
-	return barbers
 }

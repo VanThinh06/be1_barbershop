@@ -25,7 +25,10 @@ const (
 	BarberService_UpdateBarber_FullMethodName                 = "/pb.BarberService/UpdateBarber"
 	BarberService_FindBarberShopsNearby_FullMethodName        = "/pb.BarberService/FindBarberShopsNearby"
 	BarberService_CreateBarberShop_FullMethodName             = "/pb.BarberService/CreateBarberShop"
+	BarberService_GetBarberShop_FullMethodName                = "/pb.BarberService/GetBarberShop"
+	BarberService_UpdateBarberShop_FullMethodName             = "/pb.BarberService/UpdateBarberShop"
 	BarberService_GenerateCodeBarberShop_FullMethodName       = "/pb.BarberService/GenerateCodeBarberShop"
+	BarberService_GetBarberInShop_FullMethodName              = "/pb.BarberService/GetBarberInShop"
 	BarberService_CreateServiceCategory_FullMethodName        = "/pb.BarberService/CreateServiceCategory"
 	BarberService_CreateServiceCategoryPrivate_FullMethodName = "/pb.BarberService/CreateServiceCategoryPrivate"
 	BarberService_GetServiceCategories_FullMethodName         = "/pb.BarberService/GetServiceCategories"
@@ -46,7 +49,10 @@ type BarberServiceClient interface {
 	UpdateBarber(ctx context.Context, in *UpdateBarberRequest, opts ...grpc.CallOption) (*UpdateBarberResponse, error)
 	FindBarberShopsNearby(ctx context.Context, in *FindBarberShopsNearbyRequest, opts ...grpc.CallOption) (*FindBarberShopsNearbyResponse, error)
 	CreateBarberShop(ctx context.Context, in *CreateBarberShopRequest, opts ...grpc.CallOption) (*CreateBarberShopResponse, error)
+	GetBarberShop(ctx context.Context, in *GetBarberShopRequest, opts ...grpc.CallOption) (*GetBarberShopResponse, error)
+	UpdateBarberShop(ctx context.Context, in *UpdateBarberShopRequest, opts ...grpc.CallOption) (*UpdateBarberShopResponse, error)
 	GenerateCodeBarberShop(ctx context.Context, in *CodeBarberShopRequest, opts ...grpc.CallOption) (*CodeBarberShopResponse, error)
+	GetBarberInShop(ctx context.Context, in *GetBarberInShopRequest, opts ...grpc.CallOption) (*GetBarberInShopResponse, error)
 	// / service
 	CreateServiceCategory(ctx context.Context, in *CreateServiceCategoryRequest, opts ...grpc.CallOption) (*CreateServiceCategoryResponse, error)
 	CreateServiceCategoryPrivate(ctx context.Context, in *CreateServiceCategoryPrivateRequest, opts ...grpc.CallOption) (*CreateServiceCategoryResponse, error)
@@ -121,9 +127,36 @@ func (c *barberServiceClient) CreateBarberShop(ctx context.Context, in *CreateBa
 	return out, nil
 }
 
+func (c *barberServiceClient) GetBarberShop(ctx context.Context, in *GetBarberShopRequest, opts ...grpc.CallOption) (*GetBarberShopResponse, error) {
+	out := new(GetBarberShopResponse)
+	err := c.cc.Invoke(ctx, BarberService_GetBarberShop_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *barberServiceClient) UpdateBarberShop(ctx context.Context, in *UpdateBarberShopRequest, opts ...grpc.CallOption) (*UpdateBarberShopResponse, error) {
+	out := new(UpdateBarberShopResponse)
+	err := c.cc.Invoke(ctx, BarberService_UpdateBarberShop_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *barberServiceClient) GenerateCodeBarberShop(ctx context.Context, in *CodeBarberShopRequest, opts ...grpc.CallOption) (*CodeBarberShopResponse, error) {
 	out := new(CodeBarberShopResponse)
 	err := c.cc.Invoke(ctx, BarberService_GenerateCodeBarberShop_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *barberServiceClient) GetBarberInShop(ctx context.Context, in *GetBarberInShopRequest, opts ...grpc.CallOption) (*GetBarberInShopResponse, error) {
+	out := new(GetBarberInShopResponse)
+	err := c.cc.Invoke(ctx, BarberService_GetBarberInShop_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -212,7 +245,10 @@ type BarberServiceServer interface {
 	UpdateBarber(context.Context, *UpdateBarberRequest) (*UpdateBarberResponse, error)
 	FindBarberShopsNearby(context.Context, *FindBarberShopsNearbyRequest) (*FindBarberShopsNearbyResponse, error)
 	CreateBarberShop(context.Context, *CreateBarberShopRequest) (*CreateBarberShopResponse, error)
+	GetBarberShop(context.Context, *GetBarberShopRequest) (*GetBarberShopResponse, error)
+	UpdateBarberShop(context.Context, *UpdateBarberShopRequest) (*UpdateBarberShopResponse, error)
 	GenerateCodeBarberShop(context.Context, *CodeBarberShopRequest) (*CodeBarberShopResponse, error)
+	GetBarberInShop(context.Context, *GetBarberInShopRequest) (*GetBarberInShopResponse, error)
 	// / service
 	CreateServiceCategory(context.Context, *CreateServiceCategoryRequest) (*CreateServiceCategoryResponse, error)
 	CreateServiceCategoryPrivate(context.Context, *CreateServiceCategoryPrivateRequest) (*CreateServiceCategoryResponse, error)
@@ -248,8 +284,17 @@ func (UnimplementedBarberServiceServer) FindBarberShopsNearby(context.Context, *
 func (UnimplementedBarberServiceServer) CreateBarberShop(context.Context, *CreateBarberShopRequest) (*CreateBarberShopResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBarberShop not implemented")
 }
+func (UnimplementedBarberServiceServer) GetBarberShop(context.Context, *GetBarberShopRequest) (*GetBarberShopResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBarberShop not implemented")
+}
+func (UnimplementedBarberServiceServer) UpdateBarberShop(context.Context, *UpdateBarberShopRequest) (*UpdateBarberShopResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBarberShop not implemented")
+}
 func (UnimplementedBarberServiceServer) GenerateCodeBarberShop(context.Context, *CodeBarberShopRequest) (*CodeBarberShopResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateCodeBarberShop not implemented")
+}
+func (UnimplementedBarberServiceServer) GetBarberInShop(context.Context, *GetBarberInShopRequest) (*GetBarberInShopResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBarberInShop not implemented")
 }
 func (UnimplementedBarberServiceServer) CreateServiceCategory(context.Context, *CreateServiceCategoryRequest) (*CreateServiceCategoryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateServiceCategory not implemented")
@@ -396,6 +441,42 @@ func _BarberService_CreateBarberShop_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BarberService_GetBarberShop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBarberShopRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).GetBarberShop(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_GetBarberShop_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).GetBarberShop(ctx, req.(*GetBarberShopRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BarberService_UpdateBarberShop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBarberShopRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).UpdateBarberShop(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_UpdateBarberShop_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).UpdateBarberShop(ctx, req.(*UpdateBarberShopRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BarberService_GenerateCodeBarberShop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CodeBarberShopRequest)
 	if err := dec(in); err != nil {
@@ -410,6 +491,24 @@ func _BarberService_GenerateCodeBarberShop_Handler(srv interface{}, ctx context.
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BarberServiceServer).GenerateCodeBarberShop(ctx, req.(*CodeBarberShopRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BarberService_GetBarberInShop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBarberInShopRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).GetBarberInShop(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_GetBarberInShop_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).GetBarberInShop(ctx, req.(*GetBarberInShopRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -590,8 +689,20 @@ var BarberService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BarberService_CreateBarberShop_Handler,
 		},
 		{
+			MethodName: "GetBarberShop",
+			Handler:    _BarberService_GetBarberShop_Handler,
+		},
+		{
+			MethodName: "UpdateBarberShop",
+			Handler:    _BarberService_UpdateBarberShop_Handler,
+		},
+		{
 			MethodName: "GenerateCodeBarberShop",
 			Handler:    _BarberService_GenerateCodeBarberShop_Handler,
+		},
+		{
+			MethodName: "GetBarberInShop",
+			Handler:    _BarberService_GetBarberInShop_Handler,
 		},
 		{
 			MethodName: "CreateServiceCategory",

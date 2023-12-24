@@ -18,12 +18,29 @@ VALUES (
         sqlc.narg(image),
         sqlc.arg(facility)
         ) RETURNING *; 
+
+-- name: UpdateBarberShop :one
+UPDATE "BarberShops"
+SET 
+    name = coalesce(sqlc.narg('name'), name),
+    facility = coalesce(sqlc.narg('facility'), facility),
+    address = coalesce(sqlc.narg('address'), address),
+    coordinates = coalesce(ST_GeographyFromText('POINT(' || sqlc.narg(longitude)::float8 || ' ' || sqlc.narg(latitude)::float8 || ')'), coordinates),
+    image = coalesce(sqlc.narg('image'), image),
+    start_time = coalesce(sqlc.narg('start_time'), start_time),
+    end_time = coalesce(sqlc.narg('end_time'), end_time),
+    break_time = coalesce(sqlc.narg('break_time'), break_time),
+    status = coalesce(sqlc.narg('status'), status),
+    interval_scheduler = coalesce(sqlc.narg('interval_scheduler'), interval_scheduler),
+    updated_at = now()
+WHERE "shop_id" = $1
+RETURNING *;
+
 -- name: GetBarberShop :one
 
-SELECT "shop_id"
+SELECT *
 FROM "BarberShops"
-WHERE shop_id = $1
-LIMIT 1;
+WHERE shop_id = $1;
 
 -- name: FindBarberShopsNearbyLocations :many
 

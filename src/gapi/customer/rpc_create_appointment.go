@@ -10,7 +10,9 @@ import (
 
 	"firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
+	"github.com/jackc/pgconn"
 	"github.com/lib/pq"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -22,86 +24,114 @@ func (server *Server) NewAppointment(ctx context.Context, req *customer.CreateAp
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
-	// err = server.(ctx, payload)
-	// if err != nil {
-	// 	return nil, status.Errorf(codes.PermissionDenied, "No permission")
-	// }
+	validations := validateCreateAppointment(req)
+	if validations != nil {
+		return nil, InValidArgumentError(validations)
+	}
 
-	arg := db.InsertAppointmentParams{
+	arg := db.InsertAppointmentAndGetInfoParams{
 		BarbershopsID:       uuid.MustParse(req.GetBarbershopId()),
 		CustomerID:          uuid.MustParse(req.GetCustomerId()),
 		BarberID:            uuid.MustParse(req.GetBarberId()),
 		AppointmentDatetime: req.GetAppointmentDatetime().AsTime(),
-		Status:              req.GetStatus(),
+		Status:              int32(utils.Pending),
 	}
 
-	resAppoinment, err := server.store.InsertAppointment(ctx, arg)
+	resAppoinment, err := server.store.InsertAppointmentAndGetInfo(ctx, arg)
 	if err != nil {
-		if pqErr, ok := err.(*pq.Error); ok {
-			switch pqErr.Code.Name() {
-			case "BarberShops_code_barber_shop_key":
-				return nil, status.Errorf(codes.AlreadyExists, "This barber shop has already existed")
+		if pqErr, ok := err.(*pgconn.PgError); ok {
+			switch pqErr.ConstraintName {
+			case "Appointments_barber_id_appointment_datetime_idx":
+				return nil, status.Errorf(codes.AlreadyExists, "The calendar is already booked. Please choose another time.")
 			}
 		}
-		return nil, status.Errorf(codes.Internal, "failed to create barber shop")
+		return nil, status.Errorf(codes.Internal, "internal")
 	}
 
 	listService, err := utils.ConvertStringListToUUIDList(req.GetServiceId())
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
-
 	argServiceAppointment := db.InsertServicesForAppointmentParams{
 		AppointmentsServiceID: resAppoinment.AppointmentID,
 		ServicesID:            listService,
 	}
-
 	_, err = server.store.InsertServicesForAppointment(ctx, argServiceAppointment)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
-			case "BarberShops_code_barber_shop_key":
+			case "Services_Appointments_pkey":
 				return nil, status.Errorf(codes.AlreadyExists, "This barber shop has already existed")
 			}
 		}
 		return nil, status.Errorf(codes.Internal, "failed to create barber shop")
 	}
 
-	// Khởi tạo client Firebase Messaging
 	client, err := server.firebaseApp.Messaging(context.Background())
 	if err != nil {
-		log.Fatalf("Khởi tạo client Firebase Messaging thất bại: %v", err)
+		log.Fatalf("Failed to initialize")
+		return nil, status.Errorf(codes.Internal, "internal")
+	}
+	// notification to barber
+	if resAppoinment.BarberID == uuid.MustParse(req.BarberId) {
+		registrationToken := resAppoinment.FcmDevice.String
+		message := &messaging.Message{
+			Data: map[string]string{
+				"appointment_datetime": resAppoinment.AppointmentDatetime.String(),
+			},
+			Token: registrationToken,
+			Notification: &messaging.Notification{
+				Title: "Barber King",
+				Body:  fmt.Sprintf("%s, Guests have just booked with you", resAppoinment.BarberNickName),
+			},
+		}
+		response, err := client.Send(ctx, message)
+		if err != nil {
+			fmt.Println("Error", err)
+		}
+		fmt.Println("Successfully sent message:", response)
 	}
 
-	// This registration token comes from the client FCM SDKs.
-	registrationToken := "cwwkNuugTkWWRozOhJS9XK:APA91bHSIHVFiZmKkp5tTuRaSSpLRpSutkpyPoWOvLhZedk5zvBRxuyMk0WeQlog7HaV4K2EcKzPQgX0CGjlr48lwWbwfb_CMO8XSvWw9MdWiTVROCP9KtXwkllbMwBZICKvIhjY-pnz"
-
-	// See documentation on defining a message payload.
-	message := &messaging.Message{
-		Data: map[string]string{
-			"score":                "850",
-			"time":                 "2:45",
-			"message":              "Hello Work",
-			"appointment_datetime": resAppoinment.AppointmentDatetime.Format("2006-01-02T15:04:05Z"),
-		},
-		Token: registrationToken,
-		Notification: &messaging.Notification{
-			Title: "HelloWork",
-			Body:  "Ok la nha",
-		},
+	// Scheduler Appoinment to customer
+	if server.Payload.Customer.CustomerID == uuid.MustParse(req.CustomerId) {
+		registrationToken := server.Payload.Customer.FcmDevice
+		message := &messaging.Message{
+			Data: map[string]string{
+				"appointment_datetime": resAppoinment.AppointmentDatetime.String(),
+			},
+			Token: registrationToken,
+			Notification: &messaging.Notification{
+				Title: "Barber King",
+				Body:  "Guests have just booked with you",
+			},
+		}
+		response, err := client.Send(ctx, message)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		fmt.Println("Successfully sent message:", response)
 	}
-
-	// Send a message to the device corresponding to the provided
-	// registration token.
-	response, err := client.Send(ctx, message)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	// Response is a message ID string.
-	fmt.Println("Successfully sent message:", response)
 
 	rsp := &customer.CreateAppointmentResponse{
 		Appointment: convertAppointment(resAppoinment),
 	}
 	return rsp, nil
+}
+
+func validateCreateAppointment(req *customer.CreateAppointmentRequest) (validations []*errdetails.BadRequest_FieldViolation) {
+
+	validateField := func(value *string, fieldName string, validateFunc func(string) error) {
+		if value != nil {
+			if err := validateFunc(*value); err != nil {
+				validations = append(validations, FieldValidation(fieldName, err))
+			}
+		}
+	}
+
+	validateField(&req.BarberId, "barber_id", utils.ValidateId)
+	validateField(&req.BarbershopId, "barbershop_id", utils.ValidateId)
+	validateField(&req.CustomerId, "customer_id", utils.ValidateId)
+	validateField(&req.ServiceId[0], "service_id", utils.ValidateId)
+
+	return validations
 }

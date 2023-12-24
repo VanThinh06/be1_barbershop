@@ -19,6 +19,7 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 		TypeUsername: "phone",
 		Email:        req.Username,
 	}
+
 	err := utils.ValidatePhoneNumber(req.Username)
 	if err != nil {
 		contact.TypeUsername = "email"
@@ -56,6 +57,7 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 	// create token
 	customerPayload := token.Customer{
 		CustomerID: res.CustomerID,
+		Name:       res.Name,
 		Gender:     res.Gender,
 		Phone:      res.Phone,
 		Email:      res.Email,

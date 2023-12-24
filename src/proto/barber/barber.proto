@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package pb;
 
-import "google/protobuf/timestamp.proto";
 
 option go_package = "barbershop/src/pb/barber";
 
@@ -18,7 +17,5 @@ message Barber {
     string avatar = 9;
     int32 status = 10;
     bool haircut = 14;
-    google.protobuf.Timestamp created_at = 11;
-    google.protobuf.Timestamp updated_at = 12;
-    google.protobuf.Timestamp password_changed_at = 13;
+  
 }

@@ -14,27 +14,45 @@ import (
 	"github.com/lib/pq"
 )
 
-const getAppointmentByDate = `-- name: GetAppointmentByDate :many
-SELECT appointment_id, barbershops_id, customer_id, barber_id, appointment_datetime, status, created_at, updated_at FROM "Appointments"
-WHERE DATE(appointment_datetime) = $1
-AND barber_id = $2
-ORDER BY appointment_datetime
+const getAppointmentByDateWithService = `-- name: GetAppointmentByDateWithService :many
+SELECT 
+    "Appointments".appointment_id, "Appointments".barbershops_id, "Appointments".customer_id, "Appointments".barber_id, "Appointments".appointment_datetime, "Appointments".status, "Appointments".created_at, "Appointments".updated_at,
+    SUM("Services"."timer") AS "service_timer"
+FROM "Appointments"
+LEFT JOIN "Services_Appointments" ON "Appointments"."appointment_id" = "Services_Appointments"."Appointments_service_id"
+LEFT JOIN "Services" ON "Services_Appointments"."Services_id" = "Services"."id"
+WHERE DATE("Appointments"."appointment_datetime") = $1
+    AND "Appointments"."barber_id" = $2
+GROUP BY "Appointments"."appointment_id", "Appointments"."appointment_datetime" 
+ORDER BY "Appointments"."appointment_datetime"
 `
 
-type GetAppointmentByDateParams struct {
+type GetAppointmentByDateWithServiceParams struct {
 	AppointmentDatetime time.Time `json:"appointment_datetime"`
 	BarberID            uuid.UUID `json:"barber_id"`
 }
 
-func (q *Queries) GetAppointmentByDate(ctx context.Context, arg GetAppointmentByDateParams) ([]Appointment, error) {
-	rows, err := q.db.QueryContext(ctx, getAppointmentByDate, arg.AppointmentDatetime, arg.BarberID)
+type GetAppointmentByDateWithServiceRow struct {
+	AppointmentID       uuid.UUID    `json:"appointment_id"`
+	BarbershopsID       uuid.UUID    `json:"barbershops_id"`
+	CustomerID          uuid.UUID    `json:"customer_id"`
+	BarberID            uuid.UUID    `json:"barber_id"`
+	AppointmentDatetime time.Time    `json:"appointment_datetime"`
+	Status              int32        `json:"status"`
+	CreatedAt           time.Time    `json:"created_at"`
+	UpdatedAt           sql.NullTime `json:"updated_at"`
+	ServiceTimer        int64        `json:"service_timer"`
+}
+
+func (q *Queries) GetAppointmentByDateWithService(ctx context.Context, arg GetAppointmentByDateWithServiceParams) ([]GetAppointmentByDateWithServiceRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAppointmentByDateWithService, arg.AppointmentDatetime, arg.BarberID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Appointment{}
+	items := []GetAppointmentByDateWithServiceRow{}
 	for rows.Next() {
-		var i Appointment
+		var i GetAppointmentByDateWithServiceRow
 		if err := rows.Scan(
 			&i.AppointmentID,
 			&i.BarbershopsID,
@@ -44,6 +62,7 @@ func (q *Queries) GetAppointmentByDate(ctx context.Context, arg GetAppointmentBy
 			&i.Status,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.ServiceTimer,
 		); err != nil {
 			return nil, err
 		}
@@ -58,19 +77,37 @@ func (q *Queries) GetAppointmentByDate(ctx context.Context, arg GetAppointmentBy
 	return items, nil
 }
 
-const insertAppointment = `-- name: InsertAppointment :one
-INSERT INTO "Appointments" (
-    barbershops_id,
-    customer_id,
-    barber_id,    
-    appointment_datetime,
-    "status"  
+const insertAppointmentAndGetInfo = `-- name: InsertAppointmentAndGetInfo :one
+WITH inserted_appointment AS (
+    INSERT INTO "Appointments" (
+        barbershops_id,
+        customer_id,
+        barber_id,    
+        appointment_datetime,
+        "status"  
     )
-VALUES ($1, $2, $3, $4, $5)
-RETURNING appointment_id, barbershops_id, customer_id, barber_id, appointment_datetime, status, created_at, updated_at
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING appointment_id, barbershops_id, customer_id, barber_id, appointment_datetime, status, created_at, updated_at
+)
+SELECT 
+    inserted_appointment.appointment_id, inserted_appointment.barbershops_id, inserted_appointment.customer_id, inserted_appointment.barber_id, inserted_appointment.appointment_datetime, inserted_appointment.status, inserted_appointment.created_at, inserted_appointment.updated_at,
+    "Barbers".nick_name AS barber_nick_name,
+    "SessionsBarbers".fcm_device,
+    "BarberShops"."name" AS name_barber_shop
+FROM 
+    "inserted_appointment"
+JOIN 
+    "Barbers" ON "inserted_appointment".barber_id = "Barbers".barber_id
+JOIN 
+    "BarberShops" ON "inserted_appointment".barbershops_id = "BarberShops".shop_id
+LEFT JOIN 
+    "SessionsBarbers" ON "Barbers".barber_id = "SessionsBarbers".barber_id
+ORDER BY 
+    "SessionsBarbers".created_at DESC
+LIMIT 1
 `
 
-type InsertAppointmentParams struct {
+type InsertAppointmentAndGetInfoParams struct {
 	BarbershopsID       uuid.UUID `json:"barbershops_id"`
 	CustomerID          uuid.UUID `json:"customer_id"`
 	BarberID            uuid.UUID `json:"barber_id"`
@@ -78,15 +115,29 @@ type InsertAppointmentParams struct {
 	Status              int32     `json:"status"`
 }
 
-func (q *Queries) InsertAppointment(ctx context.Context, arg InsertAppointmentParams) (Appointment, error) {
-	row := q.db.QueryRowContext(ctx, insertAppointment,
+type InsertAppointmentAndGetInfoRow struct {
+	AppointmentID       uuid.UUID      `json:"appointment_id"`
+	BarbershopsID       uuid.UUID      `json:"barbershops_id"`
+	CustomerID          uuid.UUID      `json:"customer_id"`
+	BarberID            uuid.UUID      `json:"barber_id"`
+	AppointmentDatetime time.Time      `json:"appointment_datetime"`
+	Status              int32          `json:"status"`
+	CreatedAt           time.Time      `json:"created_at"`
+	UpdatedAt           sql.NullTime   `json:"updated_at"`
+	BarberNickName      string         `json:"barber_nick_name"`
+	FcmDevice           sql.NullString `json:"fcm_device"`
+	NameBarberShop      string         `json:"name_barber_shop"`
+}
+
+func (q *Queries) InsertAppointmentAndGetInfo(ctx context.Context, arg InsertAppointmentAndGetInfoParams) (InsertAppointmentAndGetInfoRow, error) {
+	row := q.db.QueryRowContext(ctx, insertAppointmentAndGetInfo,
 		arg.BarbershopsID,
 		arg.CustomerID,
 		arg.BarberID,
 		arg.AppointmentDatetime,
 		arg.Status,
 	)
-	var i Appointment
+	var i InsertAppointmentAndGetInfoRow
 	err := row.Scan(
 		&i.AppointmentID,
 		&i.BarbershopsID,
@@ -96,6 +147,9 @@ func (q *Queries) InsertAppointment(ctx context.Context, arg InsertAppointmentPa
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.BarberNickName,
+		&i.FcmDevice,
+		&i.NameBarberShop,
 	)
 	return i, err
 }

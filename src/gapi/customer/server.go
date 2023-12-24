@@ -18,7 +18,7 @@ type Server struct {
 	store       db.StoreMain
 	tokenMaker  token.CustomerMaker
 	Router      *gin.Engine
-	Payload     *token.Payload
+	Payload     *token.CustomerPayload
 	firebaseApp *firebase.App
 }
 

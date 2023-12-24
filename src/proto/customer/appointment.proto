@@ -15,4 +15,5 @@ message Appointment {
     int32 status = 6;
     google.protobuf.Timestamp  created_at = 7;
     google.protobuf.Timestamp  update_at = 8;
+    int32 service_timer = 9;
 }

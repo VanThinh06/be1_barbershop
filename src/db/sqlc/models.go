@@ -42,20 +42,25 @@ type Barber struct {
 }
 
 type BarberShop struct {
-	ShopID       uuid.UUID       `json:"shop_id"`
-	OwnerID      uuid.UUID       `json:"owner_id"`
-	ChainID      uuid.NullUUID   `json:"chain_id"`
-	Name         string          `json:"name"`
-	Facility     int32           `json:"facility"`
-	Address      string          `json:"address"`
-	Image        sql.NullString  `json:"image"`
-	ListImage    []string        `json:"list_image"`
-	Status       int32           `json:"status"`
-	Coordinates  string          `json:"coordinates"`
-	Rate         sql.NullFloat64 `json:"rate"`
-	IsReputation sql.NullBool    `json:"is_reputation"`
-	CreatedAt    time.Time       `json:"created_at"`
-	UpdatedAt    sql.NullTime    `json:"updated_at"`
+	ShopID            uuid.UUID       `json:"shop_id"`
+	OwnerID           uuid.UUID       `json:"owner_id"`
+	ChainID           uuid.NullUUID   `json:"chain_id"`
+	Name              string          `json:"name"`
+	Facility          int32           `json:"facility"`
+	Address           string          `json:"address"`
+	Coordinates       string          `json:"coordinates"`
+	Image             sql.NullString  `json:"image"`
+	ListImage         []string        `json:"list_image"`
+	Status            int32           `json:"status"`
+	Rate              sql.NullFloat64 `json:"rate"`
+	StartTime         time.Time       `json:"start_time"`
+	EndTime           time.Time       `json:"end_time"`
+	BreakTime         time.Time       `json:"break_time"`
+	BreakMinutes      int32           `json:"break_minutes"`
+	IntervalScheduler int32           `json:"interval_scheduler"`
+	IsReputation      sql.NullBool    `json:"is_reputation"`
+	CreatedAt         time.Time       `json:"created_at"`
+	UpdatedAt         sql.NullTime    `json:"updated_at"`
 }
 
 type Chain struct {

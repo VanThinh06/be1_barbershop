@@ -20,6 +20,12 @@ sql:
               import: "github.com/google/uuid"
               type: "NullUUID"
 
+          - db_type: "pg_catalog.time"
+            nullable: true
+            engine: "postgresql"
+            go_type:
+              type: "pgtype.Time"
+
           - db_type: "geography"
             go_type:
               type: "string"

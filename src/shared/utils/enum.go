@@ -14,3 +14,11 @@ const (
 	ServiceProvider
 	Manager
 )
+
+type statusAppoinment int
+const (
+	Pending statusAppoinment = iota + 1
+  	Confirmed
+  	Canceled
+  	Completed
+)

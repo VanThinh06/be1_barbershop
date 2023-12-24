@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "barbershop/src/pb/barber";
+
+message TimeOfDay {
+    // Số giờ (0-23)
+    int32 hours = 1;
+  
+    // Số phút (0-59)
+    int32 minutes = 2;
+  }

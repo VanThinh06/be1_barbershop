@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package pb;
+
+import "barber/barber.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message GetBarberInShopRequest{
+    string barbershop_id = 1;
+}
+
+message GetBarberInShopResponse {
+    repeated Barber barbers = 1;
+}

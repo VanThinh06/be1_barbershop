@@ -26,7 +26,6 @@ const (
 	CustomerBarberShop_RefreshTokenCustomer_FullMethodName   = "/pb.CustomerBarberShop/RefreshTokenCustomer"
 	CustomerBarberShop_NewAppointment_FullMethodName         = "/pb.CustomerBarberShop/NewAppointment"
 	CustomerBarberShop_GetAppointmentByDate_FullMethodName   = "/pb.CustomerBarberShop/GetAppointmentByDate"
-	CustomerBarberShop_GetBarberInShop_FullMethodName        = "/pb.CustomerBarberShop/GetBarberInShop"
 )
 
 // CustomerBarberShopClient is the client API for CustomerBarberShop service.
@@ -41,7 +40,6 @@ type CustomerBarberShopClient interface {
 	RefreshTokenCustomer(ctx context.Context, in *RefreshTokenCustomerRequest, opts ...grpc.CallOption) (*RefreshTokenCustomerResponse, error)
 	NewAppointment(ctx context.Context, in *CreateAppointmentRequest, opts ...grpc.CallOption) (*CreateAppointmentResponse, error)
 	GetAppointmentByDate(ctx context.Context, in *GetAppointmentByDateRequest, opts ...grpc.CallOption) (*GetAppointmentByDateResponse, error)
-	GetBarberInShop(ctx context.Context, in *GetBarberInShopRequest, opts ...grpc.CallOption) (*GetBarberInShopResponse, error)
 }
 
 type customerBarberShopClient struct {
@@ -115,15 +113,6 @@ func (c *customerBarberShopClient) GetAppointmentByDate(ctx context.Context, in 
 	return out, nil
 }
 
-func (c *customerBarberShopClient) GetBarberInShop(ctx context.Context, in *GetBarberInShopRequest, opts ...grpc.CallOption) (*GetBarberInShopResponse, error) {
-	out := new(GetBarberInShopResponse)
-	err := c.cc.Invoke(ctx, CustomerBarberShop_GetBarberInShop_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // CustomerBarberShopServer is the server API for CustomerBarberShop service.
 // All implementations must embed UnimplementedCustomerBarberShopServer
 // for forward compatibility
@@ -136,7 +125,6 @@ type CustomerBarberShopServer interface {
 	RefreshTokenCustomer(context.Context, *RefreshTokenCustomerRequest) (*RefreshTokenCustomerResponse, error)
 	NewAppointment(context.Context, *CreateAppointmentRequest) (*CreateAppointmentResponse, error)
 	GetAppointmentByDate(context.Context, *GetAppointmentByDateRequest) (*GetAppointmentByDateResponse, error)
-	GetBarberInShop(context.Context, *GetBarberInShopRequest) (*GetBarberInShopResponse, error)
 	mustEmbedUnimplementedCustomerBarberShopServer()
 }
 
@@ -164,9 +152,6 @@ func (UnimplementedCustomerBarberShopServer) NewAppointment(context.Context, *Cr
 }
 func (UnimplementedCustomerBarberShopServer) GetAppointmentByDate(context.Context, *GetAppointmentByDateRequest) (*GetAppointmentByDateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAppointmentByDate not implemented")
-}
-func (UnimplementedCustomerBarberShopServer) GetBarberInShop(context.Context, *GetBarberInShopRequest) (*GetBarberInShopResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBarberInShop not implemented")
 }
 func (UnimplementedCustomerBarberShopServer) mustEmbedUnimplementedCustomerBarberShopServer() {}
 
@@ -307,24 +292,6 @@ func _CustomerBarberShop_GetAppointmentByDate_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CustomerBarberShop_GetBarberInShop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBarberInShopRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CustomerBarberShopServer).GetBarberInShop(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CustomerBarberShop_GetBarberInShop_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CustomerBarberShopServer).GetBarberInShop(ctx, req.(*GetBarberInShopRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // CustomerBarberShop_ServiceDesc is the grpc.ServiceDesc for CustomerBarberShop service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -359,10 +326,6 @@ var CustomerBarberShop_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAppointmentByDate",
 			Handler:    _CustomerBarberShop_GetAppointmentByDate_Handler,
-		},
-		{
-			MethodName: "GetBarberInShop",
-			Handler:    _CustomerBarberShop_GetBarberInShop_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -66,6 +66,14 @@ func ValidatePassword(password string) error {
 	return nil
 }
 
+func ValidateId(id string) error {
+	if err := ValidateString(id, 36, 36); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // ValidatePhoneNumber kiểm tra tính hợp lệ của số điện thoại.
 func ValidatePhoneNumber(phoneNumber string) error {
 	normalizedNumber := regexp.MustCompile(`\D`).ReplaceAllString(phoneNumber, "")
