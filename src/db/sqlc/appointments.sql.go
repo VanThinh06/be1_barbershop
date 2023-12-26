@@ -16,7 +16,7 @@ import (
 
 const getAppointmentByDateWithService = `-- name: GetAppointmentByDateWithService :many
 SELECT 
-    "Appointments".appointment_id, "Appointments".barbershops_id, "Appointments".customer_id, "Appointments".barber_id, "Appointments".appointment_datetime, "Appointments".status, "Appointments".created_at, "Appointments".updated_at,
+    "Appointments".appointment_id, "Appointments".barbershops_id, "Appointments".customer_id, "Appointments".barber_id, "Appointments".appointment_datetime, "Appointments".timer, "Appointments".status, "Appointments".created_at, "Appointments".updated_at,
     SUM("Services"."timer") AS "service_timer"
 FROM "Appointments"
 LEFT JOIN "Services_Appointments" ON "Appointments"."appointment_id" = "Services_Appointments"."Appointments_service_id"
@@ -38,6 +38,7 @@ type GetAppointmentByDateWithServiceRow struct {
 	CustomerID          uuid.UUID    `json:"customer_id"`
 	BarberID            uuid.UUID    `json:"barber_id"`
 	AppointmentDatetime time.Time    `json:"appointment_datetime"`
+	Timer               int32        `json:"timer"`
 	Status              int32        `json:"status"`
 	CreatedAt           time.Time    `json:"created_at"`
 	UpdatedAt           sql.NullTime `json:"updated_at"`
@@ -59,6 +60,7 @@ func (q *Queries) GetAppointmentByDateWithService(ctx context.Context, arg GetAp
 			&i.CustomerID,
 			&i.BarberID,
 			&i.AppointmentDatetime,
+			&i.Timer,
 			&i.Status,
 			&i.CreatedAt,
 			&i.UpdatedAt,
@@ -84,13 +86,14 @@ WITH inserted_appointment AS (
         customer_id,
         barber_id,    
         appointment_datetime,
+        "timer",
         "status"  
     )
-    VALUES ($1, $2, $3, $4, $5)
-    RETURNING appointment_id, barbershops_id, customer_id, barber_id, appointment_datetime, status, created_at, updated_at
+    VALUES ($1, $2, $3, $4, $5, $6)
+    RETURNING appointment_id, barbershops_id, customer_id, barber_id, appointment_datetime, timer, status, created_at, updated_at
 )
 SELECT 
-    inserted_appointment.appointment_id, inserted_appointment.barbershops_id, inserted_appointment.customer_id, inserted_appointment.barber_id, inserted_appointment.appointment_datetime, inserted_appointment.status, inserted_appointment.created_at, inserted_appointment.updated_at,
+    inserted_appointment.appointment_id, inserted_appointment.barbershops_id, inserted_appointment.customer_id, inserted_appointment.barber_id, inserted_appointment.appointment_datetime, inserted_appointment.timer, inserted_appointment.status, inserted_appointment.created_at, inserted_appointment.updated_at,
     "Barbers".nick_name AS barber_nick_name,
     "SessionsBarbers".fcm_device,
     "BarberShops"."name" AS name_barber_shop
@@ -112,6 +115,7 @@ type InsertAppointmentAndGetInfoParams struct {
 	CustomerID          uuid.UUID `json:"customer_id"`
 	BarberID            uuid.UUID `json:"barber_id"`
 	AppointmentDatetime time.Time `json:"appointment_datetime"`
+	Timer               int32     `json:"timer"`
 	Status              int32     `json:"status"`
 }
 
@@ -121,6 +125,7 @@ type InsertAppointmentAndGetInfoRow struct {
 	CustomerID          uuid.UUID      `json:"customer_id"`
 	BarberID            uuid.UUID      `json:"barber_id"`
 	AppointmentDatetime time.Time      `json:"appointment_datetime"`
+	Timer               int32          `json:"timer"`
 	Status              int32          `json:"status"`
 	CreatedAt           time.Time      `json:"created_at"`
 	UpdatedAt           sql.NullTime   `json:"updated_at"`
@@ -135,6 +140,7 @@ func (q *Queries) InsertAppointmentAndGetInfo(ctx context.Context, arg InsertApp
 		arg.CustomerID,
 		arg.BarberID,
 		arg.AppointmentDatetime,
+		arg.Timer,
 		arg.Status,
 	)
 	var i InsertAppointmentAndGetInfoRow
@@ -144,6 +150,7 @@ func (q *Queries) InsertAppointmentAndGetInfo(ctx context.Context, arg InsertApp
 		&i.CustomerID,
 		&i.BarberID,
 		&i.AppointmentDatetime,
+		&i.Timer,
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,

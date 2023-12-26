@@ -80,6 +80,9 @@ func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBa
 	}
 	barberShop, err := server.Store.UpdateBarberShop(ctx, arg)
 	if err != nil {
+		if err == sql.ErrNoRows{
+			return nil, status.Error(codes.NotFound, "barbershop don't exist")
+		}
 		return nil, status.Error(codes.Internal, "internal")
 	}
 

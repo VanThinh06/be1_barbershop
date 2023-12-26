@@ -5,9 +5,10 @@ WITH inserted_appointment AS (
         customer_id,
         barber_id,    
         appointment_datetime,
+        "timer",
         "status"  
     )
-    VALUES ($1, $2, $3, $4, $5)
+    VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *
 )
 SELECT 

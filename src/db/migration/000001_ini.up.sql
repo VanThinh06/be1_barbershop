@@ -113,6 +113,7 @@ CREATE TABLE "Appointments" (
   "customer_id" uuid NOT NULL,
   "barber_id" uuid NOT NULL,
   "appointment_datetime" timestamptz NOT NULL,
+  "timer" integer NOT NULL,
   "status" integer NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz

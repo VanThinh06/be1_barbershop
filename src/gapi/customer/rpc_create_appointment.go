@@ -19,7 +19,7 @@ import (
 
 func (server *Server) NewAppointment(ctx context.Context, req *customer.CreateAppointmentRequest) (*customer.CreateAppointmentResponse, error) {
 
-	_, err := server.authorizeUser(ctx)
+	payload, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
@@ -34,6 +34,7 @@ func (server *Server) NewAppointment(ctx context.Context, req *customer.CreateAp
 		CustomerID:          uuid.MustParse(req.GetCustomerId()),
 		BarberID:            uuid.MustParse(req.GetBarberId()),
 		AppointmentDatetime: req.GetAppointmentDatetime().AsTime(),
+		Timer:               req.GetTimer(),
 		Status:              int32(utils.Pending),
 	}
 
@@ -93,8 +94,8 @@ func (server *Server) NewAppointment(ctx context.Context, req *customer.CreateAp
 	}
 
 	// Scheduler Appoinment to customer
-	if server.Payload.Customer.CustomerID == uuid.MustParse(req.CustomerId) {
-		registrationToken := server.Payload.Customer.FcmDevice
+	if payload.Customer.CustomerID == uuid.MustParse(req.CustomerId) {
+		registrationToken := payload.Customer.FcmDevice
 		message := &messaging.Message{
 			Data: map[string]string{
 				"appointment_datetime": resAppoinment.AppointmentDatetime.String(),
@@ -107,7 +108,7 @@ func (server *Server) NewAppointment(ctx context.Context, req *customer.CreateAp
 		}
 		response, err := client.Send(ctx, message)
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Println("Error", err)
 		}
 		fmt.Println("Successfully sent message:", response)
 	}

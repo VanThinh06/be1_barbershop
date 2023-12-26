@@ -21,6 +21,11 @@ sql:
               type: "NullUUID"
 
           - db_type: "pg_catalog.time"
+            nullable: false
+            engine: "postgresql"
+            go_type:
+              type: "pgtype.Time"
+          - db_type: "pg_catalog.time"
             nullable: true
             engine: "postgresql"
             go_type:

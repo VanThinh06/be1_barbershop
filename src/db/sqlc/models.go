@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgtype"
 )
 
 type Appointment struct {
@@ -17,6 +18,7 @@ type Appointment struct {
 	CustomerID          uuid.UUID    `json:"customer_id"`
 	BarberID            uuid.UUID    `json:"barber_id"`
 	AppointmentDatetime time.Time    `json:"appointment_datetime"`
+	Timer               int32        `json:"timer"`
 	Status              int32        `json:"status"`
 	CreatedAt           time.Time    `json:"created_at"`
 	UpdatedAt           sql.NullTime `json:"updated_at"`
@@ -53,9 +55,9 @@ type BarberShop struct {
 	ListImage         []string        `json:"list_image"`
 	Status            int32           `json:"status"`
 	Rate              sql.NullFloat64 `json:"rate"`
-	StartTime         time.Time       `json:"start_time"`
-	EndTime           time.Time       `json:"end_time"`
-	BreakTime         time.Time       `json:"break_time"`
+	StartTime         pgtype.Time     `json:"start_time"`
+	EndTime           pgtype.Time     `json:"end_time"`
+	BreakTime         pgtype.Time     `json:"break_time"`
 	BreakMinutes      int32           `json:"break_minutes"`
 	IntervalScheduler int32           `json:"interval_scheduler"`
 	IsReputation      sql.NullBool    `json:"is_reputation"`
