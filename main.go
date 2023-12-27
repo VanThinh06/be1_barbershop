@@ -49,6 +49,7 @@ func main() {
 
 	//
 	store := db.NewStore(conn)
+
 	firebaseApp := db.NewFirebase(app)
 	go runGatewayServer(config, store, firebaseApp)
 	// go runGrpcServerCustomer(config, store, firebaseApp)

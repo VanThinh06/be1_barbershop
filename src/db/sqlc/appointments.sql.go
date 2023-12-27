@@ -162,14 +162,9 @@ func (q *Queries) InsertAppointmentAndGetInfo(ctx context.Context, arg InsertApp
 }
 
 const insertServicesForAppointment = `-- name: InsertServicesForAppointment :many
-WITH inserted_services AS (
-  INSERT INTO "Services_Appointments" ("Services_id", "Appointments_service_id")
-  SELECT unnest($2::uuid[]), $1
-  RETURNING "Services_id", "Appointments_service_id"
-)
-SELECT "Services_id", "Appointments_service_id", s.id, s.category_id, s.shop_id, s.name, s.timer, s.price, s.description, s.image, s.hidden, s.created_at, s.updated_at
-FROM inserted_services
-JOIN "Services" s ON "Services_id" = s."id"
+INSERT INTO "Services_Appointments" ("Services_id", "Appointments_service_id")
+SELECT unnest($2::uuid[]), $1
+RETURNING "Services_id", "Appointments_service_id"
 `
 
 type InsertServicesForAppointmentParams struct {
@@ -177,46 +172,16 @@ type InsertServicesForAppointmentParams struct {
 	ServicesID            []uuid.UUID `json:"services_id"`
 }
 
-type InsertServicesForAppointmentRow struct {
-	ServicesID            uuid.UUID       `json:"Services_id"`
-	AppointmentsServiceID uuid.UUID       `json:"Appointments_service_id"`
-	ID                    uuid.UUID       `json:"id"`
-	CategoryID            uuid.UUID       `json:"category_id"`
-	ShopID                uuid.NullUUID   `json:"shop_id"`
-	Name                  string          `json:"name"`
-	Timer                 sql.NullInt32   `json:"timer"`
-	Price                 sql.NullFloat64 `json:"price"`
-	Description           sql.NullString  `json:"description"`
-	Image                 sql.NullString  `json:"image"`
-	Hidden                bool            `json:"hidden"`
-	CreatedAt             time.Time       `json:"created_at"`
-	UpdatedAt             sql.NullTime    `json:"updated_at"`
-}
-
-func (q *Queries) InsertServicesForAppointment(ctx context.Context, arg InsertServicesForAppointmentParams) ([]InsertServicesForAppointmentRow, error) {
+func (q *Queries) InsertServicesForAppointment(ctx context.Context, arg InsertServicesForAppointmentParams) ([]ServicesAppointment, error) {
 	rows, err := q.db.QueryContext(ctx, insertServicesForAppointment, arg.AppointmentsServiceID, pq.Array(arg.ServicesID))
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []InsertServicesForAppointmentRow{}
+	items := []ServicesAppointment{}
 	for rows.Next() {
-		var i InsertServicesForAppointmentRow
-		if err := rows.Scan(
-			&i.ServicesID,
-			&i.AppointmentsServiceID,
-			&i.ID,
-			&i.CategoryID,
-			&i.ShopID,
-			&i.Name,
-			&i.Timer,
-			&i.Price,
-			&i.Description,
-			&i.Image,
-			&i.Hidden,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-		); err != nil {
+		var i ServicesAppointment
+		if err := rows.Scan(&i.ServicesID, &i.AppointmentsServiceID); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

@@ -342,10 +342,6 @@
         "status": {
           "type": "integer",
           "format": "int32"
-        },
-        "timer": {
-          "type": "integer",
-          "format": "int32"
         }
       }
     },

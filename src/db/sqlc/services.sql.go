@@ -10,6 +10,7 @@ import (
 	"database/sql"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 const createService = `-- name: CreateService :one
@@ -225,4 +226,17 @@ func (q *Queries) GetListServices(ctx context.Context, arg GetListServicesParams
 		return nil, err
 	}
 	return items, nil
+}
+
+const getTimerService = `-- name: GetTimerService :one
+SELECT SUM("timer") AS total_timer
+FROM "Services"
+WHERE "id" IN ( $1::uuid[] )
+`
+
+func (q *Queries) GetTimerService(ctx context.Context, servicesID []uuid.UUID) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getTimerService, pq.Array(servicesID))
+	var total_timer int64
+	err := row.Scan(&total_timer)
+	return total_timer, err
 }

@@ -23,21 +23,26 @@ func (server *Server) NewAppointment(ctx context.Context, req *customer.CreateAp
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
-
 	validations := validateCreateAppointment(req)
 	if validations != nil {
 		return nil, InValidArgumentError(validations)
 	}
+
+	tx, err := server.store.
+	listServices, err := utils.ConvertStringListToUUIDList(req.GetServiceId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "services does not exist")
+	}
+	timer, err := server.store.GetTimerService(ctx, listServices)
 
 	arg := db.InsertAppointmentAndGetInfoParams{
 		BarbershopsID:       uuid.MustParse(req.GetBarbershopId()),
 		CustomerID:          uuid.MustParse(req.GetCustomerId()),
 		BarberID:            uuid.MustParse(req.GetBarberId()),
 		AppointmentDatetime: req.GetAppointmentDatetime().AsTime(),
-		Timer:               req.GetTimer(),
+		Timer:               int32(timer),
 		Status:              int32(utils.Pending),
 	}
-
 	resAppoinment, err := server.store.InsertAppointmentAndGetInfo(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pgconn.PgError); ok {
@@ -49,13 +54,9 @@ func (server *Server) NewAppointment(ctx context.Context, req *customer.CreateAp
 		return nil, status.Errorf(codes.Internal, "internal")
 	}
 
-	listService, err := utils.ConvertStringListToUUIDList(req.GetServiceId())
-	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
-	}
 	argServiceAppointment := db.InsertServicesForAppointmentParams{
 		AppointmentsServiceID: resAppoinment.AppointmentID,
-		ServicesID:            listService,
+		ServicesID:            listServices,
 	}
 	_, err = server.store.InsertServicesForAppointment(ctx, argServiceAppointment)
 	if err != nil {
@@ -68,12 +69,13 @@ func (server *Server) NewAppointment(ctx context.Context, req *customer.CreateAp
 		return nil, status.Errorf(codes.Internal, "failed to create barber shop")
 	}
 
+	// firebase notification
 	client, err := server.firebaseApp.Messaging(context.Background())
 	if err != nil {
 		log.Fatalf("Failed to initialize")
 		return nil, status.Errorf(codes.Internal, "internal")
 	}
-	// notification to barber
+
 	if resAppoinment.BarberID == uuid.MustParse(req.BarberId) {
 		registrationToken := resAppoinment.FcmDevice.String
 		message := &messaging.Message{
@@ -93,7 +95,6 @@ func (server *Server) NewAppointment(ctx context.Context, req *customer.CreateAp
 		fmt.Println("Successfully sent message:", response)
 	}
 
-	// Scheduler Appoinment to customer
 	if payload.Customer.CustomerID == uuid.MustParse(req.CustomerId) {
 		registrationToken := payload.Customer.FcmDevice
 		message := &messaging.Message{

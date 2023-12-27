@@ -29,14 +29,9 @@ ORDER BY
 LIMIT 1;
 
 -- name: InsertServicesForAppointment :many
-WITH inserted_services AS (
-  INSERT INTO "Services_Appointments" ("Services_id", "Appointments_service_id")
-  SELECT unnest(sqlc.arg(Services_id)::uuid[]), $1
-  RETURNING "Services_id", "Appointments_service_id"
-)
-SELECT "Services_id", "Appointments_service_id", s.*
-FROM inserted_services
-JOIN "Services" s ON "Services_id" = s."id";
+INSERT INTO "Services_Appointments" ("Services_id", "Appointments_service_id")
+SELECT unnest(sqlc.arg(Services_id)::uuid[]), $1
+RETURNING "Services_id", "Appointments_service_id";
 
 -- name: GetAppointmentByDateWithService :many
 SELECT 
@@ -49,3 +44,28 @@ WHERE DATE("Appointments"."appointment_datetime") = $1
     AND "Appointments"."barber_id" = $2
 GROUP BY "Appointments"."appointment_id", "Appointments"."appointment_datetime" 
 ORDER BY "Appointments"."appointment_datetime";
+
+
+-- TRIGGER 
+-- CREATE OR REPLACE FUNCTION check_appointment_conflict()
+-- RETURNS TRIGGER AS $$
+-- BEGIN
+--   IF EXISTS (
+--     SELECT 1
+--     FROM "Appointments"
+--     WHERE "barbershops_id" = NEW."barbershops_id"
+--       AND "barber_id" = NEW."barber_id"
+--       AND (
+--         (NEW."appointment_datetime" + NEW."timer" * interval '1 minute') BETWEEN "appointment_datetime" AND "appointment_datetime" + NEW."timer" * interval '1 minute'
+--         OR NEW."appointment_datetime" BETWEEN "appointment_datetime" AND "appointment_datetime" + NEW."timer" * interval '1 minute'
+--       )
+--   ) THEN
+--     RAISE EXCEPTION 'Appointment conflict: Another appointment exists in this time slot.';
+--   END IF;
+--   RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
+
+-- CREATE TRIGGER check_appointment_conflict_trigger
+-- BEFORE INSERT ON "Appointments"
+-- FOR EACH ROW EXECUTE FUNCTION check_appointment_conflict();

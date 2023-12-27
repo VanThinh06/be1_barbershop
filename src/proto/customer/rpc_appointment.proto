@@ -15,7 +15,6 @@ message CreateAppointmentRequest{
     repeated string service_id = 4;
     google.protobuf.Timestamp appointment_datetime = 5;
     int32 status = 6;
-    int32 timer = 7;
 }
 
 message CreateAppointmentResponse {
