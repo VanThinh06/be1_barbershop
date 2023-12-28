@@ -350,6 +350,12 @@
       "properties": {
         "appointment": {
           "$ref": "#/definitions/pbAppointment"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

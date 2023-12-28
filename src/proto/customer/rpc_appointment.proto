@@ -19,4 +19,5 @@ message CreateAppointmentRequest{
 
 message CreateAppointmentResponse {
     Appointment appointment = 1;
+    repeated string services = 2;
 }

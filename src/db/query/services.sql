@@ -52,9 +52,7 @@ WHERE
 -- name: GetTimerService :one
 SELECT SUM("timer") AS total_timer
 FROM "Services"
-WHERE "id" IN ( sqlc.arg(services_id)::uuid[] )
-
-;
+WHERE "id" IN (SELECT unnest(sqlc.arg(services_id)::uuid[]));
 
 -- -- name: GetListServicewithCategory :many
 -- SELECT *

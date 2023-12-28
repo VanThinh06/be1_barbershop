@@ -231,7 +231,7 @@ func (q *Queries) GetListServices(ctx context.Context, arg GetListServicesParams
 const getTimerService = `-- name: GetTimerService :one
 SELECT SUM("timer") AS total_timer
 FROM "Services"
-WHERE "id" IN ( $1::uuid[] )
+WHERE "id" IN (SELECT unnest($1::uuid[]))
 `
 
 func (q *Queries) GetTimerService(ctx context.Context, servicesID []uuid.UUID) (int64, error) {
