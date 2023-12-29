@@ -1,5 +1,5 @@
 -- CREATE EXTENSION IF NOT EXISTS "postgis";
--- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE "BarberShops" (
   "shop_id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "owner_id" uuid NOT NULL,
@@ -119,6 +119,29 @@ CREATE TABLE "Appointments" (
   "updated_at" timestamptz
 );
 
+CREATE OR REPLACE FUNCTION check_appointment_conflict()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM "Appointments"
+    WHERE "barbershops_id" = NEW."barbershops_id"
+      AND "barber_id" = NEW."barber_id"
+      AND (
+        (NEW."appointment_datetime" + NEW."timer" * interval '1 minute') BETWEEN "appointment_datetime" AND "appointment_datetime" + NEW."timer" * interval '1 minute'
+        OR NEW."appointment_datetime" BETWEEN "appointment_datetime" AND "appointment_datetime" + NEW."timer" * interval '1 minute'
+      )
+  ) THEN
+    RAISE EXCEPTION 'Appointment conflict: Another appointment exists in this time slot.';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_appointment_conflict_trigger
+BEFORE INSERT ON "Appointments"
+FOR EACH ROW EXECUTE FUNCTION check_appointment_conflict();
+
 CREATE TABLE "Chains" (
   "chain_id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "owner_id" uuid UNIQUE NOT NULL,
@@ -208,3 +231,4 @@ ALTER TABLE "Services_Appointments" ADD FOREIGN KEY ("Services_id") REFERENCES "
 ALTER TABLE "Services_Appointments" ADD FOREIGN KEY ("Appointments_service_id") REFERENCES "Appointments" ("appointment_id");
 
 ALTER TABLE "Chains" ADD FOREIGN KEY ("owner_id") REFERENCES "Barbers" ("barber_id");
+

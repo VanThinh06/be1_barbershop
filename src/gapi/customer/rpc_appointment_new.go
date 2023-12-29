@@ -7,7 +7,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-
 	"firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
 	"github.com/jackc/pgconn"
