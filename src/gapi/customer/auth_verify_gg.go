@@ -7,37 +7,36 @@ import (
 	"io"
 	"net/http"
 	"strings"
-
 	"google.golang.org/grpc/metadata"
 )
 
-func (server *Server) authVerifyJWTGG(ctx context.Context) (string, error) {
+func (server *Server) authVerifyJWTGG(ctx context.Context) (*SocialEmail, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return "", fmt.Errorf("missing metadata")
+		return nil, fmt.Errorf("missing metadata")
 	}
 
 	values := md.Get(authorizationHeader)
 	if len(values) == 0 {
-		return "", fmt.Errorf("missing authorization header")
+		return nil, fmt.Errorf("missing authorization header")
 	}
 
 	authHeader := values[0]
 	fields := strings.Fields(authHeader)
 	if len(authHeader) < 2 {
-		return "", fmt.Errorf("invalid authorization header format")
+		return nil, fmt.Errorf("invalid authorization header")
 	}
 
 	authType := strings.ToLower(fields[0])
 	if authType != authorizationBearer {
-		return "", fmt.Errorf("unsupported authorization type: %v", authType)
+		return nil, fmt.Errorf("unsupported authorization type")
 	}
 
 	accessToken := fields[1]
-	url := "https://oauth2.googleapis.com/tokeninfo"
+	url := "https://www.googleapis.com/oauth2/v3/userinfo"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return "", fmt.Errorf("Lỗi khi cấu hình: %v", err)
+		return nil, fmt.Errorf("invalid configuration")
 	}
 	query := req.URL.Query()
 	query.Add("access_token", accessToken)
@@ -45,25 +44,39 @@ func (server *Server) authVerifyJWTGG(ctx context.Context) (string, error) {
 	client := http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", fmt.Errorf("Lỗi khi cấu hình: %v", err)
+		return nil, fmt.Errorf("invalid configuration")
 	}
+	
 
-	var response struct {
-		Email string `json:"email"`
-	}
-
-	// Đọc nội dung của resp.Body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("Lỗi khi cấu hình: %v", err)
+		return nil, fmt.Errorf("invalid read response")
 
 	}
 
-	// Phân tích phản hồi JSON vào biến response
-	err = json.Unmarshal(body, &response)
+	credentialEmail, err := UnmarshalSocialEmail(body)
 	if err != nil {
-		return "", fmt.Errorf("Lỗi khi cấu hình: %v", err)
-
+		return nil, fmt.Errorf("invalid parses the response")
 	}
-	return response.Email, nil
+	return &credentialEmail, nil
+}
+
+func UnmarshalSocialEmail(data []byte) (SocialEmail, error) {
+	var r SocialEmail
+	err := json.Unmarshal(data, &r)
+	return r, err
+}
+
+func (r *SocialEmail) Marshal() ([]byte, error) {
+	return json.Marshal(r)
+}
+
+type SocialEmail struct {
+	Sub           string `json:"sub"`
+	Name          string `json:"name"`
+	GivenName     string `json:"given_name"`
+	Picture       string `json:"picture"`
+	Email         string `json:"email"`
+	EmailVerified bool   `json:"email_verified"`
+	Locale        string `json:"locale"`
 }

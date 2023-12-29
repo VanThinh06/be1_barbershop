@@ -26,20 +26,50 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 		contact.Email = req.Username
 	}
 
+	socialEmail := &SocialEmail{}
 	res, err := server.store.GetContactCustomer(ctx, contact)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, status.Error(codes.NotFound, "information is incorrect")
+			if req.IsSocialAuth == false {
+				return nil, status.Error(codes.NotFound, "incorrect account or password")
+			}
+
+			// create account for the first time login
+			if req.IsSocialAuth {
+				socialEmail, err = server.authVerifyJWTGG(ctx)
+				if err != nil {
+					return nil, status.Error(codes.Internal, "internal")
+				}
+				if socialEmail.Email != req.GetUsername() {
+					return nil, status.Error(codes.Unauthenticated, "information is incorrect")
+				}
+				argCustomer := db.CreateCustomerParams{
+					Name:           socialEmail.GivenName,
+					Phone:          sql.NullString{},
+					Gender:         int32(utils.Male),
+					Email:          socialEmail.Email,
+					IsSocialAuth:   req.GetIsSocialAuth(),
+					HashedPassword: sql.NullString{},
+				}
+				customerSocial, err := server.store.CreateCustomer(ctx, argCustomer)
+				if err != nil {
+					return nil, status.Error(codes.Unauthenticated, "information is incorrect")
+				}
+				res = customerSocial
+			}
 		}
-		return nil, status.Error(codes.Internal, "internal")
+
+		if socialEmail == nil {
+			return nil, status.Error(codes.Internal, "internal")
+		}
 	}
 
-	if req.IsSocialAuth {
-		email, err := server.authVerifyJWTGG(ctx)
+	if req.IsSocialAuth && socialEmail != nil {
+		socialEmail, err = server.authVerifyJWTGG(ctx)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "internal")
 		}
-		if email != req.Username {
+		if socialEmail.Email != req.Username {
 			return nil, status.Errorf(codes.Unauthenticated, "information is incorrect")
 		}
 	}

@@ -6,7 +6,6 @@ import (
 	"barbershop/src/shared/utils"
 	"context"
 	"database/sql"
-	"net/http"
 
 	"github.com/lib/pq"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -23,17 +22,17 @@ func (server *Server) CreateCustomer(ctx context.Context, req *customer.CreateCu
 
 	hashedPassword, err := utils.HashPassword(req.GetPassword())
 	if err != nil {
-		return nil, status.Error(codes.Internal, "internal")
+		return nil, status.Error(codes.InvalidArgument, "invalid password")
 	}
 
 	if req.IsSocialAuth {
 		hashedPassword = ""
-		email, err := server.authVerifyJWTGG(ctx)
+		credentialEmail, err := server.authVerifyJWTGG(ctx)
 		if err != nil {
 			return nil, status.Error(codes.Internal, "internal")
 		}
-		if email != req.Email {
-			return nil, status.Error(codes.Internal, "information is incorrect")
+		if credentialEmail.Email != req.Email {
+			return nil, status.Error(codes.Unauthenticated, "information is incorrect")
 		}
 	}
 
@@ -66,7 +65,7 @@ func (server *Server) CreateCustomer(ctx context.Context, req *customer.CreateCu
 				}
 			}
 		}
-		return nil, status.Error(http.StatusForbidden, "account creation failed. Please try again")
+		return nil, status.Error(codes.InvalidArgument, "account creation failed. Please try again")
 	}
 
 	rsp := &customer.CreateCustomerResponse{
