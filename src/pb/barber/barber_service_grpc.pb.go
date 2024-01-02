@@ -27,6 +27,7 @@ const (
 	BarberService_CreateBarberShop_FullMethodName             = "/pb.BarberService/CreateBarberShop"
 	BarberService_GetBarberShop_FullMethodName                = "/pb.BarberService/GetBarberShop"
 	BarberService_UpdateBarberShop_FullMethodName             = "/pb.BarberService/UpdateBarberShop"
+	BarberService_QueryBarberShops_FullMethodName             = "/pb.BarberService/QueryBarberShops"
 	BarberService_GenerateCodeBarberShop_FullMethodName       = "/pb.BarberService/GenerateCodeBarberShop"
 	BarberService_GetBarberInShop_FullMethodName              = "/pb.BarberService/GetBarberInShop"
 	BarberService_CreateServiceCategory_FullMethodName        = "/pb.BarberService/CreateServiceCategory"
@@ -51,6 +52,7 @@ type BarberServiceClient interface {
 	CreateBarberShop(ctx context.Context, in *CreateBarberShopRequest, opts ...grpc.CallOption) (*CreateBarberShopResponse, error)
 	GetBarberShop(ctx context.Context, in *GetBarberShopRequest, opts ...grpc.CallOption) (*GetBarberShopResponse, error)
 	UpdateBarberShop(ctx context.Context, in *UpdateBarberShopRequest, opts ...grpc.CallOption) (*UpdateBarberShopResponse, error)
+	QueryBarberShops(ctx context.Context, in *QueryBarberShopsRequest, opts ...grpc.CallOption) (*QueryBarberShopsResponse, error)
 	GenerateCodeBarberShop(ctx context.Context, in *CodeBarberShopRequest, opts ...grpc.CallOption) (*CodeBarberShopResponse, error)
 	GetBarberInShop(ctx context.Context, in *GetBarberInShopRequest, opts ...grpc.CallOption) (*GetBarberInShopResponse, error)
 	// / service
@@ -139,6 +141,15 @@ func (c *barberServiceClient) GetBarberShop(ctx context.Context, in *GetBarberSh
 func (c *barberServiceClient) UpdateBarberShop(ctx context.Context, in *UpdateBarberShopRequest, opts ...grpc.CallOption) (*UpdateBarberShopResponse, error) {
 	out := new(UpdateBarberShopResponse)
 	err := c.cc.Invoke(ctx, BarberService_UpdateBarberShop_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *barberServiceClient) QueryBarberShops(ctx context.Context, in *QueryBarberShopsRequest, opts ...grpc.CallOption) (*QueryBarberShopsResponse, error) {
+	out := new(QueryBarberShopsResponse)
+	err := c.cc.Invoke(ctx, BarberService_QueryBarberShops_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -247,6 +258,7 @@ type BarberServiceServer interface {
 	CreateBarberShop(context.Context, *CreateBarberShopRequest) (*CreateBarberShopResponse, error)
 	GetBarberShop(context.Context, *GetBarberShopRequest) (*GetBarberShopResponse, error)
 	UpdateBarberShop(context.Context, *UpdateBarberShopRequest) (*UpdateBarberShopResponse, error)
+	QueryBarberShops(context.Context, *QueryBarberShopsRequest) (*QueryBarberShopsResponse, error)
 	GenerateCodeBarberShop(context.Context, *CodeBarberShopRequest) (*CodeBarberShopResponse, error)
 	GetBarberInShop(context.Context, *GetBarberInShopRequest) (*GetBarberInShopResponse, error)
 	// / service
@@ -289,6 +301,9 @@ func (UnimplementedBarberServiceServer) GetBarberShop(context.Context, *GetBarbe
 }
 func (UnimplementedBarberServiceServer) UpdateBarberShop(context.Context, *UpdateBarberShopRequest) (*UpdateBarberShopResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateBarberShop not implemented")
+}
+func (UnimplementedBarberServiceServer) QueryBarberShops(context.Context, *QueryBarberShopsRequest) (*QueryBarberShopsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryBarberShops not implemented")
 }
 func (UnimplementedBarberServiceServer) GenerateCodeBarberShop(context.Context, *CodeBarberShopRequest) (*CodeBarberShopResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateCodeBarberShop not implemented")
@@ -473,6 +488,24 @@ func _BarberService_UpdateBarberShop_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BarberServiceServer).UpdateBarberShop(ctx, req.(*UpdateBarberShopRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BarberService_QueryBarberShops_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryBarberShopsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).QueryBarberShops(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_QueryBarberShops_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).QueryBarberShops(ctx, req.(*QueryBarberShopsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -695,6 +728,10 @@ var BarberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateBarberShop",
 			Handler:    _BarberService_UpdateBarberShop_Handler,
+		},
+		{
+			MethodName: "QueryBarberShops",
+			Handler:    _BarberService_QueryBarberShops_Handler,
 		},
 		{
 			MethodName: "GenerateCodeBarberShop",

@@ -60,10 +60,7 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 			String: req.GetAvatar(),
 			Valid:  req.Avatar != nil,
 		},
-		UpdatedAt: sql.NullTime{
-			Time:  time.Now(),
-			Valid: true,
-		},
+		UpdatedAt: time.Now(),
 	}
 
 	// update shop id

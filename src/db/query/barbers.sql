@@ -27,11 +27,26 @@ VALUES (
   )
 RETURNING *;
 
--- name: GetEmailBarber :one
-SELECT *
-FROM "Barbers"
-WHERE email = $1
-LIMIT 1;
+-- name: ReadBarber :one
+SELECT
+  b.*, 
+  bs."name" as "shop_name",
+  bs."address" as "shop_address",
+  bs."coordinates" as "shop_coordinates",
+  bs."start_time" as "shop_start_time",
+  bs."end_time" as "shop_end_time",
+  bs."break_time" as "shop_break_time",
+  bs."break_minutes" as "shop_break_minutes",
+  bs."interval_scheduler" as "shop_interval_scheduler",
+  bs."is_reputation" as "shop_is_reputation",
+  bs."rate" as "shop_rate"
+FROM
+  "Barbers" b
+JOIN
+  "BarberShops" bs ON b."shop_id" = bs."shop_id"
+WHERE
+  b."barber_id" = $1;
+
 
 -- name: UpdateBarber :one
 UPDATE "Barbers"
@@ -53,6 +68,15 @@ set shop_id = coalesce(sqlc.narg('shop_id'), shop_id),
   WHERE "barber_id" = sqlc.arg('barber_id')
 RETURNING *;
 
+
+-- query other
+-- name: GetEmailBarber :one
+SELECT *
+FROM "Barbers"
+WHERE email = $1
+LIMIT 1;
+
+
 -- name: BarberGetIdShop :one
 SELECT shop_id::varchar, "role"
 FROM "Barbers"
@@ -63,3 +87,5 @@ LIMIT 1;
 SELECT *
 FROM "Barbers"
 WHERE shop_id =sqlc.arg('shop_id') AND "haircut" = true;
+
+

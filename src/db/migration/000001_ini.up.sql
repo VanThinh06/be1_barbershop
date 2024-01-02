@@ -17,7 +17,7 @@ CREATE TABLE "BarberShops" (
   "break_time" TIME NOT NULL DEFAULT '12:00:00'::TIME,
   "break_minutes" integer NOT NULL DEFAULT 0,
   "interval_scheduler" integer NOT NULL DEFAULT 30,
-  "is_reputation" bool DEFAULT false,
+  "is_reputation" bool NOT NULL DEFAULT false,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz
 );
@@ -38,7 +38,7 @@ CREATE TABLE "Barbers" (
   "status" integer DEFAULT 1,
   "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
   "created_at" timestamptz NOT NULL DEFAULT (now()),
-  "updated_at" timestamptz
+  "updated_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
 CREATE TABLE "SessionsBarbers" (

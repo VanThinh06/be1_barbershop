@@ -28,7 +28,7 @@ func (server *Server) FindBarberShopsNearby(ctx context.Context, req *barber.Fin
 	}
 
 	arg := db.FindBarberShopsNearbyLocationsParams{
-		CurrentLongitude: req.GetLatitude().GetValue(),
+		CurrentLongitude: req.GetLongitude().GetValue(),
 		CurrentLatitude:  req.GetLatitude().GetValue(),
 		DistanceInMeters: req.DistanceInMeters,
 	}

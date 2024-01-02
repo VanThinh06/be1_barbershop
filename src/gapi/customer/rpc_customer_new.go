@@ -27,11 +27,11 @@ func (server *Server) CreateCustomer(ctx context.Context, req *customer.CreateCu
 
 	if req.IsSocialAuth {
 		hashedPassword = ""
-		credentialEmail, err := server.authVerifyJWTGG(ctx)
+		socialEmail, err := server.authVerifyJWTGG(ctx)
 		if err != nil {
 			return nil, status.Error(codes.Internal, "internal")
 		}
-		if credentialEmail.Email != req.Email {
+		if socialEmail.Email != req.Email {
 			return nil, status.Error(codes.Unauthenticated, "information is incorrect")
 		}
 	}

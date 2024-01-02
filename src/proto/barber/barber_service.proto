@@ -9,6 +9,8 @@ import "barber/rpc_refresh_token_barber.proto";
 import "barber/rpc_update_barber.proto";
 import "barber/rpc_barbershop_create.proto";
 import "barber/rpc_barbershop_update.proto";
+import "barber/rpc_barbershop_query.proto";
+
 import "barber/rpc_create_service_category.proto";
 import "barber/rpc_create_service.proto";
 import "barber/rpc_find_barbershops_nearby.proto";
@@ -137,6 +139,17 @@ rpc UpdateBarberShop (UpdateBarberShopRequest) returns (UpdateBarberShopResponse
   option (google.api.http) = {
             patch: "/v1/manager/barbershop"
             body: "*"
+          };
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+    description: "API endpoint to create a new barber"
+    summary: "Update a barbershop"
+    tags: "barbershop"
+  };
+}
+
+rpc QueryBarberShops (QueryBarberShopsRequest) returns (QueryBarberShopsResponse){
+  option (google.api.http) = {
+            get: "/v1/barbershop/query"
           };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
     description: "API endpoint to create a new barber"

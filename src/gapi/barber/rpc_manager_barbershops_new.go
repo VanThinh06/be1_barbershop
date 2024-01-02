@@ -5,6 +5,7 @@ import (
 	"barbershop/src/pb/barber"
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgconn"
@@ -49,7 +50,7 @@ func (server *Server) CreateBarberShop(ctx context.Context, req *barber.CreateBa
 	if isBarberShopInChain {
 		return nil, status.Errorf(codes.PermissionDenied, "account cannot create many other barber shops")
 	}
-	
+
 	barberShop, err := server.Store.CreateBarberShop(ctx, arg)
 	if err != nil {
 		if pgErr, ok := err.(*pgconn.PgError); ok {
@@ -68,7 +69,7 @@ func (server *Server) CreateBarberShop(ctx context.Context, req *barber.CreateBa
 	}
 
 	if req.IsMainBranch {
-		requestBarber := db.UpdateBarberParams{BarberID: authPayload.Barber.BarberID, ShopID: uuid.NullUUID{UUID: barberShop.ShopID, Valid: true}}
+		requestBarber := db.UpdateBarberParams{BarberID: authPayload.Barber.BarberID, ShopID: uuid.NullUUID{UUID: barberShop.ShopID, Valid: true}, UpdatedAt: time.Now()}
 		_, errUpdateBarber := server.Store.UpdateBarber(ctx, requestBarber)
 		if errUpdateBarber != nil {
 			return nil, status.Errorf(codes.Internal, "internal")

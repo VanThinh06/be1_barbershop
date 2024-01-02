@@ -77,6 +77,18 @@ UPDATE "BarberShops"
 SET "chain_id" = sqlc.arg(chain_id)::uuid
 WHERE "owner_id" = $1 AND "chain_id" IS NULL;
 
+
+-- name: QueryBarberShops :many
+SELECT bs.*
+FROM "BarberShops" bs
+WHERE bs."name" = $1
+  OR bs."chain_id" IN (
+    SELECT c."chain_id"
+    FROM "Chains" c
+    WHERE c."name" = $1
+);
+
+
 -- -- name: UpdateStore :one
 -- UPDATE store
 -- set name_id = $2,
