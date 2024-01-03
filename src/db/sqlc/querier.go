@@ -11,7 +11,7 @@ import (
 )
 
 type Querier interface {
-	BarberGetIdShop(ctx context.Context, barberID uuid.UUID) (BarberGetIdShopRow, error)
+	BarberGetIdShop(ctx context.Context, id uuid.UUID) (BarberGetIdShopRow, error)
 	BarberShopInChain(ctx context.Context, ownerID uuid.UUID) (bool, error)
 	ChangePasswordCustomer(ctx context.Context, arg ChangePasswordCustomerParams) (Customer, error)
 	CreateBarber(ctx context.Context, arg CreateBarberParams) (Barber, error)
@@ -26,10 +26,11 @@ type Querier interface {
 	CreateSessionsCustomer(ctx context.Context, arg CreateSessionsCustomerParams) (SessionsCustomer, error)
 	FindBarberShopsNearbyLocations(ctx context.Context, arg FindBarberShopsNearbyLocationsParams) ([]FindBarberShopsNearbyLocationsRow, error)
 	GetAppointmentByDateWithService(ctx context.Context, arg GetAppointmentByDateWithServiceParams) ([]GetAppointmentByDateWithServiceRow, error)
-	GetBarberShop(ctx context.Context, shopID uuid.UUID) (BarberShop, error)
+	GetBarberShop(ctx context.Context, id uuid.UUID) (BarberShop, error)
 	GetBarbersInBarberShop(ctx context.Context, shopID uuid.NullUUID) ([]Barber, error)
 	GetContactCustomer(ctx context.Context, arg GetContactCustomerParams) (Customer, error)
-	GetCustomer(ctx context.Context, customerID uuid.UUID) (Customer, error)
+	GetCustomer(ctx context.Context, id uuid.UUID) (Customer, error)
+	// query other
 	GetEmailBarber(ctx context.Context, email string) (Barber, error)
 	GetListServiceCategories(ctx context.Context, shopID uuid.NullUUID) ([]ServiceCategory, error)
 	GetListServiceDetails(ctx context.Context, arg GetListServiceDetailsParams) ([]GetListServiceDetailsRow, error)
@@ -40,7 +41,7 @@ type Querier interface {
 	InsertAppointmentAndGetInfo(ctx context.Context, arg InsertAppointmentAndGetInfoParams) (InsertAppointmentAndGetInfoRow, error)
 	InsertServicesForAppointment(ctx context.Context, arg InsertServicesForAppointmentParams) ([]ServicesAppointment, error)
 	QueryBarberShops(ctx context.Context, name string) ([]BarberShop, error)
-	ReadBarber(ctx context.Context, barberID uuid.UUID) (ReadBarberRow, error)
+	ReadBarber(ctx context.Context, id uuid.UUID) (ReadBarberRow, error)
 	UpdateBarber(ctx context.Context, arg UpdateBarberParams) (Barber, error)
 	UpdateBarberShop(ctx context.Context, arg UpdateBarberShopParams) (BarberShop, error)
 	UpdateChainForBarberShops(ctx context.Context, arg UpdateChainForBarberShopsParams) error

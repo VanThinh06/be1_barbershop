@@ -30,7 +30,7 @@ func (server *Server) UpdateCustomer(ctx context.Context, req *customer.UpdateCu
 	}
 
 	arg := db.UpdateCustomerParams{
-		CustomerID: uuid.MustParse(req.CustomerId),
+		ID: uuid.MustParse(req.CustomerId),
 		Name: sql.NullString{
 			String: req.GetName(),
 			Valid:  req.Name != nil,

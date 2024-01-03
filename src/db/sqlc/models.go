@@ -13,7 +13,7 @@ import (
 )
 
 type Appointment struct {
-	AppointmentID       uuid.UUID    `json:"appointment_id"`
+	ID                  uuid.UUID    `json:"id"`
 	BarbershopsID       uuid.UUID    `json:"barbershops_id"`
 	CustomerID          uuid.UUID    `json:"customer_id"`
 	BarberID            uuid.UUID    `json:"barber_id"`
@@ -25,7 +25,7 @@ type Appointment struct {
 }
 
 type Barber struct {
-	BarberID          uuid.UUID      `json:"barber_id"`
+	ID                uuid.UUID      `json:"id"`
 	ShopID            uuid.NullUUID  `json:"shop_id"`
 	ManagerID         uuid.NullUUID  `json:"manager_id"`
 	NickName          string         `json:"nick_name"`
@@ -44,29 +44,28 @@ type Barber struct {
 }
 
 type BarberShop struct {
-	ShopID            uuid.UUID       `json:"shop_id"`
-	OwnerID           uuid.UUID       `json:"owner_id"`
-	ChainID           uuid.NullUUID   `json:"chain_id"`
-	Name              string          `json:"name"`
-	Facility          int32           `json:"facility"`
-	Address           string          `json:"address"`
-	Coordinates       string          `json:"coordinates"`
-	Image             sql.NullString  `json:"image"`
-	ListImage         []string        `json:"list_image"`
-	Status            int32           `json:"status"`
-	Rate              sql.NullFloat64 `json:"rate"`
-	StartTime         pgtype.Time     `json:"start_time"`
-	EndTime           pgtype.Time     `json:"end_time"`
-	BreakTime         pgtype.Time     `json:"break_time"`
-	BreakMinutes      int32           `json:"break_minutes"`
-	IntervalScheduler int32           `json:"interval_scheduler"`
-	IsReputation      bool            `json:"is_reputation"`
-	CreatedAt         time.Time       `json:"created_at"`
-	UpdatedAt         sql.NullTime    `json:"updated_at"`
+	ID                uuid.UUID      `json:"id"`
+	OwnerID           uuid.UUID      `json:"owner_id"`
+	ChainID           uuid.NullUUID  `json:"chain_id"`
+	Name              string         `json:"name"`
+	Facility          int32          `json:"facility"`
+	Address           string         `json:"address"`
+	Coordinates       string         `json:"coordinates"`
+	Image             sql.NullString `json:"image"`
+	Status            int32          `json:"status"`
+	Rate              float64        `json:"rate"`
+	StartTime         pgtype.Time    `json:"start_time"`
+	EndTime           pgtype.Time    `json:"end_time"`
+	BreakTime         pgtype.Time    `json:"break_time"`
+	BreakMinutes      int32          `json:"break_minutes"`
+	IntervalScheduler int32          `json:"interval_scheduler"`
+	Reputation        bool           `json:"reputation"`
+	CreatedAt         time.Time      `json:"created_at"`
+	UpdatedAt         time.Time      `json:"updated_at"`
 }
 
 type Chain struct {
-	ChainID   uuid.UUID    `json:"chain_id"`
+	ID        uuid.UUID    `json:"id"`
 	OwnerID   uuid.UUID    `json:"owner_id"`
 	Name      string       `json:"name"`
 	CreatedAt time.Time    `json:"created_at"`
@@ -74,7 +73,7 @@ type Chain struct {
 }
 
 type Customer struct {
-	CustomerID        uuid.UUID      `json:"customer_id"`
+	ID                uuid.UUID      `json:"id"`
 	Name              string         `json:"name"`
 	Email             string         `json:"email"`
 	Phone             sql.NullString `json:"phone"`

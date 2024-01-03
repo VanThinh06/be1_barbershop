@@ -65,7 +65,7 @@ func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBa
 			Int32: req.GetFacility(),
 			Valid: req.Facility != nil,
 		},
-		ShopID:    uuid.MustParse(req.GetShopId()),
+		ID:    uuid.MustParse(req.GetShopId()),
 		StartTime: startTime,
 		EndTime:   endTime,
 		BreakTime: breakTime,

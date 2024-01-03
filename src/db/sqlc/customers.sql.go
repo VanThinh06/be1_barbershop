@@ -18,21 +18,21 @@ UPDATE "Customers"
 set   
   "hashed_password" = $1::varchar(255),
   "password_changed_at" = $2
-WHERE "customer_id" = $3
-RETURNING customer_id, name, email, phone, gender, hashed_password, avatar, is_social_auth, password_changed_at, created_at, updated_at
+WHERE "id" = $3
+RETURNING id, name, email, phone, gender, hashed_password, avatar, is_social_auth, password_changed_at, created_at, updated_at
 `
 
 type ChangePasswordCustomerParams struct {
 	HashedPassword    string    `json:"hashed_password"`
 	PasswordChangedAt time.Time `json:"password_changed_at"`
-	CustomerID        uuid.UUID `json:"customer_id"`
+	ID                uuid.UUID `json:"id"`
 }
 
 func (q *Queries) ChangePasswordCustomer(ctx context.Context, arg ChangePasswordCustomerParams) (Customer, error) {
-	row := q.db.QueryRowContext(ctx, changePasswordCustomer, arg.HashedPassword, arg.PasswordChangedAt, arg.CustomerID)
+	row := q.db.QueryRowContext(ctx, changePasswordCustomer, arg.HashedPassword, arg.PasswordChangedAt, arg.ID)
 	var i Customer
 	err := row.Scan(
-		&i.CustomerID,
+		&i.ID,
 		&i.Name,
 		&i.Email,
 		&i.Phone,
@@ -64,7 +64,7 @@ VALUES (
     $5,
     $6::bool
   )
-RETURNING customer_id, name, email, phone, gender, hashed_password, avatar, is_social_auth, password_changed_at, created_at, updated_at
+RETURNING id, name, email, phone, gender, hashed_password, avatar, is_social_auth, password_changed_at, created_at, updated_at
 `
 
 type CreateCustomerParams struct {
@@ -87,7 +87,7 @@ func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) 
 	)
 	var i Customer
 	err := row.Scan(
-		&i.CustomerID,
+		&i.ID,
 		&i.Name,
 		&i.Email,
 		&i.Phone,
@@ -103,7 +103,7 @@ func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) 
 }
 
 const getContactCustomer = `-- name: GetContactCustomer :one
-SELECT customer_id, name, email, phone, gender, hashed_password, avatar, is_social_auth, password_changed_at, created_at, updated_at
+SELECT id, name, email, phone, gender, hashed_password, avatar, is_social_auth, password_changed_at, created_at, updated_at
 FROM "Customers"
 WHERE
     (
@@ -123,7 +123,7 @@ func (q *Queries) GetContactCustomer(ctx context.Context, arg GetContactCustomer
 	row := q.db.QueryRowContext(ctx, getContactCustomer, arg.Email, arg.TypeUsername)
 	var i Customer
 	err := row.Scan(
-		&i.CustomerID,
+		&i.ID,
 		&i.Name,
 		&i.Email,
 		&i.Phone,
@@ -139,17 +139,17 @@ func (q *Queries) GetContactCustomer(ctx context.Context, arg GetContactCustomer
 }
 
 const getCustomer = `-- name: GetCustomer :one
-SELECT customer_id, name, email, phone, gender, hashed_password, avatar, is_social_auth, password_changed_at, created_at, updated_at
+SELECT id, name, email, phone, gender, hashed_password, avatar, is_social_auth, password_changed_at, created_at, updated_at
   FROM "Customers"
-  WHERE "customer_id" = $1
+  WHERE "id" = $1
 LIMIT 1
 `
 
-func (q *Queries) GetCustomer(ctx context.Context, customerID uuid.UUID) (Customer, error) {
-	row := q.db.QueryRowContext(ctx, getCustomer, customerID)
+func (q *Queries) GetCustomer(ctx context.Context, id uuid.UUID) (Customer, error) {
+	row := q.db.QueryRowContext(ctx, getCustomer, id)
 	var i Customer
 	err := row.Scan(
-		&i.CustomerID,
+		&i.ID,
 		&i.Name,
 		&i.Email,
 		&i.Phone,
@@ -172,18 +172,18 @@ set name = coalesce($1, name),
   gender = coalesce($4, gender),
   avatar = coalesce($5, avatar),
   "updated_at" = $6
-  WHERE "customer_id" = $7
-RETURNING customer_id, name, email, phone, gender, hashed_password, avatar, is_social_auth, password_changed_at, created_at, updated_at
+  WHERE "id" = $7
+RETURNING id, name, email, phone, gender, hashed_password, avatar, is_social_auth, password_changed_at, created_at, updated_at
 `
 
 type UpdateCustomerParams struct {
-	Name       sql.NullString `json:"name"`
-	Email      sql.NullString `json:"email"`
-	Phone      sql.NullString `json:"phone"`
-	Gender     sql.NullInt32  `json:"gender"`
-	Avatar     sql.NullString `json:"avatar"`
-	UpdatedAt  sql.NullTime   `json:"updated_at"`
-	CustomerID uuid.UUID      `json:"customer_id"`
+	Name      sql.NullString `json:"name"`
+	Email     sql.NullString `json:"email"`
+	Phone     sql.NullString `json:"phone"`
+	Gender    sql.NullInt32  `json:"gender"`
+	Avatar    sql.NullString `json:"avatar"`
+	UpdatedAt sql.NullTime   `json:"updated_at"`
+	ID        uuid.UUID      `json:"id"`
 }
 
 func (q *Queries) UpdateCustomer(ctx context.Context, arg UpdateCustomerParams) (Customer, error) {
@@ -194,11 +194,11 @@ func (q *Queries) UpdateCustomer(ctx context.Context, arg UpdateCustomerParams) 
 		arg.Gender,
 		arg.Avatar,
 		arg.UpdatedAt,
-		arg.CustomerID,
+		arg.ID,
 	)
 	var i Customer
 	err := row.Scan(
-		&i.CustomerID,
+		&i.ID,
 		&i.Name,
 		&i.Email,
 		&i.Phone,

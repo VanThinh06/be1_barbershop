@@ -20,7 +20,7 @@ VALUES (
     $1,
     $2
   )
-RETURNING chain_id, owner_id, name, created_at, updated_at
+RETURNING id, owner_id, name, created_at, updated_at
 `
 
 type CreateChainParams struct {
@@ -32,7 +32,7 @@ func (q *Queries) CreateChain(ctx context.Context, arg CreateChainParams) (Chain
 	row := q.db.QueryRowContext(ctx, createChain, arg.OwnerID, arg.Name)
 	var i Chain
 	err := row.Scan(
-		&i.ChainID,
+		&i.ID,
 		&i.OwnerID,
 		&i.Name,
 		&i.CreatedAt,

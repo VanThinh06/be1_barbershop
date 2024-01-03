@@ -38,11 +38,11 @@ SELECT
     "Appointments".*,
     SUM("Services"."timer") AS "service_timer"
 FROM "Appointments"
-LEFT JOIN "Services_Appointments" ON "Appointments"."appointment_id" = "Services_Appointments"."Appointments_service_id"
+LEFT JOIN "Services_Appointments" ON "Appointments"."id" = "Services_Appointments"."Appointments_service_id"
 LEFT JOIN "Services" ON "Services_Appointments"."Services_id" = "Services"."id"
 WHERE DATE("Appointments"."appointment_datetime") = $1
     AND "Appointments"."barber_id" = $2
-GROUP BY "Appointments"."appointment_id", "Appointments"."appointment_datetime" 
+GROUP BY "Appointments"."id", "Appointments"."appointment_datetime" 
 ORDER BY "Appointments"."appointment_datetime";
 
 

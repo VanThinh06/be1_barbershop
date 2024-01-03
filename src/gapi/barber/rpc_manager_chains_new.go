@@ -42,7 +42,7 @@ func (server *Server) CreateChain(ctx context.Context, req *barber.CreateChainRe
 	}
 
 	argUpdateChain := db.UpdateChainForBarberShopsParams{
-		ChainID: services.ChainID,
+		ChainID: services.ID,
 		OwnerID: services.OwnerID,
 	}
 	err = server.Store.UpdateChainForBarberShops(ctx, argUpdateChain)

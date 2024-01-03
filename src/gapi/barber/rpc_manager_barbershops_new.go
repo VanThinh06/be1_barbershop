@@ -69,7 +69,7 @@ func (server *Server) CreateBarberShop(ctx context.Context, req *barber.CreateBa
 	}
 
 	if req.IsMainBranch {
-		requestBarber := db.UpdateBarberParams{BarberID: authPayload.Barber.BarberID, ShopID: uuid.NullUUID{UUID: barberShop.ShopID, Valid: true}, UpdatedAt: time.Now()}
+		requestBarber := db.UpdateBarberParams{ID: authPayload.Barber.BarberID, ShopID: uuid.NullUUID{UUID: barberShop.ID, Valid: true}, UpdatedAt: time.Now()}
 		_, errUpdateBarber := server.Store.UpdateBarber(ctx, requestBarber)
 		if errUpdateBarber != nil {
 			return nil, status.Errorf(codes.Internal, "internal")

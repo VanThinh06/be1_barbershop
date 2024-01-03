@@ -45,7 +45,7 @@ func (server *Server) ChangePasswordCustomer(ctx context.Context, req *customer.
 	}
 
 	arg := db.ChangePasswordCustomerParams{
-		CustomerID:        uuid.MustParse(req.IdCustomer),
+		ID:        uuid.MustParse(req.IdCustomer),
 		HashedPassword:    hashedPassword,
 		PasswordChangedAt: time.Now(),
 	}

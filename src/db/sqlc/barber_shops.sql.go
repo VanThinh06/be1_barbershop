@@ -12,7 +12,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgtype"
-	"github.com/lib/pq"
 )
 
 const barberShopInChain = `-- name: BarberShopInChain :one
@@ -50,7 +49,7 @@ VALUES (
         $6,
         $7,
         $8
-        ) RETURNING shop_id, owner_id, chain_id, name, facility, address, coordinates, image, list_image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, is_reputation, created_at, updated_at
+        ) RETURNING id, owner_id, chain_id, name, facility, address, coordinates, image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, reputation, created_at, updated_at
 `
 
 type CreateBarberShopParams struct {
@@ -77,7 +76,7 @@ func (q *Queries) CreateBarberShop(ctx context.Context, arg CreateBarberShopPara
 	)
 	var i BarberShop
 	err := row.Scan(
-		&i.ShopID,
+		&i.ID,
 		&i.OwnerID,
 		&i.ChainID,
 		&i.Name,
@@ -85,7 +84,6 @@ func (q *Queries) CreateBarberShop(ctx context.Context, arg CreateBarberShopPara
 		&i.Address,
 		&i.Coordinates,
 		&i.Image,
-		pq.Array(&i.ListImage),
 		&i.Status,
 		&i.Rate,
 		&i.StartTime,
@@ -93,7 +91,7 @@ func (q *Queries) CreateBarberShop(ctx context.Context, arg CreateBarberShopPara
 		&i.BreakTime,
 		&i.BreakMinutes,
 		&i.IntervalScheduler,
-		&i.IsReputation,
+		&i.Reputation,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -103,14 +101,13 @@ func (q *Queries) CreateBarberShop(ctx context.Context, arg CreateBarberShopPara
 const findBarberShopsNearbyLocations = `-- name: FindBarberShopsNearbyLocations :many
 
 SELECT
+    id,
     owner_id,
-    shop_id,
     status,
     name,
     coordinates,
     address,
     image,
-    list_image,
     created_at,
     CAST(ST_X(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS longitude,
     CAST(ST_Y(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS latitude,
@@ -130,14 +127,13 @@ type FindBarberShopsNearbyLocationsParams struct {
 }
 
 type FindBarberShopsNearbyLocationsRow struct {
+	ID          uuid.UUID      `json:"id"`
 	OwnerID     uuid.UUID      `json:"owner_id"`
-	ShopID      uuid.UUID      `json:"shop_id"`
 	Status      int32          `json:"status"`
 	Name        string         `json:"name"`
 	Coordinates string         `json:"coordinates"`
 	Address     string         `json:"address"`
 	Image       sql.NullString `json:"image"`
-	ListImage   []string       `json:"list_image"`
 	CreatedAt   time.Time      `json:"created_at"`
 	Longitude   float64        `json:"longitude"`
 	Latitude    float64        `json:"latitude"`
@@ -154,14 +150,13 @@ func (q *Queries) FindBarberShopsNearbyLocations(ctx context.Context, arg FindBa
 	for rows.Next() {
 		var i FindBarberShopsNearbyLocationsRow
 		if err := rows.Scan(
+			&i.ID,
 			&i.OwnerID,
-			&i.ShopID,
 			&i.Status,
 			&i.Name,
 			&i.Coordinates,
 			&i.Address,
 			&i.Image,
-			pq.Array(&i.ListImage),
 			&i.CreatedAt,
 			&i.Longitude,
 			&i.Latitude,
@@ -182,16 +177,16 @@ func (q *Queries) FindBarberShopsNearbyLocations(ctx context.Context, arg FindBa
 
 const getBarberShop = `-- name: GetBarberShop :one
 
-SELECT shop_id, owner_id, chain_id, name, facility, address, coordinates, image, list_image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, is_reputation, created_at, updated_at
+SELECT id, owner_id, chain_id, name, facility, address, coordinates, image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, reputation, created_at, updated_at
 FROM "BarberShops"
-WHERE shop_id = $1
+WHERE id = $1
 `
 
-func (q *Queries) GetBarberShop(ctx context.Context, shopID uuid.UUID) (BarberShop, error) {
-	row := q.db.QueryRowContext(ctx, getBarberShop, shopID)
+func (q *Queries) GetBarberShop(ctx context.Context, id uuid.UUID) (BarberShop, error) {
+	row := q.db.QueryRowContext(ctx, getBarberShop, id)
 	var i BarberShop
 	err := row.Scan(
-		&i.ShopID,
+		&i.ID,
 		&i.OwnerID,
 		&i.ChainID,
 		&i.Name,
@@ -199,7 +194,6 @@ func (q *Queries) GetBarberShop(ctx context.Context, shopID uuid.UUID) (BarberSh
 		&i.Address,
 		&i.Coordinates,
 		&i.Image,
-		pq.Array(&i.ListImage),
 		&i.Status,
 		&i.Rate,
 		&i.StartTime,
@@ -207,7 +201,7 @@ func (q *Queries) GetBarberShop(ctx context.Context, shopID uuid.UUID) (BarberSh
 		&i.BreakTime,
 		&i.BreakMinutes,
 		&i.IntervalScheduler,
-		&i.IsReputation,
+		&i.Reputation,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -215,7 +209,7 @@ func (q *Queries) GetBarberShop(ctx context.Context, shopID uuid.UUID) (BarberSh
 }
 
 const queryBarberShops = `-- name: QueryBarberShops :many
-SELECT bs.shop_id, bs.owner_id, bs.chain_id, bs.name, bs.facility, bs.address, bs.coordinates, bs.image, bs.list_image, bs.status, bs.rate, bs.start_time, bs.end_time, bs.break_time, bs.break_minutes, bs.interval_scheduler, bs.is_reputation, bs.created_at, bs.updated_at
+SELECT bs.id, bs.owner_id, bs.chain_id, bs.name, bs.facility, bs.address, bs.coordinates, bs.image, bs.status, bs.rate, bs.start_time, bs.end_time, bs.break_time, bs.break_minutes, bs.interval_scheduler, bs.reputation, bs.created_at, bs.updated_at
 FROM "BarberShops" bs
 WHERE bs."name" = $1
   OR bs."chain_id" IN (
@@ -235,7 +229,7 @@ func (q *Queries) QueryBarberShops(ctx context.Context, name string) ([]BarberSh
 	for rows.Next() {
 		var i BarberShop
 		if err := rows.Scan(
-			&i.ShopID,
+			&i.ID,
 			&i.OwnerID,
 			&i.ChainID,
 			&i.Name,
@@ -243,7 +237,6 @@ func (q *Queries) QueryBarberShops(ctx context.Context, name string) ([]BarberSh
 			&i.Address,
 			&i.Coordinates,
 			&i.Image,
-			pq.Array(&i.ListImage),
 			&i.Status,
 			&i.Rate,
 			&i.StartTime,
@@ -251,7 +244,7 @@ func (q *Queries) QueryBarberShops(ctx context.Context, name string) ([]BarberSh
 			&i.BreakTime,
 			&i.BreakMinutes,
 			&i.IntervalScheduler,
-			&i.IsReputation,
+			&i.Reputation,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
@@ -282,12 +275,12 @@ SET
     status = coalesce($11, status),
     interval_scheduler = coalesce($12, interval_scheduler),
     updated_at = now()
-WHERE "shop_id" = $1
-RETURNING shop_id, owner_id, chain_id, name, facility, address, coordinates, image, list_image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, is_reputation, created_at, updated_at
+WHERE "id" = $1
+RETURNING id, owner_id, chain_id, name, facility, address, coordinates, image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, reputation, created_at, updated_at
 `
 
 type UpdateBarberShopParams struct {
-	ShopID            uuid.UUID       `json:"shop_id"`
+	ID                uuid.UUID       `json:"id"`
 	Name              sql.NullString  `json:"name"`
 	Facility          sql.NullInt32   `json:"facility"`
 	Address           sql.NullString  `json:"address"`
@@ -303,7 +296,7 @@ type UpdateBarberShopParams struct {
 
 func (q *Queries) UpdateBarberShop(ctx context.Context, arg UpdateBarberShopParams) (BarberShop, error) {
 	row := q.db.QueryRowContext(ctx, updateBarberShop,
-		arg.ShopID,
+		arg.ID,
 		arg.Name,
 		arg.Facility,
 		arg.Address,
@@ -318,7 +311,7 @@ func (q *Queries) UpdateBarberShop(ctx context.Context, arg UpdateBarberShopPara
 	)
 	var i BarberShop
 	err := row.Scan(
-		&i.ShopID,
+		&i.ID,
 		&i.OwnerID,
 		&i.ChainID,
 		&i.Name,
@@ -326,7 +319,6 @@ func (q *Queries) UpdateBarberShop(ctx context.Context, arg UpdateBarberShopPara
 		&i.Address,
 		&i.Coordinates,
 		&i.Image,
-		pq.Array(&i.ListImage),
 		&i.Status,
 		&i.Rate,
 		&i.StartTime,
@@ -334,7 +326,7 @@ func (q *Queries) UpdateBarberShop(ctx context.Context, arg UpdateBarberShopPara
 		&i.BreakTime,
 		&i.BreakMinutes,
 		&i.IntervalScheduler,
-		&i.IsReputation,
+		&i.Reputation,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

@@ -33,26 +33,25 @@ SET
     status = coalesce(sqlc.narg('status'), status),
     interval_scheduler = coalesce(sqlc.narg('interval_scheduler'), interval_scheduler),
     updated_at = now()
-WHERE "shop_id" = $1
+WHERE "id" = $1
 RETURNING *;
 
 -- name: GetBarberShop :one
 
 SELECT *
 FROM "BarberShops"
-WHERE shop_id = $1;
+WHERE id = $1;
 
 -- name: FindBarberShopsNearbyLocations :many
 
 SELECT
+    id,
     owner_id,
-    shop_id,
     status,
     name,
     coordinates,
     address,
     image,
-    list_image,
     created_at,
     CAST(ST_X(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS longitude,
     CAST(ST_Y(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS latitude,

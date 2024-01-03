@@ -38,14 +38,15 @@ SELECT
   bs."break_time" as "shop_break_time",
   bs."break_minutes" as "shop_break_minutes",
   bs."interval_scheduler" as "shop_interval_scheduler",
-  bs."is_reputation" as "shop_is_reputation",
+  bs."reputation" as "shop_reputation",
+  bs."facility" as "shop_facility",
   bs."rate" as "shop_rate"
 FROM
   "Barbers" b
 JOIN
   "BarberShops" bs ON b."shop_id" = bs."shop_id"
 WHERE
-  b."barber_id" = $1;
+  b."id" = $1;
 
 
 -- name: UpdateBarber :one
@@ -65,7 +66,7 @@ set shop_id = coalesce(sqlc.narg('shop_id'), shop_id),
   ),
   "updated_at" = sqlc.arg('updated_at'),
   "haircut" = coalesce(sqlc.narg('haircut'), haircut)
-  WHERE "barber_id" = sqlc.arg('barber_id')
+  WHERE "id" = sqlc.arg('id')
 RETURNING *;
 
 
@@ -80,7 +81,7 @@ LIMIT 1;
 -- name: BarberGetIdShop :one
 SELECT shop_id::varchar, "role"
 FROM "Barbers"
-WHERE barber_id = $1
+WHERE id = $1
 LIMIT 1;
 
 -- name: GetBarbersInBarberShop :many

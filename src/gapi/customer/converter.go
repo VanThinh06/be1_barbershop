@@ -14,7 +14,7 @@ func convertCustomer(res db.Customer) *customer.Customer {
 		Gender:            res.Gender,
 		Name:              res.Name,
 		Avatar:            res.Avatar.String,
-		CustomerId:        res.CustomerID.String(),
+		CustomerId:        res.ID.String(),
 		CreatedAt:         timestamppb.New(res.CreatedAt),
 		UpdateAt:          timestamppb.New(res.UpdatedAt.Time),
 		PasswordChangedAt: timestamppb.New(res.PasswordChangedAt),
@@ -24,7 +24,7 @@ func convertCustomer(res db.Customer) *customer.Customer {
 
 func convertAppointment(appointment db.InsertAppointmentAndGetInfoRow) *customer.Appointment {
 	return &customer.Appointment{
-		AppointmentId:       appointment.AppointmentID.String(),
+		AppointmentId:       appointment.ID.String(),
 		CustomerId:          appointment.CustomerID.String(),
 		BarberId:            appointment.BarberID.String(),
 		AppointmentDatetime: timestamppb.New(appointment.AppointmentDatetime),
@@ -38,7 +38,7 @@ func convertGetAppointmentByDate(res []db.GetAppointmentByDateWithServiceRow) []
 	var appointments []*customer.Appointment
 	for _, appointment := range res {
 		appointment := &customer.Appointment{
-			AppointmentId:       appointment.AppointmentID.String(),
+			AppointmentId:       appointment.ID.String(),
 			CustomerId:          appointment.CustomerID.String(),
 			BarberId:            appointment.BarbershopsID.String(),
 			Status:              appointment.Status,

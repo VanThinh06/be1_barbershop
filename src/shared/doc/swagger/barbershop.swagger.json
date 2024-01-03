@@ -154,6 +154,38 @@
         ]
       }
     },
+    "/v1/barber/{barberId}": {
+      "get": {
+        "summary": "Create a barber",
+        "description": "API endpoint to create a new barber",
+        "operationId": "BarberService_GetBarber",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetBarberResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barberId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "barber"
+        ]
+      }
+    },
     "/v1/barbershop/barbers": {
       "post": {
         "summary": "Create a service category",
@@ -1067,6 +1099,55 @@
             "type": "object",
             "$ref": "#/definitions/pbBarber"
           }
+        }
+      }
+    },
+    "pbGetBarberResponse": {
+      "type": "object",
+      "properties": {
+        "barber": {
+          "$ref": "#/definitions/pbBarber"
+        },
+        "shopName": {
+          "type": "string"
+        },
+        "shopAddress": {
+          "type": "string"
+        },
+        "shopImage": {
+          "type": "string"
+        },
+        "shopDistance": {
+          "type": "number",
+          "format": "float"
+        },
+        "shopFacility": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "shopRate": {
+          "type": "number",
+          "format": "float"
+        },
+        "startTime": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "endTime": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "breakTime": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "breakMinutes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "intervalScheduler": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "reputation": {
+          "type": "boolean"
         }
       }
     },

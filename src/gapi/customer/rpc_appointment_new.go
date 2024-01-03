@@ -129,7 +129,7 @@ func (server *Server) TxCreateAppointment(ctx context.Context, req *customer.Cre
 		}
 
 		argServiceAppointment := db.InsertServicesForAppointmentParams{
-			AppointmentsServiceID: resAppointment.AppointmentID,
+			AppointmentsServiceID: resAppointment.ID,
 			ServicesID:            listServices,
 		}
 

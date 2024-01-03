@@ -20,9 +20,10 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	BarberService_CreateBarber_FullMethodName                 = "/pb.BarberService/CreateBarber"
+	BarberService_GetBarber_FullMethodName                    = "/pb.BarberService/GetBarber"
+	BarberService_UpdateBarber_FullMethodName                 = "/pb.BarberService/UpdateBarber"
 	BarberService_LoginBarber_FullMethodName                  = "/pb.BarberService/LoginBarber"
 	BarberService_RefreshTokenBarber_FullMethodName           = "/pb.BarberService/RefreshTokenBarber"
-	BarberService_UpdateBarber_FullMethodName                 = "/pb.BarberService/UpdateBarber"
 	BarberService_FindBarberShopsNearby_FullMethodName        = "/pb.BarberService/FindBarberShopsNearby"
 	BarberService_CreateBarberShop_FullMethodName             = "/pb.BarberService/CreateBarberShop"
 	BarberService_GetBarberShop_FullMethodName                = "/pb.BarberService/GetBarberShop"
@@ -45,9 +46,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BarberServiceClient interface {
 	CreateBarber(ctx context.Context, in *CreateBarberRequest, opts ...grpc.CallOption) (*CreateBarberResponse, error)
+	GetBarber(ctx context.Context, in *GetBarberRequest, opts ...grpc.CallOption) (*GetBarberResponse, error)
+	UpdateBarber(ctx context.Context, in *UpdateBarberRequest, opts ...grpc.CallOption) (*UpdateBarberResponse, error)
 	LoginBarber(ctx context.Context, in *LoginBarberRequest, opts ...grpc.CallOption) (*LoginBarberResponse, error)
 	RefreshTokenBarber(ctx context.Context, in *RefreshTokenBarberRequest, opts ...grpc.CallOption) (*RefreshTokenBarberResponse, error)
-	UpdateBarber(ctx context.Context, in *UpdateBarberRequest, opts ...grpc.CallOption) (*UpdateBarberResponse, error)
 	FindBarberShopsNearby(ctx context.Context, in *FindBarberShopsNearbyRequest, opts ...grpc.CallOption) (*FindBarberShopsNearbyResponse, error)
 	CreateBarberShop(ctx context.Context, in *CreateBarberShopRequest, opts ...grpc.CallOption) (*CreateBarberShopResponse, error)
 	GetBarberShop(ctx context.Context, in *GetBarberShopRequest, opts ...grpc.CallOption) (*GetBarberShopResponse, error)
@@ -84,6 +86,24 @@ func (c *barberServiceClient) CreateBarber(ctx context.Context, in *CreateBarber
 	return out, nil
 }
 
+func (c *barberServiceClient) GetBarber(ctx context.Context, in *GetBarberRequest, opts ...grpc.CallOption) (*GetBarberResponse, error) {
+	out := new(GetBarberResponse)
+	err := c.cc.Invoke(ctx, BarberService_GetBarber_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *barberServiceClient) UpdateBarber(ctx context.Context, in *UpdateBarberRequest, opts ...grpc.CallOption) (*UpdateBarberResponse, error) {
+	out := new(UpdateBarberResponse)
+	err := c.cc.Invoke(ctx, BarberService_UpdateBarber_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *barberServiceClient) LoginBarber(ctx context.Context, in *LoginBarberRequest, opts ...grpc.CallOption) (*LoginBarberResponse, error) {
 	out := new(LoginBarberResponse)
 	err := c.cc.Invoke(ctx, BarberService_LoginBarber_FullMethodName, in, out, opts...)
@@ -96,15 +116,6 @@ func (c *barberServiceClient) LoginBarber(ctx context.Context, in *LoginBarberRe
 func (c *barberServiceClient) RefreshTokenBarber(ctx context.Context, in *RefreshTokenBarberRequest, opts ...grpc.CallOption) (*RefreshTokenBarberResponse, error) {
 	out := new(RefreshTokenBarberResponse)
 	err := c.cc.Invoke(ctx, BarberService_RefreshTokenBarber_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *barberServiceClient) UpdateBarber(ctx context.Context, in *UpdateBarberRequest, opts ...grpc.CallOption) (*UpdateBarberResponse, error) {
-	out := new(UpdateBarberResponse)
-	err := c.cc.Invoke(ctx, BarberService_UpdateBarber_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -251,9 +262,10 @@ func (c *barberServiceClient) CreateChain(ctx context.Context, in *CreateChainRe
 // for forward compatibility
 type BarberServiceServer interface {
 	CreateBarber(context.Context, *CreateBarberRequest) (*CreateBarberResponse, error)
+	GetBarber(context.Context, *GetBarberRequest) (*GetBarberResponse, error)
+	UpdateBarber(context.Context, *UpdateBarberRequest) (*UpdateBarberResponse, error)
 	LoginBarber(context.Context, *LoginBarberRequest) (*LoginBarberResponse, error)
 	RefreshTokenBarber(context.Context, *RefreshTokenBarberRequest) (*RefreshTokenBarberResponse, error)
-	UpdateBarber(context.Context, *UpdateBarberRequest) (*UpdateBarberResponse, error)
 	FindBarberShopsNearby(context.Context, *FindBarberShopsNearbyRequest) (*FindBarberShopsNearbyResponse, error)
 	CreateBarberShop(context.Context, *CreateBarberShopRequest) (*CreateBarberShopResponse, error)
 	GetBarberShop(context.Context, *GetBarberShopRequest) (*GetBarberShopResponse, error)
@@ -281,14 +293,17 @@ type UnimplementedBarberServiceServer struct {
 func (UnimplementedBarberServiceServer) CreateBarber(context.Context, *CreateBarberRequest) (*CreateBarberResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBarber not implemented")
 }
+func (UnimplementedBarberServiceServer) GetBarber(context.Context, *GetBarberRequest) (*GetBarberResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBarber not implemented")
+}
+func (UnimplementedBarberServiceServer) UpdateBarber(context.Context, *UpdateBarberRequest) (*UpdateBarberResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBarber not implemented")
+}
 func (UnimplementedBarberServiceServer) LoginBarber(context.Context, *LoginBarberRequest) (*LoginBarberResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoginBarber not implemented")
 }
 func (UnimplementedBarberServiceServer) RefreshTokenBarber(context.Context, *RefreshTokenBarberRequest) (*RefreshTokenBarberResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefreshTokenBarber not implemented")
-}
-func (UnimplementedBarberServiceServer) UpdateBarber(context.Context, *UpdateBarberRequest) (*UpdateBarberResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateBarber not implemented")
 }
 func (UnimplementedBarberServiceServer) FindBarberShopsNearby(context.Context, *FindBarberShopsNearbyRequest) (*FindBarberShopsNearbyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindBarberShopsNearby not implemented")
@@ -366,6 +381,42 @@ func _BarberService_CreateBarber_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BarberService_GetBarber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBarberRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).GetBarber(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_GetBarber_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).GetBarber(ctx, req.(*GetBarberRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BarberService_UpdateBarber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBarberRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).UpdateBarber(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_UpdateBarber_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).UpdateBarber(ctx, req.(*UpdateBarberRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BarberService_LoginBarber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoginBarberRequest)
 	if err := dec(in); err != nil {
@@ -398,24 +449,6 @@ func _BarberService_RefreshTokenBarber_Handler(srv interface{}, ctx context.Cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BarberServiceServer).RefreshTokenBarber(ctx, req.(*RefreshTokenBarberRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BarberService_UpdateBarber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateBarberRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BarberServiceServer).UpdateBarber(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BarberService_UpdateBarber_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BarberServiceServer).UpdateBarber(ctx, req.(*UpdateBarberRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -702,16 +735,20 @@ var BarberService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BarberService_CreateBarber_Handler,
 		},
 		{
+			MethodName: "GetBarber",
+			Handler:    _BarberService_GetBarber_Handler,
+		},
+		{
+			MethodName: "UpdateBarber",
+			Handler:    _BarberService_UpdateBarber_Handler,
+		},
+		{
 			MethodName: "LoginBarber",
 			Handler:    _BarberService_LoginBarber_Handler,
 		},
 		{
 			MethodName: "RefreshTokenBarber",
 			Handler:    _BarberService_RefreshTokenBarber_Handler,
-		},
-		{
-			MethodName: "UpdateBarber",
-			Handler:    _BarberService_UpdateBarber_Handler,
 		},
 		{
 			MethodName: "FindBarberShopsNearby",

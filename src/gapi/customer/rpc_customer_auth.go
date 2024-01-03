@@ -82,7 +82,7 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 	}
 
 	customerPayload := token.Customer{
-		CustomerID: res.CustomerID,
+		CustomerID: res.ID,
 		Name:       res.Name,
 		Gender:     res.Gender,
 		Phone:      res.Phone,
