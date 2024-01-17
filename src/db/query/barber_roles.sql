@@ -24,3 +24,15 @@ VALUES (
     $3
   )
 RETURNING *;
+
+-- name: UpdateBarberRole
+UPDATE "BarberRoles"
+SET "role_id" = $1,
+    "update_at" = NOW()
+WHERE "id" = $2
+RETURNING *;
+
+-- name: DeleteBarberRole
+DELETE FROM "BarberRoles"
+WHERE "id" = $1
+RETURNING *;
