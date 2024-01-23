@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+message BarberShopServices {
+    string id = 1;
+    string barbershop_category_id = 2;
+    string barbershop_chain_id = 3;
+    string barbershop_id = 4;
+    int32 gender_id = 5;
+    string name = 6;
+    int32 timer = 7;
+    float price = 8;
+    string description = 9;
+    string image = 10;
+    bool is_custom = 11;
+    bool is_removed = 12;
+    google.protobuf.Timestamp create_at = 13;
+    google.protobuf.Timestamp update_at = 14;
+}

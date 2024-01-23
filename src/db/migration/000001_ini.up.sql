@@ -19,6 +19,10 @@ CREATE TABLE "BarberRoles" (
 CREATE TABLE "BarberShopChains" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" varchar UNIQUE NOT NULL,
+  "description" text,
+  "founder" varchar NOT NULL,
+  "founding_date" timestamptz NOT NULL ,
+  "website" varchar,
   "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
@@ -27,6 +31,7 @@ CREATE TABLE "BarberShops" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "barbershop_chain_id" uuid,
   "name" varchar NOT NULL,
+  "is_main_branch" bool NOT NULL DEFAULT false,
   "branch_count" integer NOT NULL DEFAULT 1,
   "coordinates" GEOGRAPHY(Point, 4326) NOT NULL,
   "address" varchar NOT NULL,

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package pb;
+import "barber/barber_shops.proto";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message CreateBarberShopsRequest {
+    optional string barbershop_chain_id = 1;
+    string name = 2;
+    optional bool is_main_branch = 3;
+    int32 branch_count = 4;
+    google.protobuf.DoubleValue longitude = 5;
+    google.protobuf.DoubleValue latitude = 6;
+    string address = 7;
+    optional string image = 8;
+}
+
+message CreateBarberShopsResponse {
+    BarberShops barber_shop = 1;
+}

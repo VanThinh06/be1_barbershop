@@ -26,13 +26,13 @@ WHERE "BarberRoles"."barbershop_id" = $1
 ORDER BY "Roles"."id";
 
 
--- name: UpdateBarberRole :one
+-- name: UpdateBarberRoles :one
 UPDATE "BarberRoles"
 SET "role_id" = $1,
     "update_at" = NOW()
 WHERE "id" = $2
 RETURNING *;
 
--- name: DeleteBarberRole :exec
+-- name: DeleteBarberRoles :exec
 DELETE FROM "BarberRoles"
 WHERE "id" = $1;

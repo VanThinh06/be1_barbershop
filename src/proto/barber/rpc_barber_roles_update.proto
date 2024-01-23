@@ -13,5 +13,5 @@ message UpdateBarberRolesRequest{
 }
 
 message UpdateBarberRolesResponse {
-    BarberRoles barber_roles = 1;
+    BarberRoles barber_role = 1;
 }

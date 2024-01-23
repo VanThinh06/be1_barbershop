@@ -2,18 +2,18 @@ syntax = "proto3";
 
 package pb;
 
-import "barber/barber_shop.proto";
+import "barber/barber_shops.proto";
 import "google/protobuf/wrappers.proto";
 
 option go_package = "barbershop/src/pb/barber";
 
 
-message FindBarberShopsNearbyRequest {
+message ListNearbyBarberShopsRequest {
     google.protobuf.DoubleValue  longitude = 1;
     google.protobuf.DoubleValue  latitude = 2;
     int32 distance_in_meters = 3;
 }
 
-message FindBarberShopsNearbyResponse {
-    repeated BarberShop barber_shops = 1;
+message ListNearbyBarberShopsResponse {
+    repeated BarberShops barber_shops = 1;
 }

@@ -2,6 +2,7 @@
 INSERT INTO "BarberShops" (
                            barbershop_chain_id,
                            name,
+                           is_main_branch,
                            branch_count,
                            coordinates,
                            address,
@@ -10,6 +11,7 @@ INSERT INTO "BarberShops" (
 VALUES (
         sqlc.arg(barbershop_chain_id),
         sqlc.arg(name),
+        sqlc.narg(is_main_branch),
         sqlc.arg(branch_count),
         ST_GeographyFromText('POINT(' || sqlc.arg(longitude)::float8 || ' ' || sqlc.arg(latitude)::float8 || ')'),
         sqlc.arg(address),
@@ -21,9 +23,10 @@ SELECT *
 FROM "BarberShops"
 WHERE id = $1;
 
--- name: ListBarberShopsNearbyLocations :many
+-- name: ListBarberShopsNearby :many
 SELECT
     id,
+    barbershop_chain_id,
     name,
     branch_count,
     coordinates,
@@ -31,6 +34,7 @@ SELECT
     image,
     status,
     rate,
+    "reputation",
     CAST(ST_X(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS longitude,
     CAST(ST_Y(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS latitude,
     CAST(ST_Distance(
@@ -45,6 +49,7 @@ ORDER BY ST_Distance(coordinates, ST_SetSRID(ST_MakePoint(sqlc.arg(current_longi
 UPDATE "BarberShops"
 SET 
     name = coalesce(sqlc.narg('name'), name),
+    is_main_branch = coalesce(sqlc.narg('is_main_branch'), is_main_branch),
     branch_count = coalesce(sqlc.narg('branch_count'), branch_count),
     coordinates = coalesce(ST_GeographyFromText('POINT(' || sqlc.narg(longitude)::float8 || ' ' || sqlc.narg(latitude)::float8 || ')'), coordinates),
     address = coalesce(sqlc.narg('address'), address),
@@ -55,14 +60,9 @@ SET
     end_time = coalesce(sqlc.narg('end_time'), end_time),
     break_time = coalesce(sqlc.narg('break_time'), break_time),
     interval_scheduler = coalesce(sqlc.narg('interval_scheduler'), interval_scheduler),
-    updated_at = now()
+    update_at = now()
 WHERE "id" = $1
 RETURNING *;
-
--- name: UpdateChainForBarberShops :exec  
-UPDATE "BarberShops"
-SET "barbershop_chain_id" = sqlc.arg(barbershop_chain_id)::uuid
-WHERE "id" = $1 AND "barbershop_chain_id" IS NULL;
 
 -- name: DeleteBarberShops :exec
 DELETE FROM "BarberShops"

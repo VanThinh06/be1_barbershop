@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+message BarberShopChains {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string founder = 4;
+    google.protobuf.Timestamp founding_date = 5;
+    string website = 6;
+    google.protobuf.Timestamp create_at = 7;
+    google.protobuf.Timestamp update_at = 8;
+}

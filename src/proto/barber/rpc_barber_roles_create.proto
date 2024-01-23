@@ -14,5 +14,5 @@ message CreateBarberRolesRequest{
 }
 
 message CreateBarberRolesResponse {
-    BarberRoles barber_roles = 1;
+    BarberRoles barber_role = 1;
 }

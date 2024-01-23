@@ -1,0 +1,22 @@
+
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+import "barber/barbershop_chains.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message UpdateBarberShopChainsRequest{
+    string id = 1;
+    string name = 2;
+    string founder = 3;
+    google.protobuf.Timestamp founding_date = 4;
+    string website = 5;
+}
+
+message UpdateBarberShopChainsResponse{
+    BarberShopChains barbershop_chain = 1;
+}

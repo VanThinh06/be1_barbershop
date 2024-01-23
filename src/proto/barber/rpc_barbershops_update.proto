@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package pb;
+import "barber/barber_shops.proto";
+import "barber/time_of_day.proto";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message UpdateBarberShopsRequest {
+    optional string name = 1;
+    optional string is_main_branch = 2;
+    optional int32 branch_count = 3;
+    optional google.protobuf.DoubleValue latitude = 4;
+    optional google.protobuf.DoubleValue longtude = 5;
+    optional string address = 6;
+    optional string image = 7;
+    optional int32 status = 8;
+    optional int32 rate = 9;
+    optional TimeOfDay start_time = 10;
+    optional TimeOfDay end_time = 11;
+    optional TimeOfDay break_time = 12;
+    optional int32 interval_sheduler = 13;
+    optional int32 break_minutes = 14;
+    string id = 15;
+}
+
+message UpdateBarberShopsResponse {
+    BarberShops barber_shop = 1;
+}

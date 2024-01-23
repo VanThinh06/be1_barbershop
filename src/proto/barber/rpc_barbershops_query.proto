@@ -1,14 +1,14 @@
 syntax = "proto3";
 
 package pb;
-import "barber/barber_shop.proto";
+import "barber/barber_shops.proto";
 option go_package = "barbershop/src/pb/barber";
 
 
 message QueryBarberShopsRequest {
-    string barbershop = 1;
+    string query = 1;
 }
 
 message QueryBarberShopsResponse {
-    repeated BarberShop barber_shops = 1;
+    repeated BarberShops barber_shops = 1;
 }

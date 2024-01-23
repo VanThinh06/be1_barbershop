@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package pb;
+
+import "barber/barbershop_chains.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message GetBarberShopChainsRequest{
+    string id = 1;
+}
+
+message GetBarberShopChainsResponse {
+    BarberShopChains barbershop_chain = 1;
+}

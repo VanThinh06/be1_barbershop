@@ -12,5 +12,5 @@ message ListBarberRolesRequest{
 }
 
 message ListBarberRolesResponse {
-    repeated BarberRoles barber_roles = 1;
+    repeated BarberRoles barber_role = 1;
 }
