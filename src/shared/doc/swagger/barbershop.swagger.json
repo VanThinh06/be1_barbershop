@@ -86,6 +86,172 @@
         ]
       }
     },
+    "/v1/barber-roles": {
+      "get": {
+        "summary": "Get a barber roles",
+        "description": "API endpoint to get a barber roles",
+        "operationId": "BarberService_GetBarberRoles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetBarberRolesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barberId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "barbershopId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "barber roles"
+        ]
+      },
+      "post": {
+        "summary": "Create a barber roles",
+        "description": "API endpoint to create a barber roles",
+        "operationId": "BarberService_CreateBarberRoles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateBarberRolesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateBarberRolesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "barber roles"
+        ]
+      },
+      "put": {
+        "summary": "Update barber roles",
+        "description": "API endpoint to update role_id a barber roles",
+        "operationId": "BarberService_UpdateBarberRoles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateBarberRolesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateBarberRolesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "barber roles"
+        ]
+      }
+    },
+    "/v1/barber-roles/{barbershopId}": {
+      "get": {
+        "summary": "List barber roles",
+        "description": "API endpoint to get list barber roles",
+        "operationId": "BarberService_ListBarberRoles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListBarberRolesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barbershopId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "barber roles"
+        ]
+      }
+    },
+    "/v1/barber-roles/{id}": {
+      "delete": {
+        "summary": "Delete barber roles",
+        "description": "API endpoint to delete a barber roles",
+        "operationId": "BarberService_DeleteBarberRoles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteBarberRolesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "barber roles"
+        ]
+      }
+    },
     "/v1/barber/login": {
       "post": {
         "summary": "Authenticate a barber",
@@ -731,6 +897,32 @@
         }
       }
     },
+    "pbBarberRoles": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "barberId": {
+          "type": "string"
+        },
+        "barbershopId": {
+          "type": "string"
+        },
+        "roleId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "createAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updateAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "pbBarberShop": {
       "type": "object",
       "properties": {
@@ -889,6 +1081,29 @@
       "properties": {
         "barber": {
           "$ref": "#/definitions/pbBarber"
+        }
+      }
+    },
+    "pbCreateBarberRolesRequest": {
+      "type": "object",
+      "properties": {
+        "barberId": {
+          "type": "string"
+        },
+        "barbershopId": {
+          "type": "string"
+        },
+        "roleId": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "pbCreateBarberRolesResponse": {
+      "type": "object",
+      "properties": {
+        "barberRoles": {
+          "$ref": "#/definitions/pbBarberRoles"
         }
       }
     },
@@ -1053,6 +1268,14 @@
         }
       }
     },
+    "pbDeleteBarberRolesResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      }
+    },
     "pbFindBarberShopsNearbyRequest": {
       "type": "object",
       "properties": {
@@ -1125,10 +1348,6 @@
           "type": "integer",
           "format": "int32"
         },
-        "shopRate": {
-          "type": "number",
-          "format": "float"
-        },
         "startTime": {
           "$ref": "#/definitions/pbTimeOfDay"
         },
@@ -1148,6 +1367,21 @@
         },
         "reputation": {
           "type": "boolean"
+        },
+        "shopRate": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "pbGetBarberRolesResponse": {
+      "type": "object",
+      "properties": {
+        "barberRoles": {
+          "$ref": "#/definitions/pbBarberRoles"
+        },
+        "roleName": {
+          "type": "string"
         }
       }
     },
@@ -1213,6 +1447,18 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/pbService"
+          }
+        }
+      }
+    },
+    "pbListBarberRolesResponse": {
+      "type": "object",
+      "properties": {
+        "barberRoles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbBarberRoles"
           }
         }
       }
@@ -1468,6 +1714,26 @@
       "properties": {
         "barber": {
           "$ref": "#/definitions/pbBarber"
+        }
+      }
+    },
+    "pbUpdateBarberRolesRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "roleId": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "pbUpdateBarberRolesResponse": {
+      "type": "object",
+      "properties": {
+        "barberRoles": {
+          "$ref": "#/definitions/pbBarberRoles"
         }
       }
     },

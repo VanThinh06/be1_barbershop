@@ -1,6 +1,5 @@
 -- name: CreateSessionsCustomer :one
-INSERT INTO "SessionsCustomers" (
-                               id,
+INSERT INTO "SessionsCustomer" (
                                customer_id,
                                refresh_token,
                                user_agent,
@@ -19,20 +18,18 @@ VALUES ($1,
         $6,
         $7,
         $8,
-        $9,
         ST_GeographyFromText('POINT(' || sqlc.arg(longitude)::float8 || ' ' || sqlc.arg(latitude)::float8 || ')')
         ) RETURNING *;
 
 -- name: GetSessionsCustomer :one
 SELECT *
-FROM "SessionsCustomers"
+FROM "SessionsBarber"
 WHERE id = $1
 LIMIT 1;
 
--- name: UpdateRefreshTokenSessionsCustomer :one
-UPDATE "SessionsCustomers"
-set refresh_token = $2,
-    expires_at = $3
-WHERE id = $1
-RETURNING *;
+-- name: UpdateSessionsCustomer :exec
+UPDATE "SessionsBarber"
+SET refresh_token = $2,
+ "expires_at" = now() + interval '30 minutes'
+WHERE id = $1;
 

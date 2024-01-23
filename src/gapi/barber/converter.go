@@ -10,6 +10,46 @@ import (
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
+func ConvertBarberRoles(res db.BarberRole) *barber.BarberRoles {
+	return &barber.BarberRoles{
+		Id:           res.BarberID.String(),
+		BarberId:     res.BarberID.String(),
+		BarbershopId: res.BarbershopID.String(),
+		RoleId:       res.RoleID,
+		CreateAt:     timestamppb.New(res.CreateAt),
+		UpdateAt:     timestamppb.New(res.UpdateAt),
+	}
+}
+
+func ConvertBarberRolesDetail(res db.GetBarberRolesRow) *barber.BarberRoles {
+	return &barber.BarberRoles{
+		Id:           res.BarberID.String(),
+		BarberId:     res.BarberID.String(),
+		BarbershopId: res.BarbershopID.String(),
+		RoleId:       res.RoleID,
+		CreateAt:     timestamppb.New(res.CreateAt),
+		UpdateAt:     timestamppb.New(res.UpdateAt),
+	}
+}
+
+func ConvertListBarbersRoles(res []db.ListBarbersRolesRow) []*barber.BarberRoles {
+	var barbersRoles []*barber.BarberRoles
+
+	for _, item := range res {
+		barberRole := &barber.BarberRoles{
+			Id:           item.ID.String(),
+			BarberId:     item.BarberID.String(),
+			BarbershopId: item.BarbershopID.String(),
+			RoleId:       item.RoleID,
+			CreateAt:     timestamppb.New(item.CreatedAt),
+			UpdateAt:     timestamppb.New(item.UpdateAt),
+		}
+		barbersRoles = append(barbersRoles, barberRole)
+	}
+
+	return barbersRoles
+}
+
 func convertBarber(res db.Barber) *barber.Barber {
 	return &barber.Barber{
 		BarberId: res.ID.String(),

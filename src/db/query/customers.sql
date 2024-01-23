@@ -41,7 +41,7 @@ set name = coalesce(sqlc.narg('name'), name),
   phone = coalesce(sqlc.narg('phone'), phone),
   gender = coalesce(sqlc.narg('gender'), gender),
   avatar = coalesce(sqlc.narg('avatar'), avatar),
-  "updated_at" = sqlc.arg('updated_at')
+  "update_at" = sqlc.arg('updated_at')
   WHERE "id" = sqlc.arg('id')
 RETURNING *;
 

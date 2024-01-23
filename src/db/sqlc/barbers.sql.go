@@ -14,38 +14,15 @@ import (
 	"github.com/jackc/pgtype"
 )
 
-const barberGetIdShop = `-- name: BarberGetIdShop :one
-SELECT shop_id::varchar, "role"
-FROM "Barbers"
-WHERE id = $1
-LIMIT 1
-`
-
-type BarberGetIdShopRow struct {
-	ShopID string `json:"shop_id"`
-	Role   int32  `json:"role"`
-}
-
-func (q *Queries) BarberGetIdShop(ctx context.Context, id uuid.UUID) (BarberGetIdShopRow, error) {
-	row := q.db.QueryRowContext(ctx, barberGetIdShop, id)
-	var i BarberGetIdShopRow
-	err := row.Scan(&i.ShopID, &i.Role)
-	return i, err
-}
-
 const createBarber = `-- name: CreateBarber :one
 INSERT INTO "Barbers" (
-    shop_id,
+    gender_id,
+    email,
+    phone,
+    hashed_password,
     nick_name,
     full_name,
-    phone,
-    email,
-    gender,
-    "role",
-    hashed_password,
-    avatar,
-    manager_id,
-    "haircut"
+    avatar_url
   )
 VALUES (
     $1,
@@ -54,97 +31,230 @@ VALUES (
     $4,
     $5,
     $6,
-    $7,
-    $8,
-    $9,
-    $10,
-    $11
+    $7
   )
-RETURNING id, shop_id, manager_id, nick_name, full_name, phone, email, gender, role, haircut, hashed_password, avatar, status, password_changed_at, created_at, updated_at
+RETURNING id, gender_id, email, phone, hashed_password, nick_name, full_name, haircut, avatar_url, password_changed_at, create_at, update_at
 `
 
 type CreateBarberParams struct {
-	ShopID         uuid.NullUUID  `json:"shop_id"`
+	GenderID       sql.NullInt32  `json:"gender_id"`
+	Email          string         `json:"email"`
+	Phone          string         `json:"phone"`
+	HashedPassword string         `json:"hashed_password"`
 	NickName       string         `json:"nick_name"`
 	FullName       string         `json:"full_name"`
-	Phone          string         `json:"phone"`
-	Email          string         `json:"email"`
-	Gender         int32          `json:"gender"`
-	Role           int32          `json:"role"`
-	HashedPassword string         `json:"hashed_password"`
-	Avatar         sql.NullString `json:"avatar"`
-	ManagerID      uuid.NullUUID  `json:"manager_id"`
-	Haircut        bool           `json:"haircut"`
+	AvatarUrl      sql.NullString `json:"avatar_url"`
 }
 
 func (q *Queries) CreateBarber(ctx context.Context, arg CreateBarberParams) (Barber, error) {
 	row := q.db.QueryRowContext(ctx, createBarber,
-		arg.ShopID,
+		arg.GenderID,
+		arg.Email,
+		arg.Phone,
+		arg.HashedPassword,
 		arg.NickName,
 		arg.FullName,
-		arg.Phone,
-		arg.Email,
-		arg.Gender,
-		arg.Role,
-		arg.HashedPassword,
-		arg.Avatar,
-		arg.ManagerID,
-		arg.Haircut,
+		arg.AvatarUrl,
 	)
 	var i Barber
 	err := row.Scan(
 		&i.ID,
-		&i.ShopID,
-		&i.ManagerID,
+		&i.GenderID,
+		&i.Email,
+		&i.Phone,
+		&i.HashedPassword,
 		&i.NickName,
 		&i.FullName,
-		&i.Phone,
-		&i.Email,
-		&i.Gender,
-		&i.Role,
 		&i.Haircut,
-		&i.HashedPassword,
-		&i.Avatar,
-		&i.Status,
+		&i.AvatarUrl,
 		&i.PasswordChangedAt,
-		&i.CreatedAt,
-		&i.UpdatedAt,
+		&i.CreateAt,
+		&i.UpdateAt,
 	)
 	return i, err
 }
 
-const getBarbersInBarberShop = `-- name: GetBarbersInBarberShop :many
-SELECT id, shop_id, manager_id, nick_name, full_name, phone, email, gender, role, haircut, hashed_password, avatar, status, password_changed_at, created_at, updated_at
-FROM "Barbers"
-WHERE shop_id =$1 AND "haircut" = true
+const deleteBarber = `-- name: DeleteBarber :exec
+DELETE FROM "Barbers"
+WHERE "id" = $1
 `
 
-func (q *Queries) GetBarbersInBarberShop(ctx context.Context, shopID uuid.NullUUID) ([]Barber, error) {
-	rows, err := q.db.QueryContext(ctx, getBarbersInBarberShop, shopID)
+func (q *Queries) DeleteBarber(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteBarber, id)
+	return err
+}
+
+const getBarber = `-- name: GetBarber :one
+SELECT
+  b.id, b.gender_id, b.email, b.phone, b.hashed_password, b.nick_name, b.full_name, b.haircut, b.avatar_url, b.password_changed_at, b.create_at, b.update_at, 
+  bs."name" as "shop_name",
+  bs."address" as "shop_address",
+  bs."coordinates" as "shop_coordinates",
+  bs."start_time" as "shop_start_time",
+  bs."end_time" as "shop_end_time",
+  bs."break_time" as "shop_break_time",
+  bs."break_minutes" as "shop_break_minutes",
+  bs."interval_scheduler" as "shop_interval_scheduler",
+  bs."reputation" as "shop_reputation",
+  bs."rate" as "shop_rate",
+  bs."branch_count" as "shop_branch_count",
+  br."role_id" as "barber_role_id",
+  br."barbershop_id" as "barber_role_barbershop_id"
+FROM
+  "Barbers" b
+JOIN
+  "BarberRoles" br ON b."id" = br."barber_id"
+JOIN
+  "BarberShops" bs ON br."barbershop_id" = bs."id"
+WHERE
+  b."id" = $1
+  AND bs."id" = $2
+`
+
+type GetBarberParams struct {
+	ID   uuid.UUID `json:"id"`
+	ID_2 uuid.UUID `json:"id_2"`
+}
+
+type GetBarberRow struct {
+	ID                     uuid.UUID      `json:"id"`
+	GenderID               sql.NullInt32  `json:"gender_id"`
+	Email                  string         `json:"email"`
+	Phone                  string         `json:"phone"`
+	HashedPassword         string         `json:"hashed_password"`
+	NickName               string         `json:"nick_name"`
+	FullName               string         `json:"full_name"`
+	Haircut                bool           `json:"haircut"`
+	AvatarUrl              sql.NullString `json:"avatar_url"`
+	PasswordChangedAt      time.Time      `json:"password_changed_at"`
+	CreateAt               time.Time      `json:"create_at"`
+	UpdateAt               time.Time      `json:"update_at"`
+	ShopName               string         `json:"shop_name"`
+	ShopAddress            string         `json:"shop_address"`
+	ShopCoordinates        string         `json:"shop_coordinates"`
+	ShopStartTime          pgtype.Time    `json:"shop_start_time"`
+	ShopEndTime            pgtype.Time    `json:"shop_end_time"`
+	ShopBreakTime          pgtype.Time    `json:"shop_break_time"`
+	ShopBreakMinutes       int32          `json:"shop_break_minutes"`
+	ShopIntervalScheduler  int32          `json:"shop_interval_scheduler"`
+	ShopReputation         bool           `json:"shop_reputation"`
+	ShopRate               float64        `json:"shop_rate"`
+	ShopBranchCount        int32          `json:"shop_branch_count"`
+	BarberRoleID           int32          `json:"barber_role_id"`
+	BarberRoleBarbershopID uuid.UUID      `json:"barber_role_barbershop_id"`
+}
+
+func (q *Queries) GetBarber(ctx context.Context, arg GetBarberParams) (GetBarberRow, error) {
+	row := q.db.QueryRowContext(ctx, getBarber, arg.ID, arg.ID_2)
+	var i GetBarberRow
+	err := row.Scan(
+		&i.ID,
+		&i.GenderID,
+		&i.Email,
+		&i.Phone,
+		&i.HashedPassword,
+		&i.NickName,
+		&i.FullName,
+		&i.Haircut,
+		&i.AvatarUrl,
+		&i.PasswordChangedAt,
+		&i.CreateAt,
+		&i.UpdateAt,
+		&i.ShopName,
+		&i.ShopAddress,
+		&i.ShopCoordinates,
+		&i.ShopStartTime,
+		&i.ShopEndTime,
+		&i.ShopBreakTime,
+		&i.ShopBreakMinutes,
+		&i.ShopIntervalScheduler,
+		&i.ShopReputation,
+		&i.ShopRate,
+		&i.ShopBranchCount,
+		&i.BarberRoleID,
+		&i.BarberRoleBarbershopID,
+	)
+	return i, err
+}
+
+const getEmailBarber = `-- name: GetEmailBarber :one
+SELECT id, gender_id, email, phone, hashed_password, nick_name, full_name, haircut, avatar_url, password_changed_at, create_at, update_at
+FROM "Barbers"
+WHERE email = $1
+LIMIT 1
+`
+
+func (q *Queries) GetEmailBarber(ctx context.Context, email string) (Barber, error) {
+	row := q.db.QueryRowContext(ctx, getEmailBarber, email)
+	var i Barber
+	err := row.Scan(
+		&i.ID,
+		&i.GenderID,
+		&i.Email,
+		&i.Phone,
+		&i.HashedPassword,
+		&i.NickName,
+		&i.FullName,
+		&i.Haircut,
+		&i.AvatarUrl,
+		&i.PasswordChangedAt,
+		&i.CreateAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}
+
+const listBarbersInBarberShop = `-- name: ListBarbersInBarberShop :many
+SELECT
+  b.id, b.gender_id, b.email, b.phone, b.hashed_password, b.nick_name, b.full_name, b.haircut, b.avatar_url, b.password_changed_at, b.create_at, b.update_at,
+  br."role_id" as "barber_role_id"
+FROM
+  "Barbers" b
+JOIN
+  "BarberRoles" br ON b."id" = br."barber_id"
+WHERE
+  br."barbershop_id" = $1
+`
+
+type ListBarbersInBarberShopRow struct {
+	ID                uuid.UUID      `json:"id"`
+	GenderID          sql.NullInt32  `json:"gender_id"`
+	Email             string         `json:"email"`
+	Phone             string         `json:"phone"`
+	HashedPassword    string         `json:"hashed_password"`
+	NickName          string         `json:"nick_name"`
+	FullName          string         `json:"full_name"`
+	Haircut           bool           `json:"haircut"`
+	AvatarUrl         sql.NullString `json:"avatar_url"`
+	PasswordChangedAt time.Time      `json:"password_changed_at"`
+	CreateAt          time.Time      `json:"create_at"`
+	UpdateAt          time.Time      `json:"update_at"`
+	BarberRoleID      int32          `json:"barber_role_id"`
+}
+
+func (q *Queries) ListBarbersInBarberShop(ctx context.Context, barbershopID uuid.UUID) ([]ListBarbersInBarberShopRow, error) {
+	rows, err := q.db.QueryContext(ctx, listBarbersInBarberShop, barbershopID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Barber{}
+	items := []ListBarbersInBarberShopRow{}
 	for rows.Next() {
-		var i Barber
+		var i ListBarbersInBarberShopRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.ShopID,
-			&i.ManagerID,
+			&i.GenderID,
+			&i.Email,
+			&i.Phone,
+			&i.HashedPassword,
 			&i.NickName,
 			&i.FullName,
-			&i.Phone,
-			&i.Email,
-			&i.Gender,
-			&i.Role,
 			&i.Haircut,
-			&i.HashedPassword,
-			&i.Avatar,
-			&i.Status,
+			&i.AvatarUrl,
 			&i.PasswordChangedAt,
-			&i.CreatedAt,
-			&i.UpdatedAt,
+			&i.CreateAt,
+			&i.UpdateAt,
+			&i.BarberRoleID,
 		); err != nil {
 			return nil, err
 		}
@@ -159,196 +269,66 @@ func (q *Queries) GetBarbersInBarberShop(ctx context.Context, shopID uuid.NullUU
 	return items, nil
 }
 
-const getEmailBarber = `-- name: GetEmailBarber :one
-SELECT id, shop_id, manager_id, nick_name, full_name, phone, email, gender, role, haircut, hashed_password, avatar, status, password_changed_at, created_at, updated_at
-FROM "Barbers"
-WHERE email = $1
-LIMIT 1
-`
-
-// query other
-func (q *Queries) GetEmailBarber(ctx context.Context, email string) (Barber, error) {
-	row := q.db.QueryRowContext(ctx, getEmailBarber, email)
-	var i Barber
-	err := row.Scan(
-		&i.ID,
-		&i.ShopID,
-		&i.ManagerID,
-		&i.NickName,
-		&i.FullName,
-		&i.Phone,
-		&i.Email,
-		&i.Gender,
-		&i.Role,
-		&i.Haircut,
-		&i.HashedPassword,
-		&i.Avatar,
-		&i.Status,
-		&i.PasswordChangedAt,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const readBarber = `-- name: ReadBarber :one
-SELECT
-  b.id, b.shop_id, b.manager_id, b.nick_name, b.full_name, b.phone, b.email, b.gender, b.role, b.haircut, b.hashed_password, b.avatar, b.status, b.password_changed_at, b.created_at, b.updated_at, 
-  bs."name" as "shop_name",
-  bs."address" as "shop_address",
-  bs."coordinates" as "shop_coordinates",
-  bs."start_time" as "shop_start_time",
-  bs."end_time" as "shop_end_time",
-  bs."break_time" as "shop_break_time",
-  bs."break_minutes" as "shop_break_minutes",
-  bs."interval_scheduler" as "shop_interval_scheduler",
-  bs."reputation" as "shop_reputation",
-  bs."facility" as "shop_facility",
-  bs."rate" as "shop_rate"
-FROM
-  "Barbers" b
-JOIN
-  "BarberShops" bs ON b."shop_id" = bs."shop_id"
-WHERE
-  b."id" = $1
-`
-
-type ReadBarberRow struct {
-	ID                    uuid.UUID      `json:"id"`
-	ShopID                uuid.NullUUID  `json:"shop_id"`
-	ManagerID             uuid.NullUUID  `json:"manager_id"`
-	NickName              string         `json:"nick_name"`
-	FullName              string         `json:"full_name"`
-	Phone                 string         `json:"phone"`
-	Email                 string         `json:"email"`
-	Gender                int32          `json:"gender"`
-	Role                  int32          `json:"role"`
-	Haircut               bool           `json:"haircut"`
-	HashedPassword        string         `json:"hashed_password"`
-	Avatar                sql.NullString `json:"avatar"`
-	Status                sql.NullInt32  `json:"status"`
-	PasswordChangedAt     time.Time      `json:"password_changed_at"`
-	CreatedAt             time.Time      `json:"created_at"`
-	UpdatedAt             time.Time      `json:"updated_at"`
-	ShopName              string         `json:"shop_name"`
-	ShopAddress           string         `json:"shop_address"`
-	ShopCoordinates       string         `json:"shop_coordinates"`
-	ShopStartTime         pgtype.Time    `json:"shop_start_time"`
-	ShopEndTime           pgtype.Time    `json:"shop_end_time"`
-	ShopBreakTime         pgtype.Time    `json:"shop_break_time"`
-	ShopBreakMinutes      int32          `json:"shop_break_minutes"`
-	ShopIntervalScheduler int32          `json:"shop_interval_scheduler"`
-	ShopReputation        bool           `json:"shop_reputation"`
-	ShopFacility          int32          `json:"shop_facility"`
-	ShopRate              float64        `json:"shop_rate"`
-}
-
-func (q *Queries) ReadBarber(ctx context.Context, id uuid.UUID) (ReadBarberRow, error) {
-	row := q.db.QueryRowContext(ctx, readBarber, id)
-	var i ReadBarberRow
-	err := row.Scan(
-		&i.ID,
-		&i.ShopID,
-		&i.ManagerID,
-		&i.NickName,
-		&i.FullName,
-		&i.Phone,
-		&i.Email,
-		&i.Gender,
-		&i.Role,
-		&i.Haircut,
-		&i.HashedPassword,
-		&i.Avatar,
-		&i.Status,
-		&i.PasswordChangedAt,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.ShopName,
-		&i.ShopAddress,
-		&i.ShopCoordinates,
-		&i.ShopStartTime,
-		&i.ShopEndTime,
-		&i.ShopBreakTime,
-		&i.ShopBreakMinutes,
-		&i.ShopIntervalScheduler,
-		&i.ShopReputation,
-		&i.ShopFacility,
-		&i.ShopRate,
-	)
-	return i, err
-}
-
 const updateBarber = `-- name: UpdateBarber :one
 UPDATE "Barbers"
-set shop_id = coalesce($1, shop_id),
-  nick_name = coalesce($2, nick_name),
-  full_name = coalesce($3, full_name),
+SET 
+  gender_id = coalesce($2, gender_id),
+  email = coalesce($3, email),
   phone = coalesce($4, phone),
-  email = coalesce($5, email),
-  gender = coalesce($6, gender),
-  avatar = coalesce($7, avatar),
-  "status" = coalesce($8, status),
-  "hashed_password" = coalesce($9, hashed_password),
+  "hashed_password" = coalesce($5, hashed_password),
+  nick_name = coalesce($6, nick_name),
+  full_name = coalesce($7, full_name),
+  haircut = coalesce($8, haircut),
+  avatar_url = coalesce($9, avatar_url),
   "password_changed_at" = coalesce(
     $10,
     password_changed_at
   ),
-  "updated_at" = $11,
-  "haircut" = coalesce($12, haircut)
-  WHERE "id" = $13
-RETURNING id, shop_id, manager_id, nick_name, full_name, phone, email, gender, role, haircut, hashed_password, avatar, status, password_changed_at, created_at, updated_at
+  "updated_at" = now()
+  WHERE "id" = $1
+RETURNING id, gender_id, email, phone, hashed_password, nick_name, full_name, haircut, avatar_url, password_changed_at, create_at, update_at
 `
 
 type UpdateBarberParams struct {
-	ShopID            uuid.NullUUID  `json:"shop_id"`
+	ID                uuid.UUID      `json:"id"`
+	GenderID          sql.NullInt32  `json:"gender_id"`
+	Email             sql.NullString `json:"email"`
+	Phone             sql.NullString `json:"phone"`
+	HashedPassword    sql.NullString `json:"hashed_password"`
 	NickName          sql.NullString `json:"nick_name"`
 	FullName          sql.NullString `json:"full_name"`
-	Phone             sql.NullString `json:"phone"`
-	Email             sql.NullString `json:"email"`
-	Gender            sql.NullInt32  `json:"gender"`
-	Avatar            sql.NullString `json:"avatar"`
-	Status            sql.NullInt32  `json:"status"`
-	HashedPassword    sql.NullString `json:"hashed_password"`
-	PasswordChangedAt sql.NullTime   `json:"password_changed_at"`
-	UpdatedAt         time.Time      `json:"updated_at"`
 	Haircut           sql.NullBool   `json:"haircut"`
-	ID                uuid.UUID      `json:"id"`
+	AvatarUrl         sql.NullString `json:"avatar_url"`
+	PasswordChangedAt sql.NullTime   `json:"password_changed_at"`
 }
 
 func (q *Queries) UpdateBarber(ctx context.Context, arg UpdateBarberParams) (Barber, error) {
 	row := q.db.QueryRowContext(ctx, updateBarber,
-		arg.ShopID,
+		arg.ID,
+		arg.GenderID,
+		arg.Email,
+		arg.Phone,
+		arg.HashedPassword,
 		arg.NickName,
 		arg.FullName,
-		arg.Phone,
-		arg.Email,
-		arg.Gender,
-		arg.Avatar,
-		arg.Status,
-		arg.HashedPassword,
-		arg.PasswordChangedAt,
-		arg.UpdatedAt,
 		arg.Haircut,
-		arg.ID,
+		arg.AvatarUrl,
+		arg.PasswordChangedAt,
 	)
 	var i Barber
 	err := row.Scan(
 		&i.ID,
-		&i.ShopID,
-		&i.ManagerID,
+		&i.GenderID,
+		&i.Email,
+		&i.Phone,
+		&i.HashedPassword,
 		&i.NickName,
 		&i.FullName,
-		&i.Phone,
-		&i.Email,
-		&i.Gender,
-		&i.Role,
 		&i.Haircut,
-		&i.HashedPassword,
-		&i.Avatar,
-		&i.Status,
+		&i.AvatarUrl,
 		&i.PasswordChangedAt,
-		&i.CreatedAt,
-		&i.UpdatedAt,
+		&i.CreateAt,
+		&i.UpdateAt,
 	)
 	return i, err
 }
