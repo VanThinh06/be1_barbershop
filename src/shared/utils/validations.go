@@ -13,12 +13,12 @@ var (
 	emailRegex    = `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
 	e164Regex     = regexp.MustCompile(`^\+84\d{9,10}$`)
 	vietnamRegex  = regexp.MustCompile(`^0\d{9}$`)
-	numberRegex = regexp.MustCompile(`^\d+$`)
+	numberRegex   = regexp.MustCompile(`^\d+$`)
 )
 
 const (
 	minNumberLength = 1
-	maxNumberLength = 10 // Thay đổi giới hạn tùy thuộc vào yêu cầu cụ thể
+	maxNumberLength = 10
 )
 
 func ValidateNumber(number string) error {
@@ -74,7 +74,6 @@ func ValidateId(id string) error {
 	return nil
 }
 
-// ValidatePhoneNumber kiểm tra tính hợp lệ của số điện thoại.
 func ValidatePhoneNumber(phoneNumber string) error {
 	normalizedNumber := regexp.MustCompile(`\D`).ReplaceAllString(phoneNumber, "")
 	if e164Regex.MatchString(normalizedNumber) {
@@ -88,7 +87,6 @@ func ValidatePhoneNumber(phoneNumber string) error {
 	return errors.New("invalid phone number format")
 }
 
-// ValidateFullName kiểm tra tính hợp lệ của họ và tên.
 func ValidateFullName(fullName string) error {
 	if err := ValidateString(fullName, 3, 50); err != nil {
 		return err
@@ -103,7 +101,6 @@ func ValidateFullName(fullName string) error {
 	return nil
 }
 
-// ValidateNickname kiểm tra tính hợp lệ của nickname.
 func ValidateNickname(nickname string) error {
 	if err := ValidateString(nickname, 1, 20); err != nil {
 		return err

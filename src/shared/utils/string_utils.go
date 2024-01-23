@@ -10,11 +10,9 @@ import (
 
 func GetRemainingString(fullString, subString string) string {
 	index := strings.Index(fullString, subString)
-
 	if index != -1 {
 		return fullString[index+len(subString):]
 	}
-
 	return ""
 }
 
@@ -22,7 +20,6 @@ func GetValueAtIndex(arr []string, index int) (string, error) {
 	if index >= 0 && index < len(arr) {
 		return arr[index], nil
 	}
-
 	return "", errors.New("Chỉ số nằm ngoài phạm vi của mảng")
 }
 
@@ -36,7 +33,6 @@ func ConvertStringToInt(str string) (int, error) {
 
 func ConvertStringListToUUIDList(stringList []string) ([]uuid.UUID, error) {
 	var uuidList []uuid.UUID
-
 	for _, str := range stringList {
 		uuidVal, err := uuid.Parse(str)
 		if err != nil {
@@ -44,6 +40,5 @@ func ConvertStringListToUUIDList(stringList []string) ([]uuid.UUID, error) {
 		}
 		uuidList = append(uuidList, uuidVal)
 	}
-
 	return uuidList, nil
 }

@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"math/rand"
 	"strings"
+	"time"
 	// "time"
 )
 
 func init() {
-	// rand.Seed(time.Now().UnixNano())
+	rand.Seed(time.Now().UnixNano())
 }
 
 const alphabet = "abcdefghijklmnopqrstuvwxyz"

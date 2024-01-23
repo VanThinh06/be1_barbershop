@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message DeleteBarberShopChainRequest{
+    string id = 1;
+}
+
+message DeleteBarberShopChainResponse{
+    string status = 1;
+}

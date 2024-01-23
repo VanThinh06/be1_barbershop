@@ -7,7 +7,7 @@ const (
 	Other
 )
 
-// role 
+
 type role int
 const (
 	HairStylist role = iota + 1

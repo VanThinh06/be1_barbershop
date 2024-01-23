@@ -9,7 +9,6 @@ SET "name" = $1
 WHERE "id" = $2
 RETURNING *;
 
--- name: DeleteBarberShopChain
+-- name: DeleteBarberShopChain :exec
 DELETE FROM "BarberShopChains"
-WHERE "id" = $1
-RETURNING *;
+WHERE "id" = $1;

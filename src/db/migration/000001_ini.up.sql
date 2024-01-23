@@ -58,7 +58,7 @@ CREATE TABLE "Barbers" (
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
-CREATE TABLE "BarberManager" (
+CREATE TABLE "BarberManagers" (
   "barber_id" uuid,
   "manager_id" uuid,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
