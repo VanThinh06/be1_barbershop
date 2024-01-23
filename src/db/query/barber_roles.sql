@@ -1,17 +1,3 @@
--- name: GetBarbersRoles
-SELECT "BarberRoles".*, "Roles"."name" as role_name
-FROM "BarberRoles"
-JOIN "Roles" ON "BarberRoles"."role_id" = "Roles"."id"
-WHERE "BarberRoles"."barber_id" = $1 AND "BarberRoles"."barbershop_id" = $2
-LIMIT 1;
-
--- name: ListBarbersRoles
-SELECT "BarberRoles".*, "Roles"."name" as role_name
-FROM "BarberRoles"
-JOIN "Roles" ON "BarberRoles"."role_id" = "Roles"."id"
-WHERE "BarberRoles"."barbershop_id" = $1
-ORDER BY "Roles"."id";
-
 -- name: CreateBarberRoles :one
 INSERT INTO "BarberRoles" (
     barber_id,
@@ -25,14 +11,28 @@ VALUES (
   )
 RETURNING *;
 
--- name: UpdateBarberRole
+-- name: GetBarberRoles :one
+SELECT "BarberRoles".*, "Roles"."name" as role_name
+FROM "BarberRoles"
+JOIN "Roles" ON "BarberRoles"."role_id" = "Roles"."id"
+WHERE "BarberRoles"."barber_id" = $1 AND "BarberRoles"."barbershop_id" = $2
+LIMIT 1;
+
+-- name: ListBarbersRoles :many
+SELECT *
+FROM "BarberRoles"
+JOIN "Roles" ON "BarberRoles"."role_id" = "Roles"."id"
+WHERE "BarberRoles"."barbershop_id" = $1
+ORDER BY "Roles"."id";
+
+
+-- name: UpdateBarberRole :one
 UPDATE "BarberRoles"
 SET "role_id" = $1,
     "update_at" = NOW()
 WHERE "id" = $2
 RETURNING *;
 
--- name: DeleteBarberRole
+-- name: DeleteBarberRole :exec
 DELETE FROM "BarberRoles"
-WHERE "id" = $1
-RETURNING *;
+WHERE "id" = $1;

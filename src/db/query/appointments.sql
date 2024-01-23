@@ -1,20 +1,19 @@
 -- name: InsertAppointmentAndGetInfo :one
 WITH inserted_appointment AS (
     INSERT INTO "Appointments" (
-        barbershops_id,
+        barbershop_id,
         customer_id,
         barber_id,    
         appointment_datetime,
-        "timer",
         "status"  
     )
-    VALUES ($1, $2, $3, $4, $5, $6)
+    VALUES ($1, $2, $3, $4, $5)
     RETURNING *
 )
 SELECT 
     "inserted_appointment".*,
     "Barbers".nick_name AS barber_nick_name,
-    "SessionsBarbers".fcm_device,
+    "SessionsBarber".fcm_device,
     "BarberShops"."name" AS name_barber_shop
 FROM 
     "inserted_appointment"
@@ -23,23 +22,23 @@ JOIN
 JOIN 
     "BarberShops" ON "inserted_appointment".barbershops_id = "BarberShops".shop_id
 LEFT JOIN 
-    "SessionsBarbers" ON "Barbers".barber_id = "SessionsBarbers".barber_id
+    "SessionsBarber" ON "Barbers".id = "SessionsBarber".barber_id
 ORDER BY 
-    "SessionsBarbers".created_at DESC
+    "SessionsBarber".create_at DESC
 LIMIT 1;
 
 -- name: InsertServicesForAppointment :many
-INSERT INTO "Services_Appointments" ("Services_id", "Appointments_service_id")
-SELECT unnest(sqlc.arg(Services_id)::uuid[]), $1
-RETURNING "Services_id", "Appointments_service_id";
+INSERT INTO "BarberShopServices_Appointments" ("BarberShopServices_id", "Appointments_service_id")
+SELECT unnest(sqlc.arg(services_id)::uuid[]), $1
+RETURNING "BarberShopServices_id", "Appointments_service_id";
 
--- name: GetAppointmentByDateWithService :many
+-- name: ListAppointmentByDateWithService :many
 SELECT 
     "Appointments".*,
     SUM("Services"."timer") AS "service_timer"
 FROM "Appointments"
-LEFT JOIN "Services_Appointments" ON "Appointments"."id" = "Services_Appointments"."Appointments_service_id"
-LEFT JOIN "Services" ON "Services_Appointments"."Services_id" = "Services"."id"
+LEFT JOIN "BarberShopServices_Appointments" ON "Appointments"."id" = "BarberShopServices_Appointments"."Appointments_service_id"
+LEFT JOIN "BarberShopServices" ON "BarberShopServices_Appointments"."Services_id" = "BarberShopServices"."id"
 WHERE DATE("Appointments"."appointment_datetime") = $1
     AND "Appointments"."barber_id" = $2
 GROUP BY "Appointments"."id", "Appointments"."appointment_datetime" 

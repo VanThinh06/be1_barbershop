@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package pb;
+
+import "barber/barber_roles.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message ListBarberRolesRequest{
+    string barbershop_id = 1;
+}
+
+message ListBarberRolesResponse {
+    repeated BarberRoles barber_roles = 1;
+}

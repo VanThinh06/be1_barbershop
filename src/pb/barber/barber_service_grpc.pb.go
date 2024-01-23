@@ -19,6 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
+	BarberService_CreateBarberRoles_FullMethodName            = "/pb.BarberService/CreateBarberRoles"
+	BarberService_GetBarberRoles_FullMethodName               = "/pb.BarberService/GetBarberRoles"
+	BarberService_ListBarberRoles_FullMethodName              = "/pb.BarberService/ListBarberRoles"
+	BarberService_UpdateBarberRoles_FullMethodName            = "/pb.BarberService/UpdateBarberRoles"
+	BarberService_DeleteBarberRoles_FullMethodName            = "/pb.BarberService/DeleteBarberRoles"
 	BarberService_CreateBarber_FullMethodName                 = "/pb.BarberService/CreateBarber"
 	BarberService_GetBarber_FullMethodName                    = "/pb.BarberService/GetBarber"
 	BarberService_UpdateBarber_FullMethodName                 = "/pb.BarberService/UpdateBarber"
@@ -45,6 +50,11 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BarberServiceClient interface {
+	CreateBarberRoles(ctx context.Context, in *CreateBarberRolesRequest, opts ...grpc.CallOption) (*CreateBarberRolesResponse, error)
+	GetBarberRoles(ctx context.Context, in *GetBarberRolesRequest, opts ...grpc.CallOption) (*GetBarberRolesResponse, error)
+	ListBarberRoles(ctx context.Context, in *ListBarberRolesRequest, opts ...grpc.CallOption) (*ListBarberRolesResponse, error)
+	UpdateBarberRoles(ctx context.Context, in *UpdateBarberRolesRequest, opts ...grpc.CallOption) (*UpdateBarberRolesResponse, error)
+	DeleteBarberRoles(ctx context.Context, in *DeleteBarberRolesRequest, opts ...grpc.CallOption) (*DeleteBarberRolesResponse, error)
 	CreateBarber(ctx context.Context, in *CreateBarberRequest, opts ...grpc.CallOption) (*CreateBarberResponse, error)
 	GetBarber(ctx context.Context, in *GetBarberRequest, opts ...grpc.CallOption) (*GetBarberResponse, error)
 	UpdateBarber(ctx context.Context, in *UpdateBarberRequest, opts ...grpc.CallOption) (*UpdateBarberResponse, error)
@@ -75,6 +85,51 @@ type barberServiceClient struct {
 
 func NewBarberServiceClient(cc grpc.ClientConnInterface) BarberServiceClient {
 	return &barberServiceClient{cc}
+}
+
+func (c *barberServiceClient) CreateBarberRoles(ctx context.Context, in *CreateBarberRolesRequest, opts ...grpc.CallOption) (*CreateBarberRolesResponse, error) {
+	out := new(CreateBarberRolesResponse)
+	err := c.cc.Invoke(ctx, BarberService_CreateBarberRoles_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *barberServiceClient) GetBarberRoles(ctx context.Context, in *GetBarberRolesRequest, opts ...grpc.CallOption) (*GetBarberRolesResponse, error) {
+	out := new(GetBarberRolesResponse)
+	err := c.cc.Invoke(ctx, BarberService_GetBarberRoles_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *barberServiceClient) ListBarberRoles(ctx context.Context, in *ListBarberRolesRequest, opts ...grpc.CallOption) (*ListBarberRolesResponse, error) {
+	out := new(ListBarberRolesResponse)
+	err := c.cc.Invoke(ctx, BarberService_ListBarberRoles_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *barberServiceClient) UpdateBarberRoles(ctx context.Context, in *UpdateBarberRolesRequest, opts ...grpc.CallOption) (*UpdateBarberRolesResponse, error) {
+	out := new(UpdateBarberRolesResponse)
+	err := c.cc.Invoke(ctx, BarberService_UpdateBarberRoles_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *barberServiceClient) DeleteBarberRoles(ctx context.Context, in *DeleteBarberRolesRequest, opts ...grpc.CallOption) (*DeleteBarberRolesResponse, error) {
+	out := new(DeleteBarberRolesResponse)
+	err := c.cc.Invoke(ctx, BarberService_DeleteBarberRoles_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *barberServiceClient) CreateBarber(ctx context.Context, in *CreateBarberRequest, opts ...grpc.CallOption) (*CreateBarberResponse, error) {
@@ -261,6 +316,11 @@ func (c *barberServiceClient) CreateChain(ctx context.Context, in *CreateChainRe
 // All implementations must embed UnimplementedBarberServiceServer
 // for forward compatibility
 type BarberServiceServer interface {
+	CreateBarberRoles(context.Context, *CreateBarberRolesRequest) (*CreateBarberRolesResponse, error)
+	GetBarberRoles(context.Context, *GetBarberRolesRequest) (*GetBarberRolesResponse, error)
+	ListBarberRoles(context.Context, *ListBarberRolesRequest) (*ListBarberRolesResponse, error)
+	UpdateBarberRoles(context.Context, *UpdateBarberRolesRequest) (*UpdateBarberRolesResponse, error)
+	DeleteBarberRoles(context.Context, *DeleteBarberRolesRequest) (*DeleteBarberRolesResponse, error)
 	CreateBarber(context.Context, *CreateBarberRequest) (*CreateBarberResponse, error)
 	GetBarber(context.Context, *GetBarberRequest) (*GetBarberResponse, error)
 	UpdateBarber(context.Context, *UpdateBarberRequest) (*UpdateBarberResponse, error)
@@ -290,6 +350,21 @@ type BarberServiceServer interface {
 type UnimplementedBarberServiceServer struct {
 }
 
+func (UnimplementedBarberServiceServer) CreateBarberRoles(context.Context, *CreateBarberRolesRequest) (*CreateBarberRolesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateBarberRoles not implemented")
+}
+func (UnimplementedBarberServiceServer) GetBarberRoles(context.Context, *GetBarberRolesRequest) (*GetBarberRolesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBarberRoles not implemented")
+}
+func (UnimplementedBarberServiceServer) ListBarberRoles(context.Context, *ListBarberRolesRequest) (*ListBarberRolesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListBarberRoles not implemented")
+}
+func (UnimplementedBarberServiceServer) UpdateBarberRoles(context.Context, *UpdateBarberRolesRequest) (*UpdateBarberRolesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBarberRoles not implemented")
+}
+func (UnimplementedBarberServiceServer) DeleteBarberRoles(context.Context, *DeleteBarberRolesRequest) (*DeleteBarberRolesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBarberRoles not implemented")
+}
 func (UnimplementedBarberServiceServer) CreateBarber(context.Context, *CreateBarberRequest) (*CreateBarberResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBarber not implemented")
 }
@@ -361,6 +436,96 @@ type UnsafeBarberServiceServer interface {
 
 func RegisterBarberServiceServer(s grpc.ServiceRegistrar, srv BarberServiceServer) {
 	s.RegisterService(&BarberService_ServiceDesc, srv)
+}
+
+func _BarberService_CreateBarberRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateBarberRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).CreateBarberRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_CreateBarberRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).CreateBarberRoles(ctx, req.(*CreateBarberRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BarberService_GetBarberRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBarberRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).GetBarberRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_GetBarberRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).GetBarberRoles(ctx, req.(*GetBarberRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BarberService_ListBarberRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListBarberRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).ListBarberRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_ListBarberRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).ListBarberRoles(ctx, req.(*ListBarberRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BarberService_UpdateBarberRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBarberRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).UpdateBarberRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_UpdateBarberRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).UpdateBarberRoles(ctx, req.(*UpdateBarberRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BarberService_DeleteBarberRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteBarberRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).DeleteBarberRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_DeleteBarberRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).DeleteBarberRoles(ctx, req.(*DeleteBarberRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _BarberService_CreateBarber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -730,6 +895,26 @@ var BarberService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.BarberService",
 	HandlerType: (*BarberServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateBarberRoles",
+			Handler:    _BarberService_CreateBarberRoles_Handler,
+		},
+		{
+			MethodName: "GetBarberRoles",
+			Handler:    _BarberService_GetBarberRoles_Handler,
+		},
+		{
+			MethodName: "ListBarberRoles",
+			Handler:    _BarberService_ListBarberRoles_Handler,
+		},
+		{
+			MethodName: "UpdateBarberRoles",
+			Handler:    _BarberService_UpdateBarberRoles_Handler,
+		},
+		{
+			MethodName: "DeleteBarberRoles",
+			Handler:    _BarberService_DeleteBarberRoles_Handler,
+		},
 		{
 			MethodName: "CreateBarber",
 			Handler:    _BarberService_CreateBarber_Handler,

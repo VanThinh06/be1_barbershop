@@ -13,8 +13,7 @@ import (
 )
 
 const createSessionsCustomer = `-- name: CreateSessionsCustomer :one
-INSERT INTO "SessionsCustomers" (
-                               id,
+INSERT INTO "SessionsCustomer" (
                                customer_id,
                                refresh_token,
                                user_agent,
@@ -33,13 +32,11 @@ VALUES ($1,
         $6,
         $7,
         $8,
-        $9,
-        ST_GeographyFromText('POINT(' || $10::float8 || ' ' || $11::float8 || ')')
-        ) RETURNING id, customer_id, refresh_token, user_agent, client_ip, fcm_device, timezone, coordinates, is_blocked, expires_at, created_at
+        ST_GeographyFromText('POINT(' || $9::float8 || ' ' || $10::float8 || ')')
+        ) RETURNING id, customer_id, refresh_token, user_agent, client_ip, fcm_device, timezone, coordinates, is_blocked, expires_at, create_at
 `
 
 type CreateSessionsCustomerParams struct {
-	ID           uuid.UUID `json:"id"`
 	CustomerID   uuid.UUID `json:"customer_id"`
 	RefreshToken string    `json:"refresh_token"`
 	UserAgent    string    `json:"user_agent"`
@@ -54,7 +51,6 @@ type CreateSessionsCustomerParams struct {
 
 func (q *Queries) CreateSessionsCustomer(ctx context.Context, arg CreateSessionsCustomerParams) (SessionsCustomer, error) {
 	row := q.db.QueryRowContext(ctx, createSessionsCustomer,
-		arg.ID,
 		arg.CustomerID,
 		arg.RefreshToken,
 		arg.UserAgent,
@@ -78,66 +74,48 @@ func (q *Queries) CreateSessionsCustomer(ctx context.Context, arg CreateSessions
 		&i.Coordinates,
 		&i.IsBlocked,
 		&i.ExpiresAt,
-		&i.CreatedAt,
+		&i.CreateAt,
 	)
 	return i, err
 }
 
 const getSessionsCustomer = `-- name: GetSessionsCustomer :one
-SELECT id, customer_id, refresh_token, user_agent, client_ip, fcm_device, timezone, coordinates, is_blocked, expires_at, created_at
-FROM "SessionsCustomers"
+SELECT id, barber_id, refresh_token, user_agent, client_ip, fcm_device, is_blocked, expires_at, create_at
+FROM "SessionsBarber"
 WHERE id = $1
 LIMIT 1
 `
 
-func (q *Queries) GetSessionsCustomer(ctx context.Context, id uuid.UUID) (SessionsCustomer, error) {
+func (q *Queries) GetSessionsCustomer(ctx context.Context, id uuid.UUID) (SessionsBarber, error) {
 	row := q.db.QueryRowContext(ctx, getSessionsCustomer, id)
-	var i SessionsCustomer
+	var i SessionsBarber
 	err := row.Scan(
 		&i.ID,
-		&i.CustomerID,
+		&i.BarberID,
 		&i.RefreshToken,
 		&i.UserAgent,
 		&i.ClientIp,
 		&i.FcmDevice,
-		&i.Timezone,
-		&i.Coordinates,
 		&i.IsBlocked,
 		&i.ExpiresAt,
-		&i.CreatedAt,
+		&i.CreateAt,
 	)
 	return i, err
 }
 
-const updateRefreshTokenSessionsCustomer = `-- name: UpdateRefreshTokenSessionsCustomer :one
-UPDATE "SessionsCustomers"
-set refresh_token = $2,
-    expires_at = $3
+const updateSessionsCustomer = `-- name: UpdateSessionsCustomer :exec
+UPDATE "SessionsBarber"
+SET refresh_token = $2,
+ "expires_at" = now() + interval '30 minutes'
 WHERE id = $1
-RETURNING id, customer_id, refresh_token, user_agent, client_ip, fcm_device, timezone, coordinates, is_blocked, expires_at, created_at
 `
 
-type UpdateRefreshTokenSessionsCustomerParams struct {
+type UpdateSessionsCustomerParams struct {
 	ID           uuid.UUID `json:"id"`
 	RefreshToken string    `json:"refresh_token"`
-	ExpiresAt    time.Time `json:"expires_at"`
 }
 
-func (q *Queries) UpdateRefreshTokenSessionsCustomer(ctx context.Context, arg UpdateRefreshTokenSessionsCustomerParams) (SessionsCustomer, error) {
-	row := q.db.QueryRowContext(ctx, updateRefreshTokenSessionsCustomer, arg.ID, arg.RefreshToken, arg.ExpiresAt)
-	var i SessionsCustomer
-	err := row.Scan(
-		&i.ID,
-		&i.CustomerID,
-		&i.RefreshToken,
-		&i.UserAgent,
-		&i.ClientIp,
-		&i.FcmDevice,
-		&i.Timezone,
-		&i.Coordinates,
-		&i.IsBlocked,
-		&i.ExpiresAt,
-		&i.CreatedAt,
-	)
-	return i, err
+func (q *Queries) UpdateSessionsCustomer(ctx context.Context, arg UpdateSessionsCustomerParams) error {
+	_, err := q.db.ExecContext(ctx, updateSessionsCustomer, arg.ID, arg.RefreshToken)
+	return err
 }

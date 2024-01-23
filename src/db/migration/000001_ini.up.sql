@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE "Roles" (
   "id" serial  PRIMARY KEY,
   "name" varchar UNIQUE NOT NULL,
-  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
@@ -12,14 +12,14 @@ CREATE TABLE "BarberRoles" (
   "barber_id" uuid NOT NULL,
   "barbershop_id" uuid NOT NULL,
   "role_id" integer NOT NULL,
-  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
 CREATE TABLE "BarberShopChains" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" varchar UNIQUE NOT NULL,
-  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
@@ -39,7 +39,7 @@ CREATE TABLE "BarberShops" (
   "break_minutes" integer NOT NULL DEFAULT 60,
   "interval_scheduler" integer NOT NULL DEFAULT 30,
   "reputation" bool NOT NULL DEFAULT false,
-  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
@@ -54,14 +54,14 @@ CREATE TABLE "Barbers" (
   "haircut" bool NOT NULL DEFAULT false,
   "avatar_url" varchar,
   "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
-  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
 CREATE TABLE "BarberManager" (
   "barber_id" uuid,
   "manager_id" uuid,
-  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
@@ -86,7 +86,7 @@ CREATE TABLE "ServiceCategories" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" varchar NOT NULL,
   "is_global" bool NOT NULL DEFAULT false,
-  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
@@ -95,7 +95,7 @@ CREATE TABLE "BarberShopServiceCategories" (
   "barbershop_chain_id" uuid,
   "barbershop_id" uuid,
   "service_category_id" uuid,
-  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
@@ -112,7 +112,7 @@ CREATE TABLE "BarberShopServices" (
   "image" varchar,
   "is_custom" bool NOT NULL DEFAULT false,
   "is_removed" bool NOT NULL DEFAULT false,
-  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
@@ -152,7 +152,7 @@ CREATE TABLE "Appointments" (
   "service_id" uuid NOT NULL,
   "appointment_datetime" timestamptz NOT NULL,
   "status" integer NOT NULL,
-  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
@@ -185,8 +185,8 @@ CREATE TABLE "BarberShopReviews" (
   "barbershop_id" uuid NOT NULL,
   "rating" integer NOT NULL,
   "comment" varchar,
-  "created_at" timestamptz NOT NULL DEFAULT (now()),
-  "updated_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
+  "create_at" timestamptz NOT NULL DEFAULT (now()),
+  "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
 CREATE TABLE "BarberReviews" (
@@ -195,7 +195,7 @@ CREATE TABLE "BarberReviews" (
   "customer_id" uuid NOT NULL,
   "rating" integer NOT NULL,
   "comment" varchar,
-  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
@@ -205,12 +205,16 @@ CREATE INDEX ON "BarberRoles" ("barbershop_id");
 
 CREATE INDEX ON "BarberRoles" ("role_id");
 
+CREATE INDEX ON "BarberShopChains" ("name");
+
 CREATE INDEX ON "BarberShops" ("barbershop_chain_id");
 
 CREATE INDEX ON "BarberShops" ("name");
 
 CREATE UNIQUE INDEX ON "BarberShops" ("barbershop_chain_id", "branch_count");
 
+CREATE INDEX ON "Barbers" ("phone");
+CREATE INDEX ON "Barbers" ("email");
 CREATE INDEX ON "Barbers" ("nick_name");
 
 CREATE INDEX ON "BarberManager" ("barber_id");
