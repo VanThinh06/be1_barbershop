@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+import "barber/barbershop_service_categories.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message DeleteBarberShopServiceCategoriesRequest{
+    string id = 1;
+}
+
+message DeleteBarberShopServiceCategoriesResponse{
+    string status = 1;
+}

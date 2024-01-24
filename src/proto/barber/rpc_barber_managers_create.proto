@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package pb;
 
-import "google/protobuf/timestamp.proto";
 import "barber/barber_managers.proto";
 
 option go_package = "barbershop/src/pb/barber";
@@ -11,8 +10,6 @@ option go_package = "barbershop/src/pb/barber";
 message CreateBarberManagersRequest{
     string barber_id = 1;
     string manager_id = 2;
-    google.protobuf.Timestamp create_at = 3;
-    google.protobuf.Timestamp update_at = 4;
 }
 
 message CreateBarberManagersResponse{

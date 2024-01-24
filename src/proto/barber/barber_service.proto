@@ -32,7 +32,6 @@ import "barber/rpc_barber_refresh_token.proto";
 
 import "barber/rpc_barber_managers_create.proto";
 import "barber/rpc_barber_managers_get.proto";
-import "barber/rpc_barber_managers_update.proto";
 import "barber/rpc_barber_managers_delete.proto";
 
 
@@ -267,18 +266,6 @@ rpc GetBarberManagers (GetBarberManagersRequest) returns (GetBarberManagersRespo
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
     description: "API endpoint to get detail barber manager"
     summary: "Get a barber manager"
-    tags: "barber managers"
-  };
-}
-
-rpc UpdateBarberManagers (UpdateBarberManagersRequest) returns (UpdateBarberManagersResponse){
-  option (google.api.http) = {
-            put: "/v1/barber-managers"
-            body: "*"
-          };
-  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-    description: "API endpoint to update barber manager"
-    summary: "Update a barber manager"
     tags: "barber managers"
   };
 }

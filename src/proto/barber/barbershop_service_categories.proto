@@ -11,6 +11,7 @@ message BarberShopServiceCategories {
     string barbershop_chain_id = 2;
     string barbershop_id = 3;
     string service_category_id = 4;
-    google.protobuf.Timestamp create_at = 5;
-    google.protobuf.Timestamp update_at = 6;
+    string name = 5;
+    google.protobuf.Timestamp create_at = 6;
+    google.protobuf.Timestamp update_at = 7;
 }

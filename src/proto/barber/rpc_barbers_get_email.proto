@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package pb;
+
+import "barber/barbers.proto";
+import "barber/time_of_day.proto";
+option go_package = "barbershop/src/pb/barber";
+
+
+message GetBarbersEmailRequest{
+    string email = 1;
+}
+
+message GetBarbersEmailResponse {
+    Barbers barber = 1;
+    // string shop_name = 2;
+    // string shop_address = 3;
+    // string shop_image = 4;
+    // float shop_distance = 5;
+    // int32 shop_facility = 6;
+    // optional TimeOfDay start_time = 7;
+    // optional TimeOfDay end_time = 8;
+    // optional TimeOfDay break_time = 9;
+    // int32 break_minutes = 10;
+    // int32 interval_scheduler = 11;
+    // bool reputation = 12;
+    // float shop_rate = 13;
+}
+

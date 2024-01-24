@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package pb;
+import "google/protobuf/timestamp.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+message Barbers {
+    string id = 1;
+    string gender_id = 2;
+    string email = 3;
+    string phone = 4;
+    string nick_name = 5;
+    string full_name = 6;
+    bool haircut = 7;
+    string avatar_url = 8;
+    google.protobuf.Timestamp create_at = 9;
+    google.protobuf.Timestamp update_at = 10;
+    google.protobuf.Timestamp barber_role_id = 11;
+}
