@@ -28,7 +28,7 @@ func (server *Server) GetBarberRoles(ctx context.Context, req *barber.GetBarberR
 		BarbershopID: barberShopID,
 	}
 
-	barberRoles, err := server.Store.GetBarberRoles(ctx, arg)
+	barberRole, err := server.Store.GetBarberRoles(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
@@ -42,8 +42,8 @@ func (server *Server) GetBarberRoles(ctx context.Context, req *barber.GetBarberR
 	}
 
 	rsp := &barber.GetBarberRolesResponse{
-		BarberRoles: ConvertBarberRolesDetail(barberRoles),
-		RoleName: barberRoles.RoleName,
+		BarberRole: ConvertBarberRolesDetail(barberRole),
+		RoleName: barberRole.RoleName,
 	}
 	return rsp, nil
 }

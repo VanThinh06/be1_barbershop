@@ -22,12 +22,12 @@ func (server *Server) UpdateBarberRoles(ctx context.Context, req *barber.UpdateB
 		return nil, status.Errorf(codes.PermissionDenied, "no permission")
 	}
 	var barberRoleID = uuid.MustParse(req.Id)
-	arg := db.UpdateBarberRoleParams{
+	arg := db.UpdateBarberRolesParams{
 		RoleID: req.RoleId,
 		ID: barberRoleID,
 	}
 
-	barberRoles, err := server.Store.UpdateBarberRole(ctx, arg)
+	barberRole, err := server.Store.UpdateBarberRoles(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
@@ -41,7 +41,7 @@ func (server *Server) UpdateBarberRoles(ctx context.Context, req *barber.UpdateB
 	}
 
 	rsp := &barber.UpdateBarberRolesResponse{
-		BarberRoles: ConvertBarberRoles(barberRoles),
+		BarberRole: ConvertBarberRoles(barberRole),
 	}
 	return rsp, nil
 }

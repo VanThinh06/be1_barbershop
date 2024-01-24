@@ -69,6 +69,7 @@ type BarberShop struct {
 	ID                uuid.UUID      `json:"id"`
 	BarbershopChainID uuid.NullUUID  `json:"barbershop_chain_id"`
 	Name              string         `json:"name"`
+	IsMainBranch      bool           `json:"is_main_branch"`
 	BranchCount       int32          `json:"branch_count"`
 	Coordinates       string         `json:"coordinates"`
 	Address           string         `json:"address"`
@@ -86,10 +87,14 @@ type BarberShop struct {
 }
 
 type BarberShopChain struct {
-	ID       uuid.UUID `json:"id"`
-	Name     string    `json:"name"`
-	CreateAt time.Time `json:"create_at"`
-	UpdateAt time.Time `json:"update_at"`
+	ID           uuid.UUID      `json:"id"`
+	Name         string         `json:"name"`
+	Description  sql.NullString `json:"description"`
+	Founder      string         `json:"founder"`
+	FoundingDate time.Time      `json:"founding_date"`
+	Website      sql.NullString `json:"website"`
+	CreateAt     time.Time      `json:"create_at"`
+	UpdateAt     time.Time      `json:"update_at"`
 }
 
 type BarberShopReview struct {

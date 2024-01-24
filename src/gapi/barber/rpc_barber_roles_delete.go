@@ -21,7 +21,7 @@ func (server *Server) DeleteBarberRoles(ctx context.Context, req *barber.DeleteB
 	}
 
 	var id = uuid.MustParse(req.Id)
-	err = server.Store.DeleteBarberRole(ctx, id)
+	err = server.Store.DeleteBarberRoles(ctx, id)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "internal")
 	}

@@ -222,11 +222,11 @@ CREATE INDEX ON "Barbers" ("phone");
 CREATE INDEX ON "Barbers" ("email");
 CREATE INDEX ON "Barbers" ("nick_name");
 
-CREATE INDEX ON "BarberManager" ("barber_id");
+CREATE INDEX ON "BarberManagers" ("barber_id");
 
-CREATE INDEX ON "BarberManager" ("manager_id");
+CREATE INDEX ON "BarberManagers" ("manager_id");
 
-CREATE UNIQUE INDEX ON "BarberManager" ("manager_id", "barber_id");
+CREATE UNIQUE INDEX ON "BarberManagers" ("manager_id", "barber_id");
 
 CREATE INDEX ON "ServiceCategories" ("name");
 
@@ -268,9 +268,9 @@ ALTER TABLE "BarberShops" ADD FOREIGN KEY ("barbershop_chain_id") REFERENCES "Ba
 
 ALTER TABLE "Barbers" ADD FOREIGN KEY ("gender_id") REFERENCES "Genders" ("id");
 
-ALTER TABLE "BarberManager" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("id");
+ALTER TABLE "BarberManagers" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("id");
 
-ALTER TABLE "BarberManager" ADD FOREIGN KEY ("manager_id") REFERENCES "Barbers" ("id");
+ALTER TABLE "BarberManagers" ADD FOREIGN KEY ("manager_id") REFERENCES "Barbers" ("id");
 
 ALTER TABLE "SessionsBarber" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("id");
 

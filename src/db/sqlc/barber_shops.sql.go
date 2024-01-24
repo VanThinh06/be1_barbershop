@@ -17,6 +17,7 @@ const createBarberShop = `-- name: CreateBarberShop :one
 INSERT INTO "BarberShops" (
                            barbershop_chain_id,
                            name,
+                           is_main_branch,
                            branch_count,
                            coordinates,
                            address,
@@ -26,15 +27,17 @@ VALUES (
         $1,
         $2,
         $3,
-        ST_GeographyFromText('POINT(' || $4::float8 || ' ' || $5::float8 || ')'),
-        $6,
-        $7
-        ) RETURNING id, barbershop_chain_id, name, branch_count, coordinates, address, image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, reputation, create_at, update_at
+        $4,
+        ST_GeographyFromText('POINT(' || $5::float8 || ' ' || $6::float8 || ')'),
+        $7,
+        $8
+        ) RETURNING id, barbershop_chain_id, name, is_main_branch, branch_count, coordinates, address, image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, reputation, create_at, update_at
 `
 
 type CreateBarberShopParams struct {
 	BarbershopChainID uuid.NullUUID  `json:"barbershop_chain_id"`
 	Name              string         `json:"name"`
+	IsMainBranch      sql.NullBool   `json:"is_main_branch"`
 	BranchCount       int32          `json:"branch_count"`
 	Longitude         float64        `json:"longitude"`
 	Latitude          float64        `json:"latitude"`
@@ -46,6 +49,7 @@ func (q *Queries) CreateBarberShop(ctx context.Context, arg CreateBarberShopPara
 	row := q.db.QueryRowContext(ctx, createBarberShop,
 		arg.BarbershopChainID,
 		arg.Name,
+		arg.IsMainBranch,
 		arg.BranchCount,
 		arg.Longitude,
 		arg.Latitude,
@@ -57,6 +61,7 @@ func (q *Queries) CreateBarberShop(ctx context.Context, arg CreateBarberShopPara
 		&i.ID,
 		&i.BarbershopChainID,
 		&i.Name,
+		&i.IsMainBranch,
 		&i.BranchCount,
 		&i.Coordinates,
 		&i.Address,
@@ -86,7 +91,7 @@ func (q *Queries) DeleteBarberShops(ctx context.Context, id uuid.UUID) error {
 }
 
 const getBarberShop = `-- name: GetBarberShop :one
-SELECT id, barbershop_chain_id, name, branch_count, coordinates, address, image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, reputation, create_at, update_at
+SELECT id, barbershop_chain_id, name, is_main_branch, branch_count, coordinates, address, image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, reputation, create_at, update_at
 FROM "BarberShops"
 WHERE id = $1
 `
@@ -98,6 +103,7 @@ func (q *Queries) GetBarberShop(ctx context.Context, id uuid.UUID) (BarberShop, 
 		&i.ID,
 		&i.BarbershopChainID,
 		&i.Name,
+		&i.IsMainBranch,
 		&i.BranchCount,
 		&i.Coordinates,
 		&i.Address,
@@ -116,9 +122,10 @@ func (q *Queries) GetBarberShop(ctx context.Context, id uuid.UUID) (BarberShop, 
 	return i, err
 }
 
-const listBarberShopsNearbyLocations = `-- name: ListBarberShopsNearbyLocations :many
+const listBarberShopsNearby = `-- name: ListBarberShopsNearby :many
 SELECT
     id,
+    barbershop_chain_id,
     name,
     branch_count,
     coordinates,
@@ -126,6 +133,7 @@ SELECT
     image,
     status,
     rate,
+    "reputation",
     CAST(ST_X(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS longitude,
     CAST(ST_Y(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS latitude,
     CAST(ST_Distance(
@@ -137,37 +145,40 @@ WHERE  ST_Distance(coordinates, ST_SetSRID(ST_MakePoint($1::float, $2::float), 4
 ORDER BY ST_Distance(coordinates, ST_SetSRID(ST_MakePoint($1::float, $2::float), 4326))
 `
 
-type ListBarberShopsNearbyLocationsParams struct {
+type ListBarberShopsNearbyParams struct {
 	CurrentLongitude float64 `json:"current_longitude"`
 	CurrentLatitude  float64 `json:"current_latitude"`
 	DistanceInMeters int32   `json:"distance_in_meters"`
 }
 
-type ListBarberShopsNearbyLocationsRow struct {
-	ID          uuid.UUID      `json:"id"`
-	Name        string         `json:"name"`
-	BranchCount int32          `json:"branch_count"`
-	Coordinates string         `json:"coordinates"`
-	Address     string         `json:"address"`
-	Image       sql.NullString `json:"image"`
-	Status      int32          `json:"status"`
-	Rate        float64        `json:"rate"`
-	Longitude   float64        `json:"longitude"`
-	Latitude    float64        `json:"latitude"`
-	Distance    float64        `json:"distance"`
+type ListBarberShopsNearbyRow struct {
+	ID                uuid.UUID      `json:"id"`
+	BarbershopChainID uuid.NullUUID  `json:"barbershop_chain_id"`
+	Name              string         `json:"name"`
+	BranchCount       int32          `json:"branch_count"`
+	Coordinates       string         `json:"coordinates"`
+	Address           string         `json:"address"`
+	Image             sql.NullString `json:"image"`
+	Status            int32          `json:"status"`
+	Rate              float64        `json:"rate"`
+	Reputation        bool           `json:"reputation"`
+	Longitude         float64        `json:"longitude"`
+	Latitude          float64        `json:"latitude"`
+	Distance          float64        `json:"distance"`
 }
 
-func (q *Queries) ListBarberShopsNearbyLocations(ctx context.Context, arg ListBarberShopsNearbyLocationsParams) ([]ListBarberShopsNearbyLocationsRow, error) {
-	rows, err := q.db.QueryContext(ctx, listBarberShopsNearbyLocations, arg.CurrentLongitude, arg.CurrentLatitude, arg.DistanceInMeters)
+func (q *Queries) ListBarberShopsNearby(ctx context.Context, arg ListBarberShopsNearbyParams) ([]ListBarberShopsNearbyRow, error) {
+	rows, err := q.db.QueryContext(ctx, listBarberShopsNearby, arg.CurrentLongitude, arg.CurrentLatitude, arg.DistanceInMeters)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []ListBarberShopsNearbyLocationsRow{}
+	items := []ListBarberShopsNearbyRow{}
 	for rows.Next() {
-		var i ListBarberShopsNearbyLocationsRow
+		var i ListBarberShopsNearbyRow
 		if err := rows.Scan(
 			&i.ID,
+			&i.BarbershopChainID,
 			&i.Name,
 			&i.BranchCount,
 			&i.Coordinates,
@@ -175,6 +186,7 @@ func (q *Queries) ListBarberShopsNearbyLocations(ctx context.Context, arg ListBa
 			&i.Image,
 			&i.Status,
 			&i.Rate,
+			&i.Reputation,
 			&i.Longitude,
 			&i.Latitude,
 			&i.Distance,
@@ -193,7 +205,7 @@ func (q *Queries) ListBarberShopsNearbyLocations(ctx context.Context, arg ListBa
 }
 
 const queryBarberShops = `-- name: QueryBarberShops :many
-SELECT bs.id, bs.barbershop_chain_id, bs.name, bs.branch_count, bs.coordinates, bs.address, bs.image, bs.status, bs.rate, bs.start_time, bs.end_time, bs.break_time, bs.break_minutes, bs.interval_scheduler, bs.reputation, bs.create_at, bs.update_at
+SELECT bs.id, bs.barbershop_chain_id, bs.name, bs.is_main_branch, bs.branch_count, bs.coordinates, bs.address, bs.image, bs.status, bs.rate, bs.start_time, bs.end_time, bs.break_time, bs.break_minutes, bs.interval_scheduler, bs.reputation, bs.create_at, bs.update_at
 FROM "BarberShops" bs
 WHERE bs."name" = $1
   OR bs."barbershop_chain_id" IN (
@@ -216,6 +228,7 @@ func (q *Queries) QueryBarberShops(ctx context.Context, name string) ([]BarberSh
 			&i.ID,
 			&i.BarbershopChainID,
 			&i.Name,
+			&i.IsMainBranch,
 			&i.BranchCount,
 			&i.Coordinates,
 			&i.Address,
@@ -248,24 +261,26 @@ const updateBarberShop = `-- name: UpdateBarberShop :one
 UPDATE "BarberShops"
 SET 
     name = coalesce($2, name),
-    branch_count = coalesce($3, branch_count),
-    coordinates = coalesce(ST_GeographyFromText('POINT(' || $4::float8 || ' ' || $5::float8 || ')'), coordinates),
-    address = coalesce($6, address),
-    image = coalesce($7, image),
-    status = coalesce($8, status),
-    rate = coalesce($9, rate),
-    start_time = coalesce($10, start_time),
-    end_time = coalesce($11, end_time),
-    break_time = coalesce($12, break_time),
-    interval_scheduler = coalesce($13, interval_scheduler),
-    updated_at = now()
+    is_main_branch = coalesce($3, is_main_branch),
+    branch_count = coalesce($4, branch_count),
+    coordinates = coalesce(ST_GeographyFromText('POINT(' || $5::float8 || ' ' || $6::float8 || ')'), coordinates),
+    address = coalesce($7, address),
+    image = coalesce($8, image),
+    status = coalesce($9, status),
+    rate = coalesce($10, rate),
+    start_time = coalesce($11, start_time),
+    end_time = coalesce($12, end_time),
+    break_time = coalesce($13, break_time),
+    interval_scheduler = coalesce($14, interval_scheduler),
+    update_at = now()
 WHERE "id" = $1
-RETURNING id, barbershop_chain_id, name, branch_count, coordinates, address, image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, reputation, create_at, update_at
+RETURNING id, barbershop_chain_id, name, is_main_branch, branch_count, coordinates, address, image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, reputation, create_at, update_at
 `
 
 type UpdateBarberShopParams struct {
 	ID                uuid.UUID       `json:"id"`
 	Name              sql.NullString  `json:"name"`
+	IsMainBranch      sql.NullBool    `json:"is_main_branch"`
 	BranchCount       sql.NullInt32   `json:"branch_count"`
 	Longitude         sql.NullFloat64 `json:"longitude"`
 	Latitude          sql.NullFloat64 `json:"latitude"`
@@ -283,6 +298,7 @@ func (q *Queries) UpdateBarberShop(ctx context.Context, arg UpdateBarberShopPara
 	row := q.db.QueryRowContext(ctx, updateBarberShop,
 		arg.ID,
 		arg.Name,
+		arg.IsMainBranch,
 		arg.BranchCount,
 		arg.Longitude,
 		arg.Latitude,
@@ -300,6 +316,7 @@ func (q *Queries) UpdateBarberShop(ctx context.Context, arg UpdateBarberShopPara
 		&i.ID,
 		&i.BarbershopChainID,
 		&i.Name,
+		&i.IsMainBranch,
 		&i.BranchCount,
 		&i.Coordinates,
 		&i.Address,
@@ -316,20 +333,4 @@ func (q *Queries) UpdateBarberShop(ctx context.Context, arg UpdateBarberShopPara
 		&i.UpdateAt,
 	)
 	return i, err
-}
-
-const updateChainForBarberShops = `-- name: UpdateChainForBarberShops :exec
-UPDATE "BarberShops"
-SET "barbershop_chain_id" = $2::uuid
-WHERE "id" = $1 AND "barbershop_chain_id" IS NULL
-`
-
-type UpdateChainForBarberShopsParams struct {
-	ID                uuid.UUID `json:"id"`
-	BarbershopChainID uuid.UUID `json:"barbershop_chain_id"`
-}
-
-func (q *Queries) UpdateChainForBarberShops(ctx context.Context, arg UpdateChainForBarberShopsParams) error {
-	_, err := q.db.ExecContext(ctx, updateChainForBarberShops, arg.ID, arg.BarbershopChainID)
-	return err
 }

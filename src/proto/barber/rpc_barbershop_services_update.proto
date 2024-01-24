@@ -3,13 +3,12 @@ syntax = "proto3";
 
 package pb;
 
-import "google/protobuf/timestamp.proto";
 import "barber/barbershop_services.proto";
 
 option go_package = "barbershop/src/pb/barber";
 
 
-message UpdateBarberShopChainsRequest{
+message UpdateBarberShopServicesRequest{
     string id = 1;
     string gender_id = 2;
     string name = 3;

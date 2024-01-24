@@ -29,7 +29,7 @@ func (server *Server) CreateBarberRoles(ctx context.Context, req *barber.CreateB
 		RoleID:       req.RoleId,
 	}
 
-	barberRoles, err := server.Store.CreateBarberRoles(ctx, arg)
+	barberRole, err := server.Store.CreateBarberRoles(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
@@ -41,7 +41,7 @@ func (server *Server) CreateBarberRoles(ctx context.Context, req *barber.CreateB
 	}
 
 	rsp := &barber.CreateBarberRolesResponse{
-		BarberRoles: ConvertBarberRoles(barberRoles),
+		BarberRole: ConvertBarberRoles(barberRole),
 	}
 	return rsp, nil
 }

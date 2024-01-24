@@ -2175,6 +2175,9 @@
         "name": {
           "type": "string"
         },
+        "description": {
+          "type": "string"
+        },
         "founder": {
           "type": "string"
         },

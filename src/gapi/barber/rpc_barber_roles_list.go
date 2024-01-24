@@ -31,7 +31,7 @@ func (server *Server) ListBarberRoles(ctx context.Context, req *barber.ListBarbe
 	}
 
 	rsp := &barber.ListBarberRolesResponse{
-		BarberRoles: ConvertListBarbersRoles(barberRoles),
+		BarberRole: ConvertListBarbersRoles(barberRoles),
 	}
 	return rsp, nil
 }

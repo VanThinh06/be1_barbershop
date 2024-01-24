@@ -13,9 +13,10 @@ import (
 type Querier interface {
 	ChangePasswordCustomer(ctx context.Context, arg ChangePasswordCustomerParams) (Customer, error)
 	CreateBarber(ctx context.Context, arg CreateBarberParams) (Barber, error)
+	CreateBarberManagers(ctx context.Context, arg CreateBarberManagersParams) (BarberManager, error)
 	CreateBarberRoles(ctx context.Context, arg CreateBarberRolesParams) (BarberRole, error)
 	CreateBarberShop(ctx context.Context, arg CreateBarberShopParams) (BarberShop, error)
-	CreateBarberShopChains(ctx context.Context, name string) (BarberShopChain, error)
+	CreateBarberShopChains(ctx context.Context, arg CreateBarberShopChainsParams) (BarberShopChain, error)
 	CreateBarberShopServiceCategoryWithChain(ctx context.Context, arg CreateBarberShopServiceCategoryWithChainParams) (BarberShopServiceCategory, error)
 	CreateBarberShopServiceCategoryWithShop(ctx context.Context, arg CreateBarberShopServiceCategoryWithShopParams) (BarberShopServiceCategory, error)
 	CreateBarberShopServices(ctx context.Context, arg CreateBarberShopServicesParams) (BarberShopService, error)
@@ -23,14 +24,17 @@ type Querier interface {
 	CreateSessionBarber(ctx context.Context, arg CreateSessionBarberParams) (SessionsBarber, error)
 	CreateSessionsCustomer(ctx context.Context, arg CreateSessionsCustomerParams) (SessionsCustomer, error)
 	DeleteBarber(ctx context.Context, id uuid.UUID) error
-	DeleteBarberRole(ctx context.Context, id uuid.UUID) error
-	DeleteBarberShopChain(ctx context.Context, id uuid.UUID) error
+	DeleteBarberManagers(ctx context.Context, arg DeleteBarberManagersParams) error
+	DeleteBarberRoles(ctx context.Context, id uuid.UUID) error
+	DeleteBarberShopChains(ctx context.Context, id uuid.UUID) error
 	DeleteBarberShopServiceCategory(ctx context.Context, id uuid.UUID) error
 	DeleteBarberShopServices(ctx context.Context, id uuid.UUID) error
 	DeleteBarberShops(ctx context.Context, id uuid.UUID) error
 	GetBarber(ctx context.Context, arg GetBarberParams) (GetBarberRow, error)
+	GetBarberManagers(ctx context.Context, barberID uuid.NullUUID) (BarberManager, error)
 	GetBarberRoles(ctx context.Context, arg GetBarberRolesParams) (GetBarberRolesRow, error)
 	GetBarberShop(ctx context.Context, id uuid.UUID) (BarberShop, error)
+	GetBarberShopChains(ctx context.Context, id uuid.UUID) (BarberShopChain, error)
 	GetContactCustomer(ctx context.Context, arg GetContactCustomerParams) (Customer, error)
 	GetCustomer(ctx context.Context, id uuid.UUID) (Customer, error)
 	GetEmailBarber(ctx context.Context, email string) (Barber, error)
@@ -40,16 +44,15 @@ type Querier interface {
 	InsertServicesForAppointment(ctx context.Context, arg InsertServicesForAppointmentParams) ([]BarberShopServicesAppointment, error)
 	ListAppointmentByDateWithService(ctx context.Context, arg ListAppointmentByDateWithServiceParams) ([]ListAppointmentByDateWithServiceRow, error)
 	ListBarberShopServiceCategories(ctx context.Context, arg ListBarberShopServiceCategoriesParams) ([]ListBarberShopServiceCategoriesRow, error)
-	ListBarberShopsNearbyLocations(ctx context.Context, arg ListBarberShopsNearbyLocationsParams) ([]ListBarberShopsNearbyLocationsRow, error)
+	ListBarberShopsNearby(ctx context.Context, arg ListBarberShopsNearbyParams) ([]ListBarberShopsNearbyRow, error)
 	ListBarbersInBarberShop(ctx context.Context, barbershopID uuid.UUID) ([]ListBarbersInBarberShopRow, error)
 	ListBarbersRoles(ctx context.Context, barbershopID uuid.UUID) ([]ListBarbersRolesRow, error)
 	QueryBarberShops(ctx context.Context, name string) ([]BarberShop, error)
 	UpdateBarber(ctx context.Context, arg UpdateBarberParams) (Barber, error)
-	UpdateBarberRole(ctx context.Context, arg UpdateBarberRoleParams) (BarberRole, error)
+	UpdateBarberRoles(ctx context.Context, arg UpdateBarberRolesParams) (BarberRole, error)
 	UpdateBarberShop(ctx context.Context, arg UpdateBarberShopParams) (BarberShop, error)
-	UpdateBarberShopChain(ctx context.Context, arg UpdateBarberShopChainParams) (BarberShopChain, error)
+	UpdateBarberShopChains(ctx context.Context, arg UpdateBarberShopChainsParams) (BarberShopChain, error)
 	UpdateBarberShopServiceCategory(ctx context.Context, arg UpdateBarberShopServiceCategoryParams) error
-	UpdateChainForBarberShops(ctx context.Context, arg UpdateChainForBarberShopsParams) error
 	UpdateCustomer(ctx context.Context, arg UpdateCustomerParams) (Customer, error)
 	UpdateSessionRefreshToken(ctx context.Context, arg UpdateSessionRefreshTokenParams) error
 	UpdateSessionsCustomer(ctx context.Context, arg UpdateSessionsCustomerParams) error

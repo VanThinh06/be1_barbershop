@@ -41,13 +41,26 @@ func ConvertListBarbersRoles(res []db.ListBarbersRolesRow) []*barber.BarberRoles
 			BarberId:     item.BarberID.String(),
 			BarbershopId: item.BarbershopID.String(),
 			RoleId:       item.RoleID,
-			CreateAt:     timestamppb.New(item.CreatedAt),
+			CreateAt:     timestamppb.New(item.CreateAt),
 			UpdateAt:     timestamppb.New(item.UpdateAt),
 		}
 		barbersRoles = append(barbersRoles, barberRole)
 	}
 
 	return barbersRoles
+}
+
+func ConvertBarberShopChains(res db.BarberShopChain) *barber.BarberShopChains {
+	return &barber.BarberShopChains{
+		Id:           res.ID.String(),
+		Name:         res.Name,
+		Description:  res.Description.String,
+		Founder:      res.Founder,
+		FoundingDate: timestamppb.New(res.FoundingDate),
+		Website:      res.Website.String,
+		CreateAt:     timestamppb.New(res.CreateAt),
+		UpdateAt:     timestamppb.New(res.UpdateAt),
+	}
 }
 
 func convertBarber(res db.Barber) *barber.Barber {
@@ -114,21 +127,20 @@ func convertGetBarberInShop(res []db.Barber) []*barber.Barber {
 	return barbers
 }
 
-func convertBarberShop(barberShop db.BarberShop) *barber.BarberShop {
-	return &barber.BarberShop{
-		OwnerId:           barberShop.OwnerID.String(),
-		ShopId:            barberShop.ID.String(),
+func convertBarberShop(barberShop db.BarberShop) *barber.BarberShops {
+	return &barber.BarberShops{
+		Id:            barberShop.ID.String(),
 		Status:            barberShop.Status,
 		Name:              barberShop.Name,
 		Coordinates:       barberShop.Coordinates,
 		Address:           barberShop.Address,
 		Image:             barberShop.Image.String,
-		CreatedAt:         timestamppb.New(barberShop.CreatedAt),
 		StartTime:         convertToTimeOfDay(barberShop.StartTime),
 		EndTime:           convertToTimeOfDay(barberShop.EndTime),
 		BreakTime:         convertToTimeOfDay(barberShop.BreakTime),
 		BreakMinutes:      barberShop.BreakMinutes,
 		IntervalScheduler: barberShop.IntervalScheduler,
+		CreateAt:         timestamppb.New(barberShop.CreateAt),
 	}
 }
 

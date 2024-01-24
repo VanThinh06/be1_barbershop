@@ -10,7 +10,7 @@ option go_package = "barbershop/src/pb/barber";
 
 message CreateBarberShopChainsRequest{
     string name = 1;
-    string description = 2;
+    optional string description = 2;
     string founder = 3;
     google.protobuf.Timestamp founding_date = 4;
     string website = 5;

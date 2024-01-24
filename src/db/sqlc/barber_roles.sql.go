@@ -46,13 +46,13 @@ func (q *Queries) CreateBarberRoles(ctx context.Context, arg CreateBarberRolesPa
 	return i, err
 }
 
-const deleteBarberRole = `-- name: DeleteBarberRole :exec
+const deleteBarberRoles = `-- name: DeleteBarberRoles :exec
 DELETE FROM "BarberRoles"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteBarberRole(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, deleteBarberRole, id)
+func (q *Queries) DeleteBarberRoles(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteBarberRoles, id)
 	return err
 }
 
@@ -149,7 +149,7 @@ func (q *Queries) ListBarbersRoles(ctx context.Context, barbershopID uuid.UUID) 
 	return items, nil
 }
 
-const updateBarberRole = `-- name: UpdateBarberRole :one
+const updateBarberRoles = `-- name: UpdateBarberRoles :one
 UPDATE "BarberRoles"
 SET "role_id" = $1,
     "update_at" = NOW()
@@ -157,13 +157,13 @@ WHERE "id" = $2
 RETURNING id, barber_id, barbershop_id, role_id, create_at, update_at
 `
 
-type UpdateBarberRoleParams struct {
+type UpdateBarberRolesParams struct {
 	RoleID int32     `json:"role_id"`
 	ID     uuid.UUID `json:"id"`
 }
 
-func (q *Queries) UpdateBarberRole(ctx context.Context, arg UpdateBarberRoleParams) (BarberRole, error) {
-	row := q.db.QueryRowContext(ctx, updateBarberRole, arg.RoleID, arg.ID)
+func (q *Queries) UpdateBarberRoles(ctx context.Context, arg UpdateBarberRolesParams) (BarberRole, error) {
+	row := q.db.QueryRowContext(ctx, updateBarberRoles, arg.RoleID, arg.ID)
 	var i BarberRole
 	err := row.Scan(
 		&i.ID,
