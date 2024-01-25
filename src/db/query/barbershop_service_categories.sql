@@ -1,23 +1,13 @@
--- name: CreateBarberShopServiceCategoryWithChain :one
+-- name: CreateBarberShopServiceCategories :one
 INSERT INTO "BarberShopServiceCategories" (
   "barbershop_chain_id",
-  "service_category_id"
-)
-VALUES (
-  $1,
-  $2
-)
-RETURNING *
-;
-
--- name: CreateBarberShopServiceCategoryWithShop :one
-INSERT INTO "BarberShopServiceCategories" (
   "barbershop_id",
   "service_category_id"
 )
 VALUES (
   $1,
-  $2
+  $2,
+  $3
 )
 RETURNING *
 ;
@@ -35,14 +25,17 @@ WHERE
   bsc."barbershop_id" = $1
   AND bsc."barbershop_chain_id" = $2;
 
--- name: UpdateBarberShopServiceCategory :exec
+-- name: UpdateBarberShopServiceCategories :one
 UPDATE "BarberShopServiceCategories"
 SET
   "service_category_id" = $1
 WHERE
-  "id" = $2;;
+  "id" = $2
+RETURNING *
+;
 
--- name: DeleteBarberShopServiceCategory :exec
+-- name: DeleteBarberShopServiceCategories :exec
 DELETE FROM "BarberShopServiceCategories"
 WHERE
-  "id" = $1;;
+  "id" = $1
+;

@@ -1,4 +1,4 @@
--- name: CreateBarber :one
+-- name: CreateBarbers :one
 INSERT INTO "Barbers" (
     gender_id,
     email,
@@ -19,7 +19,7 @@ VALUES (
   )
 RETURNING *;
 
--- name: GetBarber :one
+-- name: GetBarbers :one
 SELECT
   b.*, 
   bs."name" as "shop_name",
@@ -45,11 +45,10 @@ WHERE
   b."id" = $1
   AND bs."id" = $2;
 
--- name: GetEmailBarber :one
+-- name: GetBarbersEmail :one
 SELECT *
 FROM "Barbers"
-WHERE email = $1
-LIMIT 1;
+WHERE email = $1;
 
 -- name: ListBarbersInBarberShop :many
 SELECT
@@ -62,25 +61,20 @@ JOIN
 WHERE
   br."barbershop_id" = $1;
 
--- name: UpdateBarber :one
+-- name: UpdateBarbers :one
 UPDATE "Barbers"
 SET 
   gender_id = coalesce(sqlc.narg('gender_id'), gender_id),
   email = coalesce(sqlc.narg('email'), email),
   phone = coalesce(sqlc.narg('phone'), phone),
-  "hashed_password" = coalesce(sqlc.narg('hashed_password'), hashed_password),
   nick_name = coalesce(sqlc.narg('nick_name'), nick_name),
   full_name = coalesce(sqlc.narg('full_name'), full_name),
   haircut = coalesce(sqlc.narg('haircut'), haircut),
   avatar_url = coalesce(sqlc.narg('avatar_url'), avatar_url),
-  "password_changed_at" = coalesce(
-    sqlc.narg('password_changed_at'),
-    password_changed_at
-  ),
   "updated_at" = now()
   WHERE "id" = $1
 RETURNING *;
 
--- name: DeleteBarber :exec
+-- name: DeleteBarbers :exec
 DELETE FROM "Barbers"
 WHERE "id" = $1;

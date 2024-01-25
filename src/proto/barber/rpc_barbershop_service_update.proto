@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+import "barber/barbershop_service_categories.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message UpdateBarberShopServiceCategoriesRequest{
+    string id = 1;
+    string service_category_id = 2;
+}
+
+message UpdateBarberShopServiceCategoriesResponse{
+    BarberShopServiceCategories service_categories = 1;
+}
