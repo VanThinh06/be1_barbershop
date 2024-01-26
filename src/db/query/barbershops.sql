@@ -1,3 +1,42 @@
+
+-- name: GetBarberShop :one
+SELECT *
+FROM "BarberShops"
+WHERE id = $1;
+
+-- name: QueryBarberShops :many
+SELECT bs.*
+FROM "BarberShops" bs
+WHERE bs."name" = $1
+  OR bs."barbershop_chain_id" IN (
+    SELECT c."barbershop_chain_id"
+    FROM "BarberShopChains" c
+    WHERE c."name" = $1
+);
+-- name: ListNearbyBarberShops :many
+SELECT
+    id,
+    barbershop_chain_id,
+    name,
+    branch_count,
+    coordinates,
+    address,
+    image,
+    status,
+    rate,
+    "is_reputation",
+    CAST(ST_X(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS longitude,
+    CAST(ST_Y(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS latitude,
+    CAST(ST_Distance(
+        ST_SetSRID(ST_MakePoint(sqlc.arg(current_longitude)::float, sqlc.arg(current_latitude)::float), 4326),
+        coordinates::geography
+    ) AS float) AS distance
+FROM "BarberShops"
+WHERE  ST_Distance(coordinates, ST_SetSRID(ST_MakePoint(sqlc.arg(current_longitude)::float, sqlc.arg(current_latitude)::float), 4326)) <= sqlc.arg(distance_in_meters)::int
+ORDER BY ST_Distance(coordinates, ST_SetSRID(ST_MakePoint(sqlc.arg(current_longitude)::float, sqlc.arg(current_latitude)::float), 4326));
+
+
+-- admin
 -- name: CreateBarberShop :one
 INSERT INTO "BarberShops" (
                            barbershop_chain_id,
@@ -18,33 +57,6 @@ VALUES (
         sqlc.narg(image)
         ) RETURNING *; 
 
--- name: GetBarberShop :one
-SELECT *
-FROM "BarberShops"
-WHERE id = $1;
-
--- name: ListBarberShopsNearby :many
-SELECT
-    id,
-    barbershop_chain_id,
-    name,
-    branch_count,
-    coordinates,
-    address,
-    image,
-    status,
-    rate,
-    "reputation",
-    CAST(ST_X(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS longitude,
-    CAST(ST_Y(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS latitude,
-    CAST(ST_Distance(
-        ST_SetSRID(ST_MakePoint(sqlc.arg(current_longitude)::float, sqlc.arg(current_latitude)::float), 4326),
-        coordinates::geography
-    ) AS float) AS distance
-FROM "BarberShops"
-WHERE  ST_Distance(coordinates, ST_SetSRID(ST_MakePoint(sqlc.arg(current_longitude)::float, sqlc.arg(current_latitude)::float), 4326)) <= sqlc.arg(distance_in_meters)::int
-ORDER BY ST_Distance(coordinates, ST_SetSRID(ST_MakePoint(sqlc.arg(current_longitude)::float, sqlc.arg(current_latitude)::float), 4326));
-
 -- name: UpdateBarberShop :one
 UPDATE "BarberShops"
 SET 
@@ -60,6 +72,8 @@ SET
     end_time = coalesce(sqlc.narg('end_time'), end_time),
     break_time = coalesce(sqlc.narg('break_time'), break_time),
     interval_scheduler = coalesce(sqlc.narg('interval_scheduler'), interval_scheduler),
+    is_reputation = coalesce(sqlc.arg('is_reputation'), is_reputation),
+    is_verified = coalesce(sqlc.arg('is_verified'), is_verified),
     update_at = now()
 WHERE "id" = $1
 RETURNING *;
@@ -68,12 +82,4 @@ RETURNING *;
 DELETE FROM "BarberShops"
 WHERE id = $1;
 
--- name: QueryBarberShops :many
-SELECT bs.*
-FROM "BarberShops" bs
-WHERE bs."name" = $1
-  OR bs."barbershop_chain_id" IN (
-    SELECT c."barbershop_chain_id"
-    FROM "BarberShopChains" c
-    WHERE c."name" = $1
-);
+

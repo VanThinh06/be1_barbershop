@@ -18,7 +18,7 @@ func (server *Server) QueryBarberShops(ctx context.Context, req *barber.QueryBar
 		}
 	}
 
-	res, err := server.Store.QueryBarberShops(ctx, req.Barbershop)
+	res, err := server.Store.QueryBarberShops(ctx, req.Query)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, status.Error(codes.NotFound, "barbershops don't exist")

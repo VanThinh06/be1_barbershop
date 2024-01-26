@@ -30,7 +30,7 @@ SELECT
   bs."break_time" as "shop_break_time",
   bs."break_minutes" as "shop_break_minutes",
   bs."interval_scheduler" as "shop_interval_scheduler",
-  bs."reputation" as "shop_reputation",
+  bs."is_reputation" as "shop_reputation",
   bs."rate" as "shop_rate",
   bs."branch_count" as "shop_branch_count",
   br."role_id" as "barber_role_id",

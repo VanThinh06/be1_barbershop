@@ -3,7 +3,7 @@ syntax = "proto3";
 package pb;
 
 import "barber/barbers.proto";
-import "barber/time_of_day.proto";
+
 option go_package = "barbershop/src/pb/barber";
 
 

@@ -43,7 +43,8 @@ CREATE TABLE "BarberShops" (
   "break_time" TIME NOT NULL DEFAULT '12:00:00'::TIME,
   "break_minutes" integer NOT NULL DEFAULT 60,
   "interval_scheduler" integer NOT NULL DEFAULT 30,
-  "reputation" bool NOT NULL DEFAULT false,
+  "is_reputation" bool NOT NULL DEFAULT false,
+  "is_verified" bool NOT NULL DEFAULT false,
   "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
@@ -64,8 +65,8 @@ CREATE TABLE "Barbers" (
 );
 
 CREATE TABLE "BarberManagers" (
-  "barber_id" uuid,
-  "manager_id" uuid,
+  "barber_id" uuid NOT NULL,
+  "manager_id" uuid NOT NULL,
   "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
@@ -167,7 +168,7 @@ BEGIN
   IF EXISTS (
     SELECT 1
     FROM "Appointments"
-    WHERE "barbershop_id" = NEW."barbershos_id"
+    WHERE "barbershop_id" = NEW."barbershop_id"
       AND "barber_id" = NEW."barber_id"
       AND (
         (NEW."appointment_datetime" + NEW."timer" * interval '1 minute') BETWEEN "appointment_datetime" AND "appointment_datetime" + NEW."timer" * interval '1 minute'

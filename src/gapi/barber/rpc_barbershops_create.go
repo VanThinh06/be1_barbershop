@@ -46,7 +46,7 @@ func (server *Server) CreateBarberShops(ctx context.Context, req *barber.CreateB
 	}
 
 	rsp := &barber.CreateBarberShopsResponse{
-		BarberShop: convertBarberShop(barberShop),
+		BarberShop: convertBarberShops(barberShop),
 	}
 	return rsp, nil
 }

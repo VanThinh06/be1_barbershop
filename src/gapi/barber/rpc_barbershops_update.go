@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBarberShopRequest) (*barber.UpdateBarberShopResponse, error) {
+func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBarberShopsRequest) (*barber.UpdateBarberShopsResponse, error) {
 
 	payload, err := server.AuthorizeUser(ctx)
 	if err != nil {
@@ -39,7 +39,9 @@ func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBa
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid parameters")
 	}
+	
 	arg := db.UpdateBarberShopParams{
+		ID:    uuid.MustParse(req.Id),
 		Name: sql.NullString{
 			String: req.GetName(),
 			Valid:  req.Name != nil,
@@ -61,11 +63,10 @@ func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBa
 			Valid:  req.Image != nil,
 		},
 
-		Facility: sql.NullInt32{
-			Int32: req.GetFacility(),
-			Valid: req.Facility != nil,
+		BranchCount: sql.NullInt32{
+			Int32: req.GetBranchCount(),
+			Valid: req.BranchCount != nil,
 		},
-		ID:    uuid.MustParse(req.GetShopId()),
 		StartTime: startTime,
 		EndTime:   endTime,
 		BreakTime: breakTime,
@@ -74,8 +75,12 @@ func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBa
 			Valid: req.Status != nil,
 		},
 		IntervalScheduler: sql.NullInt32{
-			Int32: req.GetIntervalSheduler(),
-			Valid: req.IntervalSheduler != nil,
+			Int32: req.GetIntervalScheduler(),
+			Valid: req.IntervalScheduler != nil,
+		},
+		IsMainBranch: sql.NullBool{
+			Bool: req.GetIsMainBranch(),
+			Valid: req.IsMainBranch != nil,
 		},
 	}
 	barberShop, err := server.Store.UpdateBarberShop(ctx, arg)
@@ -86,8 +91,8 @@ func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBa
 		return nil, status.Error(codes.Internal, "internal")
 	}
 
-	rsp := &barber.UpdateBarberShopResponse{
-		BarberShop: convertBarberShop(barberShop),
+	rsp := &barber.UpdateBarberShopsResponse{
+		BarberShop: convertBarberShops(barberShop),
 	}
 	return rsp, nil
 }

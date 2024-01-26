@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 package pb;
-import "google/protobuf/timestamp.proto";
 import "barber/barbers.proto";
 
 option go_package = "barbershop/src/pb/barber";

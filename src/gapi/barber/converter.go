@@ -10,18 +10,8 @@ import (
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
+// BarberRoles
 func ConvertBarberRoles(res db.BarberRole) *barber.BarberRoles {
-	return &barber.BarberRoles{
-		Id:           res.BarberID.String(),
-		BarberId:     res.BarberID.String(),
-		BarbershopId: res.BarbershopID.String(),
-		RoleId:       res.RoleID,
-		CreateAt:     timestamppb.New(res.CreateAt),
-		UpdateAt:     timestamppb.New(res.UpdateAt),
-	}
-}
-
-func ConvertBarberRolesDetail(res db.GetBarberRolesRow) *barber.BarberRoles {
 	return &barber.BarberRoles{
 		Id:           res.BarberID.String(),
 		BarberId:     res.BarberID.String(),
@@ -50,6 +40,8 @@ func ConvertListBarbersRoles(res []db.ListBarbersRolesRow) []*barber.BarberRoles
 	return barbersRoles
 }
 
+// / BarberShop
+// / chains
 func ConvertBarberShopChains(res db.BarberShopChain) *barber.BarberShopChains {
 	return &barber.BarberShopChains{
 		Id:           res.ID.String(),
@@ -63,46 +55,39 @@ func ConvertBarberShopChains(res db.BarberShopChain) *barber.BarberShopChains {
 	}
 }
 
-func convertBarber(res db.Barber) *barber.Barber {
-	return &barber.Barber{
-		BarberId: res.ID.String(),
-		ShopId:   res.ShopID.UUID.String(),
-		NickName: res.NickName,
-		FullName: res.FullName,
-		Phone:    res.Phone,
-		Email:    res.Email,
-		Gender:   res.Gender,
-		Role:     res.Role,
-		Status:   int32(res.Status.Int32),
-		Haircut:  res.Haircut,
+// / barbershops
+func convertBarberShops(barberShop db.BarberShop) *barber.BarberShops {
+	var barberShopChainId *string
+	if barberShop.BarbershopChainID.Valid {
+		*barberShopChainId = barberShop.BarbershopChainID.UUID.String()
+	}
+	return &barber.BarberShops{
+		Id:                barberShop.ID.String(),
+		BarbershopChainId: barberShopChainId,
+		Name:              barberShop.Name,
+		IsMainBranch:      barberShop.IsMainBranch,
+		BranchCount:       barberShop.BranchCount,
+		Coordinates:       barberShop.Coordinates,
+		Address:           barberShop.Address,
+		Image:             barberShop.Image.String,
+		Status:            barberShop.Status,
+		Rate:              float32(barberShop.Rate),
+		StartTime:         convertToTimeOfDay(barberShop.StartTime),
+		EndTime:           convertToTimeOfDay(barberShop.EndTime),
+		BreakTime:         convertToTimeOfDay(barberShop.BreakTime),
+		BreakMinutes:      barberShop.BreakMinutes,
+		IntervalScheduler: barberShop.IntervalScheduler,
+		CreateAt: timestamppb.New(barberShop.CreateAt),
+		UpdateAt: timestamppb.New(barberShop.UpdateAt),
 	}
 }
 
-func convertBarberDetail(res db.ReadBarberRow) *barber.GetBarberResponse {
-	return &barber.GetBarberResponse{
-		Barber: &barber.Barber{
-			BarberId: res.ID.String(),
-			ShopId:   res.ShopID.UUID.String(),
-			NickName: res.NickName,
-			FullName: res.FullName,
-			Phone:    res.Phone,
-			Email:    res.Email,
-			Gender:   res.Gender,
-			Role:     res.Role,
-			Status:   int32(res.Status.Int32),
-			Haircut:  res.Haircut,
-		},
-		ShopName:          res.ShopName,
-		ShopAddress:       res.ShopAddress,
-		ShopImage:         res.Avatar.String,
-		ShopFacility:      res.ShopFacility,
-		Reputation:        res.ShopReputation,
-		ShopRate:          float32(res.ShopRate),
-		StartTime:         convertToTimeOfDay(res.ShopStartTime),
-		EndTime:           convertToTimeOfDay(res.ShopEndTime),
-		BreakTime:         convertToTimeOfDay(res.ShopBreakTime),
-		BreakMinutes:      res.ShopBreakMinutes,
-		IntervalScheduler: res.ShopIntervalScheduler,
+func convertBarberManagers(res db.BarberManager) *barber.BarberManagers {
+	return &barber.BarberManagers{
+		BarberId: res.BarberID.String(),
+		ManagerId: res.ManagerID.String(),
+		CreateAt: timestamppb.New(res.CreateAt),
+		UpdateAt: timestamppb.New(res.UpdateAt),
 	}
 }
 
@@ -125,23 +110,6 @@ func convertGetBarberInShop(res []db.Barber) []*barber.Barber {
 		barbers = append(barbers, barber)
 	}
 	return barbers
-}
-
-func convertBarberShop(barberShop db.BarberShop) *barber.BarberShops {
-	return &barber.BarberShops{
-		Id:            barberShop.ID.String(),
-		Status:            barberShop.Status,
-		Name:              barberShop.Name,
-		Coordinates:       barberShop.Coordinates,
-		Address:           barberShop.Address,
-		Image:             barberShop.Image.String,
-		StartTime:         convertToTimeOfDay(barberShop.StartTime),
-		EndTime:           convertToTimeOfDay(barberShop.EndTime),
-		BreakTime:         convertToTimeOfDay(barberShop.BreakTime),
-		BreakMinutes:      barberShop.BreakMinutes,
-		IntervalScheduler: barberShop.IntervalScheduler,
-		CreateAt:         timestamppb.New(barberShop.CreateAt),
-	}
 }
 
 func ConvertServiceCategory(servicecategory db.ServiceCategory) *barber.ServiceCategory {

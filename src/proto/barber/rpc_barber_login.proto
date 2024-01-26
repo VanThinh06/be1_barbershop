@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package pb;
-import "barber/barber.proto";
+import "barber/barbers.proto";
 import "google/protobuf/timestamp.proto";
 
 option go_package = "barbershop/src/pb/barber";
@@ -16,7 +16,7 @@ message LoginBarberRequest{
 }
 
 message LoginBarberResponse {
-    Barber barber = 1;
+    Barbers barber = 1;
     string session_id = 2;
     string access_token = 3;
     google.protobuf.Timestamp access_token_expires_at =4;

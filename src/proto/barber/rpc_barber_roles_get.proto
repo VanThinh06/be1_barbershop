@@ -14,5 +14,4 @@ message GetBarberRolesRequest{
 
 message GetBarberRolesResponse {
     BarberRoles barber_role = 1;
-    string role_name = 2;
 }

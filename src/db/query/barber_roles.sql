@@ -12,9 +12,8 @@ VALUES (
 RETURNING *;
 
 -- name: GetBarberRoles :one
-SELECT "BarberRoles".*, "Roles"."name" as role_name
+SELECT *
 FROM "BarberRoles"
-JOIN "Roles" ON "BarberRoles"."role_id" = "Roles"."id"
 WHERE "BarberRoles"."barber_id" = $1 AND "BarberRoles"."barbershop_id" = $2
 LIMIT 1;
 

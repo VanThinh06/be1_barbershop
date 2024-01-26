@@ -9,7 +9,6 @@ DROP TABLE IF EXISTS "BarberShopReviews";
 DROP TABLE IF EXISTS "BarberReviews";
 
 DROP TABLE IF EXISTS "Appointments";
-DROP TABLE IF EXISTS "Barbers";
 DROP TABLE IF EXISTS "Roles";
 DROP TABLE IF EXISTS "Customers";
 DROP TABLE IF EXISTS "Barbers";

@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) FindBarberShopsNearby(ctx context.Context, req *barber.FindBarberShopsNearbyRequest) (*barber.FindBarberShopsNearbyResponse, error) {
+func (server *Server) ListNearbyBarberShops(ctx context.Context, req *barber.ListNearbyBarberShopsRequest) (*barber.ListNearbyBarberShopsResponse, error) {
 
 	_, err := server.AuthorizeUser(ctx)
 	if err != nil {
@@ -27,45 +27,44 @@ func (server *Server) FindBarberShopsNearby(ctx context.Context, req *barber.Fin
 		}
 	}
 
-	arg := db.FindBarberShopsNearbyLocationsParams{
+	arg := db.ListNearbyBarberShopsParams{
 		CurrentLongitude: req.GetLongitude().GetValue(),
 		CurrentLatitude:  req.GetLatitude().GetValue(),
 		DistanceInMeters: req.DistanceInMeters,
 	}
 
-	res, err := server.Store.FindBarberShopsNearbyLocations(ctx, arg)
+	res, err := server.Store.ListNearbyBarberShops(ctx, arg)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "failed to create barber shop ")
+		return nil, status.Error(codes.Internal, "internal")
 	}
 
-	rsp := &barber.FindBarberShopsNearbyResponse{
+	rsp := &barber.ListNearbyBarberShopsResponse{
 		BarberShops: ConvertListBarberShopsNearby(res),
 	}
 	return rsp, nil
 }
+
 func extractTokenFromHeader(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return "", fmt.Errorf("missing metadata") // Return an error if metadata is missing in the context
+		return "", fmt.Errorf("missing metadata") 
 	}
 
 	values := md.Get(authorizationHeader)
 	if len(values) == 0 {
-		return "", fmt.Errorf("missing authorization header") // Return an error if the "Authorization" header is missing
+		return "", fmt.Errorf("missing authorization header")
 	}
 
 	authHeader := values[0]
 	fields := strings.Fields(authHeader)
 	if len(authHeader) < 2 {
-		return "", fmt.Errorf("invalid authorization header format") // Return an error if the authorization header format is invalid
+		return "", fmt.Errorf("invalid authorization header format")
 	}
 
 	authType := strings.ToLower(fields[0])
 	if authType != authorizationBearer {
-		return "", fmt.Errorf("unsupported authorization type: %v", authType) // Return an error if the authorization type is unsupported
+		return "", fmt.Errorf("unsupported authorization type: %v", authType)
 	}
-
-	// verifyTokenCustomer
 
 	accessToken := fields[1]
 

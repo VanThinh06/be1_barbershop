@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) GetBarberShop(ctx context.Context, req *barber.GetBarberShopRequest) (*barber.GetBarberShopResponse, error) {
+func (server *Server) GetBarberShops(ctx context.Context, req *barber.GetBarberShopsRequest) (*barber.GetBarberShopsResponse, error) {
 	_, err := server.AuthorizeUser(ctx)
 	if err != nil {
 		_, err = server.AuthorizeCustomer(ctx)
@@ -19,7 +19,7 @@ func (server *Server) GetBarberShop(ctx context.Context, req *barber.GetBarberSh
 		}
 	}
 
-	res, err := server.Store.GetBarberShop(ctx, uuid.MustParse(req.ShopId))
+	res, err := server.Store.GetBarberShop(ctx, uuid.MustParse(req.Id))
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, status.Error(codes.NotFound, "barbershops don't exist")
@@ -27,8 +27,8 @@ func (server *Server) GetBarberShop(ctx context.Context, req *barber.GetBarberSh
 		return nil, status.Errorf(codes.Internal, "internal")
 	}
 
-	rsp := &barber.GetBarberShopResponse{
-		BarberShop: convertBarberShop(res),
+	rsp := &barber.GetBarberShopsResponse{
+		BarberShop: convertBarberShops(res),
 	}
 	return rsp, nil
 }

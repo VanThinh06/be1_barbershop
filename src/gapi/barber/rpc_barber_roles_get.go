@@ -42,8 +42,7 @@ func (server *Server) GetBarberRoles(ctx context.Context, req *barber.GetBarberR
 	}
 
 	rsp := &barber.GetBarberRolesResponse{
-		BarberRole: ConvertBarberRolesDetail(barberRole),
-		RoleName: barberRole.RoleName,
+		BarberRole: ConvertBarberRoles(barberRole),
 	}
 	return rsp, nil
 }
