@@ -112,15 +112,13 @@ func convertGetBarberInShop(res []db.Barber) []*barber.Barber {
 	return barbers
 }
 
-func ConvertServiceCategory(servicecategory db.ServiceCategory) *barber.ServiceCategory {
-	return &barber.ServiceCategory{
+func convertServiceCategories(servicecategory db.ServiceCategory) *barber.ServiceCategories {
+	return &barber.ServiceCategories{
 		Id:        servicecategory.ID.String(),
-		ShopId:    servicecategory.ShopID.UUID.String(),
+		IsGlobal:    servicecategory.IsGlobal,
 		Name:      servicecategory.Name,
-		CreatedAt: timestamppb.New(servicecategory.CreatedAt),
-		UpdatedAt: timestamppb.New(servicecategory.UpdatedAt.Time),
-		Gender:    servicecategory.Gender,
-		ChainId:   servicecategory.ChainID.UUID.String(),
+		CreateAt: timestamppb.New(servicecategory.CreateAt),
+		UpdateAt: timestamppb.New(servicecategory.UpdateAt),
 	}
 }
 

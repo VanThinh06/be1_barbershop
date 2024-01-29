@@ -842,6 +842,134 @@
           "barber shops"
         ]
       }
+    },
+    "/v1/service-categories": {
+      "post": {
+        "summary": "Create service categories",
+        "description": "API endpoint to create a service category",
+        "operationId": "BarberService_CreateServiceCategories",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateServiceCategoriesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateServiceCategoriesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "service categories"
+        ]
+      },
+      "patch": {
+        "summary": "Update service categories",
+        "description": "API endpoint to update a service category",
+        "operationId": "BarberService_UpdateServiceCategories",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateServiceCategoriesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateServiceCategoriesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "service categories"
+        ]
+      }
+    },
+    "/v1/service-categories/{id}": {
+      "get": {
+        "summary": "Get service categories",
+        "description": "API endpoint to get a service category",
+        "operationId": "BarberService_GetServiceCategories",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetServiceCategoriesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "service categories"
+        ]
+      },
+      "delete": {
+        "summary": "Delete service categories",
+        "description": "API endpoint to delete a service category",
+        "operationId": "BarberService_DeleteServiceCategories",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteServiceCategoriesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "service categories"
+        ]
+      }
     }
   },
   "definitions": {
@@ -1251,6 +1379,25 @@
         }
       }
     },
+    "pbCreateServiceCategoriesRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "isGlobal": {
+          "type": "boolean"
+        }
+      }
+    },
+    "pbCreateServiceCategoriesResponse": {
+      "type": "object",
+      "properties": {
+        "serviceCategories": {
+          "$ref": "#/definitions/pbServiceCategories"
+        }
+      }
+    },
     "pbDeleteBarberRolesResponse": {
       "type": "object",
       "properties": {
@@ -1268,6 +1415,14 @@
       }
     },
     "pbDeleteBarberShopsResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "pbDeleteServiceCategoriesResponse": {
       "type": "object",
       "properties": {
         "status": {
@@ -1313,6 +1468,14 @@
         "barber": {
           "$ref": "#/definitions/pbBarbers",
           "title": "string shop_name = 2;\n string shop_address = 3;\n string shop_image = 4;\n float shop_distance = 5;\n int32 shop_facility = 6;\n optional TimeOfDay start_time = 7;\n optional TimeOfDay end_time = 8;\n optional TimeOfDay break_time = 9;\n int32 break_minutes = 10;\n int32 interval_scheduler = 11;\n bool reputation = 12;\n float shop_rate = 13;"
+        }
+      }
+    },
+    "pbGetServiceCategoriesResponse": {
+      "type": "object",
+      "properties": {
+        "serviceCategories": {
+          "$ref": "#/definitions/pbServiceCategories"
         }
       }
     },
@@ -1441,6 +1604,28 @@
         }
       }
     },
+    "pbServiceCategories": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "isGlobal": {
+          "type": "boolean"
+        },
+        "createAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updateAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "pbTimeOfDay": {
       "type": "object",
       "properties": {
@@ -1553,6 +1738,28 @@
       "properties": {
         "barber": {
           "$ref": "#/definitions/pbBarbers"
+        }
+      }
+    },
+    "pbUpdateServiceCategoriesRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "isGlobal": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdateServiceCategoriesResponse": {
+      "type": "object",
+      "properties": {
+        "serviceCategories": {
+          "$ref": "#/definitions/pbServiceCategories"
         }
       }
     },

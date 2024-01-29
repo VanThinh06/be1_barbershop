@@ -34,6 +34,11 @@ import "barber/rpc_barber_managers_create.proto";
 import "barber/rpc_barber_managers_get.proto";
 import "barber/rpc_barber_managers_delete.proto";
 
+import "barber/rpc_service_categories_create.proto";
+import "barber/rpc_service_categories_get.proto";
+import "barber/rpc_service_categories_delete.proto";
+import "barber/rpc_service_categories_update.proto";
+
 import "barber/rpc_barbershop_service_categories_create.proto";
 
 
@@ -278,6 +283,51 @@ rpc GetBarberManagers (GetBarberManagersRequest) returns (GetBarberManagersRespo
   };
 }
 
+/// SERVICE CATEGORIES
+rpc CreateServiceCategories (CreateServiceCategoriesRequest) returns (CreateServiceCategoriesResponse){
+  option (google.api.http) = {
+    post: "/v1/service-categories"
+    body: "*"
+  };
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+  description: "API endpoint to create a service category"
+  summary: "Create service categories"
+  tags: "service categories"
+};
+}
+rpc GetServiceCategories (GetServiceCategoriesRequest) returns (GetServiceCategoriesResponse){
+  option (google.api.http) = {
+    get: "/v1/service-categories/{id}"
+  };
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+  description: "API endpoint to get a service category"
+  summary: "Get service categories"
+  tags: "service categories"
+};
+}
+
+rpc UpdateServiceCategories (UpdateServiceCategoriesRequest) returns (UpdateServiceCategoriesResponse){
+  option (google.api.http) = {
+    patch: "/v1/service-categories"
+    body: "*"
+  };
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+  description: "API endpoint to update a service category"
+  summary: "Update service categories"
+  tags: "service categories"
+};
+}
+
+rpc DeleteServiceCategories (DeleteServiceCategoriesRequest) returns (DeleteServiceCategoriesResponse){
+  option (google.api.http) = {
+    delete: "/v1/service-categories/{id}"
+  };
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+  description: "API endpoint to delete a service category"
+  summary: "Delete service categories"
+  tags: "service categories"
+};
+}
 
     rpc CreateBarber (CreateBarbersRequest) returns (CreateBarbersResponse){
         option (google.api.http) = {

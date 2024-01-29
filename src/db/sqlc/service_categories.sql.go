@@ -7,112 +7,88 @@ package db
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/google/uuid"
 )
 
-const createServiceCategory = `-- name: CreateServiceCategory :one
-INSERT INTO "ServiceCategories" (
-"name",
-"chain_id",
-"gender"
-) VALUES (
-  $1, $2, $3
-)
-RETURNING id, chain_id, shop_id, gender, name, created_at, updated_at, hidden
+const createServiceCategories = `-- name: CreateServiceCategories :one
+INSERT INTO "ServiceCategories" ("name", "is_global")
+VALUES ($1, $2)
+RETURNING id, name, is_global, create_at, update_at
 `
 
-type CreateServiceCategoryParams struct {
-	Name    string        `json:"name"`
-	ChainID uuid.NullUUID `json:"chain_id"`
-	Gender  int32         `json:"gender"`
+type CreateServiceCategoriesParams struct {
+	Name     string `json:"name"`
+	IsGlobal bool   `json:"is_global"`
 }
 
-func (q *Queries) CreateServiceCategory(ctx context.Context, arg CreateServiceCategoryParams) (ServiceCategory, error) {
-	row := q.db.QueryRowContext(ctx, createServiceCategory, arg.Name, arg.ChainID, arg.Gender)
+func (q *Queries) CreateServiceCategories(ctx context.Context, arg CreateServiceCategoriesParams) (ServiceCategory, error) {
+	row := q.db.QueryRowContext(ctx, createServiceCategories, arg.Name, arg.IsGlobal)
 	var i ServiceCategory
 	err := row.Scan(
 		&i.ID,
-		&i.ChainID,
-		&i.ShopID,
-		&i.Gender,
 		&i.Name,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.Hidden,
+		&i.IsGlobal,
+		&i.CreateAt,
+		&i.UpdateAt,
 	)
 	return i, err
 }
 
-const createServiceCategoryPrivate = `-- name: CreateServiceCategoryPrivate :one
-INSERT INTO "ServiceCategories" (
-shop_id,
-"name",
-"gender"
-) VALUES (
-  $1, $2, $3
-)
-RETURNING id, chain_id, shop_id, gender, name, created_at, updated_at, hidden
+const deleteServiceCategories = `-- name: DeleteServiceCategories :exec
+DELETE FROM "ServiceCategories"
+WHERE "id" = $1
 `
 
-type CreateServiceCategoryPrivateParams struct {
-	ShopID uuid.NullUUID `json:"shop_id"`
-	Name   string        `json:"name"`
-	Gender int32         `json:"gender"`
+func (q *Queries) DeleteServiceCategories(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteServiceCategories, id)
+	return err
 }
 
-func (q *Queries) CreateServiceCategoryPrivate(ctx context.Context, arg CreateServiceCategoryPrivateParams) (ServiceCategory, error) {
-	row := q.db.QueryRowContext(ctx, createServiceCategoryPrivate, arg.ShopID, arg.Name, arg.Gender)
+const getServiceCategories = `-- name: GetServiceCategories :one
+SELECT id, name, is_global, create_at, update_at
+FROM "ServiceCategories"
+WHERE "id" = $1
+`
+
+func (q *Queries) GetServiceCategories(ctx context.Context, id uuid.UUID) (ServiceCategory, error) {
+	row := q.db.QueryRowContext(ctx, getServiceCategories, id)
 	var i ServiceCategory
 	err := row.Scan(
 		&i.ID,
-		&i.ChainID,
-		&i.ShopID,
-		&i.Gender,
 		&i.Name,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.Hidden,
+		&i.IsGlobal,
+		&i.CreateAt,
+		&i.UpdateAt,
 	)
 	return i, err
 }
 
-const getListServiceCategories = `-- name: GetListServiceCategories :many
-SELECT sc.id, sc.chain_id, sc.shop_id, sc.gender, sc.name, sc.created_at, sc.updated_at, sc.hidden
-FROM "ServiceCategories" sc
-JOIN "BarberShops" bs ON sc."shop_id" = bs."shop_id"
-WHERE (sc."shop_id" = $1 OR sc."chain_id" = bs."chain_id")
-  AND sc."hidden" = false
+const updateServiceCategories = `-- name: UpdateServiceCategories :one
+UPDATE "ServiceCategories"
+SET "name" = coalesce($1, name),
+    "is_global" = coalesce($2, is_global),
+    "update_at" = NOW()
+WHERE "id" = $3
+RETURNING id, name, is_global, create_at, update_at
 `
 
-func (q *Queries) GetListServiceCategories(ctx context.Context, shopID uuid.NullUUID) ([]ServiceCategory, error) {
-	rows, err := q.db.QueryContext(ctx, getListServiceCategories, shopID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	items := []ServiceCategory{}
-	for rows.Next() {
-		var i ServiceCategory
-		if err := rows.Scan(
-			&i.ID,
-			&i.ChainID,
-			&i.ShopID,
-			&i.Gender,
-			&i.Name,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.Hidden,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+type UpdateServiceCategoriesParams struct {
+	Name     sql.NullString `json:"name"`
+	IsGlobal sql.NullBool   `json:"is_global"`
+	ID       uuid.UUID      `json:"id"`
+}
+
+func (q *Queries) UpdateServiceCategories(ctx context.Context, arg UpdateServiceCategoriesParams) (ServiceCategory, error) {
+	row := q.db.QueryRowContext(ctx, updateServiceCategories, arg.Name, arg.IsGlobal, arg.ID)
+	var i ServiceCategory
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.IsGlobal,
+		&i.CreateAt,
+		&i.UpdateAt,
+	)
+	return i, err
 }

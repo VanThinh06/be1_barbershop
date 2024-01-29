@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message DeleteServiceCategoriesRequest{
+    string id = 1;
+}
+
+message DeleteServiceCategoriesResponse{
+    string status = 1;
+}
