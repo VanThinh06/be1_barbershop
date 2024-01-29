@@ -34,6 +34,9 @@ import "barber/rpc_barber_managers_create.proto";
 import "barber/rpc_barber_managers_get.proto";
 import "barber/rpc_barber_managers_delete.proto";
 
+import "barber/rpc_appointments_create.proto";
+import "barber/rpc_appointments_list_bydate.proto";
+
 import "barber/rpc_service_categories_create.proto";
 import "barber/rpc_service_categories_get.proto";
 import "barber/rpc_service_categories_delete.proto";
@@ -328,6 +331,32 @@ rpc DeleteServiceCategories (DeleteServiceCategoriesRequest) returns (DeleteServ
   tags: "service categories"
 };
 }
+
+// Appointments
+rpc CreateAppointments (CreateAppointmentsRequest) returns (CreateAppointmentsResponse){
+  option (google.api.http) = {
+            post: "/v1/appointments"
+            body: "*"
+          };
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+    description: "API endpoint to create a new appointment"
+    summary: "Create a appointments"
+    tags: "appointments"
+
+  };
+}
+
+rpc ListAppointmentsByDate (ListAppointmentsByDateRequest) returns (ListAppointmentsByDateResponse){
+option (google.api.http) = {
+          get: "/v1/appointments"
+        };
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+  description: "API endpoint to list appointments by date"
+  summary: "list appointments by date"
+  tags: "appointments"
+};
+}
+
 
     rpc CreateBarber (CreateBarbersRequest) returns (CreateBarbersResponse){
         option (google.api.http) = {

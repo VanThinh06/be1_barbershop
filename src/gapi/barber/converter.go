@@ -77,86 +77,86 @@ func convertBarberShops(barberShop db.BarberShop) *barber.BarberShops {
 		BreakTime:         convertToTimeOfDay(barberShop.BreakTime),
 		BreakMinutes:      barberShop.BreakMinutes,
 		IntervalScheduler: barberShop.IntervalScheduler,
-		CreateAt: timestamppb.New(barberShop.CreateAt),
-		UpdateAt: timestamppb.New(barberShop.UpdateAt),
+		CreateAt:          timestamppb.New(barberShop.CreateAt),
+		UpdateAt:          timestamppb.New(barberShop.UpdateAt),
 	}
 }
 
 func convertBarberManagers(res db.BarberManager) *barber.BarberManagers {
 	return &barber.BarberManagers{
-		BarberId: res.BarberID.String(),
+		BarberId:  res.BarberID.String(),
 		ManagerId: res.ManagerID.String(),
-		CreateAt: timestamppb.New(res.CreateAt),
-		UpdateAt: timestamppb.New(res.UpdateAt),
+		CreateAt:  timestamppb.New(res.CreateAt),
+		UpdateAt:  timestamppb.New(res.UpdateAt),
 	}
 }
 
-func convertGetBarberInShop(res []db.Barber) []*barber.Barber {
-	var barbers []*barber.Barber
+func convertBSServiceCategories(serviceCategory db.BarberShopServiceCategory) *barber.BarberShopServiceCategories {
+	return &barber.BarberShopServiceCategories{
+		Id:                serviceCategory.ID.String(),
+		BarbershopChainId: serviceCategory.BarbershopChainID.UUID.String(),
+		BarbershopId:      serviceCategory.BarbershopID.UUID.String(),
+		ServiceCategoryId: serviceCategory.ServiceCategoryID.String(),
+		CreateAt:          timestamppb.New(serviceCategory.CreateAt),
+		UpdateAt:          timestamppb.New(serviceCategory.UpdateAt),
+	}
+}
+
+func convertListBSServiceCategories(res []db.ListBarberShopServiceCategoriesRow) []*barber.BarberShopServiceCategories {
+	var barbers []*barber.BarberShopServiceCategories
 	for _, item := range res {
-		barber := &barber.Barber{
-			BarberId: item.ID.String(),
-			Status:   item.Status.Int32,
-			ShopId:   item.ShopID.UUID.String(),
-			NickName: item.NickName,
-			FullName: item.FullName,
-			Phone:    item.Phone,
-			Email:    item.Email,
-			Gender:   item.Gender,
-			Role:     item.Role,
-			Avatar:   item.Avatar.String,
-			Haircut:  item.Haircut,
+		barber := &barber.BarberShopServiceCategories{
+			Id:                item.ID.String(),
+			BarbershopChainId: item.BarbershopChainID.UUID.String(),
+			BarbershopId:      item.BarbershopID.UUID.String(),
+			ServiceCategoryId: item.ServiceCategoryID.String(),
+			CreateAt:          timestamppb.New(item.CreateAt),
+			UpdateAt:          timestamppb.New(item.UpdateAt),
 		}
 		barbers = append(barbers, barber)
 	}
 	return barbers
 }
 
-func convertServiceCategories(servicecategory db.ServiceCategory) *barber.ServiceCategories {
-	return &barber.ServiceCategories{
-		Id:        servicecategory.ID.String(),
-		IsGlobal:    servicecategory.IsGlobal,
-		Name:      servicecategory.Name,
-		CreateAt: timestamppb.New(servicecategory.CreateAt),
-		UpdateAt: timestamppb.New(servicecategory.UpdateAt),
+func convertBarberShopServices(service db.BarberShopService) *barber.BarberShopServices {
+	return &barber.BarberShopServices{
+		Id:                   service.ID.String(),
+		BarbershopCategoryId: service.BarbershopCategoryID.String(),
+		BarbershopChainId:    service.BarbershopChainID.UUID.String(),
+		BarbershopId:         service.BarbershopID.UUID.String(),
 	}
 }
 
-func ConvertServices(service db.Service) *barber.Service {
-	return &barber.Service{
-		Id:          service.ID.String(),
-		CategoryId:  service.CategoryID.String(),
-		Name:        service.Name,
-		Timer:       &service.Timer.Int32,
-		Price:       utils.ConvertFloat64ToFloat32Pointer(service.Price.Float64),
-		Description: &service.Description.String,
-		Image:       &service.Image.String,
-		CreatedAt:   timestamppb.New(service.CreatedAt),
-		UpdatedAt:   timestamppb.New(service.UpdatedAt.Time),
-		ShopId:      service.ShopID.UUID.String(),
+func convertAppointments(appointment db.CreateAppointmentsRow) *barber.Appointments {
+	return &barber.Appointments{
+		Id:                  appointment.ID.String(),
+		BarbershopId:        appointment.BarbershopID.String(),
+		CustomerId:          appointment.CustomerID.String(),
+		BarberId:            appointment.BarberID.String(),
+		AppointmentDateTime: timestamppb.New(appointment.AppointmentDateTime),
+		Status:              appointment.Status,
+		CreateAt:            timestamppb.New(appointment.CreateAt),
+		UpdateAt:            timestamppb.New(appointment.UpdateAt),
 	}
 }
 
-func ConvertListSerivces(res []db.Service) []*barber.Service {
-	var services []*barber.Service
-
-	for _, service := range res {
-		barberShopPB := &barber.Service{
-			Id:          service.ID.String(),
-			CategoryId:  service.CategoryID.String(),
-			ShopId:      service.ShopID.UUID.String(),
-			Name:        service.Name,
-			Image:       &service.Image.String,
-			CreatedAt:   timestamppb.New(service.CreatedAt),
-			UpdatedAt:   timestamppb.New(service.UpdatedAt.Time),
-			Timer:       &timestamppb.Now().Nanos,
-			Price:       utils.ConvertFloat64ToFloat32Pointer(service.Price.Float64),
-			Description: &service.Description.String,
+func convertListAppointmentsByDate(res []db.ListAppointmentsByDateRow) []*barber.Appointments {
+	var appointments []*barber.Appointments
+	for _, appointment := range res {
+		appointment := &barber.Appointments{
+			Id:                  appointment.ID.String(),
+			CustomerId:          appointment.CustomerID.String(),
+			BarberId:            appointment.BarberID.String(),
+			BarbershopId:        appointment.BarbershopID.String(),
+			Status:              appointment.Status,
+			AppointmentDateTime: timestamppb.New(appointment.AppointmentDateTime),
+			CreateAt:            timestamppb.New(appointment.CreateAt),
+			UpdateAt:            timestamppb.New(appointment.UpdateAt),
+			ServiceTimer:        int32(appointment.ServiceTimer),
 		}
-		services = append(services, barberShopPB)
+		appointments = append(appointments, appointment)
 	}
-
-	return services
+	return appointments
 }
 
 func ConvertListCategorySerivceDetails(res []db.GetListServiceDetailsRow) []*barber.ServiceDetail {

@@ -2,19 +2,15 @@ syntax = "proto3";
 
 package pb;
 
-import "google/protobuf/timestamp.proto";
 import "barber/barbershop_service_categories.proto";
 
 option go_package = "barbershop/src/pb/barber";
 
 
 message CreateBarberShopServiceCategoriesRequest{
-    string id = 1;
-    string barbershop_category_id = 2;
-    string barbershop_id = 3;
-    string service_category_id = 4;
-    google.protobuf.Timestamp create_at = 5;
-    google.protobuf.Timestamp update_at = 6;
+    optional string barbershop_chain_id = 1;
+    optional string barbershop_id = 2;
+    string service_category_id = 3;
 }
 
 message CreateBarberShopServiceCategoriesResponse{

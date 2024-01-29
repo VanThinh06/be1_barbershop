@@ -20,6 +20,77 @@
     "application/json"
   ],
   "paths": {
+    "/v1/appointments": {
+      "get": {
+        "summary": "list appointments by date",
+        "description": "API endpoint to list appointments by date",
+        "operationId": "BarberService_ListAppointmentsByDate",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListAppointmentsByDateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barberId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "appointmentDatetime",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          }
+        ],
+        "tags": [
+          "appointments"
+        ]
+      },
+      "post": {
+        "summary": "Create a appointments",
+        "description": "API endpoint to create a new appointment",
+        "operationId": "BarberService_CreateAppointments",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateAppointmentsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateAppointmentsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "appointments"
+        ]
+      }
+    },
     "/v1/barber": {
       "post": {
         "summary": "Create a barber shop",
@@ -973,6 +1044,43 @@
     }
   },
   "definitions": {
+    "pbAppointments": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "barbershopId": {
+          "type": "string"
+        },
+        "customerId": {
+          "type": "string"
+        },
+        "barberId": {
+          "type": "string"
+        },
+        "appointmentDateTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "createAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updateAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "serviceTimer": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
     "pbBarberManagers": {
       "type": "object",
       "properties": {
@@ -1063,9 +1171,6 @@
           "type": "string"
         },
         "serviceCategoryId": {
-          "type": "string"
-        },
-        "name": {
           "type": "string"
         },
         "createAt": {
@@ -1197,6 +1302,48 @@
         }
       }
     },
+    "pbCreateAppointmentsRequest": {
+      "type": "object",
+      "properties": {
+        "barbershopId": {
+          "type": "string"
+        },
+        "customerId": {
+          "type": "string"
+        },
+        "barberId": {
+          "type": "string"
+        },
+        "serviceId": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "appointmentDateTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "pbCreateAppointmentsResponse": {
+      "type": "object",
+      "properties": {
+        "appointment": {
+          "$ref": "#/definitions/pbAppointments"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "pbCreateBarberManagersRequest": {
       "type": "object",
       "properties": {
@@ -1271,10 +1418,7 @@
     "pbCreateBarberShopServiceCategoriesRequest": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "barbershopCategoryId": {
+        "barbershopChainId": {
           "type": "string"
         },
         "barbershopId": {
@@ -1282,14 +1426,6 @@
         },
         "serviceCategoryId": {
           "type": "string"
-        },
-        "createAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updateAt": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },
@@ -1476,6 +1612,18 @@
       "properties": {
         "serviceCategories": {
           "$ref": "#/definitions/pbServiceCategories"
+        }
+      }
+    },
+    "pbListAppointmentsByDateResponse": {
+      "type": "object",
+      "properties": {
+        "appointment": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbAppointments"
+          }
         }
       }
     },

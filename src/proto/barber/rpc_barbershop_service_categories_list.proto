@@ -8,8 +8,8 @@ option go_package = "barbershop/src/pb/barber";
 
 
 message ListBarberShopServiceCategoriesRequest{
-    string barbershop_chain_id = 1;
-    string barbershop_id = 2;
+    optional string barbershop_chain_id = 1;
+    optional string barbershop_id = 2;
 }
 
 message ListBarberShopServiceCategoriesResponse{

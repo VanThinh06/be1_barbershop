@@ -1,12 +1,13 @@
-package customergapi
+package gapi
 
 import (
 	db "barbershop/src/db/sqlc"
-	"barbershop/src/pb/customer"
+	"barbershop/src/pb/barber"
 	"barbershop/src/shared/utils"
 	"context"
 	"fmt"
 	"log"
+
 	"firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
 	"github.com/jackc/pgconn"
@@ -16,9 +17,9 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) NewAppointment(ctx context.Context, req *customer.CreateAppointmentRequest) (*customer.CreateAppointmentResponse, error) {
+func (server *Server) CreateAppointments(ctx context.Context, req *barber.CreateAppointmentsRequest) (*barber.CreateAppointmentsResponse, error) {
 
-	payload, err := server.authorizeUser(ctx)
+	payload, err := server.AuthorizeUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
@@ -28,7 +29,7 @@ func (server *Server) NewAppointment(ctx context.Context, req *customer.CreateAp
 	}
 
 	errTx := make(chan error)
-	resultAppointment := make(chan db.InsertAppointmentAndGetInfoRow)
+	resultAppointment := make(chan db.CreateAppointmentsRow)
 
 	go func() {
 		result, err := server.TxCreateAppointment(ctx, req)
@@ -44,7 +45,7 @@ func (server *Server) NewAppointment(ctx context.Context, req *customer.CreateAp
 	}
 
 	// firebase notification
-	client, err := server.firebaseApp.Messaging(context.Background())
+	client, err := server.firebase.Messaging(context.Background())
 	if err != nil {
 		log.Fatalf("Failed to initialize")
 		return nil, status.Errorf(codes.Internal, "internal")
@@ -54,7 +55,7 @@ func (server *Server) NewAppointment(ctx context.Context, req *customer.CreateAp
 		registrationToken := appointment.FcmDevice.String
 		message := &messaging.Message{
 			Data: map[string]string{
-				"appointment_datetime": appointment.AppointmentDatetime.String(),
+				"appointment_date_time": appointment.AppointmentDateTime.String(),
 			},
 			Token: registrationToken,
 			Notification: &messaging.Notification{
@@ -69,11 +70,11 @@ func (server *Server) NewAppointment(ctx context.Context, req *customer.CreateAp
 		fmt.Println("Successfully sent message:", response)
 	}
 
-	if payload.Customer.CustomerID == uuid.MustParse(req.CustomerId) {
-		registrationToken := payload.Customer.FcmDevice
+	if payload.Barber.BarberID == uuid.MustParse(req.BarberId) {
+		registrationToken := payload.Barber.FcmDevice
 		message := &messaging.Message{
 			Data: map[string]string{
-				"appointment_datetime": appointment.AppointmentDatetime.String(),
+				"appointment_date_time": appointment.AppointmentDateTime.String(),
 			},
 			Token: registrationToken,
 			Notification: &messaging.Notification{
@@ -88,16 +89,16 @@ func (server *Server) NewAppointment(ctx context.Context, req *customer.CreateAp
 		fmt.Println("Successfully sent message:", response)
 	}
 
-	rsp := &customer.CreateAppointmentResponse{
-		Appointment: convertAppointment(appointment),
+	rsp := &barber.CreateAppointmentsResponse{
+		Appointment: convertAppointments(appointment),
 		Services:    req.ServiceId,
 	}
 	return rsp, nil
 }
 
-func (server *Server) TxCreateAppointment(ctx context.Context, req *customer.CreateAppointmentRequest) (db.InsertAppointmentAndGetInfoRow, error) {
-	var resAppointment db.InsertAppointmentAndGetInfoRow
-	err := server.store.ExecTx(ctx, func(q *db.Queries) error {
+func (server *Server) TxCreateAppointment(ctx context.Context, req *barber.CreateAppointmentsRequest) (db.CreateAppointmentsRow, error) {
+	var resAppointment db.CreateAppointmentsRow
+	err := server.Store.ExecTx(ctx, func(q *db.Queries) error {
 		listServices, err := utils.ConvertStringListToUUIDList(req.GetServiceId())
 		if err != nil {
 			return status.Errorf(codes.InvalidArgument, "services do not exist")
@@ -108,32 +109,31 @@ func (server *Server) TxCreateAppointment(ctx context.Context, req *customer.Cre
 			return status.Errorf(codes.Internal, "failed to get timer service")
 		}
 
-		arg := db.InsertAppointmentAndGetInfoParams{
-			BarbershopsID:       uuid.MustParse(req.GetBarbershopId()),
+		arg := db.CreateAppointmentsParams{
+		
 			CustomerID:          uuid.MustParse(req.GetCustomerId()),
 			BarberID:            uuid.MustParse(req.GetBarberId()),
-			AppointmentDatetime: req.GetAppointmentDatetime().AsTime(),
-			Timer:               int32(timer),
+			AppointmentDateTime: req.GetAppointmentDateTime().AsTime(),
 			Status:              int32(utils.Pending),
 		}
 
-		resAppointment, err = q.InsertAppointmentAndGetInfo(ctx, arg)
+		resAppointment, err = q.CreateAppointments(ctx, arg)
 		if err != nil {
 			if pqErr, ok := err.(*pgconn.PgError); ok {
 				switch pqErr.ConstraintName {
-				case "Appointments_barber_id_appointment_datetime_idx":
+				case "Appointments_barber_id_appointment_date_time_idx":
 					return status.Errorf(codes.AlreadyExists, "The calendar is already booked. Please choose another time.")
 				}
 			}
 			return status.Errorf(codes.Internal, "internal")
 		}
 
-		argServiceAppointment := db.InsertServicesForAppointmentParams{
+		argServiceAppointment := db.CreateServicesForAppointmentsParams{
 			AppointmentsServiceID: resAppointment.ID,
 			ServicesID:            listServices,
 		}
 
-		_, err = q.InsertServicesForAppointment(ctx, argServiceAppointment)
+		_, err = q.CreateServicesForAppointments(ctx, argServiceAppointment)
 		if err != nil {
 			if pqErr, ok := err.(*pq.Error); ok {
 				switch pqErr.Code.Name() {
@@ -149,7 +149,7 @@ func (server *Server) TxCreateAppointment(ctx context.Context, req *customer.Cre
 	return resAppointment, err
 }
 
-func validateCreateAppointment(req *customer.CreateAppointmentRequest) (validations []*errdetails.BadRequest_FieldViolation) {
+func validateCreateAppointment(req *barber.CreateAppointmentsRequest) (validations []*errdetails.BadRequest_FieldViolation) {
 
 	validateField := func(value *string, fieldName string, validateFunc func(string) error) {
 		if value != nil {

@@ -100,7 +100,7 @@ CREATE TABLE "BarberShopServiceCategories" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "barbershop_chain_id" uuid,
   "barbershop_id" uuid,
-  "service_category_id" uuid,
+  "service_category_id" uuid NOT NULL,
   "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
@@ -110,7 +110,7 @@ CREATE TABLE "BarberShopServices" (
   "barbershop_category_id" uuid NOT NULL,
   "barbershop_chain_id" uuid,
   "barbershop_id" uuid,
-  "gender_id" integer,
+  "gender_id" integer NOT NULL,
   "name" varchar NOT NULL,
   "timer" integer NOT NULL DEFAULT 0,
   "price" real NOT NULL DEFAULT 0,
@@ -155,8 +155,7 @@ CREATE TABLE "Appointments" (
   "barbershop_id" uuid NOT NULL,
   "customer_id" uuid NOT NULL,
   "barber_id" uuid NOT NULL,
-  "service_id" uuid NOT NULL,
-  "appointment_datetime" timestamptz NOT NULL,
+  "appointment_date_time" timestamptz NOT NULL,
   "status" integer NOT NULL,
   "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
@@ -171,8 +170,8 @@ BEGIN
     WHERE "barbershop_id" = NEW."barbershop_id"
       AND "barber_id" = NEW."barber_id"
       AND (
-        (NEW."appointment_datetime" + NEW."timer" * interval '1 minute') BETWEEN "appointment_datetime" AND "appointment_datetime" + NEW."timer" * interval '1 minute'
-        OR NEW."appointment_datetime" BETWEEN "appointment_datetime" AND "appointment_datetime" + NEW."timer" * interval '1 minute'
+        (NEW."appointment_date_time" + NEW."timer" * interval '1 minute') BETWEEN "appointment_date_time" AND "appointment_date_time" + NEW."timer" * interval '1 minute'
+        OR NEW."appointment_date_time" BETWEEN "appointment_date_time" AND "appointment_date_time" + NEW."timer" * interval '1 minute'
       )
   ) THEN
     RAISE EXCEPTION 'Appointment conflict: Another appointment exists in this time slot.';
@@ -249,7 +248,7 @@ CREATE INDEX ON "Appointments" ("customer_id");
 
 CREATE INDEX ON "Appointments" ("barbershop_id");
 
-CREATE UNIQUE INDEX ON "Appointments" ("barber_id", "appointment_datetime");
+CREATE UNIQUE INDEX ON "Appointments" ("barber_id", "appointment_date_time");
 
 CREATE INDEX ON "BarberShopReviews" ("customer_id");
 
