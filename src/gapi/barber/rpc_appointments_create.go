@@ -3,7 +3,7 @@ package gapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
-	"barbershop/src/shared/utils"
+	"barbershop/src/shared/helpers"
 	"context"
 	"fmt"
 	"log"
@@ -44,7 +44,6 @@ func (server *Server) CreateAppointments(ctx context.Context, req *barber.Create
 		return nil, status.Error(codes.Internal, "internal")
 	}
 
-	// firebase notification
 	client, err := server.firebase.Messaging(context.Background())
 	if err != nil {
 		log.Fatalf("Failed to initialize")
@@ -99,22 +98,15 @@ func (server *Server) CreateAppointments(ctx context.Context, req *barber.Create
 func (server *Server) TxCreateAppointment(ctx context.Context, req *barber.CreateAppointmentsRequest) (db.CreateAppointmentsRow, error) {
 	var resAppointment db.CreateAppointmentsRow
 	err := server.Store.ExecTx(ctx, func(q *db.Queries) error {
-		listServices, err := utils.ConvertStringListToUUIDList(req.GetServiceId())
+		listServices, err := helpers.ConvertStringListToUUIDList(req.GetServiceId())
 		if err != nil {
 			return status.Errorf(codes.InvalidArgument, "services do not exist")
 		}
 
-		timer, err := q.GetTimerService(ctx, listServices)
-		if err != nil {
-			return status.Errorf(codes.Internal, "failed to get timer service")
-		}
-
 		arg := db.CreateAppointmentsParams{
-		
 			CustomerID:          uuid.MustParse(req.GetCustomerId()),
 			BarberID:            uuid.MustParse(req.GetBarberId()),
 			AppointmentDateTime: req.GetAppointmentDateTime().AsTime(),
-			Status:              int32(utils.Pending),
 		}
 
 		resAppointment, err = q.CreateAppointments(ctx, arg)
@@ -150,7 +142,6 @@ func (server *Server) TxCreateAppointment(ctx context.Context, req *barber.Creat
 }
 
 func validateCreateAppointment(req *barber.CreateAppointmentsRequest) (validations []*errdetails.BadRequest_FieldViolation) {
-
 	validateField := func(value *string, fieldName string, validateFunc func(string) error) {
 		if value != nil {
 			if err := validateFunc(*value); err != nil {
@@ -159,10 +150,10 @@ func validateCreateAppointment(req *barber.CreateAppointmentsRequest) (validatio
 		}
 	}
 
-	validateField(&req.BarberId, "barber_id", utils.ValidateId)
-	validateField(&req.BarbershopId, "barbershop_id", utils.ValidateId)
-	validateField(&req.CustomerId, "customer_id", utils.ValidateId)
-	validateField(&req.ServiceId[0], "service_id", utils.ValidateId)
+	validateField(&req.BarberId, "barber_id", helpers.ValidateId)
+	validateField(&req.BarbershopId, "barbershop_id", helpers.ValidateId)
+	validateField(&req.CustomerId, "customer_id", helpers.ValidateId)
+	validateField(&req.ServiceId[0], "service_id", helpers.ValidateId)
 
 	return validations
 }

@@ -1,7 +1,7 @@
 package token
 
 import (
-	"barbershop/src/shared/utils"
+	"barbershop/src/shared/utilities"
 	"fmt"
 	"time"
 
@@ -55,7 +55,7 @@ func (maker *PasetoMaker) VerifyToken(token string) (*Payload, error) {
 }
 func (maker *PasetoMaker) VerifyTokenCustomer(token string) (*CustomerPayload, error) {
 	payload := &CustomerPayload{}
-	config, err := utils.LoadConfig(".")
+	config, err := utilities.LoadConfig(".")
 	if err != nil {
 		return nil, ErrInvalidToken
 	}

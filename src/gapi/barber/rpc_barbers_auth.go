@@ -4,7 +4,6 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"barbershop/src/shared/token"
-	"barbershop/src/shared/utils"
 	"context"
 	"database/sql"
 

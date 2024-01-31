@@ -16,12 +16,12 @@ func (server *Server) GetAppointmentByDate(ctx context.Context, req *customer.Ge
 		return nil, UnauthenticatedError(err)
 	}
 
-	arg := db.GetAppointmentByDateWithServiceParams{
-		AppointmentDatetime: req.GetDayAppointment().AsTime(),
+	arg := db.ListAppointmentsByDateParams{
 		BarberID:            uuid.MustParse(req.BarberId),
+		AppointmentDateTime: req.GetDayAppointment().AsTime(),
 	}
 
-	res, err := server.store.GetAppointmentByDateWithService(ctx, arg)
+	res, err := server.store.ListAppointmentsByDate(ctx, arg)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to update account")
 	}

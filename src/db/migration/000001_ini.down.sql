@@ -1,21 +1,36 @@
-DROP TABLE IF EXISTS "BarberRoles";
-DROP TABLE IF EXISTS "BarberManager";
 
-DROP TABLE IF EXISTS "SessionsBarber";
-DROP TABLE IF EXISTS "SessionsCustomer";
+DROP TABLE "public"."Appointments" CASCADE;
 
-DROP TABLE IF EXISTS "BarberShopServices_Appointments";
-DROP TABLE IF EXISTS "BarberShopReviews";
-DROP TABLE IF EXISTS "BarberReviews";
+DROP TABLE "public"."BarberManagers" CASCADE;
 
-DROP TABLE IF EXISTS "Appointments";
-DROP TABLE IF EXISTS "Roles";
-DROP TABLE IF EXISTS "Customers";
-DROP TABLE IF EXISTS "Barbers";
+DROP TABLE "public"."BarberReviews" CASCADE;
 
-DROP TABLE IF EXISTS "BarberShopServices";
-DROP TABLE IF EXISTS "BarberShopServiceCategories";
-DROP TABLE IF EXISTS "BarberShops";
-DROP TABLE IF EXISTS "BarberShopChains";
-DROP TABLE IF EXISTS "ServiceCategories";
-DROP TABLE IF EXISTS "Genders";
+DROP TABLE "public"."BarberRoles" CASCADE;
+
+DROP TABLE "public"."Barbers" CASCADE;
+
+DROP TABLE "public"."BarberShopChains" CASCADE;
+
+DROP TABLE "public"."BarberShopReviews" CASCADE;
+
+DROP TABLE "public"."BarberShops" CASCADE;
+
+DROP TABLE "public"."BarberShopServiceCategories" CASCADE;
+
+DROP TABLE "public"."BarberShopServices" CASCADE;
+
+DROP TABLE "public"."BarberShopServices_Appointments" CASCADE;
+
+DROP TABLE "public"."Customers" CASCADE;
+
+DROP TABLE "public"."Genders" CASCADE;
+
+DROP TABLE "public"."Roles" CASCADE;
+
+DROP TABLE "public"."schema_migrations" CASCADE;
+
+DROP TABLE "public"."ServiceCategories" CASCADE;
+
+DROP TABLE "public"."SessionsBarber" CASCADE;
+
+DROP TABLE "public"."SessionsCustomer" CASCADE;

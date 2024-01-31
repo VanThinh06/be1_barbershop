@@ -2,7 +2,7 @@ package gapi
 
 import (
 	"barbershop/src/shared/token"
-	"barbershop/src/shared/utils"
+	"barbershop/src/shared/utilities"
 	"context"
 	"fmt"
 	"strings"
@@ -77,8 +77,8 @@ func (server *Server) AuthorizeCustomer(ctx context.Context) (*token.CustomerPay
 	return payload, nil
 }
 
-func (server *Server) IsManager(ctx context.Context, payload *token.Payload) error {
-	if payload.Barber.Role != int32(utils.Manager) {
+func (server *Server) IsAdministrator(ctx context.Context, payload *token.Payload) error {
+	if payload.Barber.RoleType != int32(utilities.Admin) {
 		return fmt.Errorf("PermissionDenied")
 	}
 	return nil

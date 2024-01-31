@@ -8,12 +8,13 @@ import (
 )
 
 type BarberPayload struct {
-	BarberID  uuid.UUID `json:"username"`
+	BarberID  uuid.UUID `json:"barber_id"`
+	NickName  string    `json:"nick_name"`
 	Role      int32     `json:"role"`
+	RoleType  int32     `json:"role_type"`
 	Phone     string    `json:"phone"`
 	Email     string    `json:"email"`
 	FcmDevice string    `json:"fcm_device"`
-	Timezone  string    `json:"timezone"`
 }
 
 type Payload struct {

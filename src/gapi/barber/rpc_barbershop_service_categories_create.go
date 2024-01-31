@@ -17,7 +17,7 @@ func (server *Server) CreateBarberShopServiceCategories(ctx context.Context, req
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
-	err = server.IsManager(ctx, payload)
+	err = server.IsAdministrator(ctx, payload)
 	if err != nil {
 		return nil, status.Errorf(codes.PermissionDenied, "No permission")
 	}

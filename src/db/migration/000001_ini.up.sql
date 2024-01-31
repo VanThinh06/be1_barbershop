@@ -1,10 +1,8 @@
--- CREATE EXTENSION IF NOT EXISTS "postgis";
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE "Roles" (
   "id" serial  PRIMARY KEY,
   "name" varchar UNIQUE NOT NULL,
-  "create_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
+  "type" varchar
 );
 
 CREATE TABLE "BarberRoles" (
@@ -83,7 +81,7 @@ CREATE TABLE "SessionsBarber" (
   "user_agent" varchar NOT NULL,
   "client_ip" varchar NOT NULL,
   "fcm_device" varchar NOT NULL,
-  "is_blocked" bool NOT NULL DEFAULT false,
+  "is_blocked" bool NOT NULL DEFAULT false,  
   "expires_at" timestamptz NOT NULL,
   "create_at" timestamptz NOT NULL DEFAULT (now())
 );
@@ -305,7 +303,6 @@ CREATE TABLE "BarberShopServices_Appointments" (
 ALTER TABLE "BarberShopServices_Appointments" ADD FOREIGN KEY ("BarberShopServices_id") REFERENCES "BarberShopServices" ("id");
 
 ALTER TABLE "BarberShopServices_Appointments" ADD FOREIGN KEY ("Appointments_service_id") REFERENCES "Appointments" ("id");
-
 
 ALTER TABLE "BarberShopReviews" ADD FOREIGN KEY ("customer_id") REFERENCES "Customers" ("id");
 

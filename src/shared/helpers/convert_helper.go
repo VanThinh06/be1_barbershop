@@ -1,7 +1,6 @@
-package utils
+package helpers
 
 import (
-	"errors"
 	"strconv"
 	"strings"
 
@@ -14,13 +13,6 @@ func GetRemainingString(fullString, subString string) string {
 		return fullString[index+len(subString):]
 	}
 	return ""
-}
-
-func GetValueAtIndex(arr []string, index int) (string, error) {
-	if index >= 0 && index < len(arr) {
-		return arr[index], nil
-	}
-	return "", errors.New("Chỉ số nằm ngoài phạm vi của mảng")
 }
 
 func ConvertStringToInt(str string) (int, error) {
@@ -41,4 +33,9 @@ func ConvertStringListToUUIDList(stringList []string) ([]uuid.UUID, error) {
 		uuidList = append(uuidList, uuidVal)
 	}
 	return uuidList, nil
+}
+
+func ConvertFloat64ToFloat32Pointer(number float64) *float32 {
+    convertedNumber := float32(number)
+    return &convertedNumber
 }

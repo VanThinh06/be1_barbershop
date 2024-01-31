@@ -3,7 +3,7 @@ package gapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
-	"barbershop/src/shared/utils"
+	"barbershop/src/shared/helpers"
 
 	"github.com/jackc/pgtype"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -170,7 +170,7 @@ func ConvertListCategorySerivceDetails(res []db.GetListServiceDetailsRow) []*bar
 			Name:         item.ServiceName,
 			Image:        &item.Image.String,
 			Timer:        &timestamppb.Now().Nanos,
-			Price:        utils.ConvertFloat64ToFloat32Pointer(item.Price.Float64),
+			Price:        helpers.ConvertFloat64ToFloat32Pointer(item.Price.Float64),
 			Description:  &item.Description.String,
 		}
 		services = append(services, serviceDetail)
