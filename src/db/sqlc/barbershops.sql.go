@@ -207,46 +207,75 @@ func (q *Queries) ListNearbyBarberShops(ctx context.Context, arg ListNearbyBarbe
 	return items, nil
 }
 
-const queryBarberShops = `-- name: QueryBarberShops :many
-SELECT bs.id, bs.barbershop_chain_id, bs.name, bs.is_main_branch, bs.branch_count, bs.coordinates, bs.address, bs.image, bs.status, bs.rate, bs.start_time, bs.end_time, bs.break_time, bs.break_minutes, bs.interval_scheduler, bs.is_reputation, bs.is_verified, bs.create_at, bs.update_at
+const searchByNameBarberShops = `-- name: SearchByNameBarberShops :many
+SELECT
+    bs.id,
+    bs.barbershop_chain_id,
+    bs.name,
+    bs.branch_count,
+    bs.coordinates,
+    bs.address,
+    bs.image,
+    bs.status,
+    bs.rate,
+    bs."is_reputation",
+    CAST(ST_X(ST_GeomFromWKB(bs.coordinates::geometry)) AS float8) AS longitude,
+    CAST(ST_Y(ST_GeomFromWKB(bs.coordinates::geometry)) AS float8) AS latitude,
+    CAST(ST_Distance(
+        ST_SetSRID(ST_MakePoint($2::float, $3::float), 4326),
+        bs.coordinates::geography
+    ) AS float) AS distance
 FROM "BarberShops" bs
-WHERE bs."name" = $1
-  OR bs."barbershop_chain_id" IN (
-    SELECT c."barbershop_chain_id"
-    FROM "BarberShopChains" c
-    WHERE c."name" = $1
-)
+JOIN "BarberShopChains" bsc ON bs.barbershop_chain_id = bsc.id
+WHERE bsc."name" = $1
+ORDER BY ST_Distance(bs.coordinates, ST_SetSRID(ST_MakePoint($2::float, $3::float), 4326))
 `
 
-func (q *Queries) QueryBarberShops(ctx context.Context, name string) ([]BarberShop, error) {
-	rows, err := q.db.QueryContext(ctx, queryBarberShops, name)
+type SearchByNameBarberShopsParams struct {
+	Name             string  `json:"name"`
+	CurrentLongitude float64 `json:"current_longitude"`
+	CurrentLatitude  float64 `json:"current_latitude"`
+}
+
+type SearchByNameBarberShopsRow struct {
+	ID                uuid.UUID      `json:"id"`
+	BarbershopChainID uuid.NullUUID  `json:"barbershop_chain_id"`
+	Name              string         `json:"name"`
+	BranchCount       int32          `json:"branch_count"`
+	Coordinates       string         `json:"coordinates"`
+	Address           string         `json:"address"`
+	Image             sql.NullString `json:"image"`
+	Status            int32          `json:"status"`
+	Rate              float64        `json:"rate"`
+	IsReputation      bool           `json:"is_reputation"`
+	Longitude         float64        `json:"longitude"`
+	Latitude          float64        `json:"latitude"`
+	Distance          float64        `json:"distance"`
+}
+
+func (q *Queries) SearchByNameBarberShops(ctx context.Context, arg SearchByNameBarberShopsParams) ([]SearchByNameBarberShopsRow, error) {
+	rows, err := q.db.QueryContext(ctx, searchByNameBarberShops, arg.Name, arg.CurrentLongitude, arg.CurrentLatitude)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []BarberShop{}
+	items := []SearchByNameBarberShopsRow{}
 	for rows.Next() {
-		var i BarberShop
+		var i SearchByNameBarberShopsRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.BarbershopChainID,
 			&i.Name,
-			&i.IsMainBranch,
 			&i.BranchCount,
 			&i.Coordinates,
 			&i.Address,
 			&i.Image,
 			&i.Status,
 			&i.Rate,
-			&i.StartTime,
-			&i.EndTime,
-			&i.BreakTime,
-			&i.BreakMinutes,
-			&i.IntervalScheduler,
 			&i.IsReputation,
-			&i.IsVerified,
-			&i.CreateAt,
-			&i.UpdateAt,
+			&i.Longitude,
+			&i.Latitude,
+			&i.Distance,
 		); err != nil {
 			return nil, err
 		}

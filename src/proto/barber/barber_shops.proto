@@ -24,7 +24,7 @@ message BarberShops {
     optional TimeOfDay break_time = 13;
     int32 break_minutes = 14;
     int32 interval_scheduler = 15;
-    bool reputation = 16;
+    bool is_reputation = 16;
     float distance = 17;
     google.protobuf.DoubleValue longitude = 18;
     google.protobuf.DoubleValue latitude = 19;

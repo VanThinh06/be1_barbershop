@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pb;
+import "barber/barber_shops.proto";
+import "google/protobuf/wrappers.proto";
+option go_package = "barbershop/src/pb/barber";
+
+
+message SearchByNameBarberShopsRequest {
+    string name = 1;
+    google.protobuf.DoubleValue  longitude = 2;
+    google.protobuf.DoubleValue  latitude = 3;
+}
+
+message SearchByNameBarberShopsResponse {
+    repeated BarberShops barber_shops = 1;
+}

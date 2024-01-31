@@ -27,8 +27,6 @@ DROP TABLE "public"."Genders" CASCADE;
 
 DROP TABLE "public"."Roles" CASCADE;
 
-DROP TABLE "public"."schema_migrations" CASCADE;
-
 DROP TABLE "public"."ServiceCategories" CASCADE;
 
 DROP TABLE "public"."SessionsBarber" CASCADE;

@@ -1,6 +1,7 @@
 package gapi
 
 import (
+	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"context"
 	"database/sql"
@@ -9,7 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) QueryBarberShops(ctx context.Context, req *barber.QueryBarberShopsRequest) (*barber.QueryBarberShopsResponse, error) {
+func (server *Server) SearchByNameBarberShops(ctx context.Context, req *barber.SearchByNameBarberShopsRequest) (*barber.SearchByNameBarberShopsResponse, error) {
 	_, err := server.AuthorizeUser(ctx)
 	if err != nil {
 		_, err = server.AuthorizeCustomer(ctx)
@@ -17,8 +18,12 @@ func (server *Server) QueryBarberShops(ctx context.Context, req *barber.QueryBar
 			return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 		}
 	}
-
-	res, err := server.Store.QueryBarberShops(ctx, req.Query)
+	arg := db.SearchByNameBarberShopsParams{
+			CurrentLongitude: req.GetLongitude().GetValue(),
+			CurrentLatitude:  req.GetLatitude().GetValue(),
+			Name: req.GetName(),
+	}
+	res, err := server.Store.SearchByNameBarberShops(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, status.Error(codes.NotFound, "barbershops don't exist")
@@ -26,8 +31,8 @@ func (server *Server) QueryBarberShops(ctx context.Context, req *barber.QueryBar
 		return nil, status.Errorf(codes.Internal, "internal")
 	}
 
-	rsp := &barber.QueryBarberShopsResponse{
-		BarberShops: ConvertListBarberShops(res),
+	rsp := &barber.SearchByNameBarberShopsResponse{
+		BarberShops: ConvertSearchByNameBarberShops(res),
 	}
 	return rsp, nil
 }

@@ -4,15 +4,31 @@ SELECT *
 FROM "BarberShops"
 WHERE id = $1;
 
--- name: QueryBarberShops :many
-SELECT bs.*
+-- name: SearchByNameBarberShops :many
+SELECT
+    bs.id,
+    bs.barbershop_chain_id,
+    bs.name,
+    bs.branch_count,
+    bs.coordinates,
+    bs.address,
+    bs.image,
+    bs.status,
+    bs.rate,
+    bs."is_reputation",
+    CAST(ST_X(ST_GeomFromWKB(bs.coordinates::geometry)) AS float8) AS longitude,
+    CAST(ST_Y(ST_GeomFromWKB(bs.coordinates::geometry)) AS float8) AS latitude,
+    CAST(ST_Distance(
+        ST_SetSRID(ST_MakePoint(sqlc.arg(current_longitude)::float, sqlc.arg(current_latitude)::float), 4326),
+        bs.coordinates::geography
+    ) AS float) AS distance
 FROM "BarberShops" bs
-WHERE bs."name" = $1
-  OR bs."barbershop_chain_id" IN (
-    SELECT c."barbershop_chain_id"
-    FROM "BarberShopChains" c
-    WHERE c."name" = $1
-);
+JOIN "BarberShopChains" bsc ON bs.barbershop_chain_id = bsc.id
+WHERE bsc."name" = $1
+ORDER BY ST_Distance(bs.coordinates, ST_SetSRID(ST_MakePoint(sqlc.arg(current_longitude)::float, sqlc.arg(current_latitude)::float), 4326));
+
+
+
 -- name: ListNearbyBarberShops :many
 SELECT
     id,

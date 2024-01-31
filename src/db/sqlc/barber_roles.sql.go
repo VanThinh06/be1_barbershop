@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -83,7 +84,7 @@ func (q *Queries) GetBarberRoles(ctx context.Context, arg GetBarberRolesParams) 
 }
 
 const listBarbersRoles = `-- name: ListBarbersRoles :many
-SELECT "BarberRoles".id, barber_id, barbershop_id, role_id, "BarberRoles".create_at, "BarberRoles".update_at, "Roles".id, name, "Roles".create_at, "Roles".update_at
+SELECT "BarberRoles".id, barber_id, barbershop_id, role_id, create_at, update_at, "Roles".id, name, type
 FROM "BarberRoles"
 JOIN "Roles" ON "BarberRoles"."role_id" = "Roles"."id"
 WHERE "BarberRoles"."barbershop_id" = $1
@@ -91,16 +92,15 @@ ORDER BY "Roles"."id"
 `
 
 type ListBarbersRolesRow struct {
-	ID           uuid.UUID `json:"id"`
-	BarberID     uuid.UUID `json:"barber_id"`
-	BarbershopID uuid.UUID `json:"barbershop_id"`
-	RoleID       int32     `json:"role_id"`
-	CreateAt     time.Time `json:"create_at"`
-	UpdateAt     time.Time `json:"update_at"`
-	ID_2         int32     `json:"id_2"`
-	Name         string    `json:"name"`
-	CreateAt_2   time.Time `json:"create_at_2"`
-	UpdateAt_2   time.Time `json:"update_at_2"`
+	ID           uuid.UUID      `json:"id"`
+	BarberID     uuid.UUID      `json:"barber_id"`
+	BarbershopID uuid.UUID      `json:"barbershop_id"`
+	RoleID       int32          `json:"role_id"`
+	CreateAt     time.Time      `json:"create_at"`
+	UpdateAt     time.Time      `json:"update_at"`
+	ID_2         int32          `json:"id_2"`
+	Name         string         `json:"name"`
+	Type         sql.NullString `json:"type"`
 }
 
 func (q *Queries) ListBarbersRoles(ctx context.Context, barbershopID uuid.UUID) ([]ListBarbersRolesRow, error) {
@@ -121,8 +121,7 @@ func (q *Queries) ListBarbersRoles(ctx context.Context, barbershopID uuid.UUID) 
 			&i.UpdateAt,
 			&i.ID_2,
 			&i.Name,
-			&i.CreateAt_2,
-			&i.UpdateAt_2,
+			&i.Type,
 		); err != nil {
 			return nil, err
 		}

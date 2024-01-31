@@ -20,7 +20,7 @@ import "barber/rpc_barbershops_get.proto";
 import "barber/rpc_barbershops_update.proto";
 import "barber/rpc_barbershops_delete.proto";
 import "barber/rpc_barbershops_list_nearby.proto";
-import "barber/rpc_barbershops_query.proto";
+import "barber/rpc_barbershops_search_by_name.proto";
 
 
 import "barber/rpc_barbers_create.proto";
@@ -202,9 +202,10 @@ rpc GetBarberShops (GetBarberShopsRequest) returns (GetBarberShopsResponse){
   };
 }
 
-rpc QueryBarberShops (QueryBarberShopsRequest) returns (QueryBarberShopsResponse){
+rpc SearchByNameBarberShops (SearchByNameBarberShopsRequest) returns (SearchByNameBarberShopsResponse){
   option (google.api.http) = {
-            get: "/v1/barbershops/{query}"
+            post: "/v1/barbershops/{name}"
+            body: "*"
           };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
     description: "API endpoint to query a new barber shop"

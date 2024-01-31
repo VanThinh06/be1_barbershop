@@ -882,16 +882,16 @@
         ]
       }
     },
-    "/v1/barbershops/{query}": {
-      "get": {
+    "/v1/barbershops/{name}": {
+      "post": {
         "summary": "Query barber shop",
         "description": "API endpoint to query a new barber shop",
-        "operationId": "BarberService_QueryBarberShops",
+        "operationId": "BarberService_SearchByNameBarberShops",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbQueryBarberShopsResponse"
+              "$ref": "#/definitions/pbSearchByNameBarberShopsResponse"
             }
           },
           "default": {
@@ -903,10 +903,28 @@
         },
         "parameters": [
           {
-            "name": "query",
+            "name": "name",
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "longitude": {
+                  "type": "number",
+                  "format": "double"
+                },
+                "latitude": {
+                  "type": "number",
+                  "format": "double"
+                }
+              }
+            }
           }
         ],
         "tags": [
@@ -1236,7 +1254,7 @@
           "type": "integer",
           "format": "int32"
         },
-        "reputation": {
+        "isReputation": {
           "type": "boolean"
         },
         "distance": {
@@ -1713,18 +1731,6 @@
         }
       }
     },
-    "pbQueryBarberShopsResponse": {
-      "type": "object",
-      "properties": {
-        "barberShops": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/pbBarberShops"
-          }
-        }
-      }
-    },
     "pbRefreshTokenBarberRequest": {
       "type": "object",
       "properties": {
@@ -1749,6 +1755,18 @@
         "refreshTokenExpiresAt": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "pbSearchByNameBarberShopsResponse": {
+      "type": "object",
+      "properties": {
+        "barberShops": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbBarberShops"
+          }
         }
       }
     },

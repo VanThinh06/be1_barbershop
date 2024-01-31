@@ -30,7 +30,7 @@ const (
 	BarberService_DeleteBarberShopChains_FullMethodName            = "/pb.BarberService/DeleteBarberShopChains"
 	BarberService_CreateBarberShops_FullMethodName                 = "/pb.BarberService/CreateBarberShops"
 	BarberService_GetBarberShops_FullMethodName                    = "/pb.BarberService/GetBarberShops"
-	BarberService_QueryBarberShops_FullMethodName                  = "/pb.BarberService/QueryBarberShops"
+	BarberService_SearchByNameBarberShops_FullMethodName           = "/pb.BarberService/SearchByNameBarberShops"
 	BarberService_ListNearbyBarberShops_FullMethodName             = "/pb.BarberService/ListNearbyBarberShops"
 	BarberService_UpdateBarberShops_FullMethodName                 = "/pb.BarberService/UpdateBarberShops"
 	BarberService_DeleteBarberShops_FullMethodName                 = "/pb.BarberService/DeleteBarberShops"
@@ -69,7 +69,7 @@ type BarberServiceClient interface {
 	// /barbershops
 	CreateBarberShops(ctx context.Context, in *CreateBarberShopsRequest, opts ...grpc.CallOption) (*CreateBarberShopsResponse, error)
 	GetBarberShops(ctx context.Context, in *GetBarberShopsRequest, opts ...grpc.CallOption) (*GetBarberShopsResponse, error)
-	QueryBarberShops(ctx context.Context, in *QueryBarberShopsRequest, opts ...grpc.CallOption) (*QueryBarberShopsResponse, error)
+	SearchByNameBarberShops(ctx context.Context, in *SearchByNameBarberShopsRequest, opts ...grpc.CallOption) (*SearchByNameBarberShopsResponse, error)
 	ListNearbyBarberShops(ctx context.Context, in *ListNearbyBarberShopsRequest, opts ...grpc.CallOption) (*ListNearbyBarberShopsResponse, error)
 	UpdateBarberShops(ctx context.Context, in *UpdateBarberShopsRequest, opts ...grpc.CallOption) (*UpdateBarberShopsResponse, error)
 	DeleteBarberShops(ctx context.Context, in *DeleteBarberShopsRequest, opts ...grpc.CallOption) (*DeleteBarberShopsResponse, error)
@@ -200,9 +200,9 @@ func (c *barberServiceClient) GetBarberShops(ctx context.Context, in *GetBarberS
 	return out, nil
 }
 
-func (c *barberServiceClient) QueryBarberShops(ctx context.Context, in *QueryBarberShopsRequest, opts ...grpc.CallOption) (*QueryBarberShopsResponse, error) {
-	out := new(QueryBarberShopsResponse)
-	err := c.cc.Invoke(ctx, BarberService_QueryBarberShops_FullMethodName, in, out, opts...)
+func (c *barberServiceClient) SearchByNameBarberShops(ctx context.Context, in *SearchByNameBarberShopsRequest, opts ...grpc.CallOption) (*SearchByNameBarberShopsResponse, error) {
+	out := new(SearchByNameBarberShopsResponse)
+	err := c.cc.Invoke(ctx, BarberService_SearchByNameBarberShops_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -381,7 +381,7 @@ type BarberServiceServer interface {
 	// /barbershops
 	CreateBarberShops(context.Context, *CreateBarberShopsRequest) (*CreateBarberShopsResponse, error)
 	GetBarberShops(context.Context, *GetBarberShopsRequest) (*GetBarberShopsResponse, error)
-	QueryBarberShops(context.Context, *QueryBarberShopsRequest) (*QueryBarberShopsResponse, error)
+	SearchByNameBarberShops(context.Context, *SearchByNameBarberShopsRequest) (*SearchByNameBarberShopsResponse, error)
 	ListNearbyBarberShops(context.Context, *ListNearbyBarberShopsRequest) (*ListNearbyBarberShopsResponse, error)
 	UpdateBarberShops(context.Context, *UpdateBarberShopsRequest) (*UpdateBarberShopsResponse, error)
 	DeleteBarberShops(context.Context, *DeleteBarberShopsRequest) (*DeleteBarberShopsResponse, error)
@@ -443,8 +443,8 @@ func (UnimplementedBarberServiceServer) CreateBarberShops(context.Context, *Crea
 func (UnimplementedBarberServiceServer) GetBarberShops(context.Context, *GetBarberShopsRequest) (*GetBarberShopsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBarberShops not implemented")
 }
-func (UnimplementedBarberServiceServer) QueryBarberShops(context.Context, *QueryBarberShopsRequest) (*QueryBarberShopsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryBarberShops not implemented")
+func (UnimplementedBarberServiceServer) SearchByNameBarberShops(context.Context, *SearchByNameBarberShopsRequest) (*SearchByNameBarberShopsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchByNameBarberShops not implemented")
 }
 func (UnimplementedBarberServiceServer) ListNearbyBarberShops(context.Context, *ListNearbyBarberShopsRequest) (*ListNearbyBarberShopsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListNearbyBarberShops not implemented")
@@ -708,20 +708,20 @@ func _BarberService_GetBarberShops_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BarberService_QueryBarberShops_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryBarberShopsRequest)
+func _BarberService_SearchByNameBarberShops_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchByNameBarberShopsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BarberServiceServer).QueryBarberShops(ctx, in)
+		return srv.(BarberServiceServer).SearchByNameBarberShops(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: BarberService_QueryBarberShops_FullMethodName,
+		FullMethod: BarberService_SearchByNameBarberShops_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BarberServiceServer).QueryBarberShops(ctx, req.(*QueryBarberShopsRequest))
+		return srv.(BarberServiceServer).SearchByNameBarberShops(ctx, req.(*SearchByNameBarberShopsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1084,8 +1084,8 @@ var BarberService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BarberService_GetBarberShops_Handler,
 		},
 		{
-			MethodName: "QueryBarberShops",
-			Handler:    _BarberService_QueryBarberShops_Handler,
+			MethodName: "SearchByNameBarberShops",
+			Handler:    _BarberService_SearchByNameBarberShops_Handler,
 		},
 		{
 			MethodName: "ListNearbyBarberShops",

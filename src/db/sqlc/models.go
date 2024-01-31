@@ -158,10 +158,9 @@ type Gender struct {
 }
 
 type Role struct {
-	ID       int32     `json:"id"`
-	Name     string    `json:"name"`
-	CreateAt time.Time `json:"create_at"`
-	UpdateAt time.Time `json:"update_at"`
+	ID   int32          `json:"id"`
+	Name string         `json:"name"`
+	Type sql.NullString `json:"type"`
 }
 
 type ServiceCategory struct {
