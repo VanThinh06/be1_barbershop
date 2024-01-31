@@ -3,8 +3,6 @@ package gapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
-	"barbershop/src/shared/helpers"
-
 	"github.com/jackc/pgtype"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
@@ -107,6 +105,27 @@ func ConvertSearchByNameBarberShops(res []db.SearchByNameBarberShopsRow) []*barb
 	return barberShops
 }
 
+func ConvertListBarberShopsNearby(res []db.ListNearbyBarberShopsRow) []*barber.BarberShops {
+	var barberShops []*barber.BarberShops
+	for _, barberShop := range res {
+		barberShopPB := &barber.BarberShops{
+			Id:          barberShop.ID.String(),
+			Status:      barberShop.Status,
+			Name:        barberShop.Name,
+			Coordinates: barberShop.Coordinates,
+			Address:     barberShop.Address,
+			Image:       barberShop.Image.String,
+			Distance:    float32(barberShop.Distance),
+			Longitude:   wrapperspb.Double(barberShop.Longitude),
+			Latitude:    wrapperspb.Double(barberShop.Latitude),
+		}
+
+		barberShops = append(barberShops, barberShopPB)
+	}
+
+	return barberShops
+}
+
 func convertBarberManagers(res db.BarberManager) *barber.BarberManagers {
 	return &barber.BarberManagers{
 		BarberId:  res.BarberID.String(),
@@ -184,68 +203,6 @@ func convertListAppointmentsByDate(res []db.ListAppointmentsByDateRow) []*barber
 	return appointments
 }
 
-func ConvertListCategorySerivceDetails(res []db.GetListServiceDetailsRow) []*barber.ServiceDetail {
-	var services []*barber.ServiceDetail
-
-	for _, item := range res {
-		serviceDetail := &barber.ServiceDetail{
-			CategoryId:   item.CategoryID.String(),
-			NameCategory: item.CategoryName,
-			Id:           item.ServiceID.String(),
-			Name:         item.ServiceName,
-			Image:        &item.Image.String,
-			Timer:        &timestamppb.Now().Nanos,
-			Price:        helpers.ConvertFloat64ToFloat32Pointer(item.Price.Float64),
-			Description:  &item.Description.String,
-		}
-		services = append(services, serviceDetail)
-	}
-
-	return services
-}
-
-func ConvertListSerivceCategories(res []db.ServiceCategory) []*barber.ServiceCategory {
-	var serviceCategories []*barber.ServiceCategory
-
-	for _, serviceCategory := range res {
-		item := &barber.ServiceCategory{
-			Id:        serviceCategory.ID.String(),
-			ShopId:    serviceCategory.ShopID.UUID.String(),
-			ChainId:   serviceCategory.ChainID.UUID.String(),
-			Name:      serviceCategory.Name,
-			Gender:    serviceCategory.Gender,
-			CreatedAt: timestamppb.New(serviceCategory.CreatedAt),
-			UpdatedAt: timestamppb.New(serviceCategory.UpdatedAt.Time),
-		}
-		serviceCategories = append(serviceCategories, item)
-	}
-
-	return serviceCategories
-}
-
-func ConvertListBarberShopsNearby(res []db.FindBarberShopsNearbyLocationsRow) []*barber.BarberShop {
-	var barberShops []*barber.BarberShop
-
-	for _, barberShop := range res {
-		barberShopPB := &barber.BarberShops{
-			OwnerId:     barberShop.OwnerID.String(),
-			ShopId:      barberShop.ID.String(),
-			Status:      barberShop.Status,
-			Name:        barberShop.Name,
-			Coordinates: barberShop.Coordinates,
-			Address:     barberShop.Address,
-			Image:       barberShop.Image.String,
-			CreatedAt:   timestamppb.New(barberShop.CreatedAt),
-			Distance:    float32(barberShop.Distance),
-			Longitude:   wrapperspb.Double(barberShop.Longitude),
-			Latitude:    wrapperspb.Double(barberShop.Latitude),
-		}
-
-		barberShops = append(barberShops, barberShopPB)
-	}
-
-	return barberShops
-}
 
 func convertToTimeOfDay(pgTime pgtype.Time) *barber.TimeOfDay {
 	if pgTime.Status == pgtype.Null || pgTime.Microseconds < 0 {

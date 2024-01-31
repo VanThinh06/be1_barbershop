@@ -6,7 +6,6 @@ import (
 	customergapi "barbershop/src/gapi/customer"
 	"barbershop/src/pb/barber"
 	"barbershop/src/pb/customer"
-	"barbershop/src/shared/utils"
 	"context"
 	"database/sql"
 	"log"
@@ -14,6 +13,7 @@ import (
 	"net/http"
 
 	_ "barbershop/src/shared/doc/statik"
+	"barbershop/src/shared/utilities"
 
 	_ "github.com/jackc/pgx/v4/stdlib"
 	_ "github.com/lib/pq"
@@ -30,7 +30,7 @@ import (
 func main() {
 
 	// Load file config
-	config, err := utils.LoadConfig(".") // . vì nằm cùng vị trí với thư mục hiện tại app.env
+	config, err := utilities.LoadConfig(".") // . vì nằm cùng vị trí với thư mục hiện tại app.env
 	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}
@@ -56,7 +56,7 @@ func main() {
 	runGrpcServer(config, store, firebaseApp)
 }
 
-func runGatewayServer(config utils.Config, store db.StoreMain, firebase db.FirebaseApp) {
+func runGatewayServer(config utilities.Config, store db.StoreMain, firebase db.FirebaseApp) {
 	grpcMux := runtime.NewServeMux()
 	ctx, cancel := context.WithCancel(context.Background()) // create context
 	defer cancel()                                          // trì hoãn lệnh cancel trước khi exit khỏi func này
@@ -101,7 +101,7 @@ func runGatewayServer(config utils.Config, store db.StoreMain, firebase db.Fireb
 	}
 }
 
-func runGrpcServer(config utils.Config, store db.StoreMain, firebase db.FirebaseApp) {
+func runGrpcServer(config utilities.Config, store db.StoreMain, firebase db.FirebaseApp) {
 	grpcServer := grpc.NewServer()
 
 	server, err := gapi.NewServer(config, store, firebase)
@@ -129,61 +129,3 @@ func runGrpcServer(config utils.Config, store db.StoreMain, firebase db.Firebase
 		log.Fatal("cannot start gRPC: ", err)
 	}
 }
-
-// func runGatewayServerCustomer(config utils.Config, store db.StoreMain, firebase db.FirebaseApp) {
-// 	server, err := customergapi.NewServer(config, store, firebase)
-// 	if err != nil {
-// 		log.Fatal("cannot create server:", err)
-// 	}
-// 	grpcMux := runtime.NewServeMux()
-// 	ctx, cancel := context.WithCancel(context.Background()) // create context
-// 	defer cancel()                                          // trì hoãn lệnh cancel trước khi exit khỏi func này
-
-// 	err = pb.RegisterAuthCustomerBarberShopHandlerServer(ctx, grpcMux, server)
-// 	if err != nil {
-// 		log.Fatal("cannot register handler server:", err)
-// 	}
-
-// 	mux := http.NewServeMux()
-// 	mux.Handle("/", grpcMux)
-
-// 	statikFS, err := fs.New()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	swaggerHandler := http.StripPrefix("/swagger/", http.FileServer(statikFS))
-// 	mux.Handle("/swagger/", swaggerHandler)
-
-// 	listener, err := net.Listen("tcp", config.HTTPServerAddressCustomer)
-// 	if err != nil {
-// 		log.Fatal("cannot create listener: ", err)
-// 	}
-
-// 	log.Printf("start HTTP gateway server at %s", listener.Addr().String())
-// 	err = http.Serve(listener, mux)
-// 	if err != nil {
-// 		log.Fatal("cannot start HTTP gateway server Customer: ", err)
-// 	}
-// }
-
-// func runGrpcServerCustomer(config utils.Config, store db.StoreMain, firebase db.FirebaseApp) {
-// 	server, err := customergapi.NewServer(config, store, firebase)
-// 	if err != nil {
-// 		log.Fatal("cannot create server:", err)
-// 	}
-
-// 	grpcServer := grpc.NewServer()
-// 	pb.RegisterAuthCustomerBarberShopServer(grpcServer, server)
-// 	reflection.Register(grpcServer)
-
-// 	listener, err := net.Listen("tcp", config.GRPCServerAddressCustomer)
-// 	if err != nil {
-// 		log.Fatal("cannot create listener: ", err)
-// 	}
-
-// 	log.Printf("start gRPC server at %s", config.GRPCServerAddressCustomer)
-// 	err = grpcServer.Serve(listener)
-// 	if err != nil {
-// 		log.Fatal("cannot start gRPC: ", err)
-// 	}
-// }
