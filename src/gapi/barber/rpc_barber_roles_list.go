@@ -23,11 +23,9 @@ func (server *Server) ListBarberRoles(ctx context.Context, req *barber.ListBarbe
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
-			case "Barbershop_id_key":
-				return nil, status.Errorf(codes.AlreadyExists, "no permission")
 			}
 		}
-		return nil, status.Errorf(codes.Internal, "internal")
+		return nil, internalError(err)
 	}
 
 	rsp := &barber.ListBarberRolesResponse{

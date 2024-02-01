@@ -14,7 +14,6 @@ func GenerateAESString(key string, plaintext string) (string, error) {
 
 	keyBytes := []byte(key)
 
-
 	block, err := aes.NewCipher(keyBytes)
 	if err != nil {
 		return "", err

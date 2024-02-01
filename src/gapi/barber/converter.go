@@ -3,6 +3,7 @@ package gapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
+
 	"github.com/jackc/pgtype"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
@@ -126,6 +127,38 @@ func ConvertListBarberShopsNearby(res []db.ListNearbyBarberShopsRow) []*barber.B
 	return barberShops
 }
 
+// barbers
+func convertBarbers(res db.GetBarbersRow) *barber.Barbers {
+	return &barber.Barbers{
+		Id:           res.ID.String(),
+		GenderId:     res.GenderID,
+		Email:        res.Email,
+		Phone:        res.Phone,
+		NickName:     res.NickName,
+		FullName:     res.FullName,
+		Haircut:      res.Haircut,
+		AvatarUrl:    res.AvatarUrl.String,
+		BarberRoleId: res.BarberRoleID,
+		CreateAt: timestamppb.New(res.CreateAt),
+		UpdateAt: timestamppb.New(res.UpdateAt),
+	}
+}
+func convertBarbersEmail(res db.GetBarbersEmailRow) *barber.Barbers {
+	return &barber.Barbers{
+		Id:           res.ID.String(),
+		GenderId:     res.GenderID,
+		Email:        res.Email,
+		Phone:        res.Phone,
+		NickName:     res.NickName,
+		FullName:     res.FullName,
+		Haircut:      res.Haircut,
+		AvatarUrl:    res.AvatarUrl.String,
+		BarberRoleId: res.BarberRole,
+		CreateAt:     timestamppb.New(res.CreateAt),
+		UpdateAt:     timestamppb.New(res.UpdateAt),
+	}
+}
+
 func convertBarberManagers(res db.BarberManager) *barber.BarberManagers {
 	return &barber.BarberManagers{
 		BarberId:  res.BarberID.String(),
@@ -202,7 +235,6 @@ func convertListAppointmentsByDate(res []db.ListAppointmentsByDateRow) []*barber
 	}
 	return appointments
 }
-
 
 func convertToTimeOfDay(pgTime pgtype.Time) *barber.TimeOfDay {
 	if pgTime.Status == pgtype.Null || pgTime.Microseconds < 0 {

@@ -4,7 +4,7 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"barbershop/src/shared/token"
-	"barbershop/src/shared/utils"
+	"barbershop/src/shared/utilities"
 	"context"
 	"strings"
 
@@ -15,23 +15,22 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarberRequest) (*barber.CreateBarberResponse, error) {
+func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarbersRequest) (*barber.CreateBarbersResponse, error) {
 
 	validations := validateCreateBarber(req)
 	if validations != nil {
 		return nil, InValidArgumentError(validations)
 	}
 
-	hashedPassword, err := utils.HashPassword(req.GetPassword())
+	hashedPassword, err := utilities.HashPassword(req.GetPassword())
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "internal")
 	}
 
 	var managerId uuid.NullUUID
 	var barberShopId uuid.NullUUID
-	var roleBarber = int(req.GetRole())
-	if req.Role != int32(utils.Manager) {
-		if req.Role == int32(utils.HairStylist) {
+
+		if req.Role == int32(utilities.Receptionist) {
 			req.Haircut = true
 		}
 		var code, err = token.DecodeAESString(server.config.AesKey, req.CodeBarberShop)
@@ -40,16 +39,16 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 		}
 		var listCode = splitExpression(code)
 
-		strRoleBarber, err := utils.GetValueAtIndex(listCode, 0)
+		strRoleBarber, err := utilities.GetValueAtIndex(listCode, 0)
 		if err != nil {
 			return nil, status.Error(codes.InvalidArgument, "information is incorrect")
 		}
-		roleBarber, err = utils.ConvertStringToInt(strRoleBarber)
+		roleBarber, err = utilities.ConvertStringToInt(strRoleBarber)
 		if err != nil {
 			return nil, status.Error(codes.InvalidArgument, "information is incorrect")
 		}
 
-		valueIdBarberShop, err := utils.GetValueAtIndex(listCode, 1)
+		valueIdBarberShop, err := utilities.GetValueAtIndex(listCode, 1)
 		if err != nil {
 			return nil, status.Error(codes.InvalidArgument, "information is incorrect")
 		}
@@ -60,7 +59,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 			}
 		}
 
-		valueIdManager, err := utils.GetValueAtIndex(listCode, 2)
+		valueIdManager, err := utilities.GetValueAtIndex(listCode, 2)
 		if err != nil {
 			return nil, status.Error(codes.InvalidArgument, "information is incorrect")
 		}
@@ -70,7 +69,6 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 				Valid: valueIdManager != "",
 			}
 		}
-	}
 
 	arg := db.CreateBarberParams{
 		NickName:       req.GetNickname(),
@@ -113,23 +111,23 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 }
 
 func validateCreateBarber(req *barber.CreateBarberRequest) (validations []*errdetails.BadRequest_FieldViolation) {
-	if err := utils.ValidateEmail(req.Email); err != nil {
+	if err := utilities.ValidateEmail(req.Email); err != nil {
 		validations = append(validations, FieldValidation("email", err))
 	}
 
-	if err := utils.ValidatePhoneNumber(req.Phone); err != nil {
+	if err := utilities.ValidatePhoneNumber(req.Phone); err != nil {
 		validations = append(validations, FieldValidation("phone", err))
 	}
 
-	if err := utils.ValidatePassword(req.Password); err != nil {
+	if err := utilities.ValidatePassword(req.Password); err != nil {
 		validations = append(validations, FieldValidation("password", err))
 	}
 
-	if err := utils.ValidateNickname(req.Nickname); err != nil {
+	if err := utilities.ValidateNickname(req.Nickname); err != nil {
 		validations = append(validations, FieldValidation("nickname", err))
 	}
 
-	if err := utils.ValidateFullName(req.FullName); err != nil {
+	if err := utilities.ValidateFullName(req.FullName); err != nil {
 		validations = append(validations, FieldValidation("full_name", err))
 	}
 

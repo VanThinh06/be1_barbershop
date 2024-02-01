@@ -49,7 +49,7 @@ CREATE TABLE "BarberShops" (
 
 CREATE TABLE "Barbers" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "gender_id" integer,
+  "gender_id" integer NOT NULL DEFAULT 1,
   "email" varchar UNIQUE NOT NULL,
   "phone" varchar UNIQUE NOT NULL,
   "hashed_password" varchar NOT NULL,

@@ -4,6 +4,7 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"barbershop/src/shared/token"
+	"barbershop/src/shared/utilities"
 	"context"
 	"database/sql"
 
@@ -14,7 +15,7 @@ import (
 
 func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRequest) (*barber.LoginBarberResponse, error) {
 
-	res, err := server.Store.GetEmailBarber(ctx, req.Username)
+	res, err := server.Store.GetBarbersEmail(ctx, req.Username)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, status.Error(codes.NotFound, "you have not created an account yet")
@@ -22,21 +23,19 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 		return nil, status.Error(codes.InvalidArgument, "username or password is incorrect")
 	}
 
-
-	err = utils.CheckPassword(req.Password, res.HashedPassword)
+	err = utilities.CheckPassword(req.Password, res.HashedPassword)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "username or password is incorrect")
 	}
 
 	barberPayload := token.BarberPayload{
-		BarberID:  res.ID,
-		Role:      res.Role,
-		Phone:     res.Phone,
-		Email:     res.Email,
-		FcmDevice: req.FcmDevice,
-		Timezone:  req.Timezone,
+		BarberID:       res.ID,
+		BarberRole:     res.BarberRole,
+		BarberRoleType: utilities.MapRoleToRoleType[res.BarberRole],
+		Phone:          res.Phone,
+		Email:          res.Email,
+		FcmDevice:      req.FcmDevice,
 	}
-
 
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
 		barberPayload,
@@ -45,7 +44,6 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 	if err != nil {
 		return nil, status.Error(codes.Internal, "internal")
 	}
-
 
 	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
 		barberPayload,
@@ -57,22 +55,19 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 
 	mtdt := server.extractMetadata(ctx)
 	session, err := server.Store.CreateSessionBarber(ctx, db.CreateSessionBarberParams{
-		ID:           refreshPayload.ID,
 		BarberID:     refreshPayload.Barber.BarberID,
 		RefreshToken: refreshToken,
 		UserAgent:    mtdt.UserAgent,
 		ClientIp:     mtdt.ClientIP,
 		IsBlocked:    false,
-		ExpiresAt:    refreshPayload.ExpiredAt,
 		FcmDevice:    req.FcmDevice,
-		Timezone:     req.Timezone,
 	})
 	if err != nil {
 		return nil, status.Error(codes.Internal, "internal")
 	}
 
 	rsp := &barber.LoginBarberResponse{
-		Barber:                convertBarber(res),
+		Barber:                convertBarbersEmail(res),
 		SessionId:             session.ID.String(),
 		AccessToken:           accessToken,
 		RefreshToken:          refreshToken,

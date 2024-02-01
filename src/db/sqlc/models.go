@@ -25,7 +25,7 @@ type Appointment struct {
 
 type Barber struct {
 	ID                uuid.UUID      `json:"id"`
-	GenderID          sql.NullInt32  `json:"gender_id"`
+	GenderID          int32          `json:"gender_id"`
 	Email             string         `json:"email"`
 	Phone             string         `json:"phone"`
 	HashedPassword    string         `json:"hashed_password"`

@@ -37,7 +37,7 @@ RETURNING id, gender_id, email, phone, hashed_password, nick_name, full_name, ha
 `
 
 type CreateBarbersParams struct {
-	GenderID       sql.NullInt32  `json:"gender_id"`
+	GenderID       int32          `json:"gender_id"`
 	Email          string         `json:"email"`
 	Phone          string         `json:"phone"`
 	HashedPassword string         `json:"hashed_password"`
@@ -118,7 +118,7 @@ type GetBarbersParams struct {
 
 type GetBarbersRow struct {
 	ID                     uuid.UUID      `json:"id"`
-	GenderID               sql.NullInt32  `json:"gender_id"`
+	GenderID               int32          `json:"gender_id"`
 	Email                  string         `json:"email"`
 	Phone                  string         `json:"phone"`
 	HashedPassword         string         `json:"hashed_password"`
@@ -178,14 +178,34 @@ func (q *Queries) GetBarbers(ctx context.Context, arg GetBarbersParams) (GetBarb
 }
 
 const getBarbersEmail = `-- name: GetBarbersEmail :one
-SELECT id, gender_id, email, phone, hashed_password, nick_name, full_name, haircut, avatar_url, password_changed_at, create_at, update_at
-FROM "Barbers"
+SELECT 
+  b.id, b.gender_id, b.email, b.phone, b.hashed_password, b.nick_name, b.full_name, b.haircut, b.avatar_url, b.password_changed_at, b.create_at, b.update_at,
+  br."role_id" as "barber_role"
+FROM "Barbers" b
+JOIN
+  "BarberRoles" br ON b."id" = br."barber_id"
 WHERE email = $1
 `
 
-func (q *Queries) GetBarbersEmail(ctx context.Context, email string) (Barber, error) {
+type GetBarbersEmailRow struct {
+	ID                uuid.UUID      `json:"id"`
+	GenderID          int32          `json:"gender_id"`
+	Email             string         `json:"email"`
+	Phone             string         `json:"phone"`
+	HashedPassword    string         `json:"hashed_password"`
+	NickName          string         `json:"nick_name"`
+	FullName          string         `json:"full_name"`
+	Haircut           bool           `json:"haircut"`
+	AvatarUrl         sql.NullString `json:"avatar_url"`
+	PasswordChangedAt time.Time      `json:"password_changed_at"`
+	CreateAt          time.Time      `json:"create_at"`
+	UpdateAt          time.Time      `json:"update_at"`
+	BarberRole        int32          `json:"barber_role"`
+}
+
+func (q *Queries) GetBarbersEmail(ctx context.Context, email string) (GetBarbersEmailRow, error) {
 	row := q.db.QueryRowContext(ctx, getBarbersEmail, email)
-	var i Barber
+	var i GetBarbersEmailRow
 	err := row.Scan(
 		&i.ID,
 		&i.GenderID,
@@ -199,6 +219,7 @@ func (q *Queries) GetBarbersEmail(ctx context.Context, email string) (Barber, er
 		&i.PasswordChangedAt,
 		&i.CreateAt,
 		&i.UpdateAt,
+		&i.BarberRole,
 	)
 	return i, err
 }
@@ -217,7 +238,7 @@ WHERE
 
 type ListBarbersInBarberShopRow struct {
 	ID                uuid.UUID      `json:"id"`
-	GenderID          sql.NullInt32  `json:"gender_id"`
+	GenderID          int32          `json:"gender_id"`
 	Email             string         `json:"email"`
 	Phone             string         `json:"phone"`
 	HashedPassword    string         `json:"hashed_password"`

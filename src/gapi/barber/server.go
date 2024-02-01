@@ -4,6 +4,7 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"barbershop/src/shared/token"
+	"barbershop/src/shared/utilities"
 	"barbershop/src/shared/utils"
 	"fmt"
 
@@ -14,7 +15,7 @@ import (
 // Server servers gRPC requests for our barbershop
 type Server struct {
 	barber.UnimplementedBarberServiceServer
-	config     utils.Config
+	config     utilities.Config
 	Store      db.StoreMain
 	tokenMaker token.Maker
 	Router     *gin.Engine

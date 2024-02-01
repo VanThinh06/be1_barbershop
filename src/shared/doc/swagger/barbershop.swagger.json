@@ -1286,7 +1286,8 @@
           "type": "string"
         },
         "genderId": {
-          "type": "string"
+          "type": "integer",
+          "format": "int32"
         },
         "email": {
           "type": "string"
@@ -1315,8 +1316,8 @@
           "format": "date-time"
         },
         "barberRoleId": {
-          "type": "string",
-          "format": "date-time"
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -1877,7 +1878,8 @@
           "type": "string"
         },
         "genderId": {
-          "type": "string"
+          "type": "integer",
+          "format": "int32"
         },
         "email": {
           "type": "string"

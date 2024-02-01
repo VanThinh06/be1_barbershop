@@ -28,7 +28,7 @@ VALUES (
   $4,
   $5,
   $6,
-  now() + interval '30 minutes' -- Thêm expires_at với giá trị là thời điểm hiện tại cộng thêm 30 phút
+  now() + interval '30 minutes' 
 )
 RETURNING id, barber_id, refresh_token, user_agent, client_ip, fcm_device, is_blocked, expires_at, create_at
 `

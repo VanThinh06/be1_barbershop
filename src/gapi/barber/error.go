@@ -26,6 +26,14 @@ func InValidArgumentError(validations []*errdetails.BadRequest_FieldViolation) e
 	return statusDetail.Err()
 }
 
-func UnauthenticatedError(err error) error {
-	return status.Errorf(codes.Unauthenticated, "unauthenticated: %v", err)
+func unauthenticatedError(err error) error {
+	return status.Error(codes.Unauthenticated, "unauthenticated")
+}
+
+func internalError(err error) error {
+	return status.Error(codes.Internal, "internal")
+}
+
+func returnError(code codes.Code, strError string, err error) error {
+	return status.Error(code, strError)
 }

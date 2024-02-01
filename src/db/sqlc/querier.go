@@ -39,7 +39,7 @@ type Querier interface {
 	GetBarberShop(ctx context.Context, id uuid.UUID) (BarberShop, error)
 	GetBarberShopChains(ctx context.Context, id uuid.UUID) (BarberShopChain, error)
 	GetBarbers(ctx context.Context, arg GetBarbersParams) (GetBarbersRow, error)
-	GetBarbersEmail(ctx context.Context, email string) (Barber, error)
+	GetBarbersEmail(ctx context.Context, email string) (GetBarbersEmailRow, error)
 	GetContactCustomer(ctx context.Context, arg GetContactCustomerParams) (Customer, error)
 	GetCustomer(ctx context.Context, id uuid.UUID) (Customer, error)
 	GetServiceCategories(ctx context.Context, id uuid.UUID) (ServiceCategory, error)

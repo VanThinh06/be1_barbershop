@@ -14,10 +14,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarberRequest) (*barber.UpdateBarberResponse, error) {
+func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarbersRequest) (*barber.UpdateBarbersResponse, error) {
 	authPayload, err := server.AuthorizeUser(ctx)
 	if err != nil {
-		return nil, UnauthenticatedError(err)
+		return nil, unauthenticatedError(err)
 	}
 
 	validations := validateUpdateBarber(req)
@@ -25,20 +25,17 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 		return nil, InValidArgumentError(validations)
 	}
 
-	if authPayload.Barber.BarberID.String() != req.BarberId {
+	if authPayload.Barber.BarberID.String() != req.Id {
 		return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to update barber")
 	}
 
-	arg := db.UpdateBarberParams{
-		ID: uuid.MustParse(req.GetBarberId()),
+	arg := db.UpdateBarbersParams{
+		ID: uuid.MustParse(req.GetId()),
 		NickName: sql.NullString{
 			String: req.GetNickname(),
 			Valid:  req.Nickname != nil,
 		},
-		Status: sql.NullInt32{
-			Int32: req.GetStatus(),
-			Valid: req.Status != nil,
-		},
+	
 		FullName: sql.NullString{
 			String: req.GetFullName(),
 			Valid:  req.FullName != nil,
@@ -48,24 +45,23 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 			String: req.GetPhone(),
 			Valid:  req.Phone != nil,
 		},
-		Gender: sql.NullInt32{
-			Int32: req.GetGender(),
-			Valid: req.Gender != nil,
+		GenderID: sql.NullInt32{
+			Int32: req.GetGenderId(),
+			Valid: req.GenderId != nil,
 		},
 		Email: sql.NullString{
 			String: req.GetEmail(),
 			Valid:  req.Email != nil,
 		},
-		Avatar: sql.NullString{
-			String: req.GetAvatar(),
-			Valid:  req.Avatar != nil,
+		AvatarUrl: sql.NullString{
+			String: req.GetAvatarUrl(),
+			Valid:  req.AvatarUrl != nil,
 		},
-		UpdatedAt: time.Now(),
 	}
 
 	// update shop id
-	if req.ShopId != nil {
-		arg.ShopID = uuid.NullUUID{
+	if req.BarbershopId != nil {
+		arg. = uuid.NullUUID{
 			UUID:  uuid.MustParse(req.GetShopId()),
 			Valid: true,
 		}

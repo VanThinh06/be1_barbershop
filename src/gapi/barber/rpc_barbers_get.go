@@ -1,29 +1,35 @@
 package gapi
 
 import (
+	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"context"
 	"database/sql"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
-func (server *Server) GetBarber(ctx context.Context, req *barber.GetBarberRequest) (*barber.GetBarberResponse, error) {
+func (server *Server) GetBarber(ctx context.Context, req *barber.GetBarbersRequest) (*barber.GetBarbersResponse, error) {
 	_, err := server.AuthorizeUser(ctx)
 	if err != nil {
-		return nil, UnauthenticatedError(err)
+		return nil, unauthenticatedError(err)
 	}
 
-	res, err := server.Store.ReadBarber(ctx, uuid.MustParse(req.BarberId))
+	arg := db.GetBarbersParams{
+		ID:   uuid.MustParse(req.Id),
+		ID_2: uuid.MustParse(req.BarbershopId),
+	}
+	res, err := server.Store.GetBarbers(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, status.Errorf(codes.NotFound, "barber not found")
+			return nil, returnError(codes.NotFound, "barber not found", err)
 		}
-		return nil, status.Errorf(codes.Internal, "barber not found")
+		return nil, internalError(err)
 	}
 
-	rsp := convertBarberDetail(res)
+	rsp := &barber.GetBarbersResponse{
+		Barber: convertBarbers(res),
+	}
 	return rsp, nil
 }

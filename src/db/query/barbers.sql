@@ -46,8 +46,12 @@ WHERE
   AND bs."id" = $2;
 
 -- name: GetBarbersEmail :one
-SELECT *
-FROM "Barbers"
+SELECT 
+  b.*,
+  br."role_id" as "barber_role"
+FROM "Barbers" b
+JOIN
+  "BarberRoles" br ON b."id" = br."barber_id"
 WHERE email = $1;
 
 -- name: ListBarbersInBarberShop :many

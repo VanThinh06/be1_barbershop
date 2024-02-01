@@ -1,6 +1,6 @@
 package utilities
 
-type EnumGender int
+type EnumGender int32
 
 const (
 	Male EnumGender = iota + 1
@@ -8,7 +8,7 @@ const (
 	Other
 )
 
-type EnumRole int
+type EnumRole int32
 
 const (
 	Customer EnumRole = iota + 1

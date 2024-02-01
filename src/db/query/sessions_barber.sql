@@ -15,7 +15,7 @@ VALUES (
   $4,
   $5,
   $6,
-  now() + interval '30 minutes' -- Thêm expires_at với giá trị là thời điểm hiện tại cộng thêm 30 phút
+  now() + interval '30 minutes' 
 )
 RETURNING *;
 
