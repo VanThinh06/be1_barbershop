@@ -17,7 +17,7 @@ VALUES (
   )
 RETURNING *;
 
--- name: GetContactCustomer :one
+-- name: GetUserCustomer :one
 SELECT *
 FROM "Customers"
 WHERE
@@ -31,8 +31,7 @@ LIMIT 1;
 -- name: GetCustomer :one
 SELECT *
   FROM "Customers"
-  WHERE "id" = sqlc.arg('id')
-LIMIT 1;
+  WHERE "id" = sqlc.arg('id');
 
 -- name: UpdateCustomer :one
 UPDATE "Customers"
@@ -41,7 +40,7 @@ set name = coalesce(sqlc.narg('name'), name),
   phone = coalesce(sqlc.narg('phone'), phone),
   gender = coalesce(sqlc.narg('gender'), gender),
   avatar = coalesce(sqlc.narg('avatar'), avatar),
-  "update_at" = sqlc.arg('updated_at')
+  "update_at" = NOW()
   WHERE "id" = sqlc.arg('id')
 RETURNING *;
 
@@ -49,7 +48,7 @@ RETURNING *;
 -- name: ChangePasswordCustomer :one
 UPDATE "Customers" 
 set   
-  "hashed_password" = sqlc.arg('hashed_password')::varchar(255),
-  "password_changed_at" = sqlc.arg('password_changed_at')
+  "hashed_password" = sqlc.arg('hashed_password')::varchar(100),
+  "password_changed_at" = NOW()
 WHERE "id" = sqlc.arg('id')
 RETURNING *;

@@ -12,7 +12,7 @@ import (
 
 func (server *Server) CreateBarberShopChains(ctx context.Context, req *barber.CreateBarberShopChainsRequest) (*barber.CreateBarberShopChainsResponse, error) {
 
-	_, err := server.AuthorizeUser(ctx)
+	_, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
@@ -23,7 +23,7 @@ func (server *Server) CreateBarberShopChains(ctx context.Context, req *barber.Cr
 			String: req.GetDescription(),
 			Valid:  req.Description != nil,
 		},
-		Founder: req.Founder,
+		Founder:      req.Founder,
 		FoundingDate: req.FoundingDate.AsTime(),
 		Website: sql.NullString{
 			String: req.GetWebsite(),
@@ -33,7 +33,7 @@ func (server *Server) CreateBarberShopChains(ctx context.Context, req *barber.Cr
 
 	barberShopChain, err := server.Store.CreateBarberShopChains(ctx, arg)
 	if err != nil {
-		
+
 		return nil, status.Errorf(codes.Internal, "internal")
 	}
 

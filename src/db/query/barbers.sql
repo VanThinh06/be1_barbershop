@@ -5,8 +5,7 @@ INSERT INTO "Barbers" (
     phone,
     hashed_password,
     nick_name,
-    full_name,
-    avatar_url
+    full_name
   )
 VALUES (
     $1,
@@ -14,8 +13,7 @@ VALUES (
     $3,
     $4,
     $5,
-    $6,
-    $7
+    $6
   )
 RETURNING *;
 
@@ -82,3 +80,5 @@ RETURNING *;
 -- name: DeleteBarbers :exec
 DELETE FROM "Barbers"
 WHERE "id" = $1;
+
+-- name: GenerateQRCodeBarber :one

@@ -11,7 +11,7 @@ import (
 
 func (server *Server) DeleteServiceCategories(ctx context.Context, req *barber.DeleteServiceCategoriesRequest) (*barber.DeleteServiceCategoriesResponse, error) {
 
-	payload, err := server.AuthorizeUser(ctx)
+	payload, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}

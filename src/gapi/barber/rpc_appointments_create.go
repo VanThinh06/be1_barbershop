@@ -19,7 +19,7 @@ import (
 
 func (server *Server) CreateAppointments(ctx context.Context, req *barber.CreateAppointmentsRequest) (*barber.CreateAppointmentsResponse, error) {
 
-	payload, err := server.AuthorizeUser(ctx)
+	payload, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}

@@ -7,8 +7,9 @@ import (
 )
 
 type Maker interface {
-	CreateToken(Barber BarberPayload, duration time.Duration) (string, *Payload, error)
-	VerifyToken(token string) (*Payload, error)
+	CreateToken(Barber Barber, duration time.Duration) (string, *BarberPayload, error)
+	VerifyToken(token string) (*BarberPayload, error)
+	RefreshToken(id uuid.UUID, barber Barber, duration time.Duration) (string, *BarberPayload, error)
 	VerifyTokenCustomer(token string) (*CustomerPayload, error)
 }
 

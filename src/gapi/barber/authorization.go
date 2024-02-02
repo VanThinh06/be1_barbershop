@@ -15,7 +15,7 @@ const (
 	authorizationBearer = "bearer"
 )
 
-func (server *Server) AuthorizeUser(ctx context.Context) (*token.Payload, error) {
+func (server *Server) authorizeUser(ctx context.Context) (*token.BarberPayload, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, fmt.Errorf("missing metadata")
@@ -77,7 +77,7 @@ func (server *Server) AuthorizeCustomer(ctx context.Context) (*token.CustomerPay
 	return payload, nil
 }
 
-func (server *Server) IsAdministrator(ctx context.Context, payload *token.Payload) error {
+func (server *Server) IsAdministrator(ctx context.Context, payload *token.BarberPayload) error {
 	if payload.Barber.BarberRoleType != string(utilities.Administrator) {
 		return fmt.Errorf("PermissionDenied")
 	}

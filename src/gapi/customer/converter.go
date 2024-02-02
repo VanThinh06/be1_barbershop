@@ -15,39 +15,23 @@ func convertCustomer(res db.Customer) *customer.Customer {
 		Name:              res.Name,
 		Avatar:            res.Avatar.String,
 		CustomerId:        res.ID.String(),
-		CreatedAt:         timestamppb.New(res.CreatedAt),
-		UpdateAt:          timestamppb.New(res.UpdatedAt.Time),
+		CreatedAt:         timestamppb.New(res.CreateAt),
+		UpdateAt:          timestamppb.New(res.UpdateAt),
 		PasswordChangedAt: timestamppb.New(res.PasswordChangedAt),
 		IsSocialAuth:      res.IsSocialAuth.Bool,
 	}
 }
 
-func convertAppointment(appointment db.InsertAppointmentAndGetInfoRow) *customer.Appointment {
+func convertAppointment(appointment db.CreateAppointmentsRow) *customer.Appointment {
 	return &customer.Appointment{
 		AppointmentId:       appointment.ID.String(),
 		CustomerId:          appointment.CustomerID.String(),
 		BarberId:            appointment.BarberID.String(),
-		AppointmentDatetime: timestamppb.New(appointment.AppointmentDatetime),
+		AppointmentDatetime: timestamppb.New(appointment.AppointmentDateTime),
 		Status:              appointment.Status,
-		CreatedAt:           timestamppb.New(appointment.CreatedAt),
-		UpdateAt:            timestamppb.New(appointment.UpdatedAt.Time),
+		CreatedAt:           timestamppb.New(appointment.CreateAt),
+		UpdateAt:            timestamppb.New(appointment.UpdateAt),
 	}
 }
 
-func convertGetAppointmentByDate(res []db.GetAppointmentByDateWithServiceRow) []*customer.Appointment {
-	var appointments []*customer.Appointment
-	for _, appointment := range res {
-		appointment := &customer.Appointment{
-			AppointmentId:       appointment.ID.String(),
-			CustomerId:          appointment.CustomerID.String(),
-			BarberId:            appointment.BarbershopsID.String(),
-			Status:              appointment.Status,
-			AppointmentDatetime: timestamppb.New(appointment.AppointmentDatetime),
-			CreatedAt:           timestamppb.New(appointment.CreatedAt),
-			UpdateAt:            timestamppb.New(appointment.UpdatedAt.Time),
-			ServiceTimer:        int32(appointment.ServiceTimer),
-		}
-		appointments = append(appointments, appointment)
-	}
-	return appointments
-}
+

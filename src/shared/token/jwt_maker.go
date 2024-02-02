@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/google/uuid"
 )
 
 type JWTMaker struct {
@@ -14,17 +15,17 @@ type JWTMaker struct {
 
 const minSecretKeySize = 32
 
-func NewJWTMaker(secretKey string) (Maker,  error) {
+func NewJWTMaker(secretKey string) (Maker, error) {
 	if len(secretKey) < minSecretKeySize {
 		return nil, fmt.Errorf("invalid key size: must be at least %d characters", minSecretKeySize)
 	}
 	return &JWTMaker{secretKey}, nil
 }
 
-func (maker *JWTMaker) CreateToken(username BarberPayload, duration time.Duration) (string, *Payload, error) {
+func (maker *JWTMaker) CreateToken(username Barber, duration time.Duration) (string, *BarberPayload, error) {
 	payload, err := NewPayload(username, duration)
 	if err != nil {
-		return "", payload,  err
+		return "", payload, err
 	}
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
@@ -32,7 +33,7 @@ func (maker *JWTMaker) CreateToken(username BarberPayload, duration time.Duratio
 	return token, payload, err
 }
 
-func (maker *JWTMaker) VerifyToken(token string) (*Payload, error) {
+func (maker *JWTMaker) VerifyToken(token string) (*BarberPayload, error) {
 	keyFunc := func(token *jwt.Token) (interface{}, error) {
 		_, ok := token.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
@@ -41,7 +42,7 @@ func (maker *JWTMaker) VerifyToken(token string) (*Payload, error) {
 		return []byte(maker.secretKey), nil
 	}
 
-	jwtToken, err := jwt.ParseWithClaims(token, &Payload{}, keyFunc)
+	jwtToken, err := jwt.ParseWithClaims(token, &BarberPayload{}, keyFunc)
 	if err != nil {
 		verr, ok := err.(*jwt.ValidationError)
 		if ok && errors.Is(verr.Inner, ErrExpiredToken) {
@@ -49,7 +50,7 @@ func (maker *JWTMaker) VerifyToken(token string) (*Payload, error) {
 		}
 		return nil, ErrInvalidToken
 	}
-	payload, ok := jwtToken.Claims.(*Payload)
+	payload, ok := jwtToken.Claims.(*BarberPayload)
 	if !ok {
 		return nil, ErrInvalidToken
 	}
@@ -57,7 +58,7 @@ func (maker *JWTMaker) VerifyToken(token string) (*Payload, error) {
 	return payload, nil
 }
 
-//!
+// !
 func (maker *JWTMaker) VerifyTokenCustomer(token string) (*CustomerPayload, error) {
 	keyFunc := func(token *jwt.Token) (interface{}, error) {
 		_, ok := token.Method.(*jwt.SigningMethodHMAC)
@@ -67,7 +68,7 @@ func (maker *JWTMaker) VerifyTokenCustomer(token string) (*CustomerPayload, erro
 		return []byte(maker.secretKey), nil
 	}
 
-	_, err := jwt.ParseWithClaims(token, &Payload{}, keyFunc)
+	_, err := jwt.ParseWithClaims(token, &BarberPayload{}, keyFunc)
 	if err != nil {
 		verr, ok := err.(*jwt.ValidationError)
 		if ok && errors.Is(verr.Inner, ErrExpiredToken) {
@@ -84,3 +85,14 @@ func (maker *JWTMaker) VerifyTokenCustomer(token string) (*CustomerPayload, erro
 	return payload, nil
 }
 
+func (maker *JWTMaker) RefreshToken(id uuid.UUID, barber Barber, duration time.Duration) (string, *BarberPayload, error) {
+
+	payload, err := RePayloadBarber(id, barber, duration)
+	if err != nil {
+		return "", payload, err
+	}
+
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
+	token, err := jwtToken.SignedString([]byte(maker.secretKey))
+	return token, payload, err
+}

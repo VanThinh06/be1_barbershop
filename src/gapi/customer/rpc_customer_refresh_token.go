@@ -36,7 +36,7 @@ func (server *Server) RefreshTokenCustomer(ctx context.Context, req *customer.Re
 
 	}
 
-	if session.CustomerID != payload.Customer.CustomerID {
+	if session.BarberID != payload.Customer.CustomerID {
 		_ = fmt.Errorf("incorrect session user")
 
 		return nil, status.Error(codes.Unauthenticated, "unauthenticated")
@@ -83,20 +83,20 @@ func (server *Server) RefreshTokenCustomer(ctx context.Context, req *customer.Re
 		return nil, status.Error(codes.Internal, "intenal")
 	}
 
-	sessionCustomer, err := server.store.UpdateRefreshTokenSessionsCustomer(ctx, db.UpdateRefreshTokenSessionsCustomerParams{
+	arg := db.UpdateSessionsCustomerParams{
 		ID:           payload.ID,
 		RefreshToken: refresh_token,
-		ExpiresAt:    refreshPayload.ExpiredAt,
-	})
+	}
+	err = server.store.UpdateSessionsCustomer(ctx, arg)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "intenal")
 	}
 
 	rsp := &customer.RefreshTokenCustomerResponse{
 		AccessToken:           access_token,
-		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiredAt),
-		RefreshToken:          sessionCustomer.RefreshToken,
-		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiredAt),
+		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiresAt),
+		RefreshToken:          refresh_token,
+		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiresAt),
 	}
 	return rsp, nil
 }

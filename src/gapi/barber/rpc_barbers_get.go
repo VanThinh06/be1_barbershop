@@ -11,7 +11,7 @@ import (
 )
 
 func (server *Server) GetBarber(ctx context.Context, req *barber.GetBarbersRequest) (*barber.GetBarbersResponse, error) {
-	_, err := server.AuthorizeUser(ctx)
+	_, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}

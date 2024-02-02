@@ -19,7 +19,7 @@ type CustomerPayload struct {
 	ID        uuid.UUID `json:"id"`
 	Customer  Customer  `json:"customer"`
 	IssuedAt  time.Time `json:"issued_at"`
-	ExpiredAt time.Time `json:"expired_at"`
+	ExpiresAt time.Time `json:"expired_at"`
 }
 
 func NewPayloadCustomer(customer Customer, duration time.Duration) (*CustomerPayload, error) {
@@ -32,7 +32,7 @@ func NewPayloadCustomer(customer Customer, duration time.Duration) (*CustomerPay
 		ID:        tokenID,
 		Customer:  customer,
 		IssuedAt:  time.Now(),
-		ExpiredAt: time.Now().Add(duration),
+		ExpiresAt: time.Now().Add(duration),
 	}
 	return payload, nil
 }
@@ -42,13 +42,13 @@ func RePayloadCustomer(id uuid.UUID, customer Customer, duration time.Duration) 
 		ID:        id,
 		Customer:  customer,
 		IssuedAt:  time.Now(),
-		ExpiredAt: time.Now().Add(duration),
+		ExpiresAt: time.Now().Add(duration),
 	}
 	return payload, nil
 }
 
 func (payload *CustomerPayload) Valid() error {
-	if time.Now().After(payload.ExpiredAt) {
+	if time.Now().After(payload.ExpiresAt) {
 		return ErrExpiredToken
 	}
 	return nil

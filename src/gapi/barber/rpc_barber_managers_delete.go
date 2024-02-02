@@ -12,15 +12,15 @@ import (
 
 func (server *Server) DeleteBarberManagers(ctx context.Context, req *barber.DeleteBarberManagersRequest) (*barber.DeleteBarberManagersResponse, error) {
 
-	_, err := server.AuthorizeUser(ctx)
+	_, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
-	
+
 	var barberID = uuid.MustParse(req.BarberId)
 	var managerID = uuid.MustParse(req.BarberId)
 
-	arg :=  db.DeleteBarberManagersParams{
+	arg := db.DeleteBarberManagersParams{
 		BarberID:  barberID,
 		ManagerID: managerID,
 	}

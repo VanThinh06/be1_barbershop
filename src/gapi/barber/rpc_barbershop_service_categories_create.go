@@ -4,6 +4,7 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"context"
+
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"google.golang.org/grpc/codes"
@@ -12,7 +13,7 @@ import (
 
 func (server *Server) CreateBarberShopServiceCategories(ctx context.Context, req *barber.CreateBarberShopServiceCategoriesRequest) (*barber.CreateBarberShopServiceCategoriesResponse, error) {
 
-	payload, err := server.AuthorizeUser(ctx)
+	payload, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
@@ -26,26 +27,27 @@ func (server *Server) CreateBarberShopServiceCategories(ctx context.Context, req
 	var barberShopID uuid.NullUUID
 	if req.BarbershopChainId != nil {
 		chainID = uuid.NullUUID{
-			UUID: uuid.MustParse(req.GetBarbershopChainId()),
+			UUID:  uuid.MustParse(req.GetBarbershopChainId()),
 			Valid: req.BarbershopChainId != nil,
 		}
 	}
 	if req.BarbershopId != nil {
 		barberShopID = uuid.NullUUID{
-			UUID: uuid.MustParse(req.GetBarbershopId()),
+			UUID:  uuid.MustParse(req.GetBarbershopId()),
 			Valid: req.BarbershopId != nil,
 		}
 	}
 
 	arg := db.CreateBarberShopServiceCategoriesParams{
 		BarbershopChainID: chainID,
-		BarbershopID: barberShopID,
+		BarbershopID:      barberShopID,
 	}
 
 	serviceCategory, err := server.Store.CreateBarberShopServiceCategories(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
-			switch pqErr.Code.Name() {}
+			switch pqErr.Code.Name() {
+			}
 		}
 		return nil, status.Errorf(codes.Internal, "failed to create barber shop")
 	}

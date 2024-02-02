@@ -167,7 +167,7 @@ rpc UpdateBarberShopChains (UpdateBarberShopChainsRequest) returns (UpdateBarber
 };
 }
 
-rpc DeleteBarberShopChains (DeleteBarberRolesRequest) returns (DeleteBarberShopChainsResponse){
+rpc DeleteBarberShopChains (DeleteBarberShopChainsRequest) returns (DeleteBarberShopChainsResponse){
   option (google.api.http) = {
     delete: "/v1/barbershop-chains/{id}"
   };
@@ -249,20 +249,6 @@ rpc DeleteBarberShops (DeleteBarberShopsRequest) returns (DeleteBarberShopsRespo
   };
 }
 
-  // service categories
-  rpc CreateBarberShopServiceCategories (CreateBarberShopServiceCategoriesRequest) returns (CreateBarberShopServiceCategoriesResponse){
-    option (google.api.http) = {
-              post: "/v1/barbershop/service-categories"
-              body: "*"
-            };
-    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      description: "API endpoint to create a new barber"
-      summary: "Create a service category"
-      tags: "barber shops"
-    };
-  }
-
-
 // BARBERMANAGERS
 rpc CreateBarberManagers (CreateBarberManagersRequest) returns (CreateBarberManagersResponse){
   option (google.api.http) = {
@@ -286,6 +272,32 @@ rpc GetBarberManagers (GetBarberManagersRequest) returns (GetBarberManagersRespo
     tags: "barber managers"
   };
 }
+
+rpc DeleteBarberManagers (DeleteBarberManagersRequest) returns (DeleteBarberManagersResponse){
+  option (google.api.http) = {
+            delete: "/v1/barber-managers"
+          };
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+    description: "API endpoint to get detail barber manager"
+    summary: "Delete a barber manager"
+    tags: "barber managers"
+  };
+}
+
+  // service categories
+  rpc CreateBarberShopServiceCategories (CreateBarberShopServiceCategoriesRequest) returns (CreateBarberShopServiceCategoriesResponse){
+    option (google.api.http) = {
+              post: "/v1/barbershop/service-categories"
+              body: "*"
+            };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "API endpoint to create a new barber"
+      summary: "Create a service category"
+      tags: "barber shops"
+    };
+  }
+
+
 
 /// SERVICE CATEGORIES
 rpc CreateServiceCategories (CreateServiceCategoriesRequest) returns (CreateServiceCategoriesResponse){
@@ -312,7 +324,7 @@ rpc GetServiceCategories (GetServiceCategoriesRequest) returns (GetServiceCatego
 
 rpc UpdateServiceCategories (UpdateServiceCategoriesRequest) returns (UpdateServiceCategoriesResponse){
   option (google.api.http) = {
-    patch: "/v1/service-categories"
+    patch: "/v1/service-categories/{id}"
     body: "*"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -358,7 +370,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
 };
 }
 
-
+// Barber
     rpc CreateBarber (CreateBarbersRequest) returns (CreateBarbersResponse){
         option (google.api.http) = {
                   post: "/v1/barber"
@@ -367,7 +379,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
           description: "API endpoint to create a new barber"
           summary: "Create a barber shop"
-          tags: "barber"
+          tags: "barbers"
 
         };
     }
@@ -379,7 +391,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         description: "API endpoint to create a new barber"
         summary: "Create a barber"
-        tags: "barber"
+        tags: "barbers"
       };
     }
 
@@ -392,7 +404,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         description: "API endpoint for barber authentication" 
         summary: "Authenticate a barber"
-        tags: "barber"
+        tags: "barbers"
       };
     }
 
@@ -405,7 +417,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         description: "API endpoint for barber authentication" 
         summary: "Authenticate a barber"
-        tags: "barber"
+        tags: "barbers"
       };
     }
     rpc RefreshTokenBarber (RefreshTokenBarberRequest) returns (RefreshTokenBarberResponse) {
@@ -416,7 +428,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         description: "API endpoint for barber authentication" 
         summary: "Authenticate a barber"
-        tags: "barber"
+        tags: "barbers"
       };
     }
 }

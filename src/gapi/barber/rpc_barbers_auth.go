@@ -28,7 +28,7 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 		return nil, status.Error(codes.Unauthenticated, "username or password is incorrect")
 	}
 
-	barberPayload := token.BarberPayload{
+	barberPayload := token.Barber{
 		BarberID:       res.ID,
 		BarberRole:     res.BarberRole,
 		BarberRoleType: utilities.MapRoleToRoleType[res.BarberRole],
@@ -71,8 +71,8 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 		SessionId:             session.ID.String(),
 		AccessToken:           accessToken,
 		RefreshToken:          refreshToken,
-		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiredAt),
-		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiredAt),
+		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiresAt),
+		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiresAt),
 	}
 	return rsp, nil
 }

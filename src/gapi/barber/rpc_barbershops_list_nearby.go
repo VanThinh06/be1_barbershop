@@ -14,7 +14,7 @@ import (
 
 func (server *Server) ListNearbyBarberShops(ctx context.Context, req *barber.ListNearbyBarberShopsRequest) (*barber.ListNearbyBarberShopsResponse, error) {
 
-	_, err := server.AuthorizeUser(ctx)
+	_, err := server.authorizeUser(ctx)
 	if err != nil {
 		accessToken, err := extractTokenFromHeader(ctx)
 		if err != nil {
@@ -47,7 +47,7 @@ func (server *Server) ListNearbyBarberShops(ctx context.Context, req *barber.Lis
 func extractTokenFromHeader(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return "", fmt.Errorf("missing metadata") 
+		return "", fmt.Errorf("missing metadata")
 	}
 
 	values := md.Get(authorizationHeader)

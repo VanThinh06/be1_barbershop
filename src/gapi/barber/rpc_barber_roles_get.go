@@ -13,7 +13,7 @@ import (
 
 func (server *Server) GetBarberRoles(ctx context.Context, req *barber.GetBarberRolesRequest) (*barber.GetBarberRolesResponse, error) {
 
-	payload, err := server.AuthorizeUser(ctx)
+	payload, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}

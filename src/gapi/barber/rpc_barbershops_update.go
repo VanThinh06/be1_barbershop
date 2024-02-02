@@ -3,7 +3,7 @@ package gapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
-	"barbershop/src/shared/utils"
+	"barbershop/src/shared/utilities"
 	"context"
 	"database/sql"
 	"time"
@@ -16,12 +16,12 @@ import (
 
 func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBarberShopsRequest) (*barber.UpdateBarberShopsResponse, error) {
 
-	payload, err := server.AuthorizeUser(ctx)
+	payload, err := server.authorizeUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+		return nil, unauthenticatedError(err)
 	}
-	if payload.Barber.Role != int32(utils.Manager) {
-		return nil, status.Errorf(codes.PermissionDenied, "unauthenticated")
+	if payload.Barber.BarberRole != int32(utilities.Admin) {
+		return nil, unauthenticatedError(err)
 	}
 
 	startTime := pgtype.Time{}
@@ -39,9 +39,9 @@ func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBa
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid parameters")
 	}
-	
+
 	arg := db.UpdateBarberShopParams{
-		ID:    uuid.MustParse(req.Id),
+		ID: uuid.MustParse(req.Id),
 		Name: sql.NullString{
 			String: req.GetName(),
 			Valid:  req.Name != nil,
@@ -79,13 +79,13 @@ func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBa
 			Valid: req.IntervalScheduler != nil,
 		},
 		IsMainBranch: sql.NullBool{
-			Bool: req.GetIsMainBranch(),
+			Bool:  req.GetIsMainBranch(),
 			Valid: req.IsMainBranch != nil,
 		},
 	}
 	barberShop, err := server.Store.UpdateBarberShop(ctx, arg)
 	if err != nil {
-		if err == sql.ErrNoRows{
+		if err == sql.ErrNoRows {
 			return nil, status.Error(codes.NotFound, "barbershop don't exist")
 		}
 		return nil, status.Error(codes.Internal, "internal")

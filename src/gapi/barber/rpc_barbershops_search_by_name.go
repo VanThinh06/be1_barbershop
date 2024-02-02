@@ -11,7 +11,7 @@ import (
 )
 
 func (server *Server) SearchByNameBarberShops(ctx context.Context, req *barber.SearchByNameBarberShopsRequest) (*barber.SearchByNameBarberShopsResponse, error) {
-	_, err := server.AuthorizeUser(ctx)
+	_, err := server.authorizeUser(ctx)
 	if err != nil {
 		_, err = server.AuthorizeCustomer(ctx)
 		if err != nil {
@@ -19,9 +19,9 @@ func (server *Server) SearchByNameBarberShops(ctx context.Context, req *barber.S
 		}
 	}
 	arg := db.SearchByNameBarberShopsParams{
-			CurrentLongitude: req.GetLongitude().GetValue(),
-			CurrentLatitude:  req.GetLatitude().GetValue(),
-			Name: req.GetName(),
+		CurrentLongitude: req.GetLongitude().GetValue(),
+		CurrentLatitude:  req.GetLatitude().GetValue(),
+		Name:             req.GetName(),
 	}
 	res, err := server.Store.SearchByNameBarberShops(ctx, arg)
 	if err != nil {

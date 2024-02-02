@@ -3,10 +3,9 @@ package gapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
-	"barbershop/src/shared/utils"
+	"barbershop/src/shared/helpers"
 	"context"
 	"database/sql"
-	"time"
 
 	"github.com/google/uuid"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -15,7 +14,7 @@ import (
 )
 
 func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarbersRequest) (*barber.UpdateBarbersResponse, error) {
-	authPayload, err := server.AuthorizeUser(ctx)
+	authPayload, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}
@@ -35,7 +34,7 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 			String: req.GetNickname(),
 			Valid:  req.Nickname != nil,
 		},
-	
+
 		FullName: sql.NullString{
 			String: req.GetFullName(),
 			Valid:  req.FullName != nil,
@@ -59,47 +58,21 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 		},
 	}
 
-	// update shop id
-	if req.BarbershopId != nil {
-		arg. = uuid.NullUUID{
-			UUID:  uuid.MustParse(req.GetShopId()),
-			Valid: true,
-		}
-	}
-
-	// Hash the password provided in the request
-	if req.Password != nil {
-		hashedPassword, err := utils.HashPassword(req.GetPassword())
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "failed to hash password")
-		}
-
-		arg.HashedPassword = sql.NullString{
-			String: hashedPassword,
-			Valid:  true,
-		}
-
-		arg.PasswordChangedAt = sql.NullTime{
-			Time:  time.Now(),
-			Valid: true,
-		}
-	}
-
-	res, err := server.Store.UpdateBarber(ctx, arg)
+	res, err := server.Store.UpdateBarbers(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, status.Errorf(codes.NotFound, "barber not found")
+			return nil, returnError(codes.NotFound, "barber not found", err)
 		}
-		return nil, status.Errorf(codes.PermissionDenied, "failed to update account")
+		return nil, returnError(codes.PermissionDenied, "failed to update account", err)
 	}
 
-	rsp := &barber.UpdateBarberResponse{
-		Barber: convertBarber(res),
+	rsp := &barber.UpdateBarbersResponse{
+		Barber: convertCreateBarbers(res),
 	}
 	return rsp, nil
 }
 
-func validateUpdateBarber(req *barber.UpdateBarberRequest) (validations []*errdetails.BadRequest_FieldViolation) {
+func validateUpdateBarber(req *barber.UpdateBarbersRequest) (validations []*errdetails.BadRequest_FieldViolation) {
 
 	validateField := func(value, fieldName string, validateFunc func(string) error) {
 		if value != "" {
@@ -109,11 +82,10 @@ func validateUpdateBarber(req *barber.UpdateBarberRequest) (validations []*errde
 		}
 	}
 
-	validateField(req.GetEmail(), "email", utils.ValidateEmail)
-	validateField(req.GetPhone(), "phone", utils.ValidatePhoneNumber)
-	validateField(req.GetPassword(), "password", utils.ValidatePassword)
-	validateField(req.GetNickname(), "nickname", utils.ValidateNickname)
-	validateField(req.GetFullName(), "full_name", utils.ValidateFullName)
+	validateField(req.GetEmail(), "email", helpers.ValidateEmail)
+	validateField(req.GetPhone(), "phone", helpers.ValidatePhoneNumber)
+	validateField(req.GetNickname(), "nickname", helpers.ValidateNickname)
+	validateField(req.GetFullName(), "full_name", helpers.ValidateFullName)
 
 	return validations
 }

@@ -28,7 +28,7 @@ func NewPasetoMaker(symmetricKey string) (Maker, error) {
 	return maker, nil
 }
 
-func (maker *PasetoMaker) CreateToken(username BarberPayload, duration time.Duration) (string, *Payload, error) {
+func (maker *PasetoMaker) CreateToken(username Barber, duration time.Duration) (string, *BarberPayload, error) {
 	payload, err := NewPayload(username, duration)
 	if err != nil {
 		return "", payload, err
@@ -38,8 +38,8 @@ func (maker *PasetoMaker) CreateToken(username BarberPayload, duration time.Dura
 	return token, payload, err
 }
 
-func (maker *PasetoMaker) VerifyToken(token string) (*Payload, error) {
-	payload := &Payload{}
+func (maker *PasetoMaker) VerifyToken(token string) (*BarberPayload, error) {
+	payload := &BarberPayload{}
 
 	err := maker.paseto.Decrypt(token, maker.symmetricKey, payload, nil)
 	if err != nil {
@@ -59,7 +59,7 @@ func (maker *PasetoMaker) VerifyTokenCustomer(token string) (*CustomerPayload, e
 	if err != nil {
 		return nil, ErrInvalidToken
 	}
-	
+
 	maker = &PasetoMaker{
 		paseto:       paseto.NewV2(),
 		symmetricKey: []byte(config.TokenSymmetricKeyCustomer),
@@ -76,6 +76,16 @@ func (maker *PasetoMaker) VerifyTokenCustomer(token string) (*CustomerPayload, e
 	}
 
 	return payload, nil
+}
+
+func (maker *PasetoMaker) RefreshToken(id uuid.UUID, barber Barber, duration time.Duration) (string, *BarberPayload, error) {
+	payload, err := RePayloadBarber(id, barber, duration)
+	if err != nil {
+		return "", payload, err
+	}
+
+	token, err := maker.paseto.Encrypt(maker.symmetricKey, payload, nil)
+	return token, payload, err
 }
 
 // / paseto customer

@@ -13,7 +13,7 @@ import (
 
 func (server *Server) CreateBarberManagers(ctx context.Context, req *barber.CreateBarberManagersRequest) (*barber.CreateBarberManagersResponse, error) {
 
-	payload, err := server.AuthorizeUser(ctx)
+	payload, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
@@ -32,7 +32,8 @@ func (server *Server) CreateBarberManagers(ctx context.Context, req *barber.Crea
 	barberManager, err := server.Store.CreateBarberManagers(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
-			switch pqErr.Code.Name() {}
+			switch pqErr.Code.Name() {
+			}
 		}
 		return nil, status.Errorf(codes.Internal, "internal")
 	}

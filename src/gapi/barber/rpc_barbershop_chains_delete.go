@@ -11,13 +11,13 @@ import (
 
 func (server *Server) DeleteBarberShopChains(ctx context.Context, req *barber.DeleteBarberShopChainsRequest) (*barber.DeleteBarberShopChainsResponse, error) {
 
-	payload, err := server.AuthorizeUser(ctx)
+	payload, err := server.authorizeUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+		return nil, unauthenticatedError(err)
 	}
 
 	if payload.Barber.BarberID.String() != req.GetId() {
-		return nil, status.Errorf(codes.PermissionDenied, "no permission")
+		return nil, unauthenticatedError(err)
 	}
 
 	var id = uuid.MustParse(req.Id)

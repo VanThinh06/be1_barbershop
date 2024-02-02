@@ -128,6 +128,21 @@ func ConvertListBarberShopsNearby(res []db.ListNearbyBarberShopsRow) []*barber.B
 }
 
 // barbers
+
+func convertCreateBarbers(res db.Barber) *barber.Barbers {
+	return &barber.Barbers{
+		Id:        res.ID.String(),
+		GenderId:  res.GenderID,
+		Email:     res.Email,
+		Phone:     res.Phone,
+		NickName:  res.NickName,
+		FullName:  res.FullName,
+		Haircut:   res.Haircut,
+		AvatarUrl: res.AvatarUrl.String,
+		CreateAt:  timestamppb.New(res.CreateAt),
+		UpdateAt:  timestamppb.New(res.UpdateAt),
+	}
+}
 func convertBarbers(res db.GetBarbersRow) *barber.Barbers {
 	return &barber.Barbers{
 		Id:           res.ID.String(),
@@ -139,10 +154,11 @@ func convertBarbers(res db.GetBarbersRow) *barber.Barbers {
 		Haircut:      res.Haircut,
 		AvatarUrl:    res.AvatarUrl.String,
 		BarberRoleId: res.BarberRoleID,
-		CreateAt: timestamppb.New(res.CreateAt),
-		UpdateAt: timestamppb.New(res.UpdateAt),
+		CreateAt:     timestamppb.New(res.CreateAt),
+		UpdateAt:     timestamppb.New(res.UpdateAt),
 	}
 }
+
 func convertBarbersEmail(res db.GetBarbersEmailRow) *barber.Barbers {
 	return &barber.Barbers{
 		Id:           res.ID.String(),

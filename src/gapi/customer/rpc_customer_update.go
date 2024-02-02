@@ -3,10 +3,9 @@ package customergapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/customer"
-	"barbershop/src/shared/utils"
+	"barbershop/src/shared/helpers"
 	"context"
 	"database/sql"
-	"time"
 
 	"github.com/google/uuid"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -17,7 +16,7 @@ import (
 func (server *Server) UpdateCustomer(ctx context.Context, req *customer.UpdateCustomerRequest) (*customer.UpdateCustomerResponse, error) {
 	authPayload, err := server.authorizeUser(ctx)
 	if err != nil {
-		return nil, UnauthenticatedError(err)
+		return nil, unauthenticatedError(err)
 	}
 
 	validations := validateUpdateCustomer(req)
@@ -52,10 +51,6 @@ func (server *Server) UpdateCustomer(ctx context.Context, req *customer.UpdateCu
 			String: req.GetAvatar(),
 			Valid:  req.Avatar != nil,
 		},
-		UpdatedAt: sql.NullTime{
-			Time:  time.Now(),
-			Valid: true,
-		},
 	}
 
 	res, err := server.store.UpdateCustomer(ctx, arg)
@@ -82,10 +77,10 @@ func validateUpdateCustomer(req *customer.UpdateCustomerRequest) (validations []
 		}
 	}
 
-	validateField(req.Email, "email", utils.ValidateEmail)
-	validateField(req.Phone, "phone", utils.ValidatePhoneNumber)
-	validateField(req.Password, "password", utils.ValidatePassword)
-	validateField(req.Name, "name", utils.ValidateFullName)
+	validateField(req.Email, "email", helpers.ValidateEmail)
+	validateField(req.Phone, "phone", helpers.ValidatePhoneNumber)
+	validateField(req.Password, "password", helpers.ValidatePassword)
+	validateField(req.Name, "name", helpers.ValidateFullName)
 
 	return validations
 }

@@ -13,7 +13,7 @@ import (
 
 func (server *Server) UpdateBarberRoles(ctx context.Context, req *barber.UpdateBarberRolesRequest) (*barber.UpdateBarberRolesResponse, error) {
 
-	payload, err := server.AuthorizeUser(ctx)
+	payload, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
@@ -24,7 +24,7 @@ func (server *Server) UpdateBarberRoles(ctx context.Context, req *barber.UpdateB
 	var barberRoleID = uuid.MustParse(req.Id)
 	arg := db.UpdateBarberRolesParams{
 		RoleID: req.RoleId,
-		ID: barberRoleID,
+		ID:     barberRoleID,
 	}
 
 	barberRole, err := server.Store.UpdateBarberRoles(ctx, arg)

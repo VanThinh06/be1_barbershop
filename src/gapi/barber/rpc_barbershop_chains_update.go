@@ -14,7 +14,7 @@ import (
 
 func (server *Server) UpdateBarberShopChains(ctx context.Context, req *barber.UpdateBarberShopChainsRequest) (*barber.UpdateBarberShopChainsResponse, error) {
 
-	payload, err := server.AuthorizeUser(ctx)
+	payload, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
@@ -27,23 +27,23 @@ func (server *Server) UpdateBarberShopChains(ctx context.Context, req *barber.Up
 		ID: barberShopChainID,
 		Name: sql.NullString{
 			String: req.GetName(),
-			Valid: req.Name != nil,
+			Valid:  req.Name != nil,
 		},
 		Description: sql.NullString{
 			String: req.GetDescription(),
-			Valid: req.Description != nil,
+			Valid:  req.Description != nil,
 		},
 		Founder: sql.NullString{
 			String: req.GetFounder(),
-			Valid: req.Founder != nil,
+			Valid:  req.Founder != nil,
 		},
 		FoundingDate: sql.NullTime{
-			Time: req.GetFoundingDate().AsTime(),
+			Time:  req.GetFoundingDate().AsTime(),
 			Valid: req.FoundingDate != nil,
 		},
 		Website: sql.NullString{
 			String: req.GetWebsite(),
-			Valid: req.Website != nil,
+			Valid:  req.Website != nil,
 		},
 	}
 
@@ -51,7 +51,7 @@ func (server *Server) UpdateBarberShopChains(ctx context.Context, req *barber.Up
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
-			
+
 			}
 		}
 		return nil, status.Errorf(codes.Internal, "internal")

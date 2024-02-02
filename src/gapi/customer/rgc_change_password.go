@@ -3,10 +3,10 @@ package customergapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/customer"
-	"barbershop/src/shared/utils"
+	"barbershop/src/shared/helpers"
+	"barbershop/src/shared/utilities"
 	"context"
 	"database/sql"
-	"time"
 
 	"github.com/google/uuid"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -17,7 +17,7 @@ import (
 func (server *Server) ChangePasswordCustomer(ctx context.Context, req *customer.ChangePasswordCustomerRequest) (*customer.ChangePasswordCustomerResponse, error) {
 	authPayload, err := server.authorizeUser(ctx)
 	if err != nil {
-		return nil, UnauthenticatedError(err)
+		return nil, unauthenticatedError(err)
 	}
 
 	validations := validateChangePasswordCustomer(req)
@@ -33,21 +33,20 @@ func (server *Server) ChangePasswordCustomer(ctx context.Context, req *customer.
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to hash password")
 	}
-	err = utils.CheckPassword(req.GetCurrentPassword(), cus.HashedPassword.String)
+	err = utilities.CheckPassword(req.GetCurrentPassword(), cus.HashedPassword.String)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to hash password")
 	}
 
 	// Hash the password provided in the request
-	hashedPassword, err := utils.HashPassword(req.GetNewPassword())
+	hashedPassword, err := utilities.HashPassword(req.GetNewPassword())
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to hash password")
 	}
 
 	arg := db.ChangePasswordCustomerParams{
-		ID:        uuid.MustParse(req.IdCustomer),
-		HashedPassword:    hashedPassword,
-		PasswordChangedAt: time.Now(),
+		ID:             uuid.MustParse(req.IdCustomer),
+		HashedPassword: hashedPassword,
 	}
 
 	_, err = server.store.ChangePasswordCustomer(ctx, arg)
@@ -74,7 +73,7 @@ func validateChangePasswordCustomer(req *customer.ChangePasswordCustomerRequest)
 		}
 	}
 
-	validateField(&req.CurrentPassword, "current_password", utils.ValidatePassword)
-	validateField(&req.NewPassword, "new_password", utils.ValidatePassword)
+	validateField(&req.CurrentPassword, "current_password", helpers.ValidatePassword)
+	validateField(&req.NewPassword, "new_password", helpers.ValidatePassword)
 	return validations
 }

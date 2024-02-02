@@ -3,8 +3,9 @@ package customergapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/customer"
+	"barbershop/src/shared/helpers"
 	"barbershop/src/shared/token"
-	"barbershop/src/shared/utils"
+	"barbershop/src/shared/utilities"
 	"context"
 	"database/sql"
 
@@ -15,30 +16,30 @@ import (
 
 func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCustomerRequest) (*customer.LoginCustomerResponse, error) {
 
-	contact := db.GetContactCustomerParams{
+	contact := db.GetUserCustomerParams{
 		TypeUsername: "phone",
 		Email:        req.Username,
 	}
 
-	err := utils.ValidatePhoneNumber(req.Username)
+	err := helpers.ValidatePhoneNumber(req.Username)
 	if err != nil {
 		contact.TypeUsername = "email"
 		contact.Email = req.Username
 	}
 
 	socialEmail := &SocialEmail{}
-	res, err := server.store.GetContactCustomer(ctx, contact)
+	res, err := server.store.GetUserCustomer(ctx, contact)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			if req.IsSocialAuth == false {
-				return nil, status.Error(codes.NotFound, "incorrect account or password")
+				return nil, returnError(codes.NotFound, "incorrect account or password", err)
 			}
 
 			// create account for the first time login
 			if req.IsSocialAuth {
 				socialEmail, err = server.authVerifyJWTGG(ctx)
 				if err != nil {
-					return nil, status.Error(codes.Internal, "internal")
+					return nil, internalError(err)
 				}
 				if socialEmail.Email != req.GetUsername() {
 					return nil, status.Error(codes.Unauthenticated, "information is incorrect")
@@ -46,7 +47,7 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 				argCustomer := db.CreateCustomerParams{
 					Name:           socialEmail.GivenName,
 					Phone:          sql.NullString{},
-					Gender:         int32(utils.Male),
+					Gender:         int32(utilities.Male),
 					Email:          socialEmail.Email,
 					IsSocialAuth:   req.GetIsSocialAuth(),
 					HashedPassword: sql.NullString{},
@@ -60,42 +61,40 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 		}
 
 		if socialEmail == nil {
-			return nil, status.Error(codes.Internal, "internal")
+			return nil, internalError(err)
 		}
 	}
 
 	if req.IsSocialAuth && socialEmail != nil {
 		socialEmail, err = server.authVerifyJWTGG(ctx)
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, "internal")
+			return nil, internalError(err)
 		}
 		if socialEmail.Email != req.Username {
-			return nil, status.Errorf(codes.Unauthenticated, "information is incorrect")
+			return nil,unauthenticatedError(err)
 		}
 	}
 
 	if req.IsSocialAuth == false {
-		err = utils.CheckPassword(req.Password, res.HashedPassword.String)
+		err = utilities.CheckPassword(req.Password, res.HashedPassword.String)
 		if err != nil {
-			return nil, status.Error(codes.Unauthenticated, "information is incorrect")
+			return nil, unauthenticatedError(err)
 		}
 	}
 
 	customerPayload := token.Customer{
 		CustomerID: res.ID,
 		Name:       res.Name,
-		Gender:     res.Gender,
 		Phone:      res.Phone,
 		Email:      res.Email,
 		FcmDevice:  req.GetFcmDevice(),
-		Timezone:   req.GetTimezone(),
 	}
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
 		customerPayload,
 		server.config.AccessTokenDuration,
 	)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "internal")
+		return nil, internalError(err)
 	}
 
 	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
@@ -103,25 +102,23 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 		server.config.RefreshTokenDuration,
 	)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "internal")
+		return nil, internalError(err)
 	}
 
 	mtdt := server.extractMetadata(ctx)
 	session, err := server.store.CreateSessionsCustomer(ctx, db.CreateSessionsCustomerParams{
-		ID:           refreshPayload.ID,
 		CustomerID:   refreshPayload.Customer.CustomerID,
 		RefreshToken: refreshToken,
 		UserAgent:    mtdt.UserAgent,
 		ClientIp:     mtdt.ClientIP,
 		IsBlocked:    false,
-		ExpiresAt:    refreshPayload.ExpiredAt,
 		FcmDevice:    req.GetFcmDevice(),
 		Longitude:    req.GetLatitude().GetValue(),
 		Latitude:     req.GetLatitude().GetValue(),
 		Timezone:     req.GetTimezone(),
 	})
 	if err != nil {
-		return nil, status.Error(codes.Internal, "internal")
+		return nil, internalError(err)
 	}
 
 	rsp := &customer.LoginCustomerResponse{
@@ -129,8 +126,8 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 		SessionId:             session.ID.String(),
 		AccessToken:           accessToken,
 		RefreshToken:          refreshToken,
-		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiredAt),
-		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiredAt),
+		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiresAt),
+		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiresAt),
 		Longitude:             req.Longitude,
 		Latitude:              req.Latitude,
 	}

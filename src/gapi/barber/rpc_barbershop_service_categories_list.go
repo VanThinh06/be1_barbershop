@@ -13,7 +13,7 @@ import (
 
 func (server *Server) ListBarberShopServiceCategories(ctx context.Context, req *barber.ListBarberShopServiceCategoriesRequest) (*barber.ListBarberShopServiceCategoriesResponse, error) {
 
-	_, err := server.AuthorizeUser(ctx)
+	_, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}

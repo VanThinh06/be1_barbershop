@@ -121,7 +121,7 @@
           }
         ],
         "tags": [
-          "barber"
+          "barbers"
         ]
       },
       "patch": {
@@ -153,11 +153,47 @@
           }
         ],
         "tags": [
-          "barber"
+          "barbers"
         ]
       }
     },
     "/v1/barber-managers": {
+      "delete": {
+        "summary": "Delete a barber manager",
+        "description": "API endpoint to get detail barber manager",
+        "operationId": "BarberService_DeleteBarberManagers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteBarberManagersResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barberId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "managerId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "barber managers"
+        ]
+      },
       "post": {
         "summary": "Create a barber manager",
         "description": "API endpoint to create a new barber manager",
@@ -419,7 +455,7 @@
           }
         ],
         "tags": [
-          "barber"
+          "barbers"
         ]
       }
     },
@@ -453,7 +489,7 @@
           }
         ],
         "tags": [
-          "barber"
+          "barbers"
         ]
       }
     },
@@ -491,7 +527,7 @@
           }
         ],
         "tags": [
-          "barber"
+          "barbers"
         ]
       }
     },
@@ -964,38 +1000,6 @@
         "tags": [
           "service categories"
         ]
-      },
-      "patch": {
-        "summary": "Update service categories",
-        "description": "API endpoint to update a service category",
-        "operationId": "BarberService_UpdateServiceCategories",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbUpdateServiceCategoriesResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbUpdateServiceCategoriesRequest"
-            }
-          }
-        ],
-        "tags": [
-          "service categories"
-        ]
       }
     },
     "/v1/service-categories/{id}": {
@@ -1053,6 +1057,52 @@
             "in": "path",
             "required": true,
             "type": "string"
+          }
+        ],
+        "tags": [
+          "service categories"
+        ]
+      },
+      "patch": {
+        "summary": "Update service categories",
+        "description": "API endpoint to update a service category",
+        "operationId": "BarberService_UpdateServiceCategories",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateServiceCategoriesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "isGlobal": {
+                  "type": "boolean"
+                }
+              }
+            }
           }
         ],
         "tags": [
@@ -1521,8 +1571,15 @@
         "avatarUrl": {
           "type": "string"
         },
-        "codeBarberShop": {
+        "barberManagerId": {
           "type": "string"
+        },
+        "barberShopId": {
+          "type": "string"
+        },
+        "roleId": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -1550,6 +1607,14 @@
       "properties": {
         "serviceCategories": {
           "$ref": "#/definitions/pbServiceCategories"
+        }
+      }
+    },
+    "pbDeleteBarberManagersResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
         }
       }
     },
@@ -1906,20 +1971,6 @@
       "properties": {
         "barber": {
           "$ref": "#/definitions/pbBarbers"
-        }
-      }
-    },
-    "pbUpdateServiceCategoriesRequest": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "isGlobal": {
-          "type": "boolean"
-        },
-        "id": {
-          "type": "string"
         }
       }
     },

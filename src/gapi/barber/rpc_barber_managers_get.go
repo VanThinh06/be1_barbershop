@@ -12,7 +12,7 @@ import (
 
 func (server *Server) GetBarberManagers(ctx context.Context, req *barber.GetBarberManagersRequest) (*barber.GetBarberManagersResponse, error) {
 
-	payload, err := server.AuthorizeUser(ctx)
+	payload, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}

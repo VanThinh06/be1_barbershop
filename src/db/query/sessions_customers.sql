@@ -1,6 +1,5 @@
 -- name: CreateSessionsCustomer :one
 INSERT INTO "SessionsCustomer" (
-                               customer_id,
                                refresh_token,
                                user_agent,
                                client_ip,
@@ -23,12 +22,11 @@ VALUES ($1,
 
 -- name: GetSessionsCustomer :one
 SELECT *
-FROM "SessionsBarber"
-WHERE id = $1
-LIMIT 1;
+FROM "SessionsCustomer"
+WHERE id = $1;
 
--- name: UpdateSessionsCustomer :exec
-UPDATE "SessionsBarber"
+-- name: UpdateSessionsCustomer :one
+UPDATE "SessionsCustomer"
 SET refresh_token = $2,
  "expires_at" = now() + interval '30 minutes'
 WHERE id = $1;
