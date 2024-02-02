@@ -10,7 +10,7 @@ option go_package = "barbershop/src/pb/barber";
 
 message BarberShops {
     string id = 1;
-    optional  string barbershop_chain_id = 2;
+    optional  string barber_shop_chain_id = 2;
     string name = 3;
     bool is_main_branch = 4;
     int32 branch_count = 5;

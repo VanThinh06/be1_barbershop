@@ -15,7 +15,7 @@ const (
 	authorizationBearer = "bearer"
 )
 
-func (server *Server) authorizeUser(ctx context.Context) (*token.BarberPayload, error) {
+func (server *Server) authorizeBarber(ctx context.Context) (*token.BarberPayload, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, fmt.Errorf("missing metadata")
@@ -46,7 +46,7 @@ func (server *Server) authorizeUser(ctx context.Context) (*token.BarberPayload, 
 	return payload, nil
 }
 
-func (server *Server) AuthorizeCustomer(ctx context.Context) (*token.CustomerPayload, error) {
+func (server *Server) authorizeCustomer(ctx context.Context) (*token.CustomerPayload, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, fmt.Errorf("missing metadata")
@@ -77,9 +77,20 @@ func (server *Server) AuthorizeCustomer(ctx context.Context) (*token.CustomerPay
 	return payload, nil
 }
 
-func (server *Server) IsAdministrator(ctx context.Context, payload *token.BarberPayload) error {
+func (server *Server) isAdministrator(payload *token.BarberPayload) bool {
 	if payload.Barber.BarberRoleType != string(utilities.Administrator) {
-		return fmt.Errorf("PermissionDenied")
+		return false
+	}
+	return true
+}
+
+func (server *Server) authorizeBarberAndCustomer(ctx context.Context) error {
+	_, err := server.authorizeBarber(ctx)
+	if err != nil {
+		_, err := server.authorizeCustomer(ctx)
+		if err != nil {
+			return fmt.Errorf("unauthenticated")
+		}
 	}
 	return nil
 }

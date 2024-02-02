@@ -11,8 +11,8 @@ option go_package = "barbershop/src/pb/barber";
 message CreateBarberShopServicesRequest{
     string id = 1;
     string barbershop_category_id = 2;
-    optional string barbershop_chain_id = 3;
-    optional string barbershop_id = 4;
+    optional string barber_shop_chain_id = 3;
+    optional string barber_shop_id = 4;
     int32 gender_id = 5;
     string name = 6;
     int32 timer = 7;

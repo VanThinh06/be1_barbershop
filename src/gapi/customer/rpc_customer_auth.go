@@ -107,7 +107,6 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 
 	mtdt := server.extractMetadata(ctx)
 	session, err := server.store.CreateSessionsCustomer(ctx, db.CreateSessionsCustomerParams{
-		CustomerID:   refreshPayload.Customer.CustomerID,
 		RefreshToken: refreshToken,
 		UserAgent:    mtdt.UserAgent,
 		ClientIp:     mtdt.ClientIP,
@@ -115,7 +114,6 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 		FcmDevice:    req.GetFcmDevice(),
 		Longitude:    req.GetLatitude().GetValue(),
 		Latitude:     req.GetLatitude().GetValue(),
-		Timezone:     req.GetTimezone(),
 	})
 	if err != nil {
 		return nil, internalError(err)

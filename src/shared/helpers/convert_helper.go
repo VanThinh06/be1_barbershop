@@ -36,6 +36,15 @@ func ConvertStringListToUUIDList(stringList []string) ([]uuid.UUID, error) {
 }
 
 func ConvertFloat64ToFloat32Pointer(number float64) *float32 {
-    convertedNumber := float32(number)
-    return &convertedNumber
+	convertedNumber := float32(number)
+	return &convertedNumber
+}
+
+func ContainsValueUUID(array []uuid.UUID, valueToCheck uuid.UUID) bool {
+	for _, element := range array {
+		if element == valueToCheck {
+			return true
+		}
+	}
+	return false
 }

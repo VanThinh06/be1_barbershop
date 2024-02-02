@@ -10,9 +10,9 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) GetBarberManagers(ctx context.Context, req *barber.GetBarberManagersRequest) (*barber.GetBarberManagersResponse, error) {
+func (server *Server) ListBarberManagers(ctx context.Context, req *barber.ListBarberManagersRequest) (*barber.ListBarberManagersResponse, error) {
 
-	payload, err := server.authorizeUser(ctx)
+	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
@@ -22,7 +22,7 @@ func (server *Server) GetBarberManagers(ctx context.Context, req *barber.GetBarb
 	}
 
 	var barberID = uuid.MustParse(req.Id)
-	barberManager, err := server.Store.GetBarberManagers(ctx, barberID)
+	_, err = server.Store.ListBarberManagers(ctx, barberID)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
@@ -31,8 +31,8 @@ func (server *Server) GetBarberManagers(ctx context.Context, req *barber.GetBarb
 		return nil, status.Errorf(codes.Internal, "internal")
 	}
 
-	rsp := &barber.GetBarberManagersResponse{
-		BarberManager: convertBarberManagers(barberManager),
+	rsp := &barber.ListBarberManagersResponse{
+		// BarberManager: ConvertListBarberManagers(barberManager),
 	}
 	return rsp, nil
 }

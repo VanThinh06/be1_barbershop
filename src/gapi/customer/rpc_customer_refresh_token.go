@@ -36,7 +36,7 @@ func (server *Server) RefreshTokenCustomer(ctx context.Context, req *customer.Re
 
 	}
 
-	if session.BarberID != payload.Customer.CustomerID {
+	if session.CustomerID != payload.Customer.CustomerID {
 		_ = fmt.Errorf("incorrect session user")
 
 		return nil, status.Error(codes.Unauthenticated, "unauthenticated")
@@ -89,7 +89,7 @@ func (server *Server) RefreshTokenCustomer(ctx context.Context, req *customer.Re
 	}
 	err = server.store.UpdateSessionsCustomer(ctx, arg)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "intenal")
+		return nil, internalError(err)	
 	}
 
 	rsp := &customer.RefreshTokenCustomerResponse{

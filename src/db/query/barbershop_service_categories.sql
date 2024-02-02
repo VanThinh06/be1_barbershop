@@ -1,7 +1,7 @@
 -- name: CreateBarberShopServiceCategories :one
 INSERT INTO "BarberShopServiceCategories" (
-  "barbershop_chain_id",
-  "barbershop_id",
+  "barber_shop_chain_id",
+  "barber_shop_id",
   "service_category_id"
 )
 VALUES (
@@ -22,8 +22,8 @@ FROM
 JOIN
   "ServiceCategories" sc ON bsc."service_category_id" = sc."id"
 WHERE
-  bsc."barbershop_id" = $1
-  AND bsc."barbershop_chain_id" = $2;
+  bsc."barber_shop_id" = $1
+  AND bsc."barber_shop_chain_id" = $2;
 
 -- name: UpdateBarberShopServiceCategories :one
 UPDATE "BarberShopServiceCategories"

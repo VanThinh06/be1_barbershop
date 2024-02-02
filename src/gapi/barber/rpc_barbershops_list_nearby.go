@@ -14,7 +14,7 @@ import (
 
 func (server *Server) ListNearbyBarberShops(ctx context.Context, req *barber.ListNearbyBarberShopsRequest) (*barber.ListNearbyBarberShopsResponse, error) {
 
-	_, err := server.authorizeUser(ctx)
+	_, err := server.authorizeBarber(ctx)
 	if err != nil {
 		accessToken, err := extractTokenFromHeader(ctx)
 		if err != nil {

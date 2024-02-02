@@ -8,7 +8,7 @@ CREATE TABLE "Roles" (
 CREATE TABLE "BarberRoles" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "barber_id" uuid NOT NULL,
-  "barbershop_id" uuid NOT NULL,
+  "barber_shop_id" uuid,
   "role_id" integer NOT NULL,
   "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
@@ -27,7 +27,7 @@ CREATE TABLE "BarberShopChains" (
 
 CREATE TABLE "BarberShops" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "barbershop_chain_id" uuid,
+  "barber_shop_chain_id" uuid,
   "name" varchar NOT NULL,
   "is_main_branch" bool NOT NULL DEFAULT false,
   "branch_count" integer NOT NULL DEFAULT 1,
@@ -96,8 +96,8 @@ CREATE TABLE "ServiceCategories" (
 
 CREATE TABLE "BarberShopServiceCategories" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "barbershop_chain_id" uuid,
-  "barbershop_id" uuid,
+  "barber_shop_chain_id" uuid,
+  "barber_shop_id" uuid,
   "service_category_id" uuid NOT NULL,
   "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
@@ -106,8 +106,8 @@ CREATE TABLE "BarberShopServiceCategories" (
 CREATE TABLE "BarberShopServices" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "barbershop_category_id" uuid NOT NULL,
-  "barbershop_chain_id" uuid,
-  "barbershop_id" uuid,
+  "barber_shop_chain_id" uuid,
+  "barber_shop_id" uuid,
   "gender_id" integer NOT NULL,
   "name" varchar NOT NULL,
   "timer" integer NOT NULL DEFAULT 0,
@@ -150,7 +150,7 @@ CREATE TABLE "SessionsCustomer" (
 
 CREATE TABLE "Appointments" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "barbershop_id" uuid NOT NULL,
+  "barber_shop_id" uuid NOT NULL,
   "customer_id" uuid NOT NULL,
   "barber_id" uuid NOT NULL,
   "appointment_date_time" timestamptz NOT NULL,
@@ -165,7 +165,7 @@ BEGIN
   IF EXISTS (
     SELECT 1
     FROM "Appointments"
-    WHERE "barbershop_id" = NEW."barbershop_id"
+    WHERE "barber_shop_id" = NEW."barber_shop_id"
       AND "barber_id" = NEW."barber_id"
       AND (
         (NEW."appointment_date_time" + NEW."timer" * interval '1 minute') BETWEEN "appointment_date_time" AND "appointment_date_time" + NEW."timer" * interval '1 minute'
@@ -185,7 +185,7 @@ FOR EACH ROW EXECUTE FUNCTION check_appointment_conflict();
 CREATE TABLE "BarberShopReviews" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "customer_id" uuid NOT NULL,
-  "barbershop_id" uuid NOT NULL,
+  "barber_shop_id" uuid NOT NULL,
   "rating" integer NOT NULL,
   "comment" varchar,
   "create_at" timestamptz NOT NULL DEFAULT (now()),
@@ -204,17 +204,17 @@ CREATE TABLE "BarberReviews" (
 
 CREATE INDEX ON "BarberRoles" ("barber_id");
 
-CREATE INDEX ON "BarberRoles" ("barbershop_id");
+CREATE INDEX ON "BarberRoles" ("barber_shop_id");
 
 CREATE INDEX ON "BarberRoles" ("role_id");
 
 CREATE INDEX ON "BarberShopChains" ("name");
 
-CREATE INDEX ON "BarberShops" ("barbershop_chain_id");
+CREATE INDEX ON "BarberShops" ("barber_shop_chain_id");
 
 CREATE INDEX ON "BarberShops" ("name");
 
-CREATE UNIQUE INDEX ON "BarberShops" ("barbershop_chain_id", "branch_count");
+CREATE UNIQUE INDEX ON "BarberShops" ("barber_shop_chain_id", "branch_count");
 
 CREATE INDEX ON "Barbers" ("phone");
 CREATE INDEX ON "Barbers" ("email");
@@ -228,9 +228,9 @@ CREATE UNIQUE INDEX ON "BarberManagers" ("manager_id", "barber_id");
 
 CREATE INDEX ON "ServiceCategories" ("name");
 
-CREATE UNIQUE INDEX ON "BarberShopServiceCategories" ("barbershop_chain_id", "service_category_id");
+CREATE UNIQUE INDEX ON "BarberShopServiceCategories" ("barber_shop_chain_id", "service_category_id");
 
-CREATE UNIQUE INDEX ON "BarberShopServiceCategories" ("barbershop_id", "service_category_id");
+CREATE UNIQUE INDEX ON "BarberShopServiceCategories" ("barber_shop_id", "service_category_id");
 
 CREATE INDEX ON "BarberShopServices" ("barbershop_category_id");
 
@@ -244,13 +244,13 @@ CREATE INDEX ON "Appointments" ("barber_id");
 
 CREATE INDEX ON "Appointments" ("customer_id");
 
-CREATE INDEX ON "Appointments" ("barbershop_id");
+CREATE INDEX ON "Appointments" ("barber_shop_id");
 
 CREATE UNIQUE INDEX ON "Appointments" ("barber_id", "appointment_date_time");
 
 CREATE INDEX ON "BarberShopReviews" ("customer_id");
 
-CREATE INDEX ON "BarberShopReviews" ("barbershop_id");
+CREATE INDEX ON "BarberShopReviews" ("barber_shop_id");
 
 CREATE INDEX ON "BarberReviews" ("barber_id");
 
@@ -258,11 +258,11 @@ CREATE INDEX ON "BarberReviews" ("customer_id");
 
 ALTER TABLE "BarberRoles" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("id");
 
-ALTER TABLE "BarberRoles" ADD FOREIGN KEY ("barbershop_id") REFERENCES "BarberShops" ("id");
+ALTER TABLE "BarberRoles" ADD FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id");
 
 ALTER TABLE "BarberRoles" ADD FOREIGN KEY ("role_id") REFERENCES "Roles" ("id");
 
-ALTER TABLE "BarberShops" ADD FOREIGN KEY ("barbershop_chain_id") REFERENCES "BarberShopChains" ("id");
+ALTER TABLE "BarberShops" ADD FOREIGN KEY ("barber_shop_chain_id") REFERENCES "BarberShopChains" ("id");
 
 ALTER TABLE "Barbers" ADD FOREIGN KEY ("gender_id") REFERENCES "Genders" ("id");
 
@@ -272,23 +272,23 @@ ALTER TABLE "BarberManagers" ADD FOREIGN KEY ("manager_id") REFERENCES "Barbers"
 
 ALTER TABLE "SessionsBarber" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("id");
 
-ALTER TABLE "BarberShopServiceCategories" ADD FOREIGN KEY ("barbershop_chain_id") REFERENCES "BarberShopChains" ("id");
+ALTER TABLE "BarberShopServiceCategories" ADD FOREIGN KEY ("barber_shop_chain_id") REFERENCES "BarberShopChains" ("id");
 
-ALTER TABLE "BarberShopServiceCategories" ADD FOREIGN KEY ("barbershop_id") REFERENCES "BarberShops" ("id");
+ALTER TABLE "BarberShopServiceCategories" ADD FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id");
 
 ALTER TABLE "BarberShopServiceCategories" ADD FOREIGN KEY ("service_category_id") REFERENCES "ServiceCategories" ("id");
 
 ALTER TABLE "BarberShopServices" ADD FOREIGN KEY ("barbershop_category_id") REFERENCES "BarberShopServiceCategories" ("id");
 
-ALTER TABLE "BarberShopServices" ADD FOREIGN KEY ("barbershop_chain_id") REFERENCES "BarberShopChains" ("id");
+ALTER TABLE "BarberShopServices" ADD FOREIGN KEY ("barber_shop_chain_id") REFERENCES "BarberShopChains" ("id");
 
-ALTER TABLE "BarberShopServices" ADD FOREIGN KEY ("barbershop_id") REFERENCES "BarberShops" ("id");
+ALTER TABLE "BarberShopServices" ADD FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id");
 
 ALTER TABLE "BarberShopServices" ADD FOREIGN KEY ("gender_id") REFERENCES "Genders" ("id");
 
 ALTER TABLE "SessionsCustomer" ADD FOREIGN KEY ("customer_id") REFERENCES "Customers" ("id");
 
-ALTER TABLE "Appointments" ADD FOREIGN KEY ("barbershop_id") REFERENCES "BarberShops" ("id");
+ALTER TABLE "Appointments" ADD FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id");
 
 ALTER TABLE "Appointments" ADD FOREIGN KEY ("customer_id") REFERENCES "Customers" ("id");
 
@@ -296,17 +296,17 @@ ALTER TABLE "Appointments" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("
 
 CREATE TABLE "BarberShopServices_Appointments" (
   "BarberShopServices_id" uuid,
-  "Appointments_service_id" uuid,
-  PRIMARY KEY ("BarberShopServices_id", "Appointments_service_id")
+  "AppointmentsService_id" uuid,
+  PRIMARY KEY ("BarberShopServices_id", "AppointmentsService_id")
 );
 
 ALTER TABLE "BarberShopServices_Appointments" ADD FOREIGN KEY ("BarberShopServices_id") REFERENCES "BarberShopServices" ("id");
 
-ALTER TABLE "BarberShopServices_Appointments" ADD FOREIGN KEY ("Appointments_service_id") REFERENCES "Appointments" ("id");
+ALTER TABLE "BarberShopServices_Appointments" ADD FOREIGN KEY ("AppointmentsService_id") REFERENCES "Appointments" ("id");
 
 ALTER TABLE "BarberShopReviews" ADD FOREIGN KEY ("customer_id") REFERENCES "Customers" ("id");
 
-ALTER TABLE "BarberShopReviews" ADD FOREIGN KEY ("barbershop_id") REFERENCES "BarberShops" ("id");
+ALTER TABLE "BarberShopReviews" ADD FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id");
 
 ALTER TABLE "BarberReviews" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("id");
 

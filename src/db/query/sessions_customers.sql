@@ -6,7 +6,6 @@ INSERT INTO "SessionsCustomer" (
                                fcm_device,
                                is_blocked,
                                expires_at,
-                               timezone,
                                coordinates
                                )
 VALUES ($1,
@@ -15,8 +14,6 @@ VALUES ($1,
         $4,
         $5,
         $6,
-        $7,
-        $8,
         ST_GeographyFromText('POINT(' || sqlc.arg(longitude)::float8 || ' ' || sqlc.arg(latitude)::float8 || ')')
         ) RETURNING *;
 
@@ -25,9 +22,10 @@ SELECT *
 FROM "SessionsCustomer"
 WHERE id = $1;
 
--- name: UpdateSessionsCustomer :one
+-- name: UpdateSessionsCustomer :exec
 UPDATE "SessionsCustomer"
 SET refresh_token = $2,
  "expires_at" = now() + interval '30 minutes'
-WHERE id = $1;
+WHERE id = $1
+RETURNING * ;
 

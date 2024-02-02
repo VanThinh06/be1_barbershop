@@ -1,7 +1,7 @@
 -- name: CreateBarberRoles :one
 INSERT INTO "BarberRoles" (
     barber_id,
-    barbershop_id,
+    barber_shop_id,
     role_id
   )
 VALUES (
@@ -14,14 +14,13 @@ RETURNING *;
 -- name: GetBarberRoles :one
 SELECT *
 FROM "BarberRoles"
-WHERE "BarberRoles"."barber_id" = $1 AND "BarberRoles"."barbershop_id" = $2
-LIMIT 1;
+WHERE "BarberRoles"."barber_id" = $1 AND "BarberRoles"."barber_shop_id" = $2;
 
 -- name: ListBarbersRoles :many
 SELECT *
 FROM "BarberRoles"
 JOIN "Roles" ON "BarberRoles"."role_id" = "Roles"."id"
-WHERE "BarberRoles"."barbershop_id" = $1
+WHERE "BarberRoles"."barber_shop_id" = $1
 ORDER BY "Roles"."id";
 
 

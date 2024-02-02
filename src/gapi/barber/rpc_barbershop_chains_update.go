@@ -14,7 +14,7 @@ import (
 
 func (server *Server) UpdateBarberShopChains(ctx context.Context, req *barber.UpdateBarberShopChainsRequest) (*barber.UpdateBarberShopChainsResponse, error) {
 
-	payload, err := server.authorizeUser(ctx)
+	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}

@@ -8,7 +8,7 @@ option go_package = "barbershop/src/pb/barber";
 
 
 message ListBarbersInBarberShopRequest{
-    string barbershop_id = 1;
+    string barber_shop_id = 1;
 }
 
 message ListBarbersInBarberShopResponse {

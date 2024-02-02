@@ -19,13 +19,13 @@ import (
 
 func (server *Server) CreateAppointments(ctx context.Context, req *barber.CreateAppointmentsRequest) (*barber.CreateAppointmentsResponse, error) {
 
-	payload, err := server.authorizeUser(ctx)
+	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 	validations := validateCreateAppointment(req)
 	if validations != nil {
-		return nil, InValidArgumentError(validations)
+		return nil, inValidArgumentError(validations)
 	}
 
 	errTx := make(chan error)
@@ -151,7 +151,7 @@ func validateCreateAppointment(req *barber.CreateAppointmentsRequest) (validatio
 	}
 
 	validateField(&req.BarberId, "barber_id", helpers.ValidateId)
-	validateField(&req.BarbershopId, "barbershop_id", helpers.ValidateId)
+	validateField(&req.BarberShopId, "barber_shop_id", helpers.ValidateId)
 	validateField(&req.CustomerId, "customer_id", helpers.ValidateId)
 	validateField(&req.ServiceId[0], "service_id", helpers.ValidateId)
 

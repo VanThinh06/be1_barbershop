@@ -16,7 +16,7 @@ import (
 
 func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBarberShopsRequest) (*barber.UpdateBarberShopsResponse, error) {
 
-	payload, err := server.authorizeUser(ctx)
+	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}

@@ -9,8 +9,8 @@ VALUES (
   )
 RETURNING *;
 
--- name: GetBarberManagers :one
-SELECT *
+-- name: ListBarberManagers :many
+SELECT "manager_id"
 FROM "BarberManagers"
 WHERE "barber_id" = $1;
 

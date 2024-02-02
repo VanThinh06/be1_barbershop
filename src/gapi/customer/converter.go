@@ -22,16 +22,3 @@ func convertCustomer(res db.Customer) *customer.Customer {
 	}
 }
 
-func convertAppointment(appointment db.CreateAppointmentsRow) *customer.Appointment {
-	return &customer.Appointment{
-		AppointmentId:       appointment.ID.String(),
-		CustomerId:          appointment.CustomerID.String(),
-		BarberId:            appointment.BarberID.String(),
-		AppointmentDatetime: timestamppb.New(appointment.AppointmentDateTime),
-		Status:              appointment.Status,
-		CreatedAt:           timestamppb.New(appointment.CreateAt),
-		UpdateAt:            timestamppb.New(appointment.UpdateAt),
-	}
-}
-
-

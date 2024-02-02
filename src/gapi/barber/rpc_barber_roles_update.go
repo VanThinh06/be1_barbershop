@@ -13,13 +13,13 @@ import (
 
 func (server *Server) UpdateBarberRoles(ctx context.Context, req *barber.UpdateBarberRolesRequest) (*barber.UpdateBarberRolesResponse, error) {
 
-	payload, err := server.authorizeUser(ctx)
+	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+		return nil, unauthenticatedError(err)
 	}
 
 	if payload.Barber.BarberID.String() != req.Id {
-		return nil, status.Errorf(codes.PermissionDenied, "no permission")
+		return nil, noPermissionError(err)
 	}
 	var barberRoleID = uuid.MustParse(req.Id)
 	arg := db.UpdateBarberRolesParams{
@@ -33,7 +33,7 @@ func (server *Server) UpdateBarberRoles(ctx context.Context, req *barber.UpdateB
 			switch pqErr.Code.Name() {
 			case "Barber_id_key":
 				return nil, status.Errorf(codes.AlreadyExists, "no permission")
-			case "Barbershop_id_key":
+			case "barber_shop_id_key":
 				return nil, status.Errorf(codes.AlreadyExists, "no permission")
 			}
 		}

@@ -15,7 +15,7 @@ import (
 )
 
 func (server *Server) ChangePasswordCustomer(ctx context.Context, req *customer.ChangePasswordCustomerRequest) (*customer.ChangePasswordCustomerResponse, error) {
-	authPayload, err := server.authorizeUser(ctx)
+	authPayload, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}

@@ -14,30 +14,13 @@ func ConvertBarberRoles(res db.BarberRole) *barber.BarberRoles {
 	return &barber.BarberRoles{
 		Id:           res.BarberID.String(),
 		BarberId:     res.BarberID.String(),
-		BarbershopId: res.BarbershopID.String(),
+		BarberShopId: res.BarberShopID.UUID.String(),
 		RoleId:       res.RoleID,
 		CreateAt:     timestamppb.New(res.CreateAt),
 		UpdateAt:     timestamppb.New(res.UpdateAt),
 	}
 }
 
-func ConvertListBarbersRoles(res []db.ListBarbersRolesRow) []*barber.BarberRoles {
-	var barbersRoles []*barber.BarberRoles
-
-	for _, item := range res {
-		barberRole := &barber.BarberRoles{
-			Id:           item.ID.String(),
-			BarberId:     item.BarberID.String(),
-			BarbershopId: item.BarbershopID.String(),
-			RoleId:       item.RoleID,
-			CreateAt:     timestamppb.New(item.CreateAt),
-			UpdateAt:     timestamppb.New(item.UpdateAt),
-		}
-		barbersRoles = append(barbersRoles, barberRole)
-	}
-
-	return barbersRoles
-}
 
 // / BarberShop
 // / chains
@@ -56,13 +39,13 @@ func ConvertBarberShopChains(res db.BarberShopChain) *barber.BarberShopChains {
 
 // barbershops
 func convertBarberShops(barberShop db.BarberShop) *barber.BarberShops {
-	var barberShopChainId *string
-	if barberShop.BarbershopChainID.Valid {
-		*barberShopChainId = barberShop.BarbershopChainID.UUID.String()
+	var BarberShopChainId *string
+	if barberShop.BarberShopChainID.Valid {
+		*BarberShopChainId = barberShop.BarberShopChainID.UUID.String()
 	}
 	return &barber.BarberShops{
 		Id:                barberShop.ID.String(),
-		BarbershopChainId: barberShopChainId,
+		BarberShopChainId: BarberShopChainId,
 		Name:              barberShop.Name,
 		IsMainBranch:      barberShop.IsMainBranch,
 		BranchCount:       barberShop.BranchCount,
@@ -85,10 +68,10 @@ func ConvertSearchByNameBarberShops(res []db.SearchByNameBarberShopsRow) []*barb
 	var barberShops []*barber.BarberShops
 
 	for _, barberShop := range res {
-		chainIDString := barberShop.BarbershopChainID.UUID.String()
+		chainIDString := barberShop.BarberShopChainID.UUID.String()
 		barberShopPB := &barber.BarberShops{
 			Id:                barberShop.ID.String(),
-			BarbershopChainId: &chainIDString,
+			BarberShopChainId: &chainIDString,
 			BranchCount:       barberShop.BranchCount,
 			Distance:          float32(barberShop.Distance),
 			Longitude:         wrapperspb.Double(barberShop.Longitude),
@@ -184,11 +167,31 @@ func convertBarberManagers(res db.BarberManager) *barber.BarberManagers {
 	}
 }
 
+func ConvertListBarberManagers(res []db.BarberManager) []*barber.BarberManagers {
+	var barberManagers []*barber.BarberManagers
+
+	for _, item := range res {
+		barberManager := &barber.BarberManagers{
+
+			BarberId:  item.BarberID.String(),
+			ManagerId: item.ManagerID.String(),
+			CreateAt:  timestamppb.New(item.CreateAt),
+			UpdateAt:  timestamppb.New(item.UpdateAt),
+		}
+		barberManagers = append(barberManagers, barberManager)
+	}
+
+	return barberManagers
+}
+
+
+
+
 func convertBSServiceCategories(serviceCategory db.BarberShopServiceCategory) *barber.BarberShopServiceCategories {
 	return &barber.BarberShopServiceCategories{
 		Id:                serviceCategory.ID.String(),
-		BarbershopChainId: serviceCategory.BarbershopChainID.UUID.String(),
-		BarbershopId:      serviceCategory.BarbershopID.UUID.String(),
+		BarberShopChainId: serviceCategory.BarberShopChainID.UUID.String(),
+		BarberShopId:      serviceCategory.BarberShopID.UUID.String(),
 		ServiceCategoryId: serviceCategory.ServiceCategoryID.String(),
 		CreateAt:          timestamppb.New(serviceCategory.CreateAt),
 		UpdateAt:          timestamppb.New(serviceCategory.UpdateAt),
@@ -200,8 +203,8 @@ func convertListBSServiceCategories(res []db.ListBarberShopServiceCategoriesRow)
 	for _, item := range res {
 		barber := &barber.BarberShopServiceCategories{
 			Id:                item.ID.String(),
-			BarbershopChainId: item.BarbershopChainID.UUID.String(),
-			BarbershopId:      item.BarbershopID.UUID.String(),
+			BarberShopChainId: item.BarberShopChainID.UUID.String(),
+			BarberShopId:      item.BarberShopID.UUID.String(),
 			ServiceCategoryId: item.ServiceCategoryID.String(),
 			CreateAt:          timestamppb.New(item.CreateAt),
 			UpdateAt:          timestamppb.New(item.UpdateAt),
@@ -215,15 +218,15 @@ func convertBarberShopServices(service db.BarberShopService) *barber.BarberShopS
 	return &barber.BarberShopServices{
 		Id:                   service.ID.String(),
 		BarbershopCategoryId: service.BarbershopCategoryID.String(),
-		BarbershopChainId:    service.BarbershopChainID.UUID.String(),
-		BarbershopId:         service.BarbershopID.UUID.String(),
+		BarberShopChainId:    service.BarberShopChainID.UUID.String(),
+		BarberShopId:         service.BarberShopID.UUID.String(),
 	}
 }
 
 func convertAppointments(appointment db.CreateAppointmentsRow) *barber.Appointments {
 	return &barber.Appointments{
 		Id:                  appointment.ID.String(),
-		BarbershopId:        appointment.BarbershopID.String(),
+		BarberShopId:        appointment.BarberShopID.String(),
 		CustomerId:          appointment.CustomerID.String(),
 		BarberId:            appointment.BarberID.String(),
 		AppointmentDateTime: timestamppb.New(appointment.AppointmentDateTime),
@@ -240,7 +243,7 @@ func convertListAppointmentsByDate(res []db.ListAppointmentsByDateRow) []*barber
 			Id:                  appointment.ID.String(),
 			CustomerId:          appointment.CustomerID.String(),
 			BarberId:            appointment.BarberID.String(),
-			BarbershopId:        appointment.BarbershopID.String(),
+			BarberShopId:        appointment.BarberShopID.String(),
 			Status:              appointment.Status,
 			AppointmentDateTime: timestamppb.New(appointment.AppointmentDateTime),
 			CreateAt:            timestamppb.New(appointment.CreateAt),

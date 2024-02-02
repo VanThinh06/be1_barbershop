@@ -32,13 +32,13 @@ SELECT
   bs."rate" as "shop_rate",
   bs."branch_count" as "shop_branch_count",
   br."role_id" as "barber_role_id",
-  br."barbershop_id" as "barber_role_barbershop_id"
+  br."barber_shop_id" as "barber_role_barber_shop_id"
 FROM
   "Barbers" b
 JOIN
   "BarberRoles" br ON b."id" = br."barber_id"
 JOIN
-  "BarberShops" bs ON br."barbershop_id" = bs."id"
+  "BarberShops" bs ON br."barber_shop_id" = bs."id"
 WHERE
   b."id" = $1
   AND bs."id" = $2;
@@ -61,7 +61,7 @@ FROM
 JOIN
   "BarberRoles" br ON b."id" = br."barber_id"
 WHERE
-  br."barbershop_id" = $1;
+  br."barber_shop_id" = $1;
 
 -- name: UpdateBarbers :one
 UPDATE "Barbers"

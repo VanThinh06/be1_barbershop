@@ -11,7 +11,7 @@ import (
 
 func (server *Server) DeleteBarberShopChains(ctx context.Context, req *barber.DeleteBarberShopChainsRequest) (*barber.DeleteBarberShopChainsResponse, error) {
 
-	payload, err := server.authorizeUser(ctx)
+	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}

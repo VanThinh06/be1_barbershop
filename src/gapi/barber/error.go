@@ -13,7 +13,7 @@ func FieldValidation(field string, err error) *errdetails.BadRequest_FieldViolat
 	}
 }
 
-func InValidArgumentError(validations []*errdetails.BadRequest_FieldViolation) error {
+func inValidArgumentError(validations []*errdetails.BadRequest_FieldViolation) error {
 	badRequest := &errdetails.BadRequest{FieldViolations: validations}
 	statusInvalid := status.New(codes.InvalidArgument, "invalid parameters")
 
@@ -36,4 +36,16 @@ func internalError(err error) error {
 
 func returnError(code codes.Code, strError string, err error) error {
 	return status.Error(code, strError)
+}
+
+func noPermissionError(err error) error {
+	return status.Error(codes.PermissionDenied, "no permission")
+}
+
+func invalidInformationError(err error) error {
+	return status.Errorf(codes.InvalidArgument, "invalid information")
+}
+
+func notFoundError(err error, strError string) error {
+	return status.Errorf(codes.NotFound, "not found %v", strError)
 }

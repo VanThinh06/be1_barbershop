@@ -2,11 +2,7 @@ syntax = "proto3";
 
 package pb;
 
-import "barber/rpc_barber_roles_create.proto";
-import "barber/rpc_barber_roles_get.proto";
-import "barber/rpc_barber_roles_list.proto";
 import "barber/rpc_barber_roles_update.proto";
-import "barber/rpc_barber_roles_delete.proto";
 
 
 import "barber/rpc_barbershop_chains_create.proto";
@@ -31,7 +27,7 @@ import "barber/rpc_barber_refresh_token.proto";
 
 
 import "barber/rpc_barber_managers_create.proto";
-import "barber/rpc_barber_managers_get.proto";
+import "barber/rpc_barber_managers_list.proto";
 import "barber/rpc_barber_managers_delete.proto";
 
 import "barber/rpc_appointments_create.proto";
@@ -74,40 +70,6 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 service BarberService {
   
   /// BARBER ROLES
-  rpc CreateBarberRoles (CreateBarberRolesRequest) returns (CreateBarberRolesResponse){
-      option (google.api.http) = {
-        post: "/v1/barber-roles"
-        body: "*"
-      };
-      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      description: "API endpoint to create a barber roles"
-      summary: "Create a barber roles"
-      tags: "barber roles"
-    };
-  }
-
-  rpc GetBarberRoles (GetBarberRolesRequest) returns (GetBarberRolesResponse){
-    option (google.api.http) = {
-      get: "/v1/barber-roles"
-    };
-    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-    description: "API endpoint to get a barber roles"
-    summary: "Get a barber roles"
-    tags: "barber roles"
-  };
-}
-
-  rpc ListBarberRoles (ListBarberRolesRequest) returns (ListBarberRolesResponse){
-    option (google.api.http) = {
-      get: "/v1/barber-roles/{barbershop_id}"
-    };
-    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-    description: "API endpoint to get list barber roles"
-    summary: "List barber roles"
-    tags: "barber roles"
-  };
-}
-
 rpc UpdateBarberRoles (UpdateBarberRolesRequest) returns (UpdateBarberRolesResponse){
   option (google.api.http) = {
     put: "/v1/barber-roles"
@@ -116,17 +78,6 @@ rpc UpdateBarberRoles (UpdateBarberRolesRequest) returns (UpdateBarberRolesRespo
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
   description: "API endpoint to update role_id a barber roles"
   summary: "Update barber roles"
-  tags: "barber roles"
-};
-}
-
-rpc DeleteBarberRoles (DeleteBarberRolesRequest) returns (DeleteBarberRolesResponse){
-  option (google.api.http) = {
-    delete: "/v1/barber-roles/{id}"
-  };
-  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-  description: "API endpoint to delete a barber roles"
-  summary: "Delete barber roles"
   tags: "barber roles"
 };
 }
@@ -262,7 +213,7 @@ rpc CreateBarberManagers (CreateBarberManagersRequest) returns (CreateBarberMana
   };
 }
 
-rpc GetBarberManagers (GetBarberManagersRequest) returns (GetBarberManagersResponse){
+rpc ListBarberManagers (ListBarberManagersRequest) returns (ListBarberManagersResponse){
   option (google.api.http) = {
             get: "/v1/barber-managers/{id}"
           };

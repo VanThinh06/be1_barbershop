@@ -8,7 +8,7 @@ option go_package = "barbershop/src/pb/barber";
 
 message Appointments {
     string id = 1;
-    string barbershop_id = 2;
+    string barber_shop_id = 2;
     string customer_id = 3;
     string barber_id = 4;
     google.protobuf.Timestamp appointment_date_time = 5;

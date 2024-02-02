@@ -12,7 +12,7 @@ import (
 
 func (server *Server) DeleteBarberManagers(ctx context.Context, req *barber.DeleteBarberManagersRequest) (*barber.DeleteBarberManagersResponse, error) {
 
-	_, err := server.authorizeUser(ctx)
+	_, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}

@@ -13,34 +13,34 @@ import (
 
 func (server *Server) CreateBarberShopServiceCategories(ctx context.Context, req *barber.CreateBarberShopServiceCategoriesRequest) (*barber.CreateBarberShopServiceCategoriesResponse, error) {
 
-	payload, err := server.authorizeUser(ctx)
+	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
-	err = server.IsAdministrator(ctx, payload)
-	if err != nil {
+	isAdmin := server.isAdministrator(payload)
+	if !isAdmin {
 		return nil, status.Errorf(codes.PermissionDenied, "No permission")
 	}
 
 	var chainID uuid.NullUUID
 	var barberShopID uuid.NullUUID
-	if req.BarbershopChainId != nil {
+	if req.BarberShopChainId != nil {
 		chainID = uuid.NullUUID{
-			UUID:  uuid.MustParse(req.GetBarbershopChainId()),
-			Valid: req.BarbershopChainId != nil,
+			UUID:  uuid.MustParse(req.GetBarberShopChainId()),
+			Valid: req.BarberShopChainId != nil,
 		}
 	}
-	if req.BarbershopId != nil {
+	if req.BarberShopId != nil {
 		barberShopID = uuid.NullUUID{
-			UUID:  uuid.MustParse(req.GetBarbershopId()),
-			Valid: req.BarbershopId != nil,
+			UUID:  uuid.MustParse(req.GetBarberShopId()),
+			Valid: req.BarberShopId != nil,
 		}
 	}
 
 	arg := db.CreateBarberShopServiceCategoriesParams{
-		BarbershopChainID: chainID,
-		BarbershopID:      barberShopID,
+		BarberShopChainID: chainID,
+		BarberShopID:      barberShopID,
 	}
 
 	serviceCategory, err := server.Store.CreateBarberShopServiceCategories(ctx, arg)

@@ -1,8 +1,8 @@
 -- name: CreateBarberShopServices :one
 INSERT INTO "BarberShopServices" (
     barbershop_category_id,
-    barbershop_chain_id,
-    barbershop_id,
+    barber_shop_chain_id,
+    barber_shop_id,
     gender_id,
     "name",
     "timer",

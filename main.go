@@ -29,30 +29,25 @@ import (
 
 func main() {
 
-	// Load file config
 	config, err := utilities.LoadConfig(".") // . vì nằm cùng vị trí với thư mục hiện tại app.env
 	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}
 
-	// connect possgres
 	conn, err := sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
 
-	// Khởi tạo ứng dụng Firebase sử dụng ADC
 	app, err := firebase.NewApp(context.Background(), nil)
 	if err != nil {
 		log.Fatalf("Khởi tạo ứng dụng Firebase thất bại: %v", err)
 	}
 
-	//
 	store := db.NewStore(conn)
 
 	firebaseApp := db.NewFirebase(app)
 	go runGatewayServer(config, store, firebaseApp)
-	// go runGrpcServerCustomer(config, store, firebaseApp)
 	runGrpcServer(config, store, firebaseApp)
 }
 

@@ -13,18 +13,18 @@ import (
 
 func (server *Server) CreateBarberShops(ctx context.Context, req *barber.CreateBarberShopsRequest) (*barber.CreateBarberShopsResponse, error) {
 
-	_, err := server.authorizeUser(ctx)
+	_, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
 	var barberShopChainId = uuid.NullUUID{
-		UUID:  uuid.MustParse(req.GetBarbershopChainId()),
-		Valid: req.BarbershopChainId != nil,
+		UUID:  uuid.MustParse(req.GetBarberShopChainId()),
+		Valid: req.BarberShopChainId != nil,
 	}
 	arg := db.CreateBarberShopParams{
 		Name:              req.Name,
-		BarbershopChainID: barberShopChainId,
+		BarberShopChainID: barberShopChainId,
 		IsMainBranch: sql.NullBool{
 			Bool:  req.GetIsMainBranch(),
 			Valid: req.IsMainBranch != nil,

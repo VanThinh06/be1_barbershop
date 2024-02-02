@@ -1,7 +1,7 @@
 -- name: CreateAppointments :one
 WITH inserted_appointment AS (
     INSERT INTO "Appointments" (
-        barbershop_id,
+        barber_shop_id,
         customer_id,
         barber_id,    
         appointment_date_time,
@@ -28,9 +28,9 @@ ORDER BY
 LIMIT 1;
 
 -- name: CreateServicesForAppointments :many
-INSERT INTO "BarberShopServices_Appointments" ("BarberShopServices_id", "Appointments_service_id")
+INSERT INTO "BarberShopServices_Appointments" ("BarberShopServices_id", "AppointmentsService_id")
 SELECT unnest(sqlc.arg(services_id)::uuid[]), $1
-RETURNING "BarberShopServices_id", "Appointments_service_id";
+RETURNING "BarberShopServices_id", "AppointmentsService_id";
 
 -- name: ListAppointmentsByDate :many
 SELECT 

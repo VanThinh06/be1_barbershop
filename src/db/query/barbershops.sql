@@ -7,7 +7,7 @@ WHERE id = $1;
 -- name: SearchByNameBarberShops :many
 SELECT
     bs.id,
-    bs.barbershop_chain_id,
+    bs.barber_shop_chain_id,
     bs.name,
     bs.branch_count,
     bs.coordinates,
@@ -23,7 +23,7 @@ SELECT
         bs.coordinates::geography
     ) AS float) AS distance
 FROM "BarberShops" bs
-JOIN "BarberShopChains" bsc ON bs.barbershop_chain_id = bsc.id
+JOIN "BarberShopChains" bsc ON bs.barber_shop_chain_id = bsc.id
 WHERE bsc."name" = $1
 ORDER BY ST_Distance(bs.coordinates, ST_SetSRID(ST_MakePoint(sqlc.arg(current_longitude)::float, sqlc.arg(current_latitude)::float), 4326));
 
@@ -32,7 +32,7 @@ ORDER BY ST_Distance(bs.coordinates, ST_SetSRID(ST_MakePoint(sqlc.arg(current_lo
 -- name: ListNearbyBarberShops :many
 SELECT
     id,
-    barbershop_chain_id,
+    barber_shop_chain_id,
     name,
     branch_count,
     coordinates,
@@ -55,7 +55,7 @@ ORDER BY ST_Distance(coordinates, ST_SetSRID(ST_MakePoint(sqlc.arg(current_longi
 -- admin
 -- name: CreateBarberShop :one
 INSERT INTO "BarberShops" (
-                           barbershop_chain_id,
+                           barber_shop_chain_id,
                            name,
                            is_main_branch,
                            branch_count,
@@ -64,7 +64,7 @@ INSERT INTO "BarberShops" (
                            image
                            )
 VALUES (
-        sqlc.arg(barbershop_chain_id),
+        sqlc.arg(barber_shop_chain_id),
         sqlc.arg(name),
         sqlc.narg(is_main_branch),
         sqlc.arg(branch_count),

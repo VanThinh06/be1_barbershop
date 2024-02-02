@@ -11,7 +11,7 @@ import (
 )
 
 func (server *Server) ListAppointmentsByDate(ctx context.Context, req *barber.ListAppointmentsByDateRequest) (*barber.ListAppointmentsByDateResponse, error) {
-	_, err := server.authorizeUser(ctx)
+	_, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}

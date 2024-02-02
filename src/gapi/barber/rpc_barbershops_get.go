@@ -11,9 +11,9 @@ import (
 )
 
 func (server *Server) GetBarberShops(ctx context.Context, req *barber.GetBarberShopsRequest) (*barber.GetBarberShopsResponse, error) {
-	_, err := server.authorizeUser(ctx)
+	_, err := server.authorizeBarber(ctx)
 	if err != nil {
-		_, err = server.AuthorizeCustomer(ctx)
+		_, err = server.authorizeCustomer(ctx)
 		if err != nil {
 			return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 		}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package pb;
+
+import "barber/barber_managers.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message ListBarberManagersRequest{
+    string id = 1;
+}
+
+message ListBarberManagersResponse {
+    repeated string barber_manager = 1;
+}

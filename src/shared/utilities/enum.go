@@ -14,7 +14,9 @@ const (
 	Customer EnumRole = iota + 1
 	Barber
 	Receptionist
+	Manager
 	Admin
+	SuperAdmin
 	OtherStaff
 )
 

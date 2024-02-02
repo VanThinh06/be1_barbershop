@@ -14,29 +14,29 @@ import (
 
 func (server *Server) CreateBarberShopServices(ctx context.Context, req *barber.CreateBarberShopServicesRequest) (*barber.CreateBarberShopServicesResponse, error) {
 
-	_, err := server.authorizeUser(ctx)
+	_, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
 	var chainID uuid.NullUUID
-	var barberShopID uuid.NullUUID
-	if req.BarbershopChainId != nil {
+	var BarberShopId uuid.NullUUID
+	if req.BarberShopChainId != nil {
 		chainID = uuid.NullUUID{
-			UUID:  uuid.MustParse(req.GetBarbershopChainId()),
-			Valid: req.BarbershopChainId != nil,
+			UUID:  uuid.MustParse(req.GetBarberShopChainId()),
+			Valid: req.BarberShopChainId != nil,
 		}
 	}
-	if req.BarbershopId != nil {
-		barberShopID = uuid.NullUUID{
-			UUID:  uuid.MustParse(req.GetBarbershopId()),
-			Valid: req.BarbershopId != nil,
+	if req.BarberShopId != nil {
+		BarberShopId = uuid.NullUUID{
+			UUID:  uuid.MustParse(req.GetBarberShopId()),
+			Valid: req.BarberShopId != nil,
 		}
 	}
 	arg := db.CreateBarberShopServicesParams{
 		BarbershopCategoryID: uuid.MustParse(req.BarbershopCategoryId),
-		BarbershopChainID:    chainID,
-		BarbershopID:         barberShopID,
+		BarberShopChainID:    chainID,
+		BarberShopID:         BarberShopId,
 		GenderID:             req.GenderId,
 		Name:                 req.Name,
 		Timer:                req.Timer,

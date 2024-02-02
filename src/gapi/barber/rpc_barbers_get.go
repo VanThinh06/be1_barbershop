@@ -11,14 +11,14 @@ import (
 )
 
 func (server *Server) GetBarber(ctx context.Context, req *barber.GetBarbersRequest) (*barber.GetBarbersResponse, error) {
-	_, err := server.authorizeUser(ctx)
+	_, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}
 
 	arg := db.GetBarbersParams{
 		ID:   uuid.MustParse(req.Id),
-		ID_2: uuid.MustParse(req.BarbershopId),
+		ID_2: uuid.MustParse(req.BarberShopId),
 	}
 	res, err := server.Store.GetBarbers(ctx, arg)
 	if err != nil {

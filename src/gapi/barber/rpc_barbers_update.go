@@ -14,14 +14,14 @@ import (
 )
 
 func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarbersRequest) (*barber.UpdateBarbersResponse, error) {
-	authPayload, err := server.authorizeUser(ctx)
+	authPayload, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}
 
 	validations := validateUpdateBarber(req)
 	if validations != nil {
-		return nil, InValidArgumentError(validations)
+		return nil, inValidArgumentError(validations)
 	}
 
 	if authPayload.Barber.BarberID.String() != req.Id {

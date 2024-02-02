@@ -9,7 +9,7 @@ option go_package = "barbershop/src/pb/barber";
 
 message GetBarbersRequest{
     string id = 1;
-    string barbershop_id = 2;
+    string barber_shop_id = 2;
 }
 
 message GetBarbersResponse {
