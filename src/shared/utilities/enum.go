@@ -11,7 +11,8 @@ const (
 type EnumRole int32
 
 const (
-	Customer EnumRole = iota + 1
+	NoRole EnumGender = iota
+	Customer
 	Barber
 	Receptionist
 	Manager
@@ -23,7 +24,6 @@ const (
 type EnumRoleType string
 
 const (
-	User          EnumRoleType = "User"
 	Staff         EnumRoleType = "Staff"
 	Administrator EnumRoleType = "Administrator"
 )

@@ -84,7 +84,7 @@ func validateUpdateBarber(req *barber.UpdateBarbersRequest) (validations []*errd
 
 	validateField(req.GetEmail(), "email", helpers.ValidateEmail)
 	validateField(req.GetPhone(), "phone", helpers.ValidatePhoneNumber)
-	validateField(req.GetNickname(), "nickname", helpers.ValidateNickname)
+	validateField(req.GetNickname(), "nickname", helpers.ValidateNickName)
 	validateField(req.GetFullName(), "full_name", helpers.ValidateFullName)
 
 	return validations

@@ -43,7 +43,6 @@ func (server *Server) CreateCustomer(ctx context.Context, req *customer.CreateCu
 			String: req.GetPhone(),
 			Valid:  req.Phone != nil,
 		},
-		Gender:         req.GetGender(),
 		Email:          req.GetEmail(),
 		IsSocialAuth:   req.GetIsSocialAuth(),
 		HashedPassword: sql.NullString{String: hashedPassword, Valid: hashedPassword != ""},
@@ -55,9 +54,6 @@ func (server *Server) CreateCustomer(ctx context.Context, req *customer.CreateCu
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
 			case "unique_violation":
-				if pqErr.Constraint == "Customers_pkey" {
-					return nil, status.Errorf(codes.AlreadyExists, "this account has already existed")
-				}
 				if pqErr.Constraint == "Customers_phone_key" {
 					return nil, status.Errorf(codes.AlreadyExists, "this phone has already existed")
 				}

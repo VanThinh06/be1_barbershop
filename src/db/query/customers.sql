@@ -3,7 +3,6 @@ INSERT INTO "Customers" (
    "name",
     email,
     phone,
-    gender,
     hashed_password,
     is_social_auth
   )
@@ -12,7 +11,6 @@ VALUES (
     $2,
     $3,
     $4,
-    $5,
     sqlc.arg(is_social_auth)::bool
   )
 RETURNING *;
@@ -38,7 +36,7 @@ UPDATE "Customers"
 set name = coalesce(sqlc.narg('name'), name),
   email = coalesce(sqlc.narg('email'), email),
   phone = coalesce(sqlc.narg('phone'), phone),
-  gender = coalesce(sqlc.narg('gender'), gender),
+  gender_id = coalesce(sqlc.narg('gender_id'), gender_id),
   avatar = coalesce(sqlc.narg('avatar'), avatar),
   "update_at" = NOW()
   WHERE "id" = sqlc.arg('id')

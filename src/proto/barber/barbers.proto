@@ -11,7 +11,7 @@ message Barbers {
     string email = 3;
     string phone = 4;
     string nick_name = 5;
-    string full_name = 6;
+    optional string full_name = 6;
     bool haircut = 7;
     string avatar_url = 8;
     google.protobuf.Timestamp create_at = 9;

@@ -98,7 +98,7 @@ func ValidateFullName(fullName string) error {
 	return nil
 }
 
-func ValidateNickname(nickname string) error {
+func ValidateNickName(nickname string) error {
 	if err := ValidateString(nickname, 1, 20); err != nil {
 		return err
 	}

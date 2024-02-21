@@ -21,7 +21,6 @@ func ConvertBarberRoles(res db.BarberRole) *barber.BarberRoles {
 	}
 }
 
-
 // / BarberShop
 // / chains
 func ConvertBarberShopChains(res db.BarberShopChain) *barber.BarberShopChains {
@@ -119,7 +118,7 @@ func convertCreateBarbers(res db.Barber) *barber.Barbers {
 		Email:     res.Email,
 		Phone:     res.Phone,
 		NickName:  res.NickName,
-		FullName:  res.FullName,
+		FullName:  res.FullName.String,
 		Haircut:   res.Haircut,
 		AvatarUrl: res.AvatarUrl.String,
 		CreateAt:  timestamppb.New(res.CreateAt),
@@ -133,7 +132,7 @@ func convertBarbers(res db.GetBarbersRow) *barber.Barbers {
 		Email:        res.Email,
 		Phone:        res.Phone,
 		NickName:     res.NickName,
-		FullName:     res.FullName,
+		FullName:     res.FullName.String,
 		Haircut:      res.Haircut,
 		AvatarUrl:    res.AvatarUrl.String,
 		BarberRoleId: res.BarberRoleID,
@@ -142,17 +141,17 @@ func convertBarbers(res db.GetBarbersRow) *barber.Barbers {
 	}
 }
 
-func convertBarbersEmail(res db.GetBarbersEmailRow) *barber.Barbers {
+func convertBarbersEmail(res db.GetUserBarberRow) *barber.Barbers {
 	return &barber.Barbers{
 		Id:           res.ID.String(),
 		GenderId:     res.GenderID,
 		Email:        res.Email,
 		Phone:        res.Phone,
 		NickName:     res.NickName,
-		FullName:     res.FullName,
+		FullName:     res.FullName.String,
 		Haircut:      res.Haircut,
 		AvatarUrl:    res.AvatarUrl.String,
-		BarberRoleId: res.BarberRole,
+		BarberRoleId: res.BarberRole.Int32,
 		CreateAt:     timestamppb.New(res.CreateAt),
 		UpdateAt:     timestamppb.New(res.UpdateAt),
 	}
@@ -183,9 +182,6 @@ func ConvertListBarberManagers(res []db.BarberManager) []*barber.BarberManagers 
 
 	return barberManagers
 }
-
-
-
 
 func convertBSServiceCategories(serviceCategory db.BarberShopServiceCategory) *barber.BarberShopServiceCategories {
 	return &barber.BarberShopServiceCategories{

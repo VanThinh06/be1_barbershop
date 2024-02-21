@@ -1,77 +1,135 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE TABLE "Provinces" (
+  "id" serial2  PRIMARY KEY,
+  "name" varchar(50) UNIQUE NOT NULL
+);
+CREATE TABLE "Districts" (
+  "id" serial2  PRIMARY KEY,
+  "name" varchar(50)  NOT NULL,
+  "province_id" int2 NOT NULL
+);
+CREATE TABLE "Wards" (
+  "id" serial2  PRIMARY KEY,
+  "name" varchar(50) NOT NULL,
+  "district_id" int2 NOT NULL
+);
+
+CREATE TABLE "Genders" (
+  "id" serial2  PRIMARY KEY,
+  "name" varchar(10) UNIQUE NOT NULL
+);
+
 CREATE TABLE "Roles" (
-  "id" serial  PRIMARY KEY,
-  "name" varchar UNIQUE NOT NULL,
-  "type" varchar
+  "id" serial2  PRIMARY KEY,
+  "name" varchar(100) UNIQUE NOT NULL,
+  "type" varchar(50)
+);
+
+CREATE TABLE "ServiceCategories" (
+  "id" serial2 PRIMARY KEY,
+  "name" varchar(50) NOT NULL,
+  "is_global" bool NOT NULL DEFAULT false,
 );
 
 CREATE TABLE "BarberRoles" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "barber_id" uuid NOT NULL,
   "barber_shop_id" uuid,
-  "role_id" integer NOT NULL,
-  "create_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
+  "role_id" int2 NOT NULL
 );
 
 CREATE TABLE "BarberShopChains" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "name" varchar UNIQUE NOT NULL,
-  "description" text,
-  "founder" varchar NOT NULL,
-  "founding_date" timestamptz NOT NULL ,
-  "website" varchar,
-  "create_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
+  "name" varchar(100) NOT NULL,
+  "chain_identifier" varchar(50) UNIQUE NOT NULL,
+  "founder" varchar(50) NOT NULL,
+  "founding_date" date NOT NULL,
+  "website" varchar(150),
+  "description" varchar,
 );
 
 CREATE TABLE "BarberShops" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "barber_shop_chain_id" uuid,
-  "name" varchar NOT NULL,
-  "is_main_branch" bool NOT NULL DEFAULT false,
-  "branch_count" integer NOT NULL DEFAULT 1,
+  "name" varchar(100) NOT NULL,
+  "province_id" int2 NOT NULL,
+  "district_id" int2 NOT NULL,
+  "ward_id" int2 NOT NULL,
+  "phone" varchar(15) NOT NULL,
+  "email" varchar(50) NOT NULL,
+  "website_url" varchar(150),
+  "branch_count" int2 NOT NULL DEFAULT 1,
   "coordinates" GEOGRAPHY(Point, 4326) NOT NULL,
-  "address" varchar NOT NULL,
-  "image" varchar,
-  "status" integer NOT NULL DEFAULT 1,
-  "rate" float NOT NULL DEFAULT 0,
-  "start_time" TIME NOT NULL DEFAULT '08:00:00'::TIME,
-  "end_time" TIME NOT NULL DEFAULT '5:00:00'::TIME,
-  "break_time" TIME NOT NULL DEFAULT '12:00:00'::TIME,
-  "break_minutes" integer NOT NULL DEFAULT 60,
-  "interval_scheduler" integer NOT NULL DEFAULT 30,
+  "avatar_url" varchar(120),
+  "cover_photo_url" varchar(120),
+  "photo_url" varchar(120),
+  "start_time_monday" TIME NOT NULL DEFAULT '08:00:00'::TIME,
+  "end_time_monday" TIME NOT NULL DEFAULT '17:00:00'::TIME,
+  "start_time_tuesday" TIME NOT NULL DEFAULT '08:00:00'::TIME,
+  "end_time_tuesday" TIME NOT NULL DEFAULT '17:00:00'::TIME,
+  "start_time_wednesday" TIME NOT NULL DEFAULT '08:00:00'::TIME,
+  "end_time_wednesday" TIME NOT NULL DEFAULT '17:00:00'::TIME,
+  "start_time_thursday" TIME NOT NULL DEFAULT '08:00:00'::TIME,
+  "end_time_thursday" TIME NOT NULL DEFAULT '17:00:00'::TIME,
+  "start_time_friday" TIME NOT NULL DEFAULT '08:00:00'::TIME,
+  "end_time_friday" TIME NOT NULL DEFAULT '17:00:00'::TIME,
+  "start_time_saturday" TIME NOT NULL DEFAULT '08:00:00'::TIME,
+  "end_time_saturday" TIME NOT NULL DEFAULT '17:00:00'::TIME,
+  "start_time_sunday" TIME NOT NULL DEFAULT '08:00:00'::TIME,
+  "end_time_sunday" TIME NOT NULL DEFAULT '17:00:00'::TIME
+  "interval_scheduler" int2 NOT NULL DEFAULT 30,
+  "is_main_branch" bool NOT NULL DEFAULT true,
   "is_reputation" bool NOT NULL DEFAULT false,
   "is_verified" bool NOT NULL DEFAULT false,
   "create_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
+
+CREATE TABLE "PaymentMethods" (
+    "id" PRIMARY KEY DEFAULT (uuid_generate_v4()),
+    "account_number" VARCHAR(20) NOT NULL,
+    "bank_name" VARCHAR(50) NOT NULL,
+    "branch_name" VARCHAR(50) NOT NULL,
+    "account_holder_name" VARCHAR(100) NOT NULL,
+    "create_at" timestamptz NOT NULL DEFAULT (now()),
+);
+
+CREATE TABLE "BarberShopServiceCategories" (
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "barber_shop_id" uuid NOT NULL,
+  "service_category_id" int2 NOT NULL
+);
+
+CREATE TABLE "BarberShopServices" (
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "barbershop_category_id" uuid NOT NULL,
+  "gender_id" int2 NOT NULL,
+  "name" varchar(100) NOT NULL,
+  "timer" int2 NOT NULL DEFAULT 0,
+  "price" real NOT NULL DEFAULT 0,
+  "description" varchar(500),
+  "image_url" varchar(120),
+  "is_custom" bool NOT NULL DEFAULT false,
+  "is_removed" bool NOT NULL DEFAULT false
+);
+
 
 CREATE TABLE "Barbers" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "gender_id" integer NOT NULL DEFAULT 1,
-  "email" varchar UNIQUE NOT NULL,
-  "phone" varchar UNIQUE NOT NULL,
-  "hashed_password" varchar NOT NULL,
-  "nick_name" varchar UNIQUE NOT NULL,
-  "full_name" varchar NOT NULL,
+  "gender_id" int2 NOT NULL DEFAULT 1,
+  "email" varchar(50) UNIQUE NOT NULL,
+  "phone" varchar(15) UNIQUE NOT NULL,
+  "hashed_password" varchar(50) varchar NOT NULL,
+  "nick_name" varchar(12) UNIQUE NOT NULL,
+  "full_name" varchar(50),
   "haircut" bool NOT NULL DEFAULT false,
-  "avatar_url" varchar,
+  "avatar_url" varchar(120),
   "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
   "create_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
 CREATE TABLE "BarberManagers" (
   "barber_id" uuid NOT NULL,
   "manager_id" uuid NOT NULL,
-  "create_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
-);
-
-CREATE TABLE "Genders" (
-  "id" serial  PRIMARY KEY,
-  "name" varchar UNIQUE NOT NULL
 );
 
 CREATE TABLE "SessionsBarber" (
@@ -86,52 +144,17 @@ CREATE TABLE "SessionsBarber" (
   "create_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE TABLE "ServiceCategories" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "name" varchar NOT NULL,
-  "is_global" bool NOT NULL DEFAULT false,
-  "create_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
-);
-
-CREATE TABLE "BarberShopServiceCategories" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "barber_shop_chain_id" uuid,
-  "barber_shop_id" uuid,
-  "service_category_id" uuid NOT NULL,
-  "create_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
-);
-
-CREATE TABLE "BarberShopServices" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "barbershop_category_id" uuid NOT NULL,
-  "barber_shop_chain_id" uuid,
-  "barber_shop_id" uuid,
-  "gender_id" integer NOT NULL,
-  "name" varchar NOT NULL,
-  "timer" integer NOT NULL DEFAULT 0,
-  "price" real NOT NULL DEFAULT 0,
-  "description" varchar,
-  "image" varchar,
-  "is_custom" bool NOT NULL DEFAULT false,
-  "is_removed" bool NOT NULL DEFAULT false,
-  "create_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
-);
-
 CREATE TABLE "Customers" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" varchar NOT NULL,
   "email" varchar UNIQUE NOT NULL,
   "phone" varchar UNIQUE,
-  "gender" integer NOT NULL DEFAULT 1,
+  "gender_id" integer,
   "hashed_password" varchar,
   "avatar" varchar,
   "is_social_auth" bool DEFAULT false,
   "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
   "create_at" timestamptz NOT NULL DEFAULT (now()),
-  "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
 
 CREATE TABLE "SessionsCustomer" (
@@ -141,7 +164,6 @@ CREATE TABLE "SessionsCustomer" (
   "user_agent" varchar NOT NULL,
   "client_ip" varchar NOT NULL,
   "fcm_device" varchar NOT NULL,
-  "timezone" varchar NOT NULL,
   "coordinates" GEOGRAPHY(Point, 4326),
   "is_blocked" bool NOT NULL DEFAULT false,
   "expires_at" timestamptz NOT NULL,
@@ -256,6 +278,10 @@ CREATE INDEX ON "BarberReviews" ("barber_id");
 
 CREATE INDEX ON "BarberReviews" ("customer_id");
 
+ALTER TABLE "Districts" ADD FOREIGN KEY ("province_id") REFERENCES "Provinces" ("id");
+
+ALTER TABLE "Wards" ADD FOREIGN KEY ("district_id") REFERENCES "Districts" ("id");
+
 ALTER TABLE "BarberRoles" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("id");
 
 ALTER TABLE "BarberRoles" ADD FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id");
@@ -293,6 +319,8 @@ ALTER TABLE "Appointments" ADD FOREIGN KEY ("barber_shop_id") REFERENCES "Barber
 ALTER TABLE "Appointments" ADD FOREIGN KEY ("customer_id") REFERENCES "Customers" ("id");
 
 ALTER TABLE "Appointments" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("id");
+
+ALTER TABLE "Customers" ADD FOREIGN KEY ("gender_id") REFERENCES "Genders" ("id");
 
 CREATE TABLE "BarberShopServices_Appointments" (
   "BarberShopServices_id" uuid,

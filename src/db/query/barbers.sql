@@ -4,16 +4,14 @@ INSERT INTO "Barbers" (
     email,
     phone,
     hashed_password,
-    nick_name,
-    full_name
+    nick_name
   )
 VALUES (
     $1,
     $2,
     $3,
     $4,
-    $5,
-    $6
+    $5
   )
 RETURNING *;
 
@@ -43,14 +41,18 @@ WHERE
   b."id" = $1
   AND bs."id" = $2;
 
--- name: GetBarbersEmail :one
+-- name: GetUserBarber :one
 SELECT 
   b.*,
   br."role_id" as "barber_role"
 FROM "Barbers" b
-JOIN
+LEFT JOIN
   "BarberRoles" br ON b."id" = br."barber_id"
-WHERE email = $1;
+WHERE  (
+        (sqlc.arg(type_username)::varchar = 'email' AND email = $1)
+        OR
+        (sqlc.arg(type_username)::varchar = 'phone' AND phone = $1)
+    );
 
 -- name: ListBarbersInBarberShop :many
 SELECT

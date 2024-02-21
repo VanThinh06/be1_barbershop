@@ -12,12 +12,8 @@ message CreateBarbersRequest{
     string email = 2;
     string phone = 3;
     string nick_name = 4;
-    string full_name = 5;
     string password = 6;
     optional string avatar_url = 7;
-    string barber_manager_id = 8;
-    string barber_shop_id = 9;
-    int32 role_id = 10;
 }
 
 message CreateBarbersResponse {

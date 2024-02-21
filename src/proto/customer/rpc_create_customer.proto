@@ -11,7 +11,7 @@ message CreateCustomerRequest{
     string name = 1;
     string email = 2;
     optional string phone = 3;
-    int32 gender = 4;
+    optional int32 gender = 4;
     optional string password = 5;
     bool is_social_auth = 6;
 }

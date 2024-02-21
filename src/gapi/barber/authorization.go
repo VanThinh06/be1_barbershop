@@ -94,3 +94,18 @@ func (server *Server) authorizeBarberAndCustomer(ctx context.Context) error {
 	}
 	return nil
 }
+
+func (server *Server) checkCreateAccountBarberPermission(ctx context.Context, payload *token.BarberPayload, roleId int32) error {
+	var err error = fmt.Errorf("no permission to access")
+	if payload.Barber.BarberRoleType != string(utilities.Administrator) || payload.Barber.BarberRole != int32(utilities.Manager) {
+		return err
+	}
+
+	if payload.Barber.BarberRole == int32(utilities.Manager) {
+		if roleId != int32(utilities.Barber) && roleId != int32(utilities.OtherStaff) {
+			return err
+		}
+	}
+	return nil
+}
+

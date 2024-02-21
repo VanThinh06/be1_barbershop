@@ -3,6 +3,7 @@ package gapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
+	"barbershop/src/shared/helpers"
 	"barbershop/src/shared/token"
 	"barbershop/src/shared/utilities"
 	"context"
@@ -14,8 +15,18 @@ import (
 )
 
 func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRequest) (*barber.LoginBarberResponse, error) {
+	contact := db.GetUserBarberParams{
+		TypeUsername: "phone",
+		Email:        req.Username,
+	}
 
-	res, err := server.Store.GetBarbersEmail(ctx, req.Username)
+	err := helpers.ValidatePhoneNumber(req.Username)
+	if err != nil {
+		contact.TypeUsername = "email"
+		contact.Email = req.Username
+	}
+
+	res, err := server.Store.GetUserBarber(ctx, contact)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, status.Error(codes.NotFound, "you have not created an account yet")
@@ -30,8 +41,8 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 
 	barberPayload := token.Barber{
 		BarberID:       res.ID,
-		BarberRole:     res.BarberRole,
-		BarberRoleType: utilities.MapRoleToRoleType[res.BarberRole],
+		BarberRole:     res.BarberRole.Int32,
+		BarberRoleType: utilities.MapRoleToRoleType[res.BarberRole.Int32],
 		Phone:          res.Phone,
 		Email:          res.Email,
 		FcmDevice:      req.FcmDevice,

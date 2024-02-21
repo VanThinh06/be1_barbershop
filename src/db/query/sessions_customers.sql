@@ -1,5 +1,6 @@
 -- name: CreateSessionsCustomer :one
 INSERT INTO "SessionsCustomer" (
+                               customer_id,
                                refresh_token,
                                user_agent,
                                client_ip,
@@ -14,6 +15,7 @@ VALUES ($1,
         $4,
         $5,
         $6,
+        now() + interval '30 minutes',
         ST_GeographyFromText('POINT(' || sqlc.arg(longitude)::float8 || ' ' || sqlc.arg(latitude)::float8 || ')')
         ) RETURNING *;
 

@@ -27,107 +27,129 @@ func (server *Server) LoginCustomer(ctx context.Context, req *customer.LoginCust
 		contact.Email = req.Username
 	}
 
-	socialEmail := &SocialEmail{}
-	res, err := server.store.GetUserCustomer(ctx, contact)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			if req.IsSocialAuth == false {
-				return nil, returnError(codes.NotFound, "incorrect account or password", err)
-			}
+	errTx := make(chan error)
+	resultCustomer := make(chan *customer.LoginCustomerResponse)
 
-			// create account for the first time login
-			if req.IsSocialAuth {
-				socialEmail, err = server.authVerifyJWTGG(ctx)
-				if err != nil {
-					return nil, internalError(err)
-				}
-				if socialEmail.Email != req.GetUsername() {
-					return nil, status.Error(codes.Unauthenticated, "information is incorrect")
-				}
-				argCustomer := db.CreateCustomerParams{
-					Name:           socialEmail.GivenName,
-					Phone:          sql.NullString{},
-					Gender:         int32(utilities.Male),
-					Email:          socialEmail.Email,
-					IsSocialAuth:   req.GetIsSocialAuth(),
-					HashedPassword: sql.NullString{},
-				}
-				customerSocial, err := server.store.CreateCustomer(ctx, argCustomer)
-				if err != nil {
-					return nil, status.Error(codes.Unauthenticated, "information is incorrect")
-				}
-				res = customerSocial
-			}
-		}
+	go func() {
+		result, err := server.TxLoginCustomer(ctx, req, contact)
+		errTx <- err
+		resultCustomer <- result
+	}()
 
-		if socialEmail == nil {
-			return nil, internalError(err)
-		}
-	}
+	err = <-errTx
+	res := <-resultCustomer
 
-	if req.IsSocialAuth && socialEmail != nil {
-		socialEmail, err = server.authVerifyJWTGG(ctx)
-		if err != nil {
-			return nil, internalError(err)
-		}
-		if socialEmail.Email != req.Username {
-			return nil,unauthenticatedError(err)
-		}
-	}
-
-	if req.IsSocialAuth == false {
-		err = utilities.CheckPassword(req.Password, res.HashedPassword.String)
-		if err != nil {
-			return nil, unauthenticatedError(err)
-		}
-	}
-
-	customerPayload := token.Customer{
-		CustomerID: res.ID,
-		Name:       res.Name,
-		Phone:      res.Phone,
-		Email:      res.Email,
-		FcmDevice:  req.GetFcmDevice(),
-	}
-	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
-		customerPayload,
-		server.config.AccessTokenDuration,
-	)
 	if err != nil {
 		return nil, internalError(err)
 	}
+	return res, nil
+}
 
-	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
-		customerPayload,
-		server.config.RefreshTokenDuration,
-	)
-	if err != nil {
-		return nil, internalError(err)
-	}
+func (server *Server) TxLoginCustomer(ctx context.Context, req *customer.LoginCustomerRequest, contact db.GetUserCustomerParams) (*customer.LoginCustomerResponse, error) {
+	var customerResponse *customer.LoginCustomerResponse
 
-	mtdt := server.extractMetadata(ctx)
-	session, err := server.store.CreateSessionsCustomer(ctx, db.CreateSessionsCustomerParams{
-		RefreshToken: refreshToken,
-		UserAgent:    mtdt.UserAgent,
-		ClientIp:     mtdt.ClientIP,
-		IsBlocked:    false,
-		FcmDevice:    req.GetFcmDevice(),
-		Longitude:    req.GetLatitude().GetValue(),
-		Latitude:     req.GetLatitude().GetValue(),
+	err := server.store.ExecTx(ctx, func(q *db.Queries) error {
+		socialEmail := &SocialEmail{}
+		res, err := server.store.GetUserCustomer(ctx, contact)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				if req.IsSocialAuth == false {
+					return returnError(codes.NotFound, "incorrect account or password", err)
+				}
+
+				if req.IsSocialAuth {
+					socialEmail, err = server.authVerifyJWTGG(ctx)
+					if err != nil {
+						return internalError(err)
+					}
+					if socialEmail.Email != req.GetUsername() {
+						return status.Error(codes.Unauthenticated, "information is incorrect")
+					}
+					argCustomer := db.CreateCustomerParams{
+						Name:           socialEmail.GivenName,
+						Phone:          sql.NullString{},
+						Email:          socialEmail.Email,
+						IsSocialAuth:   req.GetIsSocialAuth(),
+						HashedPassword: sql.NullString{},
+					}
+					customerSocial, err := server.store.CreateCustomer(ctx, argCustomer)
+					if err != nil {
+						return status.Error(codes.Unauthenticated, "information is incorrect")
+					}
+					res = customerSocial
+				}
+			}
+
+			if socialEmail == nil {
+				return internalError(err)
+			}
+		}
+
+		if req.IsSocialAuth && socialEmail != nil {
+			socialEmail, err = server.authVerifyJWTGG(ctx)
+			if err != nil {
+				return internalError(err)
+			}
+			if socialEmail.Email != req.Username {
+				return unauthenticatedError(err)
+			}
+		}
+
+		if req.IsSocialAuth == false {
+			err = utilities.CheckPassword(req.Password, res.HashedPassword.String)
+			if err != nil {
+				return unauthenticatedError(err)
+			}
+		}
+
+		customerPayload := token.Customer{
+			CustomerID: res.ID,
+			Name:       res.Name,
+			Phone:      res.Phone,
+			Email:      res.Email,
+			FcmDevice:  req.GetFcmDevice(),
+		}
+		accessToken, accessPayload, err := server.tokenMaker.CreateToken(
+			customerPayload,
+			server.config.AccessTokenDuration,
+		)
+		if err != nil {
+			return internalError(err)
+		}
+
+		refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
+			customerPayload,
+			server.config.RefreshTokenDuration,
+		)
+		if err != nil {
+			return internalError(err)
+		}
+
+		mtdt := server.extractMetadata(ctx)
+		session, err := server.store.CreateSessionsCustomer(ctx, db.CreateSessionsCustomerParams{
+			CustomerID:   res.ID,
+			RefreshToken: refreshToken,
+			UserAgent:    mtdt.UserAgent,
+			ClientIp:     mtdt.ClientIP,
+			IsBlocked:    false,
+			FcmDevice:    req.GetFcmDevice(),
+			Longitude:    req.GetLatitude().GetValue(),
+			Latitude:     req.GetLatitude().GetValue(),
+		})
+		if err != nil {
+			return internalError(err)
+		}
+		customerResponse = &customer.LoginCustomerResponse{
+			Customer:              convertCustomer(res),
+			SessionId:             session.ID.String(),
+			AccessToken:           accessToken,
+			RefreshToken:          refreshToken,
+			AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiresAt),
+			RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiresAt),
+			Longitude:             req.Longitude,
+			Latitude:              req.Latitude,
+		}
+		return nil
 	})
-	if err != nil {
-		return nil, internalError(err)
-	}
-
-	rsp := &customer.LoginCustomerResponse{
-		Customer:              convertCustomer(res),
-		SessionId:             session.ID.String(),
-		AccessToken:           accessToken,
-		RefreshToken:          refreshToken,
-		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiresAt),
-		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiresAt),
-		Longitude:             req.Longitude,
-		Latitude:              req.Latitude,
-	}
-	return rsp, nil
+	return customerResponse, err
 }
