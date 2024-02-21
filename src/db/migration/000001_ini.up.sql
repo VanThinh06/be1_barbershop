@@ -25,9 +25,14 @@ CREATE TABLE "Roles" (
   "type" varchar(50)
 );
 
+-- CREATE TABLE "PaymentOptions" (
+--     "id" serial2 PRIMARY KEY,
+--     "name" varchar(50) UNIQUE NOT NULL
+-- );
+
 CREATE TABLE "ServiceCategories" (
   "id" serial2 PRIMARY KEY,
-  "name" varchar(50) NOT NULL,
+  "name" varchar(50) UNIQUE NOT NULL,
   "is_global" bool NOT NULL DEFAULT false,
 );
 
@@ -84,14 +89,18 @@ CREATE TABLE "BarberShops" (
   "create_at" timestamptz NOT NULL DEFAULT (now()),
 );
 
-CREATE TABLE "PaymentMethods" (
-    "id" PRIMARY KEY DEFAULT (uuid_generate_v4()),
-    "account_number" VARCHAR(20) NOT NULL,
-    "bank_name" VARCHAR(50) NOT NULL,
-    "branch_name" VARCHAR(50) NOT NULL,
-    "account_holder_name" VARCHAR(100) NOT NULL,
-    "create_at" timestamptz NOT NULL DEFAULT (now()),
-);
+-- CREATE TABLE "PaymentMethods" (
+--     "id" PRIMARY KEY DEFAULT (uuid_generate_v4()),
+--     "branch_id" uuid NOT NULL,
+--     "payment_option_id" uuid NOT NULL,
+--     "account_number" VARCHAR(20),
+--     "bank_name" VARCHAR(50),
+--     "branch_name" VARCHAR(50),
+--     "account_holder_name" VARCHAR(100),
+--     "create_at" timestamptz NOT NULL DEFAULT (now()),
+--     FOREIGN KEY ("payment_option_id") REFERENCES "PaymentOptions"("id")
+-- );
+
 
 CREATE TABLE "BarberShopServiceCategories" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
