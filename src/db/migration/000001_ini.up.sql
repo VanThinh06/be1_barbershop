@@ -63,7 +63,6 @@ CREATE TABLE "BarberShops" (
   "phone" varchar(15) NOT NULL,
   "email" varchar(50) NOT NULL,
   "website_url" varchar(150),
-  "branch_count" int2 NOT NULL DEFAULT 1,
   "coordinates" GEOGRAPHY(Point, 4326) NOT NULL,
   "avatar_url" varchar(120),
   "cover_photo_url" varchar(120),
