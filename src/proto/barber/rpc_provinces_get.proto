@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package pb;
+import "barber/provinces.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message GetProvincesRequest {}
+
+message GetProvincesResponse {
+     repeated Provinces provinces = 1;
+}

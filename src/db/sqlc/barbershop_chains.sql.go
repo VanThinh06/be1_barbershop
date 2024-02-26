@@ -14,14 +14,13 @@ import (
 )
 
 const createBarberShopChains = `-- name: CreateBarberShopChains :one
-INSERT INTO "BarberShopChains" ("name", "description", "founder", "founding_date", website)
-VALUES ($1, $2, $3, $4, $5)
-RETURNING id, name, description, founder, founding_date, website, create_at, update_at
+INSERT INTO "BarberShopChains" ("name", "founder", "founding_date", website)
+VALUES ($1, $2, $3, $4)
+RETURNING id, name, chain_identifier, founder, founding_date, website
 `
 
 type CreateBarberShopChainsParams struct {
 	Name         string         `json:"name"`
-	Description  sql.NullString `json:"description"`
 	Founder      string         `json:"founder"`
 	FoundingDate time.Time      `json:"founding_date"`
 	Website      sql.NullString `json:"website"`
@@ -30,7 +29,6 @@ type CreateBarberShopChainsParams struct {
 func (q *Queries) CreateBarberShopChains(ctx context.Context, arg CreateBarberShopChainsParams) (BarberShopChain, error) {
 	row := q.db.QueryRowContext(ctx, createBarberShopChains,
 		arg.Name,
-		arg.Description,
 		arg.Founder,
 		arg.FoundingDate,
 		arg.Website,
@@ -39,12 +37,10 @@ func (q *Queries) CreateBarberShopChains(ctx context.Context, arg CreateBarberSh
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.Description,
+		&i.ChainIdentifier,
 		&i.Founder,
 		&i.FoundingDate,
 		&i.Website,
-		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }
@@ -60,7 +56,7 @@ func (q *Queries) DeleteBarberShopChains(ctx context.Context, id uuid.UUID) erro
 }
 
 const getBarberShopChains = `-- name: GetBarberShopChains :one
-SELECT id, name, description, founder, founding_date, website, create_at, update_at
+SELECT id, name, chain_identifier, founder, founding_date, website
 FROM "BarberShopChains"
 WHERE "id" = $1
 `
@@ -71,12 +67,10 @@ func (q *Queries) GetBarberShopChains(ctx context.Context, id uuid.UUID) (Barber
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.Description,
+		&i.ChainIdentifier,
 		&i.Founder,
 		&i.FoundingDate,
 		&i.Website,
-		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }
@@ -84,18 +78,16 @@ func (q *Queries) GetBarberShopChains(ctx context.Context, id uuid.UUID) (Barber
 const updateBarberShopChains = `-- name: UpdateBarberShopChains :one
 UPDATE "BarberShopChains"
 SET "name" = coalesce($1, name),
-    "description" = coalesce($2, description),
-    founder = coalesce($3,founder),
-    founding_date = coalesce($4, founding_date),
-    website = coalesce($5, website),
+    founder = coalesce($2,founder),
+    founding_date = coalesce($3, founding_date),
+    website = coalesce($4, website),
     "update_at" = NOW()
-WHERE "id" = $6
-RETURNING id, name, description, founder, founding_date, website, create_at, update_at
+WHERE "id" = $5
+RETURNING id, name, chain_identifier, founder, founding_date, website
 `
 
 type UpdateBarberShopChainsParams struct {
 	Name         sql.NullString `json:"name"`
-	Description  sql.NullString `json:"description"`
 	Founder      sql.NullString `json:"founder"`
 	FoundingDate sql.NullTime   `json:"founding_date"`
 	Website      sql.NullString `json:"website"`
@@ -105,7 +97,6 @@ type UpdateBarberShopChainsParams struct {
 func (q *Queries) UpdateBarberShopChains(ctx context.Context, arg UpdateBarberShopChainsParams) (BarberShopChain, error) {
 	row := q.db.QueryRowContext(ctx, updateBarberShopChains,
 		arg.Name,
-		arg.Description,
 		arg.Founder,
 		arg.FoundingDate,
 		arg.Website,
@@ -115,12 +106,10 @@ func (q *Queries) UpdateBarberShopChains(ctx context.Context, arg UpdateBarberSh
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.Description,
+		&i.ChainIdentifier,
 		&i.Founder,
 		&i.FoundingDate,
 		&i.Website,
-		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }

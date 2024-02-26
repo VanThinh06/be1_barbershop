@@ -12,8 +12,7 @@ message CreateBarbersRequest{
     string email = 2;
     string phone = 3;
     string nick_name = 4;
-    string password = 6;
-    optional string avatar_url = 7;
+    string password = 5;
 }
 
 message CreateBarbersResponse {

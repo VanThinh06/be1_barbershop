@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+import "barber/wards.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message GetWardsRequest {
+    int32 district_id = 1;
+}
+
+message GetWardsResponse {
+    repeated Wards wards = 1;
+}

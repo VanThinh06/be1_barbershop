@@ -1,7 +1,6 @@
 package gapi
 
 import (
-	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"context"
 
@@ -18,14 +17,7 @@ func (server *Server) ListBarberShopServiceCategories(ctx context.Context, req *
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
-	var barberShopChainId uuid.NullUUID
 	var barberShopID uuid.NullUUID
-	if req.BarberShopChainId != nil {
-		barberShopChainId = uuid.NullUUID{
-			UUID:  uuid.MustParse(req.GetBarberShopChainId()),
-			Valid: req.BarberShopChainId != nil,
-		}
-	}
 	if req.BarberShopId != nil {
 		barberShopID = uuid.NullUUID{
 			UUID:  uuid.MustParse(req.GetBarberShopId()),
@@ -33,12 +25,9 @@ func (server *Server) ListBarberShopServiceCategories(ctx context.Context, req *
 		}
 	}
 
-	arg := db.ListBarberShopServiceCategoriesParams{
-		BarberShopChainID: barberShopChainId,
-		BarberShopID:      barberShopID,
-	}
 
-	serviceCategories, err := server.Store.ListBarberShopServiceCategories(ctx, arg)
+
+	serviceCategories, err := server.Store.ListBarberShopServiceCategories(ctx, barberShopID.UUID)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {

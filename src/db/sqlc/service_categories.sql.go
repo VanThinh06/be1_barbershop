@@ -8,14 +8,12 @@ package db
 import (
 	"context"
 	"database/sql"
-
-	"github.com/google/uuid"
 )
 
 const createServiceCategories = `-- name: CreateServiceCategories :one
 INSERT INTO "ServiceCategories" ("name", "is_global")
 VALUES ($1, $2)
-RETURNING id, name, is_global, create_at, update_at
+RETURNING id, name, is_global
 `
 
 type CreateServiceCategoriesParams struct {
@@ -26,13 +24,7 @@ type CreateServiceCategoriesParams struct {
 func (q *Queries) CreateServiceCategories(ctx context.Context, arg CreateServiceCategoriesParams) (ServiceCategory, error) {
 	row := q.db.QueryRowContext(ctx, createServiceCategories, arg.Name, arg.IsGlobal)
 	var i ServiceCategory
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.IsGlobal,
-		&i.CreateAt,
-		&i.UpdateAt,
-	)
+	err := row.Scan(&i.ID, &i.Name, &i.IsGlobal)
 	return i, err
 }
 
@@ -41,27 +33,21 @@ DELETE FROM "ServiceCategories"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteServiceCategories(ctx context.Context, id uuid.UUID) error {
+func (q *Queries) DeleteServiceCategories(ctx context.Context, id int16) error {
 	_, err := q.db.ExecContext(ctx, deleteServiceCategories, id)
 	return err
 }
 
 const getServiceCategories = `-- name: GetServiceCategories :one
-SELECT id, name, is_global, create_at, update_at
+SELECT id, name, is_global
 FROM "ServiceCategories"
 WHERE "id" = $1
 `
 
-func (q *Queries) GetServiceCategories(ctx context.Context, id uuid.UUID) (ServiceCategory, error) {
+func (q *Queries) GetServiceCategories(ctx context.Context, id int16) (ServiceCategory, error) {
 	row := q.db.QueryRowContext(ctx, getServiceCategories, id)
 	var i ServiceCategory
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.IsGlobal,
-		&i.CreateAt,
-		&i.UpdateAt,
-	)
+	err := row.Scan(&i.ID, &i.Name, &i.IsGlobal)
 	return i, err
 }
 
@@ -71,24 +57,18 @@ SET "name" = coalesce($1, name),
     "is_global" = coalesce($2, is_global),
     "update_at" = NOW()
 WHERE "id" = $3
-RETURNING id, name, is_global, create_at, update_at
+RETURNING id, name, is_global
 `
 
 type UpdateServiceCategoriesParams struct {
 	Name     sql.NullString `json:"name"`
 	IsGlobal sql.NullBool   `json:"is_global"`
-	ID       uuid.UUID      `json:"id"`
+	ID       int16          `json:"id"`
 }
 
 func (q *Queries) UpdateServiceCategories(ctx context.Context, arg UpdateServiceCategoriesParams) (ServiceCategory, error) {
 	row := q.db.QueryRowContext(ctx, updateServiceCategories, arg.Name, arg.IsGlobal, arg.ID)
 	var i ServiceCategory
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.IsGlobal,
-		&i.CreateAt,
-		&i.UpdateAt,
-	)
+	err := row.Scan(&i.ID, &i.Name, &i.IsGlobal)
 	return i, err
 }

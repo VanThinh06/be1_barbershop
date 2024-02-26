@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+import "barber/districts.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message GetDistrictsRequest {
+    int32 province_id = 1;
+}
+
+message GetDistrictsResponse {
+    repeated Districts districts = 1;
+}

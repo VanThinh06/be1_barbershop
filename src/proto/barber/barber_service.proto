@@ -2,8 +2,11 @@ syntax = "proto3";
 
 package pb;
 
-import "barber/rpc_barber_roles_update.proto";
+import "barber/rpc_provinces_get.proto";
+import "barber/rpc_districts_get.proto";
+import "barber/rpc_wards_get.proto";
 
+import "barber/rpc_barber_roles_update.proto";
 
 import "barber/rpc_barbershop_chains_create.proto";
 import "barber/rpc_barbershop_chains_get.proto";
@@ -371,6 +374,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         tags: "barbers"
       };
     }
+    
     rpc RefreshTokenBarber (RefreshTokenBarberRequest) returns (RefreshTokenBarberResponse) {
       option (google.api.http) = {
         post: "/v1/barber/refresh-token"
@@ -380,6 +384,41 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         description: "API endpoint for barber authentication" 
         summary: "Authenticate a barber"
         tags: "barbers"
+      };
+    }
+
+
+    /// lookup
+    rpc GetProvinces (GetProvincesRequest) returns (GetProvincesResponse) {
+      option (google.api.http) = {
+        get: "/v1/provinces"
+      };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "API endpoint for get provinces" 
+        summary: "Get provinces"
+        tags: "lookup"
+      };
+    }
+
+    rpc GetDistricts (GetDistrictsRequest) returns (GetDistrictsResponse) {
+      option (google.api.http) = {
+        get: "/v1/districts/{province_id}"
+      };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "API endpoint for get districts" 
+        summary: "Get districts"
+        tags: "lookup"
+      };
+    }
+
+    rpc GetWards (GetWardsRequest) returns (GetWardsResponse) {
+      option (google.api.http) = {
+        get: "/v1/wards/{district_id}"
+      };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "API endpoint for get wards" 
+        summary: "Get wards"
+        tags: "lookup"
       };
     }
 }

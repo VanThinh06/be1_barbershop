@@ -28,7 +28,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 		NickName:       req.GetNickName(),
 		HashedPassword: hashedPassword,
 		Phone:          req.GetPhone(),
-		GenderID:       req.GetGenderId(),
+		GenderID:       int16(req.GetGenderId()),
 		Email:          req.GetEmail(),
 	}
 	res, err := server.Store.CreateBarbers(ctx, arg)
@@ -66,7 +66,7 @@ func validateCreateBarberAccountBarberShop(req *barber.CreateBarbersRequest) (va
 	if err := helpers.ValidatePassword(req.Password); err != nil {
 		validations = append(validations, FieldValidation("password", err))
 	}
-
+	
 	if err := helpers.ValidateNickName(req.NickName); err != nil {
 		validations = append(validations, FieldValidation("nick_name", err))
 	}

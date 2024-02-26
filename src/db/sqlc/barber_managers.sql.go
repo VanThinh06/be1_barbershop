@@ -20,7 +20,7 @@ VALUES (
     $1,
     $2
   )
-RETURNING barber_id, manager_id, create_at, update_at
+RETURNING barber_id, manager_id
 `
 
 type CreateBarberManagersParams struct {
@@ -31,12 +31,7 @@ type CreateBarberManagersParams struct {
 func (q *Queries) CreateBarberManagers(ctx context.Context, arg CreateBarberManagersParams) (BarberManager, error) {
 	row := q.db.QueryRowContext(ctx, createBarberManagers, arg.BarberID, arg.ManagerID)
 	var i BarberManager
-	err := row.Scan(
-		&i.BarberID,
-		&i.ManagerID,
-		&i.CreateAt,
-		&i.UpdateAt,
-	)
+	err := row.Scan(&i.BarberID, &i.ManagerID)
 	return i, err
 }
 

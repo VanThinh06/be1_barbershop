@@ -49,7 +49,7 @@ type CreateAppointmentsParams struct {
 	CustomerID          uuid.UUID `json:"customer_id"`
 	BarberID            uuid.UUID `json:"barber_id"`
 	AppointmentDateTime time.Time `json:"appointment_date_time"`
-	Status              int32     `json:"status"`
+	Status              int16     `json:"status"`
 }
 
 type CreateAppointmentsRow struct {
@@ -58,7 +58,7 @@ type CreateAppointmentsRow struct {
 	CustomerID          uuid.UUID      `json:"customer_id"`
 	BarberID            uuid.UUID      `json:"barber_id"`
 	AppointmentDateTime time.Time      `json:"appointment_date_time"`
-	Status              int32          `json:"status"`
+	Status              int16          `json:"status"`
 	CreateAt            time.Time      `json:"create_at"`
 	UpdateAt            time.Time      `json:"update_at"`
 	BarberNickName      string         `json:"barber_nick_name"`
@@ -149,7 +149,7 @@ type ListAppointmentsByDateRow struct {
 	CustomerID          uuid.UUID `json:"customer_id"`
 	BarberID            uuid.UUID `json:"barber_id"`
 	AppointmentDateTime time.Time `json:"appointment_date_time"`
-	Status              int32     `json:"status"`
+	Status              int16     `json:"status"`
 	CreateAt            time.Time `json:"create_at"`
 	UpdateAt            time.Time `json:"update_at"`
 	ServiceTimer        int64     `json:"service_timer"`

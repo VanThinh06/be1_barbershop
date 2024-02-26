@@ -8,7 +8,6 @@ package db
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -24,13 +23,13 @@ VALUES (
     $2,
     $3
   )
-RETURNING id, barber_id, barber_shop_id, role_id, create_at, update_at
+RETURNING id, barber_id, barber_shop_id, role_id
 `
 
 type CreateBarberRolesParams struct {
 	BarberID     uuid.UUID     `json:"barber_id"`
 	BarberShopID uuid.NullUUID `json:"barber_shop_id"`
-	RoleID       int32         `json:"role_id"`
+	RoleID       int16         `json:"role_id"`
 }
 
 func (q *Queries) CreateBarberRoles(ctx context.Context, arg CreateBarberRolesParams) (BarberRole, error) {
@@ -41,8 +40,6 @@ func (q *Queries) CreateBarberRoles(ctx context.Context, arg CreateBarberRolesPa
 		&i.BarberID,
 		&i.BarberShopID,
 		&i.RoleID,
-		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }
@@ -58,7 +55,7 @@ func (q *Queries) DeleteBarberRoles(ctx context.Context, id uuid.UUID) error {
 }
 
 const getBarberRoles = `-- name: GetBarberRoles :one
-SELECT id, barber_id, barber_shop_id, role_id, create_at, update_at
+SELECT id, barber_id, barber_shop_id, role_id
 FROM "BarberRoles"
 WHERE "BarberRoles"."barber_id" = $1 AND "BarberRoles"."barber_shop_id" = $2
 `
@@ -76,14 +73,12 @@ func (q *Queries) GetBarberRoles(ctx context.Context, arg GetBarberRolesParams) 
 		&i.BarberID,
 		&i.BarberShopID,
 		&i.RoleID,
-		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }
 
 const listBarbersRoles = `-- name: ListBarbersRoles :many
-SELECT "BarberRoles".id, barber_id, barber_shop_id, role_id, create_at, update_at, "Roles".id, name, type
+SELECT "BarberRoles".id, barber_id, barber_shop_id, role_id, "Roles".id, name, type
 FROM "BarberRoles"
 JOIN "Roles" ON "BarberRoles"."role_id" = "Roles"."id"
 WHERE "BarberRoles"."barber_shop_id" = $1
@@ -94,10 +89,8 @@ type ListBarbersRolesRow struct {
 	ID           uuid.UUID      `json:"id"`
 	BarberID     uuid.UUID      `json:"barber_id"`
 	BarberShopID uuid.NullUUID  `json:"barber_shop_id"`
-	RoleID       int32          `json:"role_id"`
-	CreateAt     time.Time      `json:"create_at"`
-	UpdateAt     time.Time      `json:"update_at"`
-	ID_2         int32          `json:"id_2"`
+	RoleID       int16          `json:"role_id"`
+	ID_2         int16          `json:"id_2"`
 	Name         string         `json:"name"`
 	Type         sql.NullString `json:"type"`
 }
@@ -116,8 +109,6 @@ func (q *Queries) ListBarbersRoles(ctx context.Context, barberShopID uuid.NullUU
 			&i.BarberID,
 			&i.BarberShopID,
 			&i.RoleID,
-			&i.CreateAt,
-			&i.UpdateAt,
 			&i.ID_2,
 			&i.Name,
 			&i.Type,
@@ -140,11 +131,11 @@ UPDATE "BarberRoles"
 SET "role_id" = $1,
     "update_at" = NOW()
 WHERE "id" = $2
-RETURNING id, barber_id, barber_shop_id, role_id, create_at, update_at
+RETURNING id, barber_id, barber_shop_id, role_id
 `
 
 type UpdateBarberRolesParams struct {
-	RoleID int32     `json:"role_id"`
+	RoleID int16     `json:"role_id"`
 	ID     uuid.UUID `json:"id"`
 }
 
@@ -156,8 +147,6 @@ func (q *Queries) UpdateBarberRoles(ctx context.Context, arg UpdateBarberRolesPa
 		&i.BarberID,
 		&i.BarberShopID,
 		&i.RoleID,
-		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }

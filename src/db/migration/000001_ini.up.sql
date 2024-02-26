@@ -33,7 +33,7 @@ CREATE TABLE "Roles" (
 CREATE TABLE "ServiceCategories" (
   "id" serial2 PRIMARY KEY,
   "name" varchar(50) UNIQUE NOT NULL,
-  "is_global" bool NOT NULL DEFAULT false,
+  "is_global" bool NOT NULL DEFAULT false
 );
 
 CREATE TABLE "BarberRoles" (
@@ -49,13 +49,13 @@ CREATE TABLE "BarberShopChains" (
   "chain_identifier" varchar(50) UNIQUE NOT NULL,
   "founder" varchar(50) NOT NULL,
   "founding_date" date NOT NULL,
-  "website" varchar(150),
-  "description" varchar,
+  "website" varchar(150)
 );
 
 CREATE TABLE "BarberShops" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "barber_shop_chain_id" uuid,
+  "branch_number" int2,
   "name" varchar(100) NOT NULL,
   "province_id" int2 NOT NULL,
   "district_id" int2 NOT NULL,
@@ -80,12 +80,12 @@ CREATE TABLE "BarberShops" (
   "start_time_saturday" TIME NOT NULL DEFAULT '08:00:00'::TIME,
   "end_time_saturday" TIME NOT NULL DEFAULT '17:00:00'::TIME,
   "start_time_sunday" TIME NOT NULL DEFAULT '08:00:00'::TIME,
-  "end_time_sunday" TIME NOT NULL DEFAULT '17:00:00'::TIME
+  "end_time_sunday" TIME NOT NULL DEFAULT '17:00:00'::TIME,
   "interval_scheduler" int2 NOT NULL DEFAULT 30,
   "is_main_branch" bool NOT NULL DEFAULT true,
   "is_reputation" bool NOT NULL DEFAULT false,
   "is_verified" bool NOT NULL DEFAULT false,
-  "create_at" timestamptz NOT NULL DEFAULT (now()),
+  "create_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 -- CREATE TABLE "PaymentMethods" (
@@ -115,9 +115,7 @@ CREATE TABLE "BarberShopServices" (
   "timer" int2 NOT NULL DEFAULT 0,
   "price" real NOT NULL DEFAULT 0,
   "description" varchar(500),
-  "image_url" varchar(120),
-  "is_custom" bool NOT NULL DEFAULT false,
-  "is_removed" bool NOT NULL DEFAULT false
+  "image_url" varchar(120)
 );
 
 
@@ -126,18 +124,18 @@ CREATE TABLE "Barbers" (
   "gender_id" int2 NOT NULL DEFAULT 1,
   "email" varchar(50) UNIQUE NOT NULL,
   "phone" varchar(15) UNIQUE NOT NULL,
-  "hashed_password" varchar(50) varchar NOT NULL,
+  "hashed_password" varchar(150) NOT NULL,
   "nick_name" varchar(12) UNIQUE NOT NULL,
   "full_name" varchar(50),
   "haircut" bool NOT NULL DEFAULT false,
   "avatar_url" varchar(120),
   "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
-  "create_at" timestamptz NOT NULL DEFAULT (now()),
+  "create_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "BarberManagers" (
   "barber_id" uuid NOT NULL,
-  "manager_id" uuid NOT NULL,
+  "manager_id" uuid NOT NULL
 );
 
 CREATE TABLE "SessionsBarber" (
@@ -154,15 +152,15 @@ CREATE TABLE "SessionsBarber" (
 
 CREATE TABLE "Customers" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "name" varchar NOT NULL,
-  "email" varchar UNIQUE NOT NULL,
-  "phone" varchar UNIQUE,
-  "gender_id" integer,
-  "hashed_password" varchar,
-  "avatar" varchar,
+  "name" varchar(50) NOT NULL,
+  "email" varchar(50) UNIQUE NOT NULL,
+  "phone" varchar(15) UNIQUE,
+  "gender_id" int2 NOT NULL,
+  "hashed_password" varchar(50),
+  "avatar" varchar(120),
   "is_social_auth" bool DEFAULT false,
   "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
-  "create_at" timestamptz NOT NULL DEFAULT (now()),
+  "create_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "SessionsCustomer" (
@@ -184,7 +182,7 @@ CREATE TABLE "Appointments" (
   "customer_id" uuid NOT NULL,
   "barber_id" uuid NOT NULL,
   "appointment_date_time" timestamptz NOT NULL,
-  "status" integer NOT NULL,
+  "status" int2 NOT NULL,
   "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
@@ -216,8 +214,8 @@ CREATE TABLE "BarberShopReviews" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "customer_id" uuid NOT NULL,
   "barber_shop_id" uuid NOT NULL,
-  "rating" integer NOT NULL,
-  "comment" varchar,
+  "rating" int2 NOT NULL,
+  "comment" varchar(240),
   "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
@@ -226,11 +224,15 @@ CREATE TABLE "BarberReviews" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "barber_id" uuid NOT NULL,
   "customer_id" uuid NOT NULL,
-  "rating" integer NOT NULL,
-  "comment" varchar,
+  "rating" int2 NOT NULL,
+  "comment" varchar(240),
   "create_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z'
 );
+
+CREATE INDEX ON "Districts" ("province_id");
+
+CREATE INDEX ON "Wards" ("district_id");
 
 CREATE INDEX ON "BarberRoles" ("barber_id");
 
@@ -244,10 +246,12 @@ CREATE INDEX ON "BarberShops" ("barber_shop_chain_id");
 
 CREATE INDEX ON "BarberShops" ("name");
 
-CREATE UNIQUE INDEX ON "BarberShops" ("barber_shop_chain_id", "branch_count");
+CREATE UNIQUE INDEX ON "BarberShops" ("barber_shop_chain_id", "branch_number");
 
 CREATE INDEX ON "Barbers" ("phone");
+
 CREATE INDEX ON "Barbers" ("email");
+
 CREATE INDEX ON "Barbers" ("nick_name");
 
 CREATE INDEX ON "BarberManagers" ("barber_id");
@@ -257,8 +261,6 @@ CREATE INDEX ON "BarberManagers" ("manager_id");
 CREATE UNIQUE INDEX ON "BarberManagers" ("manager_id", "barber_id");
 
 CREATE INDEX ON "ServiceCategories" ("name");
-
-CREATE UNIQUE INDEX ON "BarberShopServiceCategories" ("barber_shop_chain_id", "service_category_id");
 
 CREATE UNIQUE INDEX ON "BarberShopServiceCategories" ("barber_shop_id", "service_category_id");
 
@@ -296,6 +298,12 @@ ALTER TABLE "BarberRoles" ADD FOREIGN KEY ("barber_shop_id") REFERENCES "BarberS
 
 ALTER TABLE "BarberRoles" ADD FOREIGN KEY ("role_id") REFERENCES "Roles" ("id");
 
+ALTER TABLE "BarberShops" ADD FOREIGN KEY ("province_id") REFERENCES "Provinces" ("id");
+
+ALTER TABLE "BarberShops" ADD FOREIGN KEY ("district_id") REFERENCES "Districts" ("id");
+
+ALTER TABLE "BarberShops" ADD FOREIGN KEY ("ward_id") REFERENCES "Wards" ("id");
+
 ALTER TABLE "BarberShops" ADD FOREIGN KEY ("barber_shop_chain_id") REFERENCES "BarberShopChains" ("id");
 
 ALTER TABLE "Barbers" ADD FOREIGN KEY ("gender_id") REFERENCES "Genders" ("id");
@@ -306,17 +314,11 @@ ALTER TABLE "BarberManagers" ADD FOREIGN KEY ("manager_id") REFERENCES "Barbers"
 
 ALTER TABLE "SessionsBarber" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("id");
 
-ALTER TABLE "BarberShopServiceCategories" ADD FOREIGN KEY ("barber_shop_chain_id") REFERENCES "BarberShopChains" ("id");
-
 ALTER TABLE "BarberShopServiceCategories" ADD FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id");
 
 ALTER TABLE "BarberShopServiceCategories" ADD FOREIGN KEY ("service_category_id") REFERENCES "ServiceCategories" ("id");
 
 ALTER TABLE "BarberShopServices" ADD FOREIGN KEY ("barbershop_category_id") REFERENCES "BarberShopServiceCategories" ("id");
-
-ALTER TABLE "BarberShopServices" ADD FOREIGN KEY ("barber_shop_chain_id") REFERENCES "BarberShopChains" ("id");
-
-ALTER TABLE "BarberShopServices" ADD FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id");
 
 ALTER TABLE "BarberShopServices" ADD FOREIGN KEY ("gender_id") REFERENCES "Genders" ("id");
 

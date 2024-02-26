@@ -10,16 +10,14 @@ option go_package = "barbershop/src/pb/barber";
 message LoginBarberRequest{
     string username = 1;
     string password = 2;
-    bool is_social_auth = 3;
-    string fcm_device = 4;
-    string timezone = 5; 
+    string fcm_device = 3;
+    string timezone = 4; 
 }
 
 message LoginBarberResponse {
     Barbers barber = 1;
-    string session_id = 2;
-    string access_token = 3;
-    google.protobuf.Timestamp access_token_expires_at =4;
-    string refresh_token = 5; 
-    google.protobuf.Timestamp  refresh_token_expires_at = 6;
+    string access_token = 2;
+    google.protobuf.Timestamp access_token_expires_at =3;
+    string refresh_token = 4; 
+    google.protobuf.Timestamp  refresh_token_expires_at = 5;
 }

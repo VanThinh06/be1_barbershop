@@ -1,6 +1,6 @@
 -- name: CreateBarberShopChains :one
-INSERT INTO "BarberShopChains" ("name", "description", "founder", "founding_date", website)
-VALUES ($1, $2, $3, $4, $5)
+INSERT INTO "BarberShopChains" ("name", "founder", "founding_date", website)
+VALUES ($1, $2, $3, $4)
 RETURNING *;
 
 -- name: GetBarberShopChains :one
@@ -11,7 +11,6 @@ WHERE "id" = $1;
 -- name: UpdateBarberShopChains :one
 UPDATE "BarberShopChains"
 SET "name" = coalesce(sqlc.narg('name'), name),
-    "description" = coalesce(sqlc.narg('description'), description),
     founder = coalesce(sqlc.narg('founder'),founder),
     founding_date = coalesce(sqlc.narg('founding_date'), founding_date),
     website = coalesce(sqlc.narg('website'), website),

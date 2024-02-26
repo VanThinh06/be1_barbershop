@@ -23,14 +23,7 @@ func (server *Server) CreateBarberShopServiceCategories(ctx context.Context, req
 		return nil, status.Errorf(codes.PermissionDenied, "No permission")
 	}
 
-	var chainID uuid.NullUUID
 	var barberShopID uuid.NullUUID
-	if req.BarberShopChainId != nil {
-		chainID = uuid.NullUUID{
-			UUID:  uuid.MustParse(req.GetBarberShopChainId()),
-			Valid: req.BarberShopChainId != nil,
-		}
-	}
 	if req.BarberShopId != nil {
 		barberShopID = uuid.NullUUID{
 			UUID:  uuid.MustParse(req.GetBarberShopId()),
@@ -39,8 +32,7 @@ func (server *Server) CreateBarberShopServiceCategories(ctx context.Context, req
 	}
 
 	arg := db.CreateBarberShopServiceCategoriesParams{
-		BarberShopChainID: chainID,
-		BarberShopID:      barberShopID,
+		BarberShopID:      barberShopID.UUID,
 	}
 
 	serviceCategory, err := server.Store.CreateBarberShopServiceCategories(ctx, arg)

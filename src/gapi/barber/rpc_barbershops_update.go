@@ -54,30 +54,6 @@ func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBa
 			Float64: req.GetLatitude().GetValue(),
 			Valid:   req.Latitude != nil,
 		},
-		Address: sql.NullString{
-			String: req.GetAddress(),
-			Valid:  req.Address != nil,
-		},
-		Image: sql.NullString{
-			String: req.GetImage(),
-			Valid:  req.Image != nil,
-		},
-
-		BranchCount: sql.NullInt32{
-			Int32: req.GetBranchCount(),
-			Valid: req.BranchCount != nil,
-		},
-		StartTime: startTime,
-		EndTime:   endTime,
-		BreakTime: breakTime,
-		Status: sql.NullInt32{
-			Int32: req.GetStatus(),
-			Valid: req.Status != nil,
-		},
-		IntervalScheduler: sql.NullInt32{
-			Int32: req.GetIntervalScheduler(),
-			Valid: req.IntervalScheduler != nil,
-		},
 		IsMainBranch: sql.NullBool{
 			Bool:  req.GetIsMainBranch(),
 			Valid: req.IsMainBranch != nil,

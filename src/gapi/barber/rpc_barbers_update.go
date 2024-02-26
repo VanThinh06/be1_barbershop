@@ -44,8 +44,8 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 			String: req.GetPhone(),
 			Valid:  req.Phone != nil,
 		},
-		GenderID: sql.NullInt32{
-			Int32: req.GetGenderId(),
+		GenderID: sql.NullInt16{
+			Int16: int16(req.GetGenderId()),
 			Valid: req.GenderId != nil,
 		},
 		Email: sql.NullString{

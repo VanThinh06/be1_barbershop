@@ -19,7 +19,7 @@ type Querier interface {
 	CreateBarberShop(ctx context.Context, arg CreateBarberShopParams) (BarberShop, error)
 	CreateBarberShopChains(ctx context.Context, arg CreateBarberShopChainsParams) (BarberShopChain, error)
 	CreateBarberShopServiceCategories(ctx context.Context, arg CreateBarberShopServiceCategoriesParams) (BarberShopServiceCategory, error)
-	CreateBarberShopServices(ctx context.Context, arg CreateBarberShopServicesParams) (BarberShopService, error)
+	CreateBarberShopServices(ctx context.Context, barbershopCategoryID uuid.UUID) (BarberShopService, error)
 	CreateBarbers(ctx context.Context, arg CreateBarbersParams) (Barber, error)
 	CreateCustomer(ctx context.Context, arg CreateCustomerParams) (Customer, error)
 	CreateServiceCategories(ctx context.Context, arg CreateServiceCategoriesParams) (ServiceCategory, error)
@@ -33,20 +33,23 @@ type Querier interface {
 	DeleteBarberShopServices(ctx context.Context, id uuid.UUID) error
 	DeleteBarberShops(ctx context.Context, id uuid.UUID) error
 	DeleteBarbers(ctx context.Context, id uuid.UUID) error
-	DeleteServiceCategories(ctx context.Context, id uuid.UUID) error
+	DeleteServiceCategories(ctx context.Context, id int16) error
 	GetBarberRoles(ctx context.Context, arg GetBarberRolesParams) (BarberRole, error)
 	GetBarberShop(ctx context.Context, id uuid.UUID) (BarberShop, error)
 	GetBarberShopChains(ctx context.Context, id uuid.UUID) (BarberShopChain, error)
 	GetBarbers(ctx context.Context, arg GetBarbersParams) (GetBarbersRow, error)
 	GetCustomer(ctx context.Context, id uuid.UUID) (Customer, error)
-	GetServiceCategories(ctx context.Context, id uuid.UUID) (ServiceCategory, error)
+	GetDistricts(ctx context.Context, provinceID int16) ([]District, error)
+	GetProvinces(ctx context.Context) ([]Province, error)
+	GetServiceCategories(ctx context.Context, id int16) (ServiceCategory, error)
 	GetSessionBarber(ctx context.Context, id uuid.UUID) (SessionsBarber, error)
 	GetSessionsCustomer(ctx context.Context, id uuid.UUID) (SessionsCustomer, error)
 	GetUserBarber(ctx context.Context, arg GetUserBarberParams) (GetUserBarberRow, error)
 	GetUserCustomer(ctx context.Context, arg GetUserCustomerParams) (Customer, error)
+	GetWards(ctx context.Context, districtID int16) ([]Ward, error)
 	ListAppointmentsByDate(ctx context.Context, arg ListAppointmentsByDateParams) ([]ListAppointmentsByDateRow, error)
 	ListBarberManagers(ctx context.Context, barberID uuid.UUID) ([]uuid.UUID, error)
-	ListBarberShopServiceCategories(ctx context.Context, arg ListBarberShopServiceCategoriesParams) ([]ListBarberShopServiceCategoriesRow, error)
+	ListBarberShopServiceCategories(ctx context.Context, barberShopID uuid.UUID) ([]ListBarberShopServiceCategoriesRow, error)
 	ListBarbersInBarberShop(ctx context.Context, barberShopID uuid.NullUUID) ([]ListBarbersInBarberShopRow, error)
 	ListBarbersRoles(ctx context.Context, barberShopID uuid.NullUUID) ([]ListBarbersRolesRow, error)
 	ListNearbyBarberShops(ctx context.Context, arg ListNearbyBarberShopsParams) ([]ListNearbyBarberShopsRow, error)

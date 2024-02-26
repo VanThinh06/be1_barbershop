@@ -23,7 +23,7 @@ func (server *Server) UpdateBarberRoles(ctx context.Context, req *barber.UpdateB
 	}
 	var barberRoleID = uuid.MustParse(req.Id)
 	arg := db.UpdateBarberRolesParams{
-		RoleID: req.RoleId,
+		RoleID: int16(req.RoleId),
 		ID:     barberRoleID,
 	}
 

@@ -45,6 +45,9 @@ const (
 	BarberService_UpdateBarber_FullMethodName                      = "/pb.BarberService/UpdateBarber"
 	BarberService_LoginBarber_FullMethodName                       = "/pb.BarberService/LoginBarber"
 	BarberService_RefreshTokenBarber_FullMethodName                = "/pb.BarberService/RefreshTokenBarber"
+	BarberService_GetProvinces_FullMethodName                      = "/pb.BarberService/GetProvinces"
+	BarberService_GetDistricts_FullMethodName                      = "/pb.BarberService/GetDistricts"
+	BarberService_GetWards_FullMethodName                          = "/pb.BarberService/GetWards"
 )
 
 // BarberServiceClient is the client API for BarberService service.
@@ -86,6 +89,10 @@ type BarberServiceClient interface {
 	UpdateBarber(ctx context.Context, in *UpdateBarbersRequest, opts ...grpc.CallOption) (*UpdateBarbersResponse, error)
 	LoginBarber(ctx context.Context, in *LoginBarberRequest, opts ...grpc.CallOption) (*LoginBarberResponse, error)
 	RefreshTokenBarber(ctx context.Context, in *RefreshTokenBarberRequest, opts ...grpc.CallOption) (*RefreshTokenBarberResponse, error)
+	// / lookup
+	GetProvinces(ctx context.Context, in *GetProvincesRequest, opts ...grpc.CallOption) (*GetProvincesResponse, error)
+	GetDistricts(ctx context.Context, in *GetDistrictsRequest, opts ...grpc.CallOption) (*GetDistrictsResponse, error)
+	GetWards(ctx context.Context, in *GetWardsRequest, opts ...grpc.CallOption) (*GetWardsResponse, error)
 }
 
 type barberServiceClient struct {
@@ -330,6 +337,33 @@ func (c *barberServiceClient) RefreshTokenBarber(ctx context.Context, in *Refres
 	return out, nil
 }
 
+func (c *barberServiceClient) GetProvinces(ctx context.Context, in *GetProvincesRequest, opts ...grpc.CallOption) (*GetProvincesResponse, error) {
+	out := new(GetProvincesResponse)
+	err := c.cc.Invoke(ctx, BarberService_GetProvinces_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *barberServiceClient) GetDistricts(ctx context.Context, in *GetDistrictsRequest, opts ...grpc.CallOption) (*GetDistrictsResponse, error) {
+	out := new(GetDistrictsResponse)
+	err := c.cc.Invoke(ctx, BarberService_GetDistricts_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *barberServiceClient) GetWards(ctx context.Context, in *GetWardsRequest, opts ...grpc.CallOption) (*GetWardsResponse, error) {
+	out := new(GetWardsResponse)
+	err := c.cc.Invoke(ctx, BarberService_GetWards_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BarberServiceServer is the server API for BarberService service.
 // All implementations must embed UnimplementedBarberServiceServer
 // for forward compatibility
@@ -369,6 +403,10 @@ type BarberServiceServer interface {
 	UpdateBarber(context.Context, *UpdateBarbersRequest) (*UpdateBarbersResponse, error)
 	LoginBarber(context.Context, *LoginBarberRequest) (*LoginBarberResponse, error)
 	RefreshTokenBarber(context.Context, *RefreshTokenBarberRequest) (*RefreshTokenBarberResponse, error)
+	// / lookup
+	GetProvinces(context.Context, *GetProvincesRequest) (*GetProvincesResponse, error)
+	GetDistricts(context.Context, *GetDistrictsRequest) (*GetDistrictsResponse, error)
+	GetWards(context.Context, *GetWardsRequest) (*GetWardsResponse, error)
 	mustEmbedUnimplementedBarberServiceServer()
 }
 
@@ -453,6 +491,15 @@ func (UnimplementedBarberServiceServer) LoginBarber(context.Context, *LoginBarbe
 }
 func (UnimplementedBarberServiceServer) RefreshTokenBarber(context.Context, *RefreshTokenBarberRequest) (*RefreshTokenBarberResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefreshTokenBarber not implemented")
+}
+func (UnimplementedBarberServiceServer) GetProvinces(context.Context, *GetProvincesRequest) (*GetProvincesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProvinces not implemented")
+}
+func (UnimplementedBarberServiceServer) GetDistricts(context.Context, *GetDistrictsRequest) (*GetDistrictsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDistricts not implemented")
+}
+func (UnimplementedBarberServiceServer) GetWards(context.Context, *GetWardsRequest) (*GetWardsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWards not implemented")
 }
 func (UnimplementedBarberServiceServer) mustEmbedUnimplementedBarberServiceServer() {}
 
@@ -935,6 +982,60 @@ func _BarberService_RefreshTokenBarber_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BarberService_GetProvinces_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProvincesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).GetProvinces(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_GetProvinces_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).GetProvinces(ctx, req.(*GetProvincesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BarberService_GetDistricts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDistrictsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).GetDistricts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_GetDistricts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).GetDistricts(ctx, req.(*GetDistrictsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BarberService_GetWards_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWardsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).GetWards(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_GetWards_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).GetWards(ctx, req.(*GetWardsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BarberService_ServiceDesc is the grpc.ServiceDesc for BarberService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1045,6 +1146,18 @@ var BarberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RefreshTokenBarber",
 			Handler:    _BarberService_RefreshTokenBarber_Handler,
+		},
+		{
+			MethodName: "GetProvinces",
+			Handler:    _BarberService_GetProvinces_Handler,
+		},
+		{
+			MethodName: "GetDistricts",
+			Handler:    _BarberService_GetDistricts_Handler,
+		},
+		{
+			MethodName: "GetWards",
+			Handler:    _BarberService_GetWards_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

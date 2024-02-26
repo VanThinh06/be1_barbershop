@@ -29,14 +29,8 @@ func (server *Server) CreateBarberShops(ctx context.Context, req *barber.CreateB
 			Bool:  req.GetIsMainBranch(),
 			Valid: req.IsMainBranch != nil,
 		},
-		BranchCount: req.BranchCount,
 		Longitude:   req.Longitude.Value,
 		Latitude:    req.Latitude.Value,
-		Address:     req.Address,
-		Image: sql.NullString{
-			String: req.GetImage(),
-			Valid:  req.Image != nil,
-		},
 	}
 
 	barberShop, err := server.Store.CreateBarberShop(ctx, arg)

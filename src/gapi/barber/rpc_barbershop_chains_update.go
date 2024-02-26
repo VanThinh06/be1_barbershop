@@ -29,10 +29,6 @@ func (server *Server) UpdateBarberShopChains(ctx context.Context, req *barber.Up
 			String: req.GetName(),
 			Valid:  req.Name != nil,
 		},
-		Description: sql.NullString{
-			String: req.GetDescription(),
-			Valid:  req.Description != nil,
-		},
 		Founder: sql.NullString{
 			String: req.GetFounder(),
 			Valid:  req.Founder != nil,

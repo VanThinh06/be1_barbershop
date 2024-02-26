@@ -7,67 +7,30 @@ package db
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/google/uuid"
 )
 
 const createBarberShopServices = `-- name: CreateBarberShopServices :one
 INSERT INTO "BarberShopServices" (
-    barbershop_category_id,
-    barber_shop_chain_id,
-    barber_shop_id,
-    gender_id,
-    "name",
-    "timer",
-    price,
-    description,
-    image
+    barbershop_category_id
   )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-RETURNING id, barbershop_category_id, barber_shop_chain_id, barber_shop_id, gender_id, name, timer, price, description, image, is_custom, is_removed, create_at, update_at
+VALUES ($1)
+RETURNING id, barbershop_category_id, gender_id, name, timer, price, description, image_url
 `
 
-type CreateBarberShopServicesParams struct {
-	BarbershopCategoryID uuid.UUID      `json:"barbershop_category_id"`
-	BarberShopChainID    uuid.NullUUID  `json:"barber_shop_chain_id"`
-	BarberShopID         uuid.NullUUID  `json:"barber_shop_id"`
-	GenderID             int32          `json:"gender_id"`
-	Name                 string         `json:"name"`
-	Timer                int32          `json:"timer"`
-	Price                float32        `json:"price"`
-	Description          sql.NullString `json:"description"`
-	Image                sql.NullString `json:"image"`
-}
-
-func (q *Queries) CreateBarberShopServices(ctx context.Context, arg CreateBarberShopServicesParams) (BarberShopService, error) {
-	row := q.db.QueryRowContext(ctx, createBarberShopServices,
-		arg.BarbershopCategoryID,
-		arg.BarberShopChainID,
-		arg.BarberShopID,
-		arg.GenderID,
-		arg.Name,
-		arg.Timer,
-		arg.Price,
-		arg.Description,
-		arg.Image,
-	)
+func (q *Queries) CreateBarberShopServices(ctx context.Context, barbershopCategoryID uuid.UUID) (BarberShopService, error) {
+	row := q.db.QueryRowContext(ctx, createBarberShopServices, barbershopCategoryID)
 	var i BarberShopService
 	err := row.Scan(
 		&i.ID,
 		&i.BarbershopCategoryID,
-		&i.BarberShopChainID,
-		&i.BarberShopID,
 		&i.GenderID,
 		&i.Name,
 		&i.Timer,
 		&i.Price,
 		&i.Description,
-		&i.Image,
-		&i.IsCustom,
-		&i.IsRemoved,
-		&i.CreateAt,
-		&i.UpdateAt,
+		&i.ImageUrl,
 	)
 	return i, err
 }

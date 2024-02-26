@@ -39,8 +39,8 @@ func (server *Server) UpdateCustomer(ctx context.Context, req *customer.UpdateCu
 			String: req.GetPhone(),
 			Valid:  req.Phone != nil,
 		},
-		GenderID: sql.NullInt32{
-			Int32: req.GetGender(),
+		GenderID: sql.NullInt16{
+			Int16: int16(req.GetGender()),
 			Valid: req.Gender != nil,
 		},
 		Email: sql.NullString{

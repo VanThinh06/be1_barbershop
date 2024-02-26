@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgtype"
 )
 
 const createBarbers = `-- name: CreateBarbers :one
@@ -29,11 +28,11 @@ VALUES (
     $4,
     $5
   )
-RETURNING id, gender_id, email, phone, hashed_password, nick_name, full_name, haircut, avatar_url, password_changed_at, create_at, update_at
+RETURNING id, gender_id, email, phone, hashed_password, nick_name, full_name, haircut, avatar_url, password_changed_at, create_at
 `
 
 type CreateBarbersParams struct {
-	GenderID       int32  `json:"gender_id"`
+	GenderID       int16  `json:"gender_id"`
 	Email          string `json:"email"`
 	Phone          string `json:"phone"`
 	HashedPassword string `json:"hashed_password"`
@@ -61,7 +60,6 @@ func (q *Queries) CreateBarbers(ctx context.Context, arg CreateBarbersParams) (B
 		&i.AvatarUrl,
 		&i.PasswordChangedAt,
 		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }
@@ -78,18 +76,12 @@ func (q *Queries) DeleteBarbers(ctx context.Context, id uuid.UUID) error {
 
 const getBarbers = `-- name: GetBarbers :one
 SELECT
-  b.id, b.gender_id, b.email, b.phone, b.hashed_password, b.nick_name, b.full_name, b.haircut, b.avatar_url, b.password_changed_at, b.create_at, b.update_at, 
+  b.id, b.gender_id, b.email, b.phone, b.hashed_password, b.nick_name, b.full_name, b.haircut, b.avatar_url, b.password_changed_at, b.create_at, 
   bs."name" as "shop_name",
-  bs."address" as "shop_address",
   bs."coordinates" as "shop_coordinates",
-  bs."start_time" as "shop_start_time",
-  bs."end_time" as "shop_end_time",
-  bs."break_time" as "shop_break_time",
-  bs."break_minutes" as "shop_break_minutes",
   bs."interval_scheduler" as "shop_interval_scheduler",
   bs."is_reputation" as "shop_reputation",
-  bs."rate" as "shop_rate",
-  bs."branch_count" as "shop_branch_count",
+  bs."branch_number" as "shop_branch_number",
   br."role_id" as "barber_role_id",
   br."barber_shop_id" as "barber_role_barber_shop_id"
 FROM
@@ -110,7 +102,7 @@ type GetBarbersParams struct {
 
 type GetBarbersRow struct {
 	ID                     uuid.UUID      `json:"id"`
-	GenderID               int32          `json:"gender_id"`
+	GenderID               int16          `json:"gender_id"`
 	Email                  string         `json:"email"`
 	Phone                  string         `json:"phone"`
 	HashedPassword         string         `json:"hashed_password"`
@@ -120,19 +112,12 @@ type GetBarbersRow struct {
 	AvatarUrl              sql.NullString `json:"avatar_url"`
 	PasswordChangedAt      time.Time      `json:"password_changed_at"`
 	CreateAt               time.Time      `json:"create_at"`
-	UpdateAt               time.Time      `json:"update_at"`
 	ShopName               string         `json:"shop_name"`
-	ShopAddress            string         `json:"shop_address"`
 	ShopCoordinates        string         `json:"shop_coordinates"`
-	ShopStartTime          pgtype.Time    `json:"shop_start_time"`
-	ShopEndTime            pgtype.Time    `json:"shop_end_time"`
-	ShopBreakTime          pgtype.Time    `json:"shop_break_time"`
-	ShopBreakMinutes       int32          `json:"shop_break_minutes"`
-	ShopIntervalScheduler  int32          `json:"shop_interval_scheduler"`
+	ShopIntervalScheduler  int16          `json:"shop_interval_scheduler"`
 	ShopReputation         bool           `json:"shop_reputation"`
-	ShopRate               float64        `json:"shop_rate"`
-	ShopBranchCount        int32          `json:"shop_branch_count"`
-	BarberRoleID           int32          `json:"barber_role_id"`
+	ShopBranchNumber       sql.NullInt16  `json:"shop_branch_number"`
+	BarberRoleID           int16          `json:"barber_role_id"`
 	BarberRoleBarberShopID uuid.NullUUID  `json:"barber_role_barber_shop_id"`
 }
 
@@ -151,18 +136,11 @@ func (q *Queries) GetBarbers(ctx context.Context, arg GetBarbersParams) (GetBarb
 		&i.AvatarUrl,
 		&i.PasswordChangedAt,
 		&i.CreateAt,
-		&i.UpdateAt,
 		&i.ShopName,
-		&i.ShopAddress,
 		&i.ShopCoordinates,
-		&i.ShopStartTime,
-		&i.ShopEndTime,
-		&i.ShopBreakTime,
-		&i.ShopBreakMinutes,
 		&i.ShopIntervalScheduler,
 		&i.ShopReputation,
-		&i.ShopRate,
-		&i.ShopBranchCount,
+		&i.ShopBranchNumber,
 		&i.BarberRoleID,
 		&i.BarberRoleBarberShopID,
 	)
@@ -171,7 +149,7 @@ func (q *Queries) GetBarbers(ctx context.Context, arg GetBarbersParams) (GetBarb
 
 const getUserBarber = `-- name: GetUserBarber :one
 SELECT 
-  b.id, b.gender_id, b.email, b.phone, b.hashed_password, b.nick_name, b.full_name, b.haircut, b.avatar_url, b.password_changed_at, b.create_at, b.update_at,
+  b.id, b.gender_id, b.email, b.phone, b.hashed_password, b.nick_name, b.full_name, b.haircut, b.avatar_url, b.password_changed_at, b.create_at,
   br."role_id" as "barber_role"
 FROM "Barbers" b
 LEFT JOIN
@@ -190,7 +168,7 @@ type GetUserBarberParams struct {
 
 type GetUserBarberRow struct {
 	ID                uuid.UUID      `json:"id"`
-	GenderID          int32          `json:"gender_id"`
+	GenderID          int16          `json:"gender_id"`
 	Email             string         `json:"email"`
 	Phone             string         `json:"phone"`
 	HashedPassword    string         `json:"hashed_password"`
@@ -200,8 +178,7 @@ type GetUserBarberRow struct {
 	AvatarUrl         sql.NullString `json:"avatar_url"`
 	PasswordChangedAt time.Time      `json:"password_changed_at"`
 	CreateAt          time.Time      `json:"create_at"`
-	UpdateAt          time.Time      `json:"update_at"`
-	BarberRole        sql.NullInt32  `json:"barber_role"`
+	BarberRole        sql.NullInt16  `json:"barber_role"`
 }
 
 func (q *Queries) GetUserBarber(ctx context.Context, arg GetUserBarberParams) (GetUserBarberRow, error) {
@@ -219,7 +196,6 @@ func (q *Queries) GetUserBarber(ctx context.Context, arg GetUserBarberParams) (G
 		&i.AvatarUrl,
 		&i.PasswordChangedAt,
 		&i.CreateAt,
-		&i.UpdateAt,
 		&i.BarberRole,
 	)
 	return i, err
@@ -227,7 +203,7 @@ func (q *Queries) GetUserBarber(ctx context.Context, arg GetUserBarberParams) (G
 
 const listBarbersInBarberShop = `-- name: ListBarbersInBarberShop :many
 SELECT
-  b.id, b.gender_id, b.email, b.phone, b.hashed_password, b.nick_name, b.full_name, b.haircut, b.avatar_url, b.password_changed_at, b.create_at, b.update_at,
+  b.id, b.gender_id, b.email, b.phone, b.hashed_password, b.nick_name, b.full_name, b.haircut, b.avatar_url, b.password_changed_at, b.create_at,
   br."role_id" as "barber_role_id"
 FROM
   "Barbers" b
@@ -239,7 +215,7 @@ WHERE
 
 type ListBarbersInBarberShopRow struct {
 	ID                uuid.UUID      `json:"id"`
-	GenderID          int32          `json:"gender_id"`
+	GenderID          int16          `json:"gender_id"`
 	Email             string         `json:"email"`
 	Phone             string         `json:"phone"`
 	HashedPassword    string         `json:"hashed_password"`
@@ -249,8 +225,7 @@ type ListBarbersInBarberShopRow struct {
 	AvatarUrl         sql.NullString `json:"avatar_url"`
 	PasswordChangedAt time.Time      `json:"password_changed_at"`
 	CreateAt          time.Time      `json:"create_at"`
-	UpdateAt          time.Time      `json:"update_at"`
-	BarberRoleID      int32          `json:"barber_role_id"`
+	BarberRoleID      int16          `json:"barber_role_id"`
 }
 
 func (q *Queries) ListBarbersInBarberShop(ctx context.Context, barberShopID uuid.NullUUID) ([]ListBarbersInBarberShopRow, error) {
@@ -274,7 +249,6 @@ func (q *Queries) ListBarbersInBarberShop(ctx context.Context, barberShopID uuid
 			&i.AvatarUrl,
 			&i.PasswordChangedAt,
 			&i.CreateAt,
-			&i.UpdateAt,
 			&i.BarberRoleID,
 		); err != nil {
 			return nil, err
@@ -299,15 +273,14 @@ SET
   nick_name = coalesce($5, nick_name),
   full_name = coalesce($6, full_name),
   haircut = coalesce($7, haircut),
-  avatar_url = coalesce($8, avatar_url),
-  "updated_at" = now()
+  avatar_url = coalesce($8, avatar_url)
   WHERE "id" = $1
-RETURNING id, gender_id, email, phone, hashed_password, nick_name, full_name, haircut, avatar_url, password_changed_at, create_at, update_at
+RETURNING id, gender_id, email, phone, hashed_password, nick_name, full_name, haircut, avatar_url, password_changed_at, create_at
 `
 
 type UpdateBarbersParams struct {
 	ID        uuid.UUID      `json:"id"`
-	GenderID  sql.NullInt32  `json:"gender_id"`
+	GenderID  sql.NullInt16  `json:"gender_id"`
 	Email     sql.NullString `json:"email"`
 	Phone     sql.NullString `json:"phone"`
 	NickName  sql.NullString `json:"nick_name"`
@@ -340,7 +313,6 @@ func (q *Queries) UpdateBarbers(ctx context.Context, arg UpdateBarbersParams) (B
 		&i.AvatarUrl,
 		&i.PasswordChangedAt,
 		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }

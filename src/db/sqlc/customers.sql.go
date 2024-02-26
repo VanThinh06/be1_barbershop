@@ -18,7 +18,7 @@ set
   "hashed_password" = $1::varchar(100),
   "password_changed_at" = NOW()
 WHERE "id" = $2
-RETURNING id, name, email, phone, gender_id, hashed_password, avatar, is_social_auth, password_changed_at, create_at, update_at
+RETURNING id, name, email, phone, gender_id, hashed_password, avatar, is_social_auth, password_changed_at, create_at
 `
 
 type ChangePasswordCustomerParams struct {
@@ -40,7 +40,6 @@ func (q *Queries) ChangePasswordCustomer(ctx context.Context, arg ChangePassword
 		&i.IsSocialAuth,
 		&i.PasswordChangedAt,
 		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }
@@ -60,7 +59,7 @@ VALUES (
     $4,
     $5::bool
   )
-RETURNING id, name, email, phone, gender_id, hashed_password, avatar, is_social_auth, password_changed_at, create_at, update_at
+RETURNING id, name, email, phone, gender_id, hashed_password, avatar, is_social_auth, password_changed_at, create_at
 `
 
 type CreateCustomerParams struct {
@@ -91,13 +90,12 @@ func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) 
 		&i.IsSocialAuth,
 		&i.PasswordChangedAt,
 		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }
 
 const getCustomer = `-- name: GetCustomer :one
-SELECT id, name, email, phone, gender_id, hashed_password, avatar, is_social_auth, password_changed_at, create_at, update_at
+SELECT id, name, email, phone, gender_id, hashed_password, avatar, is_social_auth, password_changed_at, create_at
   FROM "Customers"
   WHERE "id" = $1
 `
@@ -116,13 +114,12 @@ func (q *Queries) GetCustomer(ctx context.Context, id uuid.UUID) (Customer, erro
 		&i.IsSocialAuth,
 		&i.PasswordChangedAt,
 		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }
 
 const getUserCustomer = `-- name: GetUserCustomer :one
-SELECT id, name, email, phone, gender_id, hashed_password, avatar, is_social_auth, password_changed_at, create_at, update_at
+SELECT id, name, email, phone, gender_id, hashed_password, avatar, is_social_auth, password_changed_at, create_at
 FROM "Customers"
 WHERE
     (
@@ -152,7 +149,6 @@ func (q *Queries) GetUserCustomer(ctx context.Context, arg GetUserCustomerParams
 		&i.IsSocialAuth,
 		&i.PasswordChangedAt,
 		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }
@@ -166,14 +162,14 @@ set name = coalesce($1, name),
   avatar = coalesce($5, avatar),
   "update_at" = NOW()
   WHERE "id" = $6
-RETURNING id, name, email, phone, gender_id, hashed_password, avatar, is_social_auth, password_changed_at, create_at, update_at
+RETURNING id, name, email, phone, gender_id, hashed_password, avatar, is_social_auth, password_changed_at, create_at
 `
 
 type UpdateCustomerParams struct {
 	Name     sql.NullString `json:"name"`
 	Email    sql.NullString `json:"email"`
 	Phone    sql.NullString `json:"phone"`
-	GenderID sql.NullInt32  `json:"gender_id"`
+	GenderID sql.NullInt16  `json:"gender_id"`
 	Avatar   sql.NullString `json:"avatar"`
 	ID       uuid.UUID      `json:"id"`
 }
@@ -199,7 +195,6 @@ func (q *Queries) UpdateCustomer(ctx context.Context, arg UpdateCustomerParams) 
 		&i.IsSocialAuth,
 		&i.PasswordChangedAt,
 		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }

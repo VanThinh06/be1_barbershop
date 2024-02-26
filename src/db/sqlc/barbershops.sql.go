@@ -10,7 +10,6 @@ import (
 	"database/sql"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgtype"
 )
 
 const createBarberShop = `-- name: CreateBarberShop :one
@@ -18,31 +17,25 @@ INSERT INTO "BarberShops" (
                            barber_shop_chain_id,
                            name,
                            is_main_branch,
-                           branch_count,
-                           coordinates,
-                           address,
-                           image
+                           branch_number,
+                           coordinates
                            )
 VALUES (
         $1,
         $2,
         $3,
         $4,
-        ST_GeographyFromText('POINT(' || $5::float8 || ' ' || $6::float8 || ')'),
-        $7,
-        $8
-        ) RETURNING id, barber_shop_chain_id, name, is_main_branch, branch_count, coordinates, address, image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, is_reputation, is_verified, create_at, update_at
+        ST_GeographyFromText('POINT(' || $5::float8 || ' ' || $6::float8 || ')')
+        ) RETURNING id, barber_shop_chain_id, branch_number, name, province_id, district_id, ward_id, phone, email, website_url, coordinates, avatar_url, cover_photo_url, photo_url, start_time_monday, end_time_monday, start_time_tuesday, end_time_tuesday, start_time_wednesday, end_time_wednesday, start_time_thursday, end_time_thursday, start_time_friday, end_time_friday, start_time_saturday, end_time_saturday, start_time_sunday, end_time_sunday, interval_scheduler, is_main_branch, is_reputation, is_verified, create_at
 `
 
 type CreateBarberShopParams struct {
-	BarberShopChainID uuid.NullUUID  `json:"barber_shop_chain_id"`
-	Name              string         `json:"name"`
-	IsMainBranch      sql.NullBool   `json:"is_main_branch"`
-	BranchCount       int32          `json:"branch_count"`
-	Longitude         float64        `json:"longitude"`
-	Latitude          float64        `json:"latitude"`
-	Address           string         `json:"address"`
-	Image             sql.NullString `json:"image"`
+	BarberShopChainID uuid.NullUUID `json:"barber_shop_chain_id"`
+	Name              string        `json:"name"`
+	IsMainBranch      sql.NullBool  `json:"is_main_branch"`
+	BranchNumber      sql.NullInt16 `json:"branch_number"`
+	Longitude         float64       `json:"longitude"`
+	Latitude          float64       `json:"latitude"`
 }
 
 // admin
@@ -51,33 +44,45 @@ func (q *Queries) CreateBarberShop(ctx context.Context, arg CreateBarberShopPara
 		arg.BarberShopChainID,
 		arg.Name,
 		arg.IsMainBranch,
-		arg.BranchCount,
+		arg.BranchNumber,
 		arg.Longitude,
 		arg.Latitude,
-		arg.Address,
-		arg.Image,
 	)
 	var i BarberShop
 	err := row.Scan(
 		&i.ID,
 		&i.BarberShopChainID,
+		&i.BranchNumber,
 		&i.Name,
-		&i.IsMainBranch,
-		&i.BranchCount,
+		&i.ProvinceID,
+		&i.DistrictID,
+		&i.WardID,
+		&i.Phone,
+		&i.Email,
+		&i.WebsiteUrl,
 		&i.Coordinates,
-		&i.Address,
-		&i.Image,
-		&i.Status,
-		&i.Rate,
-		&i.StartTime,
-		&i.EndTime,
-		&i.BreakTime,
-		&i.BreakMinutes,
+		&i.AvatarUrl,
+		&i.CoverPhotoUrl,
+		&i.PhotoUrl,
+		&i.StartTimeMonday,
+		&i.EndTimeMonday,
+		&i.StartTimeTuesday,
+		&i.EndTimeTuesday,
+		&i.StartTimeWednesday,
+		&i.EndTimeWednesday,
+		&i.StartTimeThursday,
+		&i.EndTimeThursday,
+		&i.StartTimeFriday,
+		&i.EndTimeFriday,
+		&i.StartTimeSaturday,
+		&i.EndTimeSaturday,
+		&i.StartTimeSunday,
+		&i.EndTimeSunday,
 		&i.IntervalScheduler,
+		&i.IsMainBranch,
 		&i.IsReputation,
 		&i.IsVerified,
 		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }
@@ -93,7 +98,7 @@ func (q *Queries) DeleteBarberShops(ctx context.Context, id uuid.UUID) error {
 }
 
 const getBarberShop = `-- name: GetBarberShop :one
-SELECT id, barber_shop_chain_id, name, is_main_branch, branch_count, coordinates, address, image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, is_reputation, is_verified, create_at, update_at
+SELECT id, barber_shop_chain_id, branch_number, name, province_id, district_id, ward_id, phone, email, website_url, coordinates, avatar_url, cover_photo_url, photo_url, start_time_monday, end_time_monday, start_time_tuesday, end_time_tuesday, start_time_wednesday, end_time_wednesday, start_time_thursday, end_time_thursday, start_time_friday, end_time_friday, start_time_saturday, end_time_saturday, start_time_sunday, end_time_sunday, interval_scheduler, is_main_branch, is_reputation, is_verified, create_at
 FROM "BarberShops"
 WHERE id = $1
 `
@@ -104,23 +109,37 @@ func (q *Queries) GetBarberShop(ctx context.Context, id uuid.UUID) (BarberShop, 
 	err := row.Scan(
 		&i.ID,
 		&i.BarberShopChainID,
+		&i.BranchNumber,
 		&i.Name,
-		&i.IsMainBranch,
-		&i.BranchCount,
+		&i.ProvinceID,
+		&i.DistrictID,
+		&i.WardID,
+		&i.Phone,
+		&i.Email,
+		&i.WebsiteUrl,
 		&i.Coordinates,
-		&i.Address,
-		&i.Image,
-		&i.Status,
-		&i.Rate,
-		&i.StartTime,
-		&i.EndTime,
-		&i.BreakTime,
-		&i.BreakMinutes,
+		&i.AvatarUrl,
+		&i.CoverPhotoUrl,
+		&i.PhotoUrl,
+		&i.StartTimeMonday,
+		&i.EndTimeMonday,
+		&i.StartTimeTuesday,
+		&i.EndTimeTuesday,
+		&i.StartTimeWednesday,
+		&i.EndTimeWednesday,
+		&i.StartTimeThursday,
+		&i.EndTimeThursday,
+		&i.StartTimeFriday,
+		&i.EndTimeFriday,
+		&i.StartTimeSaturday,
+		&i.EndTimeSaturday,
+		&i.StartTimeSunday,
+		&i.EndTimeSunday,
 		&i.IntervalScheduler,
+		&i.IsMainBranch,
 		&i.IsReputation,
 		&i.IsVerified,
 		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }
@@ -130,12 +149,8 @@ SELECT
     id,
     barber_shop_chain_id,
     name,
-    branch_count,
+    branch_number,
     coordinates,
-    address,
-    image,
-    status,
-    rate,
     "is_reputation",
     CAST(ST_X(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS longitude,
     CAST(ST_Y(ST_GeomFromWKB(coordinates::geometry)) AS float8) AS latitude,
@@ -155,19 +170,15 @@ type ListNearbyBarberShopsParams struct {
 }
 
 type ListNearbyBarberShopsRow struct {
-	ID                uuid.UUID      `json:"id"`
-	BarberShopChainID uuid.NullUUID  `json:"barber_shop_chain_id"`
-	Name              string         `json:"name"`
-	BranchCount       int32          `json:"branch_count"`
-	Coordinates       string         `json:"coordinates"`
-	Address           string         `json:"address"`
-	Image             sql.NullString `json:"image"`
-	Status            int32          `json:"status"`
-	Rate              float64        `json:"rate"`
-	IsReputation      bool           `json:"is_reputation"`
-	Longitude         float64        `json:"longitude"`
-	Latitude          float64        `json:"latitude"`
-	Distance          float64        `json:"distance"`
+	ID                uuid.UUID     `json:"id"`
+	BarberShopChainID uuid.NullUUID `json:"barber_shop_chain_id"`
+	Name              string        `json:"name"`
+	BranchNumber      sql.NullInt16 `json:"branch_number"`
+	Coordinates       string        `json:"coordinates"`
+	IsReputation      bool          `json:"is_reputation"`
+	Longitude         float64       `json:"longitude"`
+	Latitude          float64       `json:"latitude"`
+	Distance          float64       `json:"distance"`
 }
 
 func (q *Queries) ListNearbyBarberShops(ctx context.Context, arg ListNearbyBarberShopsParams) ([]ListNearbyBarberShopsRow, error) {
@@ -183,12 +194,8 @@ func (q *Queries) ListNearbyBarberShops(ctx context.Context, arg ListNearbyBarbe
 			&i.ID,
 			&i.BarberShopChainID,
 			&i.Name,
-			&i.BranchCount,
+			&i.BranchNumber,
 			&i.Coordinates,
-			&i.Address,
-			&i.Image,
-			&i.Status,
-			&i.Rate,
 			&i.IsReputation,
 			&i.Longitude,
 			&i.Latitude,
@@ -212,12 +219,8 @@ SELECT
     bs.id,
     bs.barber_shop_chain_id,
     bs.name,
-    bs.branch_count,
+    bs.branch_number,
     bs.coordinates,
-    bs.address,
-    bs.image,
-    bs.status,
-    bs.rate,
     bs."is_reputation",
     CAST(ST_X(ST_GeomFromWKB(bs.coordinates::geometry)) AS float8) AS longitude,
     CAST(ST_Y(ST_GeomFromWKB(bs.coordinates::geometry)) AS float8) AS latitude,
@@ -238,19 +241,15 @@ type SearchByNameBarberShopsParams struct {
 }
 
 type SearchByNameBarberShopsRow struct {
-	ID                uuid.UUID      `json:"id"`
-	BarberShopChainID uuid.NullUUID  `json:"barber_shop_chain_id"`
-	Name              string         `json:"name"`
-	BranchCount       int32          `json:"branch_count"`
-	Coordinates       string         `json:"coordinates"`
-	Address           string         `json:"address"`
-	Image             sql.NullString `json:"image"`
-	Status            int32          `json:"status"`
-	Rate              float64        `json:"rate"`
-	IsReputation      bool           `json:"is_reputation"`
-	Longitude         float64        `json:"longitude"`
-	Latitude          float64        `json:"latitude"`
-	Distance          float64        `json:"distance"`
+	ID                uuid.UUID     `json:"id"`
+	BarberShopChainID uuid.NullUUID `json:"barber_shop_chain_id"`
+	Name              string        `json:"name"`
+	BranchNumber      sql.NullInt16 `json:"branch_number"`
+	Coordinates       string        `json:"coordinates"`
+	IsReputation      bool          `json:"is_reputation"`
+	Longitude         float64       `json:"longitude"`
+	Latitude          float64       `json:"latitude"`
+	Distance          float64       `json:"distance"`
 }
 
 func (q *Queries) SearchByNameBarberShops(ctx context.Context, arg SearchByNameBarberShopsParams) ([]SearchByNameBarberShopsRow, error) {
@@ -266,12 +265,8 @@ func (q *Queries) SearchByNameBarberShops(ctx context.Context, arg SearchByNameB
 			&i.ID,
 			&i.BarberShopChainID,
 			&i.Name,
-			&i.BranchCount,
+			&i.BranchNumber,
 			&i.Coordinates,
-			&i.Address,
-			&i.Image,
-			&i.Status,
-			&i.Rate,
 			&i.IsReputation,
 			&i.Longitude,
 			&i.Latitude,
@@ -295,38 +290,24 @@ UPDATE "BarberShops"
 SET 
     name = coalesce($2, name),
     is_main_branch = coalesce($3, is_main_branch),
-    branch_count = coalesce($4, branch_count),
+    branch_number = coalesce($4, branch_number),
     coordinates = coalesce(ST_GeographyFromText('POINT(' || $5::float8 || ' ' || $6::float8 || ')'), coordinates),
-    address = coalesce($7, address),
-    image = coalesce($8, image),
-    status = coalesce($9, status),
-    rate = coalesce($10, rate),
-    start_time = coalesce($11, start_time),
-    end_time = coalesce($12, end_time),
-    break_time = coalesce($13, break_time),
-    interval_scheduler = coalesce($14, interval_scheduler),
-    is_reputation = coalesce($15, is_reputation),
-    is_verified = coalesce($16, is_verified),
+    interval_scheduler = coalesce($7, interval_scheduler),
+    is_reputation = coalesce($8, is_reputation),
+    is_verified = coalesce($9, is_verified),
     update_at = now()
 WHERE "id" = $1
-RETURNING id, barber_shop_chain_id, name, is_main_branch, branch_count, coordinates, address, image, status, rate, start_time, end_time, break_time, break_minutes, interval_scheduler, is_reputation, is_verified, create_at, update_at
+RETURNING id, barber_shop_chain_id, branch_number, name, province_id, district_id, ward_id, phone, email, website_url, coordinates, avatar_url, cover_photo_url, photo_url, start_time_monday, end_time_monday, start_time_tuesday, end_time_tuesday, start_time_wednesday, end_time_wednesday, start_time_thursday, end_time_thursday, start_time_friday, end_time_friday, start_time_saturday, end_time_saturday, start_time_sunday, end_time_sunday, interval_scheduler, is_main_branch, is_reputation, is_verified, create_at
 `
 
 type UpdateBarberShopParams struct {
 	ID                uuid.UUID       `json:"id"`
 	Name              sql.NullString  `json:"name"`
 	IsMainBranch      sql.NullBool    `json:"is_main_branch"`
-	BranchCount       sql.NullInt32   `json:"branch_count"`
+	BranchNumber      sql.NullInt16   `json:"branch_number"`
 	Longitude         sql.NullFloat64 `json:"longitude"`
 	Latitude          sql.NullFloat64 `json:"latitude"`
-	Address           sql.NullString  `json:"address"`
-	Image             sql.NullString  `json:"image"`
-	Status            sql.NullInt32   `json:"status"`
-	Rate              sql.NullFloat64 `json:"rate"`
-	StartTime         pgtype.Time     `json:"start_time"`
-	EndTime           pgtype.Time     `json:"end_time"`
-	BreakTime         pgtype.Time     `json:"break_time"`
-	IntervalScheduler sql.NullInt32   `json:"interval_scheduler"`
+	IntervalScheduler sql.NullInt16   `json:"interval_scheduler"`
 	IsReputation      bool            `json:"is_reputation"`
 	IsVerified        bool            `json:"is_verified"`
 }
@@ -336,16 +317,9 @@ func (q *Queries) UpdateBarberShop(ctx context.Context, arg UpdateBarberShopPara
 		arg.ID,
 		arg.Name,
 		arg.IsMainBranch,
-		arg.BranchCount,
+		arg.BranchNumber,
 		arg.Longitude,
 		arg.Latitude,
-		arg.Address,
-		arg.Image,
-		arg.Status,
-		arg.Rate,
-		arg.StartTime,
-		arg.EndTime,
-		arg.BreakTime,
 		arg.IntervalScheduler,
 		arg.IsReputation,
 		arg.IsVerified,
@@ -354,23 +328,37 @@ func (q *Queries) UpdateBarberShop(ctx context.Context, arg UpdateBarberShopPara
 	err := row.Scan(
 		&i.ID,
 		&i.BarberShopChainID,
+		&i.BranchNumber,
 		&i.Name,
-		&i.IsMainBranch,
-		&i.BranchCount,
+		&i.ProvinceID,
+		&i.DistrictID,
+		&i.WardID,
+		&i.Phone,
+		&i.Email,
+		&i.WebsiteUrl,
 		&i.Coordinates,
-		&i.Address,
-		&i.Image,
-		&i.Status,
-		&i.Rate,
-		&i.StartTime,
-		&i.EndTime,
-		&i.BreakTime,
-		&i.BreakMinutes,
+		&i.AvatarUrl,
+		&i.CoverPhotoUrl,
+		&i.PhotoUrl,
+		&i.StartTimeMonday,
+		&i.EndTimeMonday,
+		&i.StartTimeTuesday,
+		&i.EndTimeTuesday,
+		&i.StartTimeWednesday,
+		&i.EndTimeWednesday,
+		&i.StartTimeThursday,
+		&i.EndTimeThursday,
+		&i.StartTimeFriday,
+		&i.EndTimeFriday,
+		&i.StartTimeSaturday,
+		&i.EndTimeSaturday,
+		&i.StartTimeSunday,
+		&i.EndTimeSunday,
 		&i.IntervalScheduler,
+		&i.IsMainBranch,
 		&i.IsReputation,
 		&i.IsVerified,
 		&i.CreateAt,
-		&i.UpdateAt,
 	)
 	return i, err
 }

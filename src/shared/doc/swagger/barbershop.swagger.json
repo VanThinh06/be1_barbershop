@@ -836,6 +836,63 @@
         ]
       }
     },
+    "/v1/districts/{provinceId}": {
+      "get": {
+        "summary": "Get districts",
+        "description": "API endpoint for get districts",
+        "operationId": "BarberService_GetDistricts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetDistrictsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "provinceId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "lookup"
+        ]
+      }
+    },
+    "/v1/provinces": {
+      "get": {
+        "summary": "Get provinces",
+        "description": "API endpoint for get provinces",
+        "operationId": "BarberService_GetProvinces",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetProvincesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "lookup"
+        ]
+      }
+    },
     "/v1/service-categories": {
       "post": {
         "summary": "Create service categories",
@@ -975,6 +1032,39 @@
         ],
         "tags": [
           "service categories"
+        ]
+      }
+    },
+    "/v1/wards/{districtId}": {
+      "get": {
+        "summary": "Get wards",
+        "description": "API endpoint for get wards",
+        "operationId": "BarberService_GetWards",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetWardsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "districtId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "lookup"
         ]
       }
     }
@@ -1228,14 +1318,6 @@
         "createAt": {
           "type": "string",
           "format": "date-time"
-        },
-        "updateAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "barberRoleId": {
-          "type": "integer",
-          "format": "int32"
         }
       }
     },
@@ -1407,13 +1489,7 @@
         "nickName": {
           "type": "string"
         },
-        "fullName": {
-          "type": "string"
-        },
         "password": {
-          "type": "string"
-        },
-        "avatarUrl": {
           "type": "string"
         }
       }
@@ -1477,6 +1553,22 @@
         }
       }
     },
+    "pbDistricts": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "provinceId": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
     "pbGetBarberShopChainsResponse": {
       "type": "object",
       "properties": {
@@ -1502,11 +1594,47 @@
         }
       }
     },
+    "pbGetDistrictsResponse": {
+      "type": "object",
+      "properties": {
+        "districts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbDistricts"
+          }
+        }
+      }
+    },
+    "pbGetProvincesResponse": {
+      "type": "object",
+      "properties": {
+        "provinces": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbProvinces"
+          }
+        }
+      }
+    },
     "pbGetServiceCategoriesResponse": {
       "type": "object",
       "properties": {
         "serviceCategories": {
           "$ref": "#/definitions/pbServiceCategories"
+        }
+      }
+    },
+    "pbGetWardsResponse": {
+      "type": "object",
+      "properties": {
+        "wards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbWards"
+          }
         }
       }
     },
@@ -1571,9 +1699,6 @@
         "password": {
           "type": "string"
         },
-        "isSocialAuth": {
-          "type": "boolean"
-        },
         "fcmDevice": {
           "type": "string"
         },
@@ -1588,9 +1713,6 @@
         "barber": {
           "$ref": "#/definitions/pbBarbers"
         },
-        "sessionId": {
-          "type": "string"
-        },
         "accessToken": {
           "type": "string"
         },
@@ -1604,6 +1726,18 @@
         "refreshTokenExpiresAt": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "pbProvinces": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
         }
       }
     },
@@ -1789,6 +1923,22 @@
       "properties": {
         "serviceCategories": {
           "$ref": "#/definitions/pbServiceCategories"
+        }
+      }
+    },
+    "pbWards": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "districtId": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

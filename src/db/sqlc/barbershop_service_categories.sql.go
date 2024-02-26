@@ -7,42 +7,31 @@ package db
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
 )
 
 const createBarberShopServiceCategories = `-- name: CreateBarberShopServiceCategories :one
 INSERT INTO "BarberShopServiceCategories" (
-  "barber_shop_chain_id",
   "barber_shop_id",
   "service_category_id"
 )
 VALUES (
   $1,
-  $2,
-  $3
+  $2
 )
-RETURNING id, barber_shop_chain_id, barber_shop_id, service_category_id, create_at, update_at
+RETURNING id, barber_shop_id, service_category_id
 `
 
 type CreateBarberShopServiceCategoriesParams struct {
-	BarberShopChainID uuid.NullUUID `json:"barber_shop_chain_id"`
-	BarberShopID      uuid.NullUUID `json:"barber_shop_id"`
-	ServiceCategoryID uuid.UUID     `json:"service_category_id"`
+	BarberShopID      uuid.UUID `json:"barber_shop_id"`
+	ServiceCategoryID int16     `json:"service_category_id"`
 }
 
 func (q *Queries) CreateBarberShopServiceCategories(ctx context.Context, arg CreateBarberShopServiceCategoriesParams) (BarberShopServiceCategory, error) {
-	row := q.db.QueryRowContext(ctx, createBarberShopServiceCategories, arg.BarberShopChainID, arg.BarberShopID, arg.ServiceCategoryID)
+	row := q.db.QueryRowContext(ctx, createBarberShopServiceCategories, arg.BarberShopID, arg.ServiceCategoryID)
 	var i BarberShopServiceCategory
-	err := row.Scan(
-		&i.ID,
-		&i.BarberShopChainID,
-		&i.BarberShopID,
-		&i.ServiceCategoryID,
-		&i.CreateAt,
-		&i.UpdateAt,
-	)
+	err := row.Scan(&i.ID, &i.BarberShopID, &i.ServiceCategoryID)
 	return i, err
 }
 
@@ -59,7 +48,7 @@ func (q *Queries) DeleteBarberShopServiceCategories(ctx context.Context, id uuid
 
 const listBarberShopServiceCategories = `-- name: ListBarberShopServiceCategories :many
 SELECT
-  bsc.id, bsc.barber_shop_chain_id, bsc.barber_shop_id, bsc.service_category_id, bsc.create_at, bsc.update_at,
+  bsc.id, bsc.barber_shop_id, bsc.service_category_id,
   sc."name" as "service_category_name",
   sc."is_global" as "service_category_is_global"
 FROM
@@ -68,27 +57,18 @@ JOIN
   "ServiceCategories" sc ON bsc."service_category_id" = sc."id"
 WHERE
   bsc."barber_shop_id" = $1
-  AND bsc."barber_shop_chain_id" = $2
 `
 
-type ListBarberShopServiceCategoriesParams struct {
-	BarberShopID      uuid.NullUUID `json:"barber_shop_id"`
-	BarberShopChainID uuid.NullUUID `json:"barber_shop_chain_id"`
-}
-
 type ListBarberShopServiceCategoriesRow struct {
-	ID                      uuid.UUID     `json:"id"`
-	BarberShopChainID       uuid.NullUUID `json:"barber_shop_chain_id"`
-	BarberShopID            uuid.NullUUID `json:"barber_shop_id"`
-	ServiceCategoryID       uuid.UUID     `json:"service_category_id"`
-	CreateAt                time.Time     `json:"create_at"`
-	UpdateAt                time.Time     `json:"update_at"`
-	ServiceCategoryName     string        `json:"service_category_name"`
-	ServiceCategoryIsGlobal bool          `json:"service_category_is_global"`
+	ID                      uuid.UUID `json:"id"`
+	BarberShopID            uuid.UUID `json:"barber_shop_id"`
+	ServiceCategoryID       int16     `json:"service_category_id"`
+	ServiceCategoryName     string    `json:"service_category_name"`
+	ServiceCategoryIsGlobal bool      `json:"service_category_is_global"`
 }
 
-func (q *Queries) ListBarberShopServiceCategories(ctx context.Context, arg ListBarberShopServiceCategoriesParams) ([]ListBarberShopServiceCategoriesRow, error) {
-	rows, err := q.db.QueryContext(ctx, listBarberShopServiceCategories, arg.BarberShopID, arg.BarberShopChainID)
+func (q *Queries) ListBarberShopServiceCategories(ctx context.Context, barberShopID uuid.UUID) ([]ListBarberShopServiceCategoriesRow, error) {
+	rows, err := q.db.QueryContext(ctx, listBarberShopServiceCategories, barberShopID)
 	if err != nil {
 		return nil, err
 	}
@@ -98,11 +78,8 @@ func (q *Queries) ListBarberShopServiceCategories(ctx context.Context, arg ListB
 		var i ListBarberShopServiceCategoriesRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.BarberShopChainID,
 			&i.BarberShopID,
 			&i.ServiceCategoryID,
-			&i.CreateAt,
-			&i.UpdateAt,
 			&i.ServiceCategoryName,
 			&i.ServiceCategoryIsGlobal,
 		); err != nil {
@@ -125,24 +102,17 @@ SET
   "service_category_id" = $1
 WHERE
   "id" = $2
-RETURNING id, barber_shop_chain_id, barber_shop_id, service_category_id, create_at, update_at
+RETURNING id, barber_shop_id, service_category_id
 `
 
 type UpdateBarberShopServiceCategoriesParams struct {
-	ServiceCategoryID uuid.UUID `json:"service_category_id"`
+	ServiceCategoryID int16     `json:"service_category_id"`
 	ID                uuid.UUID `json:"id"`
 }
 
 func (q *Queries) UpdateBarberShopServiceCategories(ctx context.Context, arg UpdateBarberShopServiceCategoriesParams) (BarberShopServiceCategory, error) {
 	row := q.db.QueryRowContext(ctx, updateBarberShopServiceCategories, arg.ServiceCategoryID, arg.ID)
 	var i BarberShopServiceCategory
-	err := row.Scan(
-		&i.ID,
-		&i.BarberShopChainID,
-		&i.BarberShopID,
-		&i.ServiceCategoryID,
-		&i.CreateAt,
-		&i.UpdateAt,
-	)
+	err := row.Scan(&i.ID, &i.BarberShopID, &i.ServiceCategoryID)
 	return i, err
 }

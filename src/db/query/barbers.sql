@@ -19,16 +19,10 @@ RETURNING *;
 SELECT
   b.*, 
   bs."name" as "shop_name",
-  bs."address" as "shop_address",
   bs."coordinates" as "shop_coordinates",
-  bs."start_time" as "shop_start_time",
-  bs."end_time" as "shop_end_time",
-  bs."break_time" as "shop_break_time",
-  bs."break_minutes" as "shop_break_minutes",
   bs."interval_scheduler" as "shop_interval_scheduler",
   bs."is_reputation" as "shop_reputation",
-  bs."rate" as "shop_rate",
-  bs."branch_count" as "shop_branch_count",
+  bs."branch_number" as "shop_branch_number",
   br."role_id" as "barber_role_id",
   br."barber_shop_id" as "barber_role_barber_shop_id"
 FROM
@@ -74,8 +68,7 @@ SET
   nick_name = coalesce(sqlc.narg('nick_name'), nick_name),
   full_name = coalesce(sqlc.narg('full_name'), full_name),
   haircut = coalesce(sqlc.narg('haircut'), haircut),
-  avatar_url = coalesce(sqlc.narg('avatar_url'), avatar_url),
-  "updated_at" = now()
+  avatar_url = coalesce(sqlc.narg('avatar_url'), avatar_url)
   WHERE "id" = $1
 RETURNING *;
 

@@ -11,12 +11,11 @@ func convertCustomer(res db.Customer) *customer.Customer {
 	return &customer.Customer{
 		Phone:             res.Phone.String,
 		Email:             res.Email,
-		Gender:            res.GenderID.Int32,
+		Gender:            int32(res.GenderID),
 		Name:              res.Name,
 		Avatar:            res.Avatar.String,
 		CustomerId:        res.ID.String(),
 		CreatedAt:         timestamppb.New(res.CreateAt),
-		UpdateAt:          timestamppb.New(res.UpdateAt),
 		PasswordChangedAt: timestamppb.New(res.PasswordChangedAt),
 		IsSocialAuth:      res.IsSocialAuth.Bool,
 	}
