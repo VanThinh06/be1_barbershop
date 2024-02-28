@@ -4,7 +4,6 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/customer"
 	"barbershop/src/shared/helpers"
-	"barbershop/src/shared/utilities"
 	"context"
 	"database/sql"
 
@@ -33,13 +32,13 @@ func (server *Server) ChangePasswordCustomer(ctx context.Context, req *customer.
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to hash password")
 	}
-	err = utilities.CheckPassword(req.GetCurrentPassword(), cus.HashedPassword.String)
+	err = helpers.CheckPassword(req.GetCurrentPassword(), cus.HashedPassword.String)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to hash password")
 	}
 
 	// Hash the password provided in the request
-	hashedPassword, err := utilities.HashPassword(req.GetNewPassword())
+	hashedPassword, err := helpers.HashPassword(req.GetNewPassword())
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to hash password")
 	}

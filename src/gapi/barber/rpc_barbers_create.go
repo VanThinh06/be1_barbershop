@@ -4,7 +4,6 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"barbershop/src/shared/helpers"
-	"barbershop/src/shared/utilities"
 	"context"
 
 	"github.com/jackc/pgconn"
@@ -19,7 +18,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 		return nil, inValidArgumentError(validations)
 	}
 
-	hashedPassword, err := utilities.HashPassword(req.GetPassword())
+	hashedPassword, err := helpers.HashPassword(req.GetPassword())
 	if err != nil {
 		return nil, internalError(err)
 	}

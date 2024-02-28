@@ -5,7 +5,6 @@ import (
 	"barbershop/src/pb/customer"
 	"barbershop/src/shared/helpers"
 	"barbershop/src/shared/token"
-	"barbershop/src/shared/utilities"
 	"context"
 	"database/sql"
 
@@ -53,7 +52,7 @@ func (server *Server) TxLoginCustomer(ctx context.Context, req *customer.LoginCu
 		res, err := server.store.GetUserCustomer(ctx, contact)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				if req.IsSocialAuth == false {
+				if !req.IsSocialAuth {
 					return returnError(codes.NotFound, "incorrect account or password", err)
 				}
 
@@ -95,8 +94,8 @@ func (server *Server) TxLoginCustomer(ctx context.Context, req *customer.LoginCu
 			}
 		}
 
-		if req.IsSocialAuth == false {
-			err = utilities.CheckPassword(req.Password, res.HashedPassword.String)
+		if !req.IsSocialAuth {
+			err = helpers.CheckPassword(req.Password, res.HashedPassword.String)
 			if err != nil {
 				return unauthenticatedError(err)
 			}

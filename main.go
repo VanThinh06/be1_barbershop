@@ -29,7 +29,7 @@ import (
 
 func main() {
 
-	config, err := utilities.LoadConfig(".") // . vì nằm cùng vị trí với thư mục hiện tại app.env
+	config, err := utilities.LoadConfig(".") 
 	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}
@@ -53,8 +53,8 @@ func main() {
 
 func runGatewayServer(config utilities.Config, store db.StoreMain, firebase db.FirebaseApp) {
 	grpcMux := runtime.NewServeMux()
-	ctx, cancel := context.WithCancel(context.Background()) // create context
-	defer cancel()                                          // trì hoãn lệnh cancel trước khi exit khỏi func này
+	ctx, cancel := context.WithCancel(context.Background()) 
+	defer cancel()                                          
 
 	server, err := gapi.NewServer(config, store, firebase)
 	if err != nil {

@@ -4,7 +4,6 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/customer"
 	"barbershop/src/shared/helpers"
-	"barbershop/src/shared/utilities"
 	"context"
 	"database/sql"
 
@@ -21,7 +20,7 @@ func (server *Server) CreateCustomer(ctx context.Context, req *customer.CreateCu
 		return nil, InValidArgumentError(validations)
 	}
 
-	hashedPassword, err := utilities.HashPassword(req.GetPassword())
+	hashedPassword, err := helpers.HashPassword(req.GetPassword())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid password")
 	}
@@ -82,7 +81,7 @@ func validateCreateCustomer(req *customer.CreateCustomerRequest) (validations []
 		}
 	}
 
-	if req.IsSocialAuth == false {
+	if !req.IsSocialAuth {
 		if err := helpers.ValidatePassword(req.GetPassword()); err != nil {
 			validations = append(validations, FieldValidation("password", err))
 		}
