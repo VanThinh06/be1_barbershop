@@ -15,7 +15,6 @@ type Querier interface {
 	CreateAppointments(ctx context.Context, arg CreateAppointmentsParams) (CreateAppointmentsRow, error)
 	CreateBarberManagers(ctx context.Context, arg CreateBarberManagersParams) (BarberManager, error)
 	CreateBarberRoles(ctx context.Context, arg CreateBarberRolesParams) (BarberRole, error)
-	// admin
 	CreateBarberShop(ctx context.Context, arg CreateBarberShopParams) (BarberShop, error)
 	CreateBarberShopChains(ctx context.Context, arg CreateBarberShopChainsParams) (BarberShopChain, error)
 	CreateBarberShopServiceCategories(ctx context.Context, arg CreateBarberShopServiceCategoriesParams) (BarberShopServiceCategory, error)
@@ -50,8 +49,8 @@ type Querier interface {
 	ListAppointmentsByDate(ctx context.Context, arg ListAppointmentsByDateParams) ([]ListAppointmentsByDateRow, error)
 	ListBarberManagers(ctx context.Context, barberID uuid.UUID) ([]uuid.UUID, error)
 	ListBarberShopServiceCategories(ctx context.Context, barberShopID uuid.UUID) ([]ListBarberShopServiceCategoriesRow, error)
-	ListBarbersInBarberShop(ctx context.Context, barberShopID uuid.NullUUID) ([]ListBarbersInBarberShopRow, error)
-	ListBarbersRoles(ctx context.Context, barberShopID uuid.NullUUID) ([]ListBarbersRolesRow, error)
+	ListBarbersInBarberShop(ctx context.Context, barberShopID uuid.UUID) ([]ListBarbersInBarberShopRow, error)
+	ListBarbersRoles(ctx context.Context, barberShopID uuid.UUID) ([]ListBarbersRolesRow, error)
 	ListNearbyBarberShops(ctx context.Context, arg ListNearbyBarberShopsParams) ([]ListNearbyBarberShopsRow, error)
 	SearchByNameBarberShops(ctx context.Context, arg SearchByNameBarberShopsParams) ([]SearchByNameBarberShopsRow, error)
 	UpdateBarberRoles(ctx context.Context, arg UpdateBarberRolesParams) (BarberRole, error)

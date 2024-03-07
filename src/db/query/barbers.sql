@@ -22,7 +22,6 @@ SELECT
   bs."coordinates" as "shop_coordinates",
   bs."interval_scheduler" as "shop_interval_scheduler",
   bs."is_reputation" as "shop_reputation",
-  bs."branch_number" as "shop_branch_number",
   br."role_id" as "barber_role_id",
   br."barber_shop_id" as "barber_role_barber_shop_id"
 FROM

@@ -12,13 +12,11 @@ type EnumRole int32
 
 const (
 	NoRole EnumGender = iota
-	Customer
 	Barber
+	Skinner
 	Receptionist
 	Manager
 	Admin
-	SuperAdmin
-	OtherStaff
 )
 
 type EnumRoleType string

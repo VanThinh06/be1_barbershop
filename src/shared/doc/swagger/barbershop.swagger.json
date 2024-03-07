@@ -563,7 +563,7 @@
     },
     "/v1/barbershops": {
       "post": {
-        "summary": "Create a barber shop shop",
+        "summary": "Create a barber shop",
         "description": "API endpoint to create a new barber shop",
         "operationId": "BarberService_CreateBarberShops",
         "responses": {
@@ -1221,69 +1221,116 @@
         "name": {
           "type": "string"
         },
-        "isMainBranch": {
-          "type": "boolean"
-        },
-        "branchCount": {
+        "provinceId": {
           "type": "integer",
           "format": "int32"
         },
-        "coordinates": {
-          "type": "string"
-        },
-        "address": {
-          "type": "string"
-        },
-        "image": {
-          "type": "string"
-        },
-        "status": {
+        "districtId": {
           "type": "integer",
           "format": "int32"
         },
-        "rate": {
-          "type": "number",
-          "format": "float"
-        },
-        "startTime": {
-          "$ref": "#/definitions/pbTimeOfDay"
-        },
-        "endTime": {
-          "$ref": "#/definitions/pbTimeOfDay"
-        },
-        "breakTime": {
-          "$ref": "#/definitions/pbTimeOfDay"
-        },
-        "breakMinutes": {
+        "wardId": {
           "type": "integer",
           "format": "int32"
+        },
+        "specificLocation": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "websiteUrl": {
+          "type": "string"
+        },
+        "avatarUrl": {
+          "type": "string"
+        },
+        "coverPhotoUrl": {
+          "type": "string"
+        },
+        "facadePhotoUrl": {
+          "type": "string"
+        },
+        "representativeName": {
+          "type": "string"
+        },
+        "citizenId": {
+          "type": "string"
+        },
+        "representativePhone": {
+          "type": "string"
+        },
+        "representativeEmail": {
+          "type": "string"
+        },
+        "representativePhoneOther": {
+          "type": "string"
+        },
+        "startTimeMonday": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "endTimeMonday": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "startTimeTuesday": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "endTimeTuesday": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "startTimeWednesday": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "endTimeWednesday": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "startTimeThursday": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "endTimeThursday": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "startTimeFriday": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "endTimeFriday": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "startTimeSaturday": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "endTimeSaturday": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "startTimeSunday": {
+          "$ref": "#/definitions/pbTimeOfDay"
+        },
+        "endTimeSunday": {
+          "$ref": "#/definitions/pbTimeOfDay"
         },
         "intervalScheduler": {
           "type": "integer",
           "format": "int32"
         },
+        "isMainBranch": {
+          "type": "boolean"
+        },
         "isReputation": {
           "type": "boolean"
         },
-        "distance": {
-          "type": "number",
-          "format": "float"
-        },
-        "longitude": {
-          "type": "number",
-          "format": "double"
-        },
-        "latitude": {
-          "type": "number",
-          "format": "double"
+        "isVerified": {
+          "type": "boolean"
         },
         "createAt": {
           "type": "string",
           "format": "date-time"
         },
-        "updateAt": {
-          "type": "string",
-          "format": "date-time"
+        "distance": {
+          "type": "number",
+          "format": "float"
         }
       }
     },
@@ -1442,12 +1489,109 @@
         "name": {
           "type": "string"
         },
-        "isMainBranch": {
-          "type": "boolean"
-        },
-        "branchCount": {
+        "provinceId": {
           "type": "integer",
           "format": "int32"
+        },
+        "districtId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "wardId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "specificLocation": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "websiteUrl": {
+          "type": "string"
+        },
+        "avatarUrl": {
+          "type": "string"
+        },
+        "coverPhotoUrl": {
+          "type": "string"
+        },
+        "facadePhotoUrl": {
+          "type": "string"
+        },
+        "representativeName": {
+          "type": "string"
+        },
+        "citizenId": {
+          "type": "string"
+        },
+        "representativePhone": {
+          "type": "string"
+        },
+        "representativeEmail": {
+          "type": "string"
+        },
+        "representativePhoneOther": {
+          "type": "string"
+        },
+        "startTimeMonday": {
+          "type": "string",
+          "format": "int64"
+        },
+        "endTimeMonday": {
+          "type": "string",
+          "format": "int64"
+        },
+        "startTimeTuesday": {
+          "type": "string",
+          "format": "int64"
+        },
+        "endTimeTuesday": {
+          "type": "string",
+          "format": "int64"
+        },
+        "startTimeWednesday": {
+          "type": "string",
+          "format": "int64"
+        },
+        "endTimeWednesday": {
+          "type": "string",
+          "format": "int64"
+        },
+        "startTimeThursday": {
+          "type": "string",
+          "format": "int64"
+        },
+        "endTimeThursday": {
+          "type": "string",
+          "format": "int64"
+        },
+        "startTimeFriday": {
+          "type": "string",
+          "format": "int64"
+        },
+        "endTimeFriday": {
+          "type": "string",
+          "format": "int64"
+        },
+        "startTimeSaturday": {
+          "type": "string",
+          "format": "int64"
+        },
+        "endTimeSaturday": {
+          "type": "string",
+          "format": "int64"
+        },
+        "startTimeSunday": {
+          "type": "string",
+          "format": "int64"
+        },
+        "endTimeSunday": {
+          "type": "string",
+          "format": "int64"
         },
         "longitude": {
           "type": "number",
@@ -1457,11 +1601,9 @@
           "type": "number",
           "format": "double"
         },
-        "address": {
-          "type": "string"
-        },
-        "image": {
-          "type": "string"
+        "intervalScheduler": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

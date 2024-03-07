@@ -27,9 +27,9 @@ RETURNING id, barber_id, barber_shop_id, role_id
 `
 
 type CreateBarberRolesParams struct {
-	BarberID     uuid.UUID     `json:"barber_id"`
-	BarberShopID uuid.NullUUID `json:"barber_shop_id"`
-	RoleID       int16         `json:"role_id"`
+	BarberID     uuid.UUID `json:"barber_id"`
+	BarberShopID uuid.UUID `json:"barber_shop_id"`
+	RoleID       int16     `json:"role_id"`
 }
 
 func (q *Queries) CreateBarberRoles(ctx context.Context, arg CreateBarberRolesParams) (BarberRole, error) {
@@ -61,8 +61,8 @@ WHERE "BarberRoles"."barber_id" = $1 AND "BarberRoles"."barber_shop_id" = $2
 `
 
 type GetBarberRolesParams struct {
-	BarberID     uuid.UUID     `json:"barber_id"`
-	BarberShopID uuid.NullUUID `json:"barber_shop_id"`
+	BarberID     uuid.UUID `json:"barber_id"`
+	BarberShopID uuid.UUID `json:"barber_shop_id"`
 }
 
 func (q *Queries) GetBarberRoles(ctx context.Context, arg GetBarberRolesParams) (BarberRole, error) {
@@ -88,14 +88,14 @@ ORDER BY "Roles"."id"
 type ListBarbersRolesRow struct {
 	ID           uuid.UUID      `json:"id"`
 	BarberID     uuid.UUID      `json:"barber_id"`
-	BarberShopID uuid.NullUUID  `json:"barber_shop_id"`
+	BarberShopID uuid.UUID      `json:"barber_shop_id"`
 	RoleID       int16          `json:"role_id"`
 	ID_2         int16          `json:"id_2"`
 	Name         string         `json:"name"`
 	Type         sql.NullString `json:"type"`
 }
 
-func (q *Queries) ListBarbersRoles(ctx context.Context, barberShopID uuid.NullUUID) ([]ListBarbersRolesRow, error) {
+func (q *Queries) ListBarbersRoles(ctx context.Context, barberShopID uuid.UUID) ([]ListBarbersRolesRow, error) {
 	rows, err := q.db.QueryContext(ctx, listBarbersRoles, barberShopID)
 	if err != nil {
 		return nil, err

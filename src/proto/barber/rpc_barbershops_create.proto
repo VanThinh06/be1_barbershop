@@ -3,6 +3,8 @@ syntax = "proto3";
 package pb;
 import "barber/barber_shops.proto";
 import "google/protobuf/wrappers.proto";
+import "barber/time_of_day.proto";
+
 
 option go_package = "barbershop/src/pb/barber";
 
@@ -10,12 +12,38 @@ option go_package = "barbershop/src/pb/barber";
 message CreateBarberShopsRequest {
     optional string barber_shop_chain_id = 1;
     string name = 2;
-    optional bool is_main_branch = 3;
-    int32 branch_count = 4;
-    google.protobuf.DoubleValue longitude = 5;
-    google.protobuf.DoubleValue latitude = 6;
-    string address = 7;
-    optional string image = 8;
+    int32 province_id = 3;
+    int32 district_id = 4;
+    int32 ward_id = 5;
+    string specific_location = 6;
+    string phone = 7;
+    string email = 8;
+    optional string website_url = 9;
+    string avatar_url = 10;
+    string cover_photo_url = 11;
+    string facade_photo_url = 12;
+    string representative_name = 13;
+    string citizen_id = 14;
+    string representative_phone = 15;
+    string representative_email = 16;
+    optional string representative_phone_other = 17;
+    int64 start_time_monday = 18;
+    int64 end_time_monday = 19;
+    int64 start_time_tuesday = 20;
+    int64 end_time_tuesday = 21;
+    int64 start_time_wednesday = 22;
+    int64 end_time_wednesday = 23;
+    int64 start_time_thursday = 24;
+    int64 end_time_thursday = 25;
+    int64 start_time_friday = 26;
+    int64 end_time_friday = 27;
+    int64 start_time_saturday = 28;
+    int64 end_time_saturday = 29;
+    int64 start_time_sunday = 30;
+    int64 end_time_sunday = 31;
+    google.protobuf.DoubleValue longitude = 32;
+    google.protobuf.DoubleValue latitude = 33;
+    int32 interval_scheduler = 34;
 }
 
 message CreateBarberShopsResponse {

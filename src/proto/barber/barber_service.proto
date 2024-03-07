@@ -140,7 +140,7 @@ rpc CreateBarberShops (CreateBarberShopsRequest) returns (CreateBarberShopsRespo
           };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
     description: "API endpoint to create a new barber shop"
-    summary: "Create a barber shop shop"
+    summary: "Create a barber shop"
     tags: "barber shops"
   };
 }

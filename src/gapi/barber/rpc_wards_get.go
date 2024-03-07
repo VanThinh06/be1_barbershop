@@ -24,4 +24,4 @@ func (server *Server) GetWards(ctx context.Context, req *barber.GetWardsRequest)
 		Wards: convertWards(res),
 	}
 	return rsp, nil
-}
+} 

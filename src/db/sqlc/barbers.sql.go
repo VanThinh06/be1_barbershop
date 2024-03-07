@@ -81,7 +81,6 @@ SELECT
   bs."coordinates" as "shop_coordinates",
   bs."interval_scheduler" as "shop_interval_scheduler",
   bs."is_reputation" as "shop_reputation",
-  bs."branch_number" as "shop_branch_number",
   br."role_id" as "barber_role_id",
   br."barber_shop_id" as "barber_role_barber_shop_id"
 FROM
@@ -116,9 +115,8 @@ type GetBarbersRow struct {
 	ShopCoordinates        string         `json:"shop_coordinates"`
 	ShopIntervalScheduler  int16          `json:"shop_interval_scheduler"`
 	ShopReputation         bool           `json:"shop_reputation"`
-	ShopBranchNumber       sql.NullInt16  `json:"shop_branch_number"`
 	BarberRoleID           int16          `json:"barber_role_id"`
-	BarberRoleBarberShopID uuid.NullUUID  `json:"barber_role_barber_shop_id"`
+	BarberRoleBarberShopID uuid.UUID      `json:"barber_role_barber_shop_id"`
 }
 
 func (q *Queries) GetBarbers(ctx context.Context, arg GetBarbersParams) (GetBarbersRow, error) {
@@ -140,7 +138,6 @@ func (q *Queries) GetBarbers(ctx context.Context, arg GetBarbersParams) (GetBarb
 		&i.ShopCoordinates,
 		&i.ShopIntervalScheduler,
 		&i.ShopReputation,
-		&i.ShopBranchNumber,
 		&i.BarberRoleID,
 		&i.BarberRoleBarberShopID,
 	)
@@ -228,7 +225,7 @@ type ListBarbersInBarberShopRow struct {
 	BarberRoleID      int16          `json:"barber_role_id"`
 }
 
-func (q *Queries) ListBarbersInBarberShop(ctx context.Context, barberShopID uuid.NullUUID) ([]ListBarbersInBarberShopRow, error) {
+func (q *Queries) ListBarbersInBarberShop(ctx context.Context, barberShopID uuid.UUID) ([]ListBarbersInBarberShopRow, error) {
 	rows, err := q.db.QueryContext(ctx, listBarbersInBarberShop, barberShopID)
 	if err != nil {
 		return nil, err
