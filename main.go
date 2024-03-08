@@ -7,7 +7,6 @@ import (
 	"barbershop/src/pb/barber"
 	"barbershop/src/pb/customer"
 	"context"
-	"database/sql"
 	"log"
 	"net"
 	"net/http"
@@ -16,6 +15,7 @@ import (
 	"barbershop/src/shared/utilities"
 
 	_ "github.com/jackc/pgx/v4/stdlib"
+	"github.com/jackc/pgx/v5"
 	_ "github.com/lib/pq"
 
 	firebase "firebase.google.com/go/v4"
@@ -29,12 +29,12 @@ import (
 
 func main() {
 
-	config, err := utilities.LoadConfig(".") 
+	config, err := utilities.LoadConfig(".")
 	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}
-
-	conn, err := sql.Open(config.DBDriver, config.DBSource)
+	ctx := context.Background()
+	conn, err := pgx.Connect(ctx, config.DBSource)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
@@ -53,8 +53,8 @@ func main() {
 
 func runGatewayServer(config utilities.Config, store db.StoreMain, firebase db.FirebaseApp) {
 	grpcMux := runtime.NewServeMux()
-	ctx, cancel := context.WithCancel(context.Background()) 
-	defer cancel()                                          
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	server, err := gapi.NewServer(config, store, firebase)
 	if err != nil {

@@ -1141,14 +1141,6 @@
         "roleId": {
           "type": "integer",
           "format": "int32"
-        },
-        "createAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updateAt": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },
@@ -1270,46 +1262,60 @@
           "type": "string"
         },
         "startTimeMonday": {
-          "$ref": "#/definitions/pbTimeOfDay"
+          "type": "string",
+          "format": "int64"
         },
         "endTimeMonday": {
-          "$ref": "#/definitions/pbTimeOfDay"
+          "type": "string",
+          "format": "int64"
         },
         "startTimeTuesday": {
-          "$ref": "#/definitions/pbTimeOfDay"
+          "type": "string",
+          "format": "int64"
         },
         "endTimeTuesday": {
-          "$ref": "#/definitions/pbTimeOfDay"
+          "type": "string",
+          "format": "int64"
         },
         "startTimeWednesday": {
-          "$ref": "#/definitions/pbTimeOfDay"
+          "type": "string",
+          "format": "int64"
         },
         "endTimeWednesday": {
-          "$ref": "#/definitions/pbTimeOfDay"
+          "type": "string",
+          "format": "int64"
         },
         "startTimeThursday": {
-          "$ref": "#/definitions/pbTimeOfDay"
+          "type": "string",
+          "format": "int64"
         },
         "endTimeThursday": {
-          "$ref": "#/definitions/pbTimeOfDay"
+          "type": "string",
+          "format": "int64"
         },
         "startTimeFriday": {
-          "$ref": "#/definitions/pbTimeOfDay"
+          "type": "string",
+          "format": "int64"
         },
         "endTimeFriday": {
-          "$ref": "#/definitions/pbTimeOfDay"
+          "type": "string",
+          "format": "int64"
         },
         "startTimeSaturday": {
-          "$ref": "#/definitions/pbTimeOfDay"
+          "type": "string",
+          "format": "int64"
         },
         "endTimeSaturday": {
-          "$ref": "#/definitions/pbTimeOfDay"
+          "type": "string",
+          "format": "int64"
         },
         "startTimeSunday": {
-          "$ref": "#/definitions/pbTimeOfDay"
+          "type": "string",
+          "format": "int64"
         },
         "endTimeSunday": {
-          "$ref": "#/definitions/pbTimeOfDay"
+          "type": "string",
+          "format": "int64"
         },
         "intervalScheduler": {
           "type": "integer",
@@ -1327,10 +1333,6 @@
         "createAt": {
           "type": "string",
           "format": "date-time"
-        },
-        "distance": {
-          "type": "number",
-          "format": "float"
         }
       }
     },
@@ -1595,11 +1597,11 @@
         },
         "longitude": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "latitude": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "intervalScheduler": {
           "type": "integer",
@@ -1612,6 +1614,9 @@
       "properties": {
         "barberShop": {
           "$ref": "#/definitions/pbBarberShops"
+        },
+        "barberRole": {
+          "$ref": "#/definitions/pbBarberRoles"
         }
       }
     },

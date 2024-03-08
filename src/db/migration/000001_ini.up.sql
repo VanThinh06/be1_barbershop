@@ -71,7 +71,7 @@ CREATE TABLE "BarberShops" (
   "citizen_id" varchar(12) NOT NULL,
   "representative_phone" varchar(15) NOT NULL,
   "representative_email" varchar(100) NOT NULL,
-  "representative_phone_other" varchar(15) NOT NULL,
+  "representative_phone_other" varchar(15),
   "start_time_monday" TIME NOT NULL DEFAULT '00:00:00'::TIME,
   "end_time_monday" TIME NOT NULL DEFAULT '00:00:00'::TIME,
   "start_time_tuesday" TIME NOT NULL DEFAULT '00:00:00'::TIME,
@@ -250,8 +250,6 @@ CREATE INDEX ON "BarberShopChains" ("name");
 CREATE INDEX ON "BarberShops" ("barber_shop_chain_id");
 
 CREATE INDEX ON "BarberShops" ("name");
-
-CREATE UNIQUE INDEX ON "BarberShops" ("barber_shop_chain_id", "branch_number");
 
 CREATE INDEX ON "Barbers" ("phone");
 

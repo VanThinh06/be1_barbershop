@@ -102,7 +102,7 @@ func (server *Server) checkCreateAccountBarberPermission(ctx context.Context, pa
 	}
 
 	if payload.Barber.BarberRole == int32(utilities.Manager) {
-		if roleId != int32(utilities.Barber) && roleId != int32(utilities.OtherStaff) {
+		if roleId != int32(utilities.Barber) {
 			return err
 		}
 	}

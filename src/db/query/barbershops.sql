@@ -112,8 +112,7 @@ $25,
 $26,
 $27,
 $28,
-$29
-,
+$29,
         ST_GeographyFromText('POINT(' || sqlc.arg(longitude)::float8 || ' ' || sqlc.arg(latitude)::float8 || ')')
         ) RETURNING *; 
 

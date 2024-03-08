@@ -6,7 +6,6 @@ import (
 
 	"github.com/jackc/pgtype"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // BarberRoles
@@ -14,7 +13,7 @@ func ConvertBarberRoles(res db.BarberRole) *barber.BarberRoles {
 	return &barber.BarberRoles{
 		Id:           res.BarberID.String(),
 		BarberId:     res.BarberID.String(),
-		BarberShopId: res.BarberShopID.UUID.String(),
+		BarberShopId: res.BarberShopID.String(),
 		RoleId:       int32(res.RoleID),
 	}
 }
@@ -23,29 +22,57 @@ func ConvertBarberRoles(res db.BarberRole) *barber.BarberRoles {
 // / chains
 func ConvertBarberShopChains(res db.BarberShopChain) *barber.BarberShopChains {
 	return &barber.BarberShopChains{
-		Id:           res.ID.String(),
-		Name:         res.Name,
-		Founder:      res.Founder,
-		FoundingDate: timestamppb.New(res.FoundingDate),
-		Website:      res.Website.String,
+		Id:      res.ID.String(),
+		Name:    res.Name,
+		Founder: res.Founder,
+		Website: res.Website.String,
 	}
 }
 
 // barbershops
 func convertBarberShops(barberShop db.BarberShop) *barber.BarberShops {
-	var BarberShopChainId *string
+	var barberShopChainId string
 	if barberShop.BarberShopChainID.Valid {
-		*BarberShopChainId = barberShop.BarberShopChainID.UUID.String()
+		barberShopChainId = barberShop.BarberShopChainID.UUID.String()
 	}
 	return &barber.BarberShops{
-		Id:                barberShop.ID.String(),
-		BarberShopChainId: BarberShopChainId,
-		Name:              barberShop.Name,
-		IsMainBranch:      barberShop.IsMainBranch,
-		BranchCount:       int32(barberShop.BranchNumber.Int16),
-		Coordinates:       barberShop.Coordinates,
-		IntervalScheduler: int32(barberShop.IntervalScheduler),
-		CreateAt:          timestamppb.New(barberShop.CreateAt),
+		Id:                       barberShop.ID.String(),
+		BarberShopChainId:        barberShopChainId,
+		Name:                     barberShop.Name,
+		ProvinceId:               int32(barberShop.ProvinceID),
+		DistrictId:               int32(barberShop.DistrictID),
+		WardId:                   int32(barberShop.ProvinceID),
+		SpecificLocation:         barberShop.SpecificLocation,
+		Phone:                    barberShop.Phone,
+		Email:                    barberShop.Email,
+		WebsiteUrl:               barberShop.WebsiteUrl.String,
+		AvatarUrl:                barberShop.AvatarUrl,
+		CoverPhotoUrl:            barberShop.CoverPhotoUrl,
+		FacadePhotoUrl:           barberShop.FacadePhotoUrl,
+		RepresentativeName:       barberShop.RepresentativeName,
+		CitizenId:                barberShop.CitizenID,
+		RepresentativePhone:      barberShop.RepresentativePhone,
+		RepresentativeEmail:      barberShop.RepresentativeEmail,
+		RepresentativePhoneOther: barberShop.RepresentativePhoneOther.String,
+		StartTimeMonday:          barberShop.StartTimeMonday.Microseconds,
+		EndTimeMonday:            barberShop.EndTimeMonday.Microseconds,
+		StartTimeTuesday:         barberShop.StartTimeTuesday.Microseconds,
+		EndTimeTuesday:           barberShop.EndTimeTuesday.Microseconds,
+		StartTimeWednesday:       barberShop.StartTimeWednesday.Microseconds,
+		EndTimeWednesday:         barberShop.EndTimeWednesday.Microseconds,
+		StartTimeThursday:        barberShop.StartTimeThursday.Microseconds,
+		EndTimeThursday:          barberShop.EndTimeThursday.Microseconds,
+		StartTimeFriday:          barberShop.StartTimeFriday.Microseconds,
+		EndTimeFriday:            barberShop.EndTimeFriday.Microseconds,
+		StartTimeSaturday:        barberShop.StartTimeSaturday.Microseconds,
+		EndTimeSaturday:          barberShop.EndTimeSaturday.Microseconds,
+		StartTimeSunday:          barberShop.StartTimeSunday.Microseconds,
+		EndTimeSunday:            barberShop.EndTimeSunday.Microseconds,
+		IntervalScheduler:        int32(barberShop.IntervalScheduler),
+		IsMainBranch:             barberShop.IsMainBranch,
+		IsReputation:             barberShop.IsReputation,
+		IsVerified:               barberShop.IsVerified,
+		CreateAt:                 timestamppb.New(barberShop.CreateAt),
 	}
 }
 
@@ -53,17 +80,17 @@ func ConvertSearchByNameBarberShops(res []db.SearchByNameBarberShopsRow) []*barb
 	var barberShops []*barber.BarberShops
 
 	for _, barberShop := range res {
-		chainIDString := barberShop.BarberShopChainID.UUID.String()
+		// chainIDString := barberShop.BarberShopChainID.UUID.String()
 		barberShopPB := &barber.BarberShops{
-			Id:                barberShop.ID.String(),
-			BarberShopChainId: &chainIDString,
-			BranchCount:       int32(barberShop.BranchNumber.Int16),
-			Distance:          float32(barberShop.Distance),
-			Longitude:         wrapperspb.Double(barberShop.Longitude),
-			Latitude:          wrapperspb.Double(barberShop.Latitude),
-			Name:              barberShop.Name,
-			Coordinates:       barberShop.Coordinates,
-			IsReputation:      barberShop.IsReputation,
+			Id: barberShop.ID.String(),
+			// BarberShopChainId: &chainIDString,
+			// BranchCount:       int32(barberShop.BranchNumber.Int16),
+			// Distance: float32(barberShop.Distance),
+			// Longitude:         wrapperspb.Double(barberShop.Longitude),
+			// Latitude:          wrapperspb.Double(barberShop.Latitude),
+			Name: barberShop.Name,
+			// Coordinates:       barberShop.Coordinates,
+			IsReputation: barberShop.IsReputation,
 		}
 		barberShops = append(barberShops, barberShopPB)
 	}
@@ -74,12 +101,12 @@ func ConvertListBarberShopsNearby(res []db.ListNearbyBarberShopsRow) []*barber.B
 	var barberShops []*barber.BarberShops
 	for _, barberShop := range res {
 		barberShopPB := &barber.BarberShops{
-			Id:          barberShop.ID.String(),
-			Name:        barberShop.Name,
-			Coordinates: barberShop.Coordinates,
-			Distance:    float32(barberShop.Distance),
-			Longitude:   wrapperspb.Double(barberShop.Longitude),
-			Latitude:    wrapperspb.Double(barberShop.Latitude),
+			Id:   barberShop.ID.String(),
+			Name: barberShop.Name,
+			// Coordinates: barberShop.Coordinates,
+			// Distance: float32(barberShop.Distance),
+			// Longitude:   wrapperspb.Double(barberShop.Longitude),
+			// Latitude:    wrapperspb.Double(barberShop.Latitude),
 		}
 
 		barberShops = append(barberShops, barberShopPB)
@@ -105,29 +132,29 @@ func convertCreateBarbers(res db.Barber) *barber.Barbers {
 }
 func convertBarbers(res db.GetBarbersRow) *barber.Barbers {
 	return &barber.Barbers{
-		Id:           res.ID.String(),
-		GenderId:     int32(res.GenderID),
-		Email:        res.Email,
-		Phone:        res.Phone,
-		NickName:     res.NickName,
-		FullName:     res.FullName.String,
-		Haircut:      res.Haircut,
-		AvatarUrl:    res.AvatarUrl.String,
-		CreateAt:     timestamppb.New(res.CreateAt),
+		Id:        res.ID.String(),
+		GenderId:  int32(res.GenderID),
+		Email:     res.Email,
+		Phone:     res.Phone,
+		NickName:  res.NickName,
+		FullName:  res.FullName.String,
+		Haircut:   res.Haircut,
+		AvatarUrl: res.AvatarUrl.String,
+		CreateAt:  timestamppb.New(res.CreateAt),
 	}
 }
 
 func convertBarbersEmail(res db.GetUserBarberRow) *barber.Barbers {
 	return &barber.Barbers{
-		Id:           res.ID.String(),
-		GenderId:     int32(res.GenderID),
-		Email:        res.Email,
-		Phone:        res.Phone,
-		NickName:     res.NickName,
-		FullName:     res.FullName.String,
-		Haircut:      res.Haircut,
-		AvatarUrl:    res.AvatarUrl.String,
-		CreateAt:     timestamppb.New(res.CreateAt),
+		Id:        res.ID.String(),
+		GenderId:  int32(res.GenderID),
+		Email:     res.Email,
+		Phone:     res.Phone,
+		NickName:  res.NickName,
+		FullName:  res.FullName.String,
+		Haircut:   res.Haircut,
+		AvatarUrl: res.AvatarUrl.String,
+		CreateAt:  timestamppb.New(res.CreateAt),
 	}
 }
 
@@ -182,7 +209,7 @@ func convertProvinces(res []db.Province) []*barber.Provinces {
 
 	for _, item := range res {
 		province := &barber.Provinces{
-			Id: int32(item.ID),
+			Id:   int32(item.ID),
 			Name: item.Name,
 		}
 		provinces = append(provinces, province)
@@ -196,8 +223,8 @@ func convertDistricts(res []db.District) []*barber.Districts {
 
 	for _, item := range res {
 		district := &barber.Districts{
-			Id: int32(item.ID),
-			Name: item.Name,
+			Id:         int32(item.ID),
+			Name:       item.Name,
 			ProvinceId: int32(item.ProvinceID),
 		}
 		districts = append(districts, district)
@@ -211,8 +238,8 @@ func convertWards(res []db.Ward) []*barber.Wards {
 
 	for _, item := range res {
 		ward := &barber.Wards{
-			Id: int32(item.ID),
-			Name: item.Name,
+			Id:         int32(item.ID),
+			Name:       item.Name,
 			DistrictId: int32(item.DistrictID),
 		}
 		wards = append(wards, ward)

@@ -20,7 +20,7 @@ func (server *Server) CreateBarberShopChains(ctx context.Context, req *barber.Cr
 	arg := db.CreateBarberShopChainsParams{
 		Name: req.Name,
 		Founder:      req.Founder,
-		FoundingDate: req.FoundingDate.AsTime(),
+		// FoundingDate: req.FoundingDate.AsTime(),
 		Website: sql.NullString{
 			String: req.GetWebsite(),
 			Valid:  req.Website != "",

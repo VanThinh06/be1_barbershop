@@ -33,10 +33,10 @@ func (server *Server) UpdateBarberShopChains(ctx context.Context, req *barber.Up
 			String: req.GetFounder(),
 			Valid:  req.Founder != nil,
 		},
-		FoundingDate: sql.NullTime{
-			Time:  req.GetFoundingDate().AsTime(),
-			Valid: req.FoundingDate != nil,
-		},
+		// FoundingDate: sql.NullTime{
+		// 	Time:  req.GetFoundingDate().AsTime(),
+		// 	Valid: req.FoundingDate != nil,
+		// },
 		Website: sql.NullString{
 			String: req.GetWebsite(),
 			Valid:  req.Website != nil,

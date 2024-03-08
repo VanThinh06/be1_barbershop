@@ -2,32 +2,33 @@ package db
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
+
+	"github.com/jackc/pgx/v5"
 )
 
 type StoreMain interface {
 	Querier
-	DB() *sql.DB
-	WithTx(tx *sql.Tx) *Queries
+	DB() *pgx.Conn
+	WithTx(tx pgx.Tx) *Queries
 	ExecTx(ctx context.Context, fn func(*Queries) error) error
 }
 
 type SQLStore struct {
-	db *sql.DB
+	db *pgx.Conn
 	*Queries
 }
 
-func (s *SQLStore) DB() *sql.DB {
+func (s *SQLStore) DB() *pgx.Conn {
 	return s.db
 }
 
-func (s *SQLStore) WithTx(tx *sql.Tx) *Queries {
+func (s *SQLStore) WithTx(tx pgx.Tx) *Queries {
 	return s.Queries.WithTx(tx)
 }
 
 func (s *SQLStore) ExecTx(ctx context.Context, fn func(*Queries) error) error {
-	tx, err := s.db.BeginTx(ctx, nil)
+	tx, err := s.db.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		return err
 	}
@@ -35,16 +36,15 @@ func (s *SQLStore) ExecTx(ctx context.Context, fn func(*Queries) error) error {
 	q := New(tx)
 	err = fn(q)
 	if err != nil {
-		if rbError := tx.Rollback(); rbError != nil {
-		return fmt.Errorf("tx error %v, rb error %v", err, rbError)
+		if rbError := tx.Rollback(ctx); rbError != nil {
+			return fmt.Errorf("tx error %v, rb error %v", err, rbError)
 		}
 		return err
 	}
-	return tx.Commit()
+	return tx.Commit(ctx)
 }
 
-
-func NewStore(db *sql.DB) StoreMain {
+func NewStore(db *pgx.Conn) StoreMain {
 	return &SQLStore{
 		db:      db,
 		Queries: New(db),

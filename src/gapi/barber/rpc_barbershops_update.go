@@ -46,18 +46,18 @@ func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBa
 			String: req.GetName(),
 			Valid:  req.Name != nil,
 		},
-		Longitude: sql.NullFloat64{
-			Float64: req.GetLongtude().GetValue(),
-			Valid:   req.Longtude != nil,
-		},
-		Latitude: sql.NullFloat64{
-			Float64: req.GetLatitude().GetValue(),
-			Valid:   req.Latitude != nil,
-		},
-		IsMainBranch: sql.NullBool{
-			Bool:  req.GetIsMainBranch(),
-			Valid: req.IsMainBranch != nil,
-		},
+		// Longitude: sql.NullFloat64{
+		// 	Float64: req.GetLongtude().GetValue(),
+		// 	Valid:   req.Longtude != nil,
+		// },
+		// Latitude: sql.NullFloat64{
+		// 	Float64: req.GetLatitude().GetValue(),
+		// 	Valid:   req.Latitude != nil,
+		// },
+		// IsMainBranch: sql.NullBool{
+		// 	Bool:  req.GetIsMainBranch(),
+		// 	Valid: req.IsMainBranch != nil,
+		// },
 	}
 	barberShop, err := server.Store.UpdateBarberShop(ctx, arg)
 	if err != nil {

@@ -11,6 +11,4 @@ message BarberRoles {
     string barber_id = 2;
     string barber_shop_id = 3;
     int32 role_id = 4;
-    google.protobuf.Timestamp create_at = 5;
-    google.protobuf.Timestamp update_at = 6;
 }
