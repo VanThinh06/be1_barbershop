@@ -116,6 +116,13 @@ $29,
         ST_GeographyFromText('POINT(' || sqlc.arg(longitude)::float8 || ' ' || sqlc.arg(latitude)::float8 || ')')
         ) RETURNING *; 
 
+-- name: ListBarberShops :many
+SELECT DISTINCT bs.*
+FROM "BarberShops" bs
+LEFT JOIN "BarberRoles" br ON bs."id" = br."barber_shop_id"
+WHERE br."barber_id" = $1;
+
+
 -- name: UpdateBarberShop :one
 UPDATE "BarberShops"
 SET 

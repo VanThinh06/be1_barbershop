@@ -49,6 +49,7 @@ type Querier interface {
 	ListAppointmentsByDate(ctx context.Context, arg ListAppointmentsByDateParams) ([]ListAppointmentsByDateRow, error)
 	ListBarberManagers(ctx context.Context, barberID uuid.UUID) ([]uuid.UUID, error)
 	ListBarberShopServiceCategories(ctx context.Context, barberShopID uuid.UUID) ([]ListBarberShopServiceCategoriesRow, error)
+	ListBarberShops(ctx context.Context, barberID uuid.UUID) ([]BarberShop, error)
 	ListBarbersInBarberShop(ctx context.Context, barberShopID uuid.UUID) ([]ListBarbersInBarberShopRow, error)
 	ListBarbersRoles(ctx context.Context, barberShopID uuid.UUID) ([]ListBarbersRolesRow, error)
 	ListNearbyBarberShops(ctx context.Context, arg ListNearbyBarberShopsParams) ([]ListNearbyBarberShopsRow, error)

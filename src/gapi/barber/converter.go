@@ -3,8 +3,6 @@ package gapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
-
-	"github.com/jackc/pgtype"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -75,6 +73,56 @@ func convertBarberShops(barberShop db.BarberShop) *barber.BarberShops {
 		CreateAt:                 timestamppb.New(barberShop.CreateAt),
 	}
 }
+
+
+// barbershops
+func convertListBarberShops(res [] db.BarberShop ) []*barber.BarberShops {
+	var barberShops []*barber.BarberShops
+	for _, barberShop := range res {
+		barberShopPB := &barber.BarberShops{
+		Id:                       barberShop.ID.String(),
+		BarberShopChainId:        barberShop.BarberShopChainID.UUID.String(),
+		Name:                     barberShop.Name,
+		ProvinceId:               int32(barberShop.ProvinceID),
+		DistrictId:               int32(barberShop.DistrictID),
+		WardId:                   int32(barberShop.ProvinceID),
+		SpecificLocation:         barberShop.SpecificLocation,
+		Phone:                    barberShop.Phone,
+		Email:                    barberShop.Email,
+		WebsiteUrl:               barberShop.WebsiteUrl.String,
+		AvatarUrl:                barberShop.AvatarUrl,
+		CoverPhotoUrl:            barberShop.CoverPhotoUrl,
+		FacadePhotoUrl:           barberShop.FacadePhotoUrl,
+		RepresentativeName:       barberShop.RepresentativeName,
+		CitizenId:                barberShop.CitizenID,
+		RepresentativePhone:      barberShop.RepresentativePhone,
+		RepresentativeEmail:      barberShop.RepresentativeEmail,
+		RepresentativePhoneOther: barberShop.RepresentativePhoneOther.String,
+		StartTimeMonday:          barberShop.StartTimeMonday.Microseconds,
+		EndTimeMonday:            barberShop.EndTimeMonday.Microseconds,
+		StartTimeTuesday:         barberShop.StartTimeTuesday.Microseconds,
+		EndTimeTuesday:           barberShop.EndTimeTuesday.Microseconds,
+		StartTimeWednesday:       barberShop.StartTimeWednesday.Microseconds,
+		EndTimeWednesday:         barberShop.EndTimeWednesday.Microseconds,
+		StartTimeThursday:        barberShop.StartTimeThursday.Microseconds,
+		EndTimeThursday:          barberShop.EndTimeThursday.Microseconds,
+		StartTimeFriday:          barberShop.StartTimeFriday.Microseconds,
+		EndTimeFriday:            barberShop.EndTimeFriday.Microseconds,
+		StartTimeSaturday:        barberShop.StartTimeSaturday.Microseconds,
+		EndTimeSaturday:          barberShop.EndTimeSaturday.Microseconds,
+		StartTimeSunday:          barberShop.StartTimeSunday.Microseconds,
+		EndTimeSunday:            barberShop.EndTimeSunday.Microseconds,
+		IntervalScheduler:        int32(barberShop.IntervalScheduler),
+		IsMainBranch:             barberShop.IsMainBranch,
+		IsReputation:             barberShop.IsReputation,
+		IsVerified:               barberShop.IsVerified,
+		CreateAt:                 timestamppb.New(barberShop.CreateAt),
+	}
+	barberShops = append(barberShops, barberShopPB)
+}
+	return barberShops
+}
+
 
 func ConvertSearchByNameBarberShops(res []db.SearchByNameBarberShopsRow) []*barber.BarberShops {
 	var barberShops []*barber.BarberShops
@@ -278,19 +326,4 @@ func convertListAppointmentsByDate(res []db.ListAppointmentsByDateRow) []*barber
 		appointments = append(appointments, appointment)
 	}
 	return appointments
-}
-
-func convertToTimeOfDay(pgTime pgtype.Time) *barber.TimeOfDay {
-	if pgTime.Status == pgtype.Null || pgTime.Microseconds < 0 {
-		return nil
-	}
-
-	totalMinutes := pgTime.Microseconds / 60e6
-	hours := totalMinutes / 60
-	minutes := totalMinutes % 60
-
-	return &barber.TimeOfDay{
-		Hours:   int32(hours),
-		Minutes: int32(minutes),
-	}
 }

@@ -268,6 +268,72 @@ func (q *Queries) GetBarberShop(ctx context.Context, id uuid.UUID) (BarberShop, 
 	return i, err
 }
 
+const listBarberShops = `-- name: ListBarberShops :many
+SELECT DISTINCT bs.id, bs.barber_shop_chain_id, bs.name, bs.province_id, bs.district_id, bs.ward_id, bs.specific_location, bs.phone, bs.email, bs.website_url, bs.coordinates, bs.avatar_url, bs.cover_photo_url, bs.facade_photo_url, bs.representative_name, bs.citizen_id, bs.representative_phone, bs.representative_email, bs.representative_phone_other, bs.start_time_monday, bs.end_time_monday, bs.start_time_tuesday, bs.end_time_tuesday, bs.start_time_wednesday, bs.end_time_wednesday, bs.start_time_thursday, bs.end_time_thursday, bs.start_time_friday, bs.end_time_friday, bs.start_time_saturday, bs.end_time_saturday, bs.start_time_sunday, bs.end_time_sunday, bs.interval_scheduler, bs.is_main_branch, bs.is_reputation, bs.is_verified, bs.create_at
+FROM "BarberShops" bs
+LEFT JOIN "BarberRoles" br ON bs."id" = br."barber_shop_id"
+WHERE br."barber_id" = $1
+`
+
+func (q *Queries) ListBarberShops(ctx context.Context, barberID uuid.UUID) ([]BarberShop, error) {
+	rows, err := q.db.Query(ctx, listBarberShops, barberID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []BarberShop{}
+	for rows.Next() {
+		var i BarberShop
+		if err := rows.Scan(
+			&i.ID,
+			&i.BarberShopChainID,
+			&i.Name,
+			&i.ProvinceID,
+			&i.DistrictID,
+			&i.WardID,
+			&i.SpecificLocation,
+			&i.Phone,
+			&i.Email,
+			&i.WebsiteUrl,
+			&i.Coordinates,
+			&i.AvatarUrl,
+			&i.CoverPhotoUrl,
+			&i.FacadePhotoUrl,
+			&i.RepresentativeName,
+			&i.CitizenID,
+			&i.RepresentativePhone,
+			&i.RepresentativeEmail,
+			&i.RepresentativePhoneOther,
+			&i.StartTimeMonday,
+			&i.EndTimeMonday,
+			&i.StartTimeTuesday,
+			&i.EndTimeTuesday,
+			&i.StartTimeWednesday,
+			&i.EndTimeWednesday,
+			&i.StartTimeThursday,
+			&i.EndTimeThursday,
+			&i.StartTimeFriday,
+			&i.EndTimeFriday,
+			&i.StartTimeSaturday,
+			&i.EndTimeSaturday,
+			&i.StartTimeSunday,
+			&i.EndTimeSunday,
+			&i.IntervalScheduler,
+			&i.IsMainBranch,
+			&i.IsReputation,
+			&i.IsVerified,
+			&i.CreateAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listNearbyBarberShops = `-- name: ListNearbyBarberShops :many
 SELECT
     id,

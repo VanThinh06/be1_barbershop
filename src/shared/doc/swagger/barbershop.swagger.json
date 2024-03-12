@@ -562,6 +562,28 @@
       }
     },
     "/v1/barbershops": {
+      "get": {
+        "summary": "Get barber shop",
+        "description": "API endpoint to get barber shop",
+        "operationId": "BarberService_ListBarberShops",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListBarberShopsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "barber shops"
+        ]
+      },
       "post": {
         "summary": "Create a barber shop",
         "description": "API endpoint to create a new barber shop",
@@ -1804,6 +1826,18 @@
           "type": "array",
           "items": {
             "type": "string"
+          }
+        }
+      }
+    },
+    "pbListBarberShopsResponse": {
+      "type": "object",
+      "properties": {
+        "barberShops": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbBarberShops"
           }
         }
       }

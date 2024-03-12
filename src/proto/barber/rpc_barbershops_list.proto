@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package pb;
+import "barber/barber_shops.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message ListBarberShopsRequest {}
+
+message ListBarberShopsResponse {
+    repeated BarberShops barber_shops = 1;
+}

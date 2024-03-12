@@ -16,6 +16,7 @@ import "barber/rpc_barbershop_chains_delete.proto";
 
 import "barber/rpc_barbershops_create.proto";
 import "barber/rpc_barbershops_get.proto";
+import "barber/rpc_barbershops_list.proto";
 import "barber/rpc_barbershops_update.proto";
 import "barber/rpc_barbershops_delete.proto";
 import "barber/rpc_barbershops_list_nearby.proto";
@@ -141,6 +142,17 @@ rpc CreateBarberShops (CreateBarberShopsRequest) returns (CreateBarberShopsRespo
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
     description: "API endpoint to create a new barber shop"
     summary: "Create a barber shop"
+    tags: "barber shops"
+  };
+}
+
+rpc ListBarberShops (ListBarberShopsRequest) returns (ListBarberShopsResponse){
+  option (google.api.http) = {
+            get: "/v1/barbershops"
+          };
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+    description: "API endpoint to get barber shop"
+    summary: "Get barber shop"
     tags: "barber shops"
   };
 }

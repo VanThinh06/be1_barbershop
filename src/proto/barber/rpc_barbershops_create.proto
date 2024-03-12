@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 package pb;
-import "google/protobuf/wrappers.proto";
 import "barber/barber_shops.proto";
 import "barber/barber_roles.proto";
 
