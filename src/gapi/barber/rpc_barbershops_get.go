@@ -11,15 +11,18 @@ import (
 )
 
 func (server *Server) GetBarberShops(ctx context.Context, req *barber.GetBarberShopsRequest) (*barber.GetBarberShopsResponse, error) {
+
 	_, err := server.authorizeBarber(ctx)
 	if err != nil {
-		_, err = server.authorizeCustomer(ctx)
-		if err != nil {
-			return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
-		}
+		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
-	res, err := server.Store.GetBarberShop(ctx, uuid.MustParse(req.Id))
+	idBarberShop, err := uuid.Parse(req.Id)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
+
+	res, err := server.Store.GetBarberShop(ctx, idBarberShop)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, status.Error(codes.NotFound, "barbershops don't exist")
