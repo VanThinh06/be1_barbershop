@@ -4,6 +4,7 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"barbershop/src/shared/helpers"
+	"barbershop/src/shared/utilities"
 	"context"
 	"database/sql"
 
@@ -16,9 +17,12 @@ import (
 
 func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeeRequest) (*barber.CreateBarberEmployeeResponse, error) {
 
-	// TODO
-	_, err := server.authorizeBarber(ctx)
+	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+	}
+
+	if payload.Barber.BarberRoleType != string(utilities.Administrator) {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
@@ -36,23 +40,27 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 		return nil, internalError(err)
 	}
 
-	hashedPassword, err := helpers.HashPassword(defaultPassword)
-	if err != nil {
-		return nil, internalError(err)
+	var hashedPassword string
+	if defaultPassword.Valid {
+		hashedPassword, err = helpers.HashPassword(defaultPassword.String)
+		if err != nil {
+			return nil, internalError(err)
+		}
 	}
 
 	newUUID := uuid.New()
 	uuidPrefix := newUUID.String()[:8]
 	combinedNickName := req.NickName + uuidPrefix
 
+	var hashedPasswordValid bool = hashedPassword != ""
 	arg := db.CreateBarberEmployeeParams{
-		Phone:          req.GetPhone(),
-		HashedPassword: hashedPassword,
-		NickName:       combinedNickName,
-		FullName: sql.NullString{
-			String: req.GetFullName(),
-			Valid:  true,
+		Phone: req.GetPhone(),
+		HashedPassword: sql.NullString{
+			String: hashedPassword,
+			Valid:  hashedPasswordValid,
 		},
+		NickName: combinedNickName,
+		FullName: req.GetFullName(),
 	}
 
 	errTx := make(chan error)
@@ -68,14 +76,15 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 
 	err = <-errTx
 	rspBarber := <-resultBarber
-	_ = <-resultBarberRole
+	rspRole := <-resultBarberRole
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, "internal")
 	}
 
 	rsp := &barber.CreateBarberEmployeeResponse{
-		Barber: convertCreateBarbers(rspBarber),
+		Barber:     convertCreateBarbers(rspBarber),
+		BarberRole: convertBarberRoles(rspRole),
 	}
 	return rsp, nil
 }
@@ -85,7 +94,8 @@ func (server *Server) txCreateBarberEmployee(ctx context.Context, req *barber.Cr
 	var resBarberRole db.BarberRole
 
 	err := server.Store.ExecTx(ctx, func(q *db.Queries) error {
-		resBarber, err := server.Store.CreateBarberEmployee(ctx, arg)
+		var err error
+		resBarber, err = server.Store.CreateBarberEmployee(ctx, arg)
 		if err != nil {
 			if pqErr, ok := err.(*pgconn.PgError); ok {
 				switch pqErr.ConstraintName {

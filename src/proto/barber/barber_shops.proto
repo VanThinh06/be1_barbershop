@@ -45,3 +45,24 @@ message BarberShops {
     bool is_verified = 36;
     google.protobuf.Timestamp create_at = 37;
 }
+
+message BarberShopInList {
+    string id = 1;
+    string barber_shop_chain_id = 2;
+    string name = 3;
+    int32 province_id = 4;
+    string province_name = 5;
+    int32 district_id = 6;
+    string district_name = 7;
+    int32 ward_id = 8;
+    string ward_name = 9;
+    string specific_location = 10;
+    string phone = 11;
+    string email = 12;
+    string website_url = 13;
+    string avatar_url = 14;
+    string cover_photo_url = 15;
+    string facade_photo_url = 16;
+    bool is_main_branch = 17;
+    bool is_reputation = 18;
+}

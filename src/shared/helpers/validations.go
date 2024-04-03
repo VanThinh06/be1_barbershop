@@ -11,9 +11,9 @@ import (
 var (
 	nicknameRegex = "^[a-zA-Z0-9" + regexp.QuoteMeta(".#@-_") + "]+$"
 	emailRegex    = `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
-	e164Regex     = regexp.MustCompile(`^\+84\d{9,10}$`)
-	vietnamRegex  = regexp.MustCompile(`^0\d{9}$`)
-	numberRegex   = regexp.MustCompile(`^\d+$`)
+
+	vietnamRegex = regexp.MustCompile(`^(0[35789])[0-9]{8}$`)
+	numberRegex  = regexp.MustCompile(`^\d+$`)
 )
 
 const (
@@ -73,9 +73,6 @@ func ValidateId(id string) error {
 
 func ValidatePhoneNumber(phoneNumber string) error {
 	normalizedNumber := regexp.MustCompile(`\D`).ReplaceAllString(phoneNumber, "")
-	if e164Regex.MatchString(normalizedNumber) {
-		return nil
-	}
 
 	if vietnamRegex.MatchString(normalizedNumber) {
 		return nil

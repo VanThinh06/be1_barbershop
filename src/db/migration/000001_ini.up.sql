@@ -90,7 +90,7 @@ CREATE TABLE "BarberShops" (
   "is_main_branch" bool NOT NULL DEFAULT false,
   "is_reputation" bool NOT NULL DEFAULT false,
   "is_verified" bool NOT NULL DEFAULT false,
-  "default_employee_password" varchar(150) NOT NULL DEFAULT 'Password123',
+  "default_employee_password" varchar(25),
   "create_at" timestamptz NOT NULL DEFAULT (now())
 );
 
@@ -128,11 +128,11 @@ CREATE TABLE "BarberShopServices" (
 CREATE TABLE "Barbers" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "gender_id" int2 NOT NULL DEFAULT 1,
-  "email" varchar(50) UNIQUE,
   "phone" varchar(15) UNIQUE NOT NULL,
-  "hashed_password" varchar(150) NOT NULL,
   "nick_name" varchar(50) UNIQUE NOT NULL,
-  "full_name" varchar(50),
+  "email" varchar(50) UNIQUE,
+  "hashed_password" varchar(150),
+  "full_name" varchar(50) NOT NULL,
   "haircut" bool NOT NULL DEFAULT false,
   "avatar_url" varchar(120),
   "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',

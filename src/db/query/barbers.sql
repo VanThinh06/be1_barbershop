@@ -4,14 +4,16 @@ INSERT INTO "Barbers" (
     email,
     phone,
     hashed_password,
-    nick_name
+    nick_name,
+    full_name
   )
 VALUES (
     $1,
     $2,
     $3,
     $4,
-    $5
+    $5,
+    $6
   )
 RETURNING *;
 

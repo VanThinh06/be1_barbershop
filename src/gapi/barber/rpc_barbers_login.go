@@ -40,7 +40,10 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 		return nil, status.Error(codes.InvalidArgument, "username or password is incorrect")
 	}
 
-	err = helpers.CheckPassword(req.Password, res.HashedPassword)
+	if res.HashedPassword.Valid == false{
+		return nil, status.Error(codes.Unauthenticated, "username or password is incorrect")
+	}
+	err = helpers.CheckPassword(req.Password, res.HashedPassword.String)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "username or password is incorrect")
 	}

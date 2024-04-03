@@ -42,7 +42,7 @@ func (server *Server) CreateBarberShops(ctx context.Context, req *barber.CreateB
 
 	rsp := &barber.CreateBarberShopsResponse{
 		BarberShop: convertBarberShops(barberShop),
-		BarberRole: ConvertBarberRoles(barberRole),
+		BarberRole: convertBarberRoles(barberRole),
 	}
 	return rsp, nil
 }

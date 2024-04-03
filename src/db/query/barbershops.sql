@@ -122,9 +122,30 @@ $29,
         ) RETURNING *; 
 
 -- name: ListBarberShops :many
-SELECT DISTINCT bs.*
+SELECT DISTINCT 
+    bs.id,
+    bs.barber_shop_chain_id,
+    bs.name,
+    bs.province_id,
+    bs.district_id,
+    bs.ward_id,
+    bs.specific_location,
+    bs.phone,
+    bs.email,
+    bs.website_url,
+    bs.avatar_url,
+    bs.cover_photo_url,
+    bs.facade_photo_url,
+    bs.is_main_branch,
+    bs.is_reputation,
+    COALESCE(p.name, '') AS province_name,
+    COALESCE(d.name, '') AS district_name,
+    COALESCE(w.name, '') AS ward_name
 FROM "BarberShops" bs
 LEFT JOIN "BarberRoles" br ON bs."id" = br."barber_shop_id"
+LEFT JOIN "Provinces" p ON bs."province_id" = p."id"
+LEFT JOIN "Districts" d ON bs."district_id" = d."id"
+LEFT JOIN "Wards" w ON bs."ward_id" = w."id"
 WHERE br."barber_id" = $1;
 
 

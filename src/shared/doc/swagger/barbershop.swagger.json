@@ -93,7 +93,7 @@
     },
     "/v1/barber": {
       "post": {
-        "summary": "Create a barber shop",
+        "summary": "Create a barber",
         "description": "API endpoint to create a new barber",
         "operationId": "BarberService_CreateBarber",
         "responses": {
@@ -159,8 +159,8 @@
     },
     "/v1/barber-employee": {
       "post": {
-        "summary": "Create a barber shop",
-        "description": "API endpoint to create a new barber",
+        "summary": "Create a barber",
+        "description": "API endpoint to create barber employee",
         "operationId": "BarberService_CreateBarberEmployee",
         "responses": {
           "200": {
@@ -1232,6 +1232,68 @@
         }
       }
     },
+    "pbBarberShopInList": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "barberShopChainId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "provinceId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "provinceName": {
+          "type": "string"
+        },
+        "districtId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "districtName": {
+          "type": "string"
+        },
+        "wardId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "wardName": {
+          "type": "string"
+        },
+        "specificLocation": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "websiteUrl": {
+          "type": "string"
+        },
+        "avatarUrl": {
+          "type": "string"
+        },
+        "coverPhotoUrl": {
+          "type": "string"
+        },
+        "facadePhotoUrl": {
+          "type": "string"
+        },
+        "isMainBranch": {
+          "type": "boolean"
+        },
+        "isReputation": {
+          "type": "boolean"
+        }
+      }
+    },
     "pbBarberShopServiceCategories": {
       "type": "object",
       "properties": {
@@ -1494,6 +1556,9 @@
       "properties": {
         "barber": {
           "$ref": "#/definitions/pbBarbers"
+        },
+        "barberRole": {
+          "$ref": "#/definitions/pbBarberRoles"
         }
       }
     },
@@ -1723,6 +1788,9 @@
         },
         "password": {
           "type": "string"
+        },
+        "fullName": {
+          "type": "string"
         }
       }
     },
@@ -1900,7 +1968,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/pbBarberShops"
+            "$ref": "#/definitions/pbBarberShopInList"
           }
         }
       }

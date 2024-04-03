@@ -25,10 +25,14 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 	}
 
 	arg := db.CreateBarbersParams{
-		NickName:       req.GetNickName(),
-		HashedPassword: hashedPassword,
-		Phone:          req.GetPhone(),
-		GenderID:       int16(req.GetGenderId()),
+		NickName: req.GetNickName(),
+		FullName: req.GetFullName(),
+		HashedPassword: sql.NullString{
+			String: hashedPassword,
+			Valid:  true,
+		},
+		Phone:    req.GetPhone(),
+		GenderID: int16(req.GetGenderId()),
 		Email: sql.NullString{
 			String: req.GetEmail(),
 			Valid:  true,

@@ -41,7 +41,7 @@ func (server *Server) UpdateBarberRoles(ctx context.Context, req *barber.UpdateB
 	}
 
 	rsp := &barber.UpdateBarberRolesResponse{
-		BarberRole: ConvertBarberRoles(barberRole),
+		BarberRole: convertBarberRoles(barberRole),
 	}
 	return rsp, nil
 }
