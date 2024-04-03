@@ -15,6 +15,21 @@ VALUES (
   )
 RETURNING *;
 
+-- name: CreateBarberEmployee :one
+INSERT INTO "Barbers" (
+    phone,
+    hashed_password,
+    nick_name,
+    full_name
+  )
+VALUES (
+    $1,
+    $2,
+    $3,
+    $4
+  )
+RETURNING *;
+
 -- name: GetBarbers :one
 SELECT
   b.*, 

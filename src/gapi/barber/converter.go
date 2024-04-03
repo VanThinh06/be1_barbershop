@@ -169,7 +169,7 @@ func convertCreateBarbers(res db.Barber) *barber.Barbers {
 	return &barber.Barbers{
 		Id:        res.ID.String(),
 		GenderId:  int32(res.GenderID),
-		Email:     res.Email,
+		Email:     res.Email.String,
 		Phone:     res.Phone,
 		NickName:  res.NickName,
 		FullName:  res.FullName.String,
@@ -182,7 +182,7 @@ func convertBarbers(res db.GetBarbersRow) *barber.Barbers {
 	return &barber.Barbers{
 		Id:        res.ID.String(),
 		GenderId:  int32(res.GenderID),
-		Email:     res.Email,
+		Email:     res.Email.String,
 		Phone:     res.Phone,
 		NickName:  res.NickName,
 		FullName:  res.FullName.String,
@@ -196,7 +196,7 @@ func convertBarbersEmail(res db.GetUserBarberRow) *barber.Barbers {
 	return &barber.Barbers{
 		Id:        res.ID.String(),
 		GenderId:  int32(res.GenderID),
-		Email:     res.Email,
+		Email:     res.Email.String,
 		Phone:     res.Phone,
 		NickName:  res.NickName,
 		FullName:  res.FullName.String,

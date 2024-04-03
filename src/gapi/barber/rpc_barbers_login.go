@@ -17,13 +17,19 @@ import (
 func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRequest) (*barber.LoginBarberResponse, error) {
 	contact := db.GetUserBarberParams{
 		TypeUsername: "phone",
-		Email:        req.Username,
+		Email: sql.NullString{
+			String: req.GetUsername(),
+			Valid:  true,
+		},
 	}
 
 	err := helpers.ValidatePhoneNumber(req.Username)
 	if err != nil {
 		contact.TypeUsername = "email"
-		contact.Email = req.Username
+		contact.Email = sql.NullString{
+			String: req.GetUsername(),
+			Valid:  true,
+		}
 	}
 
 	res, err := server.Store.GetUserBarber(ctx, contact)
@@ -44,7 +50,7 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 		BarberRole:     int32(res.BarberRole.Int16),
 		BarberRoleType: utilities.MapRoleToRoleType[int32(res.BarberRole.Int16)],
 		Phone:          res.Phone,
-		Email:          res.Email,
+		Email:          res.Email.String,
 		FcmDevice:      req.FcmDevice,
 	}
 
@@ -76,7 +82,7 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 	if err != nil {
 		return nil, status.Error(codes.Internal, "internal")
 	}
- 
+
 	rsp := &barber.LoginBarberResponse{
 		Barber:                convertBarbersEmail(res),
 		AccessToken:           accessToken,

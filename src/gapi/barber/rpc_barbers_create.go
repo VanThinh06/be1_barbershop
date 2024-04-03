@@ -5,6 +5,7 @@ import (
 	"barbershop/src/pb/barber"
 	"barbershop/src/shared/helpers"
 	"context"
+	"database/sql"
 
 	"github.com/jackc/pgconn"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -28,7 +29,10 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 		HashedPassword: hashedPassword,
 		Phone:          req.GetPhone(),
 		GenderID:       int16(req.GetGenderId()),
-		Email:          req.GetEmail(),
+		Email: sql.NullString{
+			String: req.GetEmail(),
+			Valid:  true,
+		},
 	}
 	res, err := server.Store.CreateBarbers(ctx, arg)
 	if err != nil {
@@ -65,7 +69,7 @@ func validateCreateBarberAccountBarberShop(req *barber.CreateBarbersRequest) (va
 	if err := helpers.ValidatePassword(req.Password); err != nil {
 		validations = append(validations, FieldValidation("password", err))
 	}
-	
+
 	if err := helpers.ValidateNickName(req.NickName); err != nil {
 		validations = append(validations, FieldValidation("nick_name", err))
 	}

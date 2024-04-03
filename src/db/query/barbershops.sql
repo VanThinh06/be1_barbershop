@@ -4,6 +4,11 @@ SELECT *
 FROM "BarberShops"
 WHERE id = $1;
 
+-- name: GetDefaultPasswordEmployee :one
+SELECT default_employee_password
+FROM "BarberShops"
+WHERE id = $1;
+
 -- name: SearchByNameBarberShops :many
 SELECT
     bs.id,

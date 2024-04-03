@@ -157,6 +157,40 @@
         ]
       }
     },
+    "/v1/barber-employee": {
+      "post": {
+        "summary": "Create a barber shop",
+        "description": "API endpoint to create a new barber",
+        "operationId": "BarberService_CreateBarberEmployee",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateBarberEmployeeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateBarberEmployeeRequest"
+            }
+          }
+        ],
+        "tags": [
+          "barbers"
+        ]
+      }
+    },
     "/v1/barber-managers": {
       "delete": {
         "summary": "Delete a barber manager",
@@ -1431,6 +1465,35 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "pbCreateBarberEmployeeRequest": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string"
+        },
+        "nickName": {
+          "type": "string"
+        },
+        "fullName": {
+          "type": "string"
+        },
+        "roleId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "barberShopId": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateBarberEmployeeResponse": {
+      "type": "object",
+      "properties": {
+        "barber": {
+          "$ref": "#/definitions/pbBarbers"
         }
       }
     },

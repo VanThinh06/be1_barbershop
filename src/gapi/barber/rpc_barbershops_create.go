@@ -151,7 +151,7 @@ func (server *Server) txCreateBarberShop(ctx context.Context, req *barber.Create
 
 		resBarberShop, err = server.Store.CreateBarberShop(ctx, arg)
 		if err != nil {
-			return status.Errorf(codes.Internal, err.Error())
+			return internalError(err)
 		}
 
 		argBarberRole := db.CreateBarberRolesParams{

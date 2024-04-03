@@ -24,6 +24,7 @@ import "barber/rpc_barbershops_search_by_name.proto";
 
 
 import "barber/rpc_barbers_create.proto";
+import "barber/rpc_barbers_create_employee.proto";
 import "barber/rpc_barbers_get.proto";
 import "barber/rpc_barbers_update.proto";
 import "barber/rpc_barber_login.proto";
@@ -344,11 +345,24 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
                 };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
           description: "API endpoint to create a new barber"
-          summary: "Create a barber shop"
+          summary: "Create a barber"
           tags: "barbers"
 
         };
     }
+
+    rpc CreateBarberEmployee (CreateBarberEmployeeRequest) returns (CreateBarberEmployeeResponse){
+      option (google.api.http) = {
+                post: "/v1/barber-employee"
+                body: "*"
+              };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "API endpoint to create barber employee"
+        summary: "Create a barber"
+        tags: "barbers"
+
+      };
+  }
     
     rpc GetBarber (GetBarbersRequest) returns (GetBarbersResponse){
       option (google.api.http) = {

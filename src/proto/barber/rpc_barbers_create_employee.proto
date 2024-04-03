@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package pb;
+
+import "barber/barbers.proto";
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message CreateBarberEmployeeRequest{
+    string phone = 1;
+    string nick_name = 2;
+    string full_name = 3;
+    int32 role_id = 4;
+    string barber_shop_id = 5;
+}
+
+message CreateBarberEmployeeResponse {
+    Barbers barber = 1;
+}
