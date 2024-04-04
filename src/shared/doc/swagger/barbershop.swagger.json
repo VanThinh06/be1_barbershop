@@ -1481,10 +1481,6 @@
         },
         "avatarUrl": {
           "type": "string"
-        },
-        "createAt": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },
@@ -2013,9 +2009,6 @@
         },
         "fcmDevice": {
           "type": "string"
-        },
-        "timezone": {
-          "type": "string"
         }
       }
     },
@@ -2024,6 +2017,10 @@
       "properties": {
         "barber": {
           "$ref": "#/definitions/pbBarbers"
+        },
+        "barberRoleId": {
+          "type": "integer",
+          "format": "int32"
         },
         "accessToken": {
           "type": "string"

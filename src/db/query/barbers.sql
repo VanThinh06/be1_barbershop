@@ -54,7 +54,7 @@ WHERE
 -- name: GetUserBarber :one
 SELECT 
   b.*,
-  br."role_id" as "barber_role"
+  br."role_id" as "barber_role_id"
 FROM "Barbers" b
 LEFT JOIN
   "BarberRoles" br ON b."id" = br."barber_id"
@@ -91,5 +91,3 @@ RETURNING *;
 -- name: DeleteBarbers :exec
 DELETE FROM "Barbers"
 WHERE "id" = $1;
-
--- name: GenerateQRCodeBarber :one

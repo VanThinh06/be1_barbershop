@@ -155,7 +155,6 @@ func convertCreateBarbers(res db.Barber) *barber.Barbers {
 		FullName:  res.FullName,
 		Haircut:   res.Haircut,
 		AvatarUrl: res.AvatarUrl.String,
-		CreateAt:  timestamppb.New(res.CreateAt),
 	}
 }
 func convertBarbers(res db.GetBarbersRow) *barber.Barbers {
@@ -168,11 +167,10 @@ func convertBarbers(res db.GetBarbersRow) *barber.Barbers {
 		FullName:  res.FullName,
 		Haircut:   res.Haircut,
 		AvatarUrl: res.AvatarUrl.String,
-		CreateAt:  timestamppb.New(res.CreateAt),
 	}
 }
 
-func convertBarbersEmail(res db.GetUserBarberRow) *barber.Barbers {
+func convertBarberContact(res db.GetUserBarberRow) *barber.Barbers {
 	return &barber.Barbers{
 		Id:        res.ID.String(),
 		GenderId:  int32(res.GenderID),
@@ -182,7 +180,6 @@ func convertBarbersEmail(res db.GetUserBarberRow) *barber.Barbers {
 		FullName:  res.FullName,
 		Haircut:   res.Haircut,
 		AvatarUrl: res.AvatarUrl.String,
-		CreateAt:  timestamppb.New(res.CreateAt),
 	}
 }
 

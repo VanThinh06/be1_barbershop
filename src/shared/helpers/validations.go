@@ -100,7 +100,10 @@ func ValidateNickName(nickname string) error {
 		return err
 	}
 
-	match, _ := regexp.MatchString(nicknameRegex, nickname)
+	match, err := regexp.MatchString(nicknameRegex, nickname)
+	if err != nil {
+        return errors.New("error while validating nickname")
+    }
 	if !match {
 		return errors.New("invalid nickname format")
 	}

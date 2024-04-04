@@ -40,18 +40,18 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 		return nil, status.Error(codes.InvalidArgument, "username or password is incorrect")
 	}
 
-	if res.HashedPassword.Valid == false{
-		return nil, status.Error(codes.Unauthenticated, "username or password is incorrect")
+	if !res.HashedPassword.Valid {
+		return nil, status.Error(codes.InvalidArgument, "username or password is incorrect")
 	}
 	err = helpers.CheckPassword(req.Password, res.HashedPassword.String)
 	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, "username or password is incorrect")
+		return nil, status.Error(codes.InvalidArgument, "username or password is incorrect")
 	}
 
 	barberPayload := token.Barber{
 		BarberID:       res.ID,
-		BarberRole:     int32(res.BarberRole.Int16),
-		BarberRoleType: utilities.MapRoleToRoleType[int32(res.BarberRole.Int16)],
+		BarberRole:     int32(res.BarberRoleID.Int16),
+		BarberRoleType: utilities.MapRoleToRoleType[int32(res.BarberRoleID.Int16)],
 		Phone:          res.Phone,
 		Email:          res.Email.String,
 		FcmDevice:      req.FcmDevice,
@@ -87,7 +87,8 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 	}
 
 	rsp := &barber.LoginBarberResponse{
-		Barber:                convertBarbersEmail(res),
+		Barber:                convertBarberContact(res),
+		BarberRoleId:          int32(res.BarberRoleID.Int16),
 		AccessToken:           accessToken,
 		RefreshToken:          refreshToken,
 		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiresAt),

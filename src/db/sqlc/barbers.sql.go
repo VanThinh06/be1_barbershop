@@ -199,7 +199,7 @@ func (q *Queries) GetBarbers(ctx context.Context, arg GetBarbersParams) (GetBarb
 const getUserBarber = `-- name: GetUserBarber :one
 SELECT 
   b.id, b.gender_id, b.phone, b.nick_name, b.email, b.hashed_password, b.full_name, b.haircut, b.avatar_url, b.password_changed_at, b.create_at,
-  br."role_id" as "barber_role"
+  br."role_id" as "barber_role_id"
 FROM "Barbers" b
 LEFT JOIN
   "BarberRoles" br ON b."id" = br."barber_id"
@@ -227,7 +227,7 @@ type GetUserBarberRow struct {
 	AvatarUrl         sql.NullString `json:"avatar_url"`
 	PasswordChangedAt time.Time      `json:"password_changed_at"`
 	CreateAt          time.Time      `json:"create_at"`
-	BarberRole        pgtype.Int2    `json:"barber_role"`
+	BarberRoleID      pgtype.Int2    `json:"barber_role_id"`
 }
 
 func (q *Queries) GetUserBarber(ctx context.Context, arg GetUserBarberParams) (GetUserBarberRow, error) {
@@ -245,7 +245,7 @@ func (q *Queries) GetUserBarber(ctx context.Context, arg GetUserBarberParams) (G
 		&i.AvatarUrl,
 		&i.PasswordChangedAt,
 		&i.CreateAt,
-		&i.BarberRole,
+		&i.BarberRoleID,
 	)
 	return i, err
 }

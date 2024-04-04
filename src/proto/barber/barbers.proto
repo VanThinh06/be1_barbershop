@@ -14,5 +14,4 @@ message Barbers {
     string full_name = 6;
     bool haircut = 7;
     string avatar_url = 8;
-    google.protobuf.Timestamp create_at = 9;
 }

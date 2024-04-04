@@ -75,7 +75,11 @@ func validateCreateBarberAccountBarberShop(req *barber.CreateBarbersRequest) (va
 	}
 
 	if err := helpers.ValidateNickName(req.NickName); err != nil {
-		validations = append(validations, FieldValidation("nick_name", err))
+		validations = append(validations, FieldValidation("nick name", err))
+	}
+
+	if err := helpers.ValidateFullName(req.FullName); err != nil {
+		validations = append(validations, FieldValidation("full name", err))
 	}
 
 	return validations

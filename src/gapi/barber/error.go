@@ -15,7 +15,8 @@ func FieldValidation(field string, err error) *errdetails.BadRequest_FieldViolat
 
 func inValidArgumentError(validations []*errdetails.BadRequest_FieldViolation) error {
 	badRequest := &errdetails.BadRequest{FieldViolations: validations}
-	statusInvalid := status.New(codes.InvalidArgument, "invalid parameters")
+	msgError := "invalid " + validations[0].Field + " format"
+	statusInvalid := status.New(codes.InvalidArgument, msgError)
 
 	statusDetail, err := statusInvalid.WithDetails(badRequest)
 
