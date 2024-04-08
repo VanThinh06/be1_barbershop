@@ -15,6 +15,7 @@ message Barbers {
     string full_name = 6;
     bool haircut = 7;
     string avatar_url = 8;
+    bool work_status = 9;
 }
 
 message BarberEmployees{

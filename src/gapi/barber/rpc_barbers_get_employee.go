@@ -17,7 +17,7 @@ func (server *Server) GetBarberEmployees(ctx context.Context, req *barber.GetBar
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
-	if payload.Barber.BarberRoleType != string(utilities.Administrator) {
+	if payload.Barber.BarberRole != int32(utilities.Admin) {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 

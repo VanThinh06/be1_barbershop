@@ -196,6 +196,7 @@ func convertBarberEmployees(res []db.GetBarberEmployeesRow) []*barber.BarberEmpl
 				NickName:  item.NickName,
 				FullName:  item.FullName,
 				Haircut:   item.Haircut,
+				WorkStatus: item.WorkStatus,
 				AvatarUrl: item.AvatarUrl.String,
 			},
 			BarberRole: &barber.BarberRoles{

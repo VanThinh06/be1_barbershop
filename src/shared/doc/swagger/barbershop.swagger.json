@@ -1524,6 +1524,9 @@
         },
         "avatarUrl": {
           "type": "string"
+        },
+        "workStatus": {
+          "type": "boolean"
         }
       }
     },

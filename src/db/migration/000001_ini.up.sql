@@ -124,7 +124,6 @@ CREATE TABLE "BarberShopServices" (
   "image_url" varchar(120)
 );
 
-
 CREATE TABLE "Barbers" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "gender_id" int2 NOT NULL DEFAULT 1,
@@ -133,7 +132,8 @@ CREATE TABLE "Barbers" (
   "email" varchar(50) UNIQUE,
   "hashed_password" varchar(150),
   "full_name" varchar(50) NOT NULL,
-  "haircut" bool NOT NULL DEFAULT false,
+  "haircut" bool NOT NULL DEFAULT FALSE,
+  "work_status" BOOLEAN NOT NULL DEFAULT TRUE,
   "avatar_url" varchar(120),
   "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
   "create_at" timestamptz NOT NULL DEFAULT (now())
