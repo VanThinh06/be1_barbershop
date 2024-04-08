@@ -183,6 +183,34 @@ func convertBarberContact(res db.GetUserBarberRow) *barber.Barbers {
 	}
 }
 
+func convertBarberEmployees(res []db.GetBarberEmployeesRow) []*barber.BarberEmployees {
+	var barberEmployees []*barber.BarberEmployees
+
+	for _, item := range res {
+		barberEmployee := &barber.BarberEmployees{
+			Barber: &barber.Barbers{
+				Id:        item.ID.String(),
+				GenderId:  int32(item.GenderID),
+				Email:     item.Email.String,
+				Phone:     item.Phone,
+				NickName:  item.NickName,
+				FullName:  item.FullName,
+				Haircut:   item.Haircut,
+				AvatarUrl: item.AvatarUrl.String,
+			},
+			BarberRole: &barber.BarberRoles{
+				Id:           item.BarberID.String(),
+				BarberId:     item.BarberID.String(),
+				BarberShopId: item.BarberShopID.String(),
+				RoleId:       int32(item.RoleID),
+			},
+		}
+		barberEmployees = append(barberEmployees, barberEmployee)
+	}
+
+	return barberEmployees
+}
+
 func convertBarberManagers(res db.BarberManager) *barber.BarberManagers {
 	return &barber.BarberManagers{
 		BarberId:  res.BarberID.String(),

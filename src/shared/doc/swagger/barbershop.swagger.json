@@ -191,6 +191,38 @@
         ]
       }
     },
+    "/v1/barber-employee/{barberShopId}": {
+      "get": {
+        "summary": "Get list barber employee",
+        "description": "API endpoint to get barber employee",
+        "operationId": "BarberService_GetBarberEmployees",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetBarberEmployeeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barberShopId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "barbers"
+        ]
+      }
+    },
     "/v1/barber-managers": {
       "delete": {
         "summary": "Delete a barber manager",
@@ -1163,6 +1195,17 @@
         }
       }
     },
+    "pbBarberEmployees": {
+      "type": "object",
+      "properties": {
+        "barber": {
+          "$ref": "#/definitions/pbBarbers"
+        },
+        "barberRole": {
+          "$ref": "#/definitions/pbBarberRoles"
+        }
+      }
+    },
     "pbBarberManagers": {
       "type": "object",
       "properties": {
@@ -1862,6 +1905,18 @@
         "provinceId": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "pbGetBarberEmployeeResponse": {
+      "type": "object",
+      "properties": {
+        "barberEmployees": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbBarberEmployees"
+          }
         }
       }
     },

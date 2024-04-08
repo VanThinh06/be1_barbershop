@@ -64,10 +64,10 @@ WHERE  (
         (sqlc.arg(type_username)::varchar = 'phone' AND phone = $1)
     );
 
--- name: ListBarbersInBarberShop :many
+-- name: GetBarberEmployees :many
 SELECT
   b.*,
-  br."role_id" as "barber_role_id"
+  br.*
 FROM
   "Barbers" b
 JOIN

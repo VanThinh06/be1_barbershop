@@ -6,8 +6,9 @@ import (
 	"barbershop/src/shared/helpers"
 	"context"
 	"database/sql"
+	"strings"
 
-	"github.com/jackc/pgconn"
+	"github.com/jackc/pgx/v5/pgconn"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 )
@@ -34,7 +35,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 		Phone:    req.GetPhone(),
 		GenderID: int16(req.GetGenderId()),
 		Email: sql.NullString{
-			String: req.GetEmail(),
+			String: strings.ToLower(req.GetEmail()),
 			Valid:  true,
 		},
 	}

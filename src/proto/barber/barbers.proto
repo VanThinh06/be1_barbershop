@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package pb;
 import "google/protobuf/timestamp.proto";
+import "barber/barber_roles.proto";
 
 option go_package = "barbershop/src/pb/barber";
 
@@ -14,4 +15,9 @@ message Barbers {
     string full_name = 6;
     bool haircut = 7;
     string avatar_url = 8;
+}
+
+message BarberEmployees{
+    Barbers barber = 1;
+    BarberRoles barber_role = 2;
 }

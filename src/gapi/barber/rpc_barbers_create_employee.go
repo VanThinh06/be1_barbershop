@@ -15,6 +15,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+
 func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeeRequest) (*barber.CreateBarberEmployeeResponse, error) {
 
 	payload, err := server.authorizeBarber(ctx)

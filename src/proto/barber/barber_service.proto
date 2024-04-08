@@ -25,6 +25,7 @@ import "barber/rpc_barbershops_search_by_name.proto";
 
 import "barber/rpc_barbers_create.proto";
 import "barber/rpc_barbers_create_employee.proto";
+import "barber/rpc_barbers_get_employee.proto";
 import "barber/rpc_barbers_get.proto";
 import "barber/rpc_barbers_update.proto";
 import "barber/rpc_barber_login.proto";
@@ -363,7 +364,18 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
 
       };
   }
-    
+
+  rpc GetBarberEmployees (GetBarberEmployeeRequest) returns (GetBarberEmployeeResponse){
+    option (google.api.http) = {
+              get: "/v1/barber-employee/{barber_shop_id}"
+            };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "API endpoint to get barber employee"
+      summary: "Get list barber employee"
+      tags: "barbers"
+    };
+}
+
     rpc GetBarber (GetBarbersRequest) returns (GetBarbersResponse){
       option (google.api.http) = {
                 get: "/v1/barber/{id}"
