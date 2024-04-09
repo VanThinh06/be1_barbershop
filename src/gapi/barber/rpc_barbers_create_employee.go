@@ -51,17 +51,17 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 
 	newUUID := uuid.New()
 	uuidPrefix := newUUID.String()[:8]
-	combinedNickName := req.NickName + uuidPrefix
+	combinedNickName := req.BarberEmployee.NickName + uuidPrefix
 
 	var hashedPasswordValid bool = hashedPassword != ""
 	arg := db.CreateBarberEmployeeParams{
-		Phone: req.GetPhone(),
+		Phone: req.BarberEmployee.GetPhone(),
 		HashedPassword: sql.NullString{
 			String: hashedPassword,
 			Valid:  hashedPasswordValid,
 		},
 		NickName: combinedNickName,
-		FullName: req.GetFullName(),
+		FullName: req.BarberEmployee.GetFullName(),
 	}
 
 	errTx := make(chan error)
@@ -133,11 +133,11 @@ func (server *Server) txCreateBarberEmployee(ctx context.Context, req *barber.Cr
 
 func validateCreateBarberEmployee(req *barber.CreateBarberEmployeeRequest) (validations []*errdetails.BadRequest_FieldViolation) {
 
-	if err := helpers.ValidatePhoneNumber(req.Phone); err != nil {
+	if err := helpers.ValidatePhoneNumber(req.BarberEmployee.Phone); err != nil {
 		validations = append(validations, FieldValidation("phone", err))
 	}
 
-	if err := helpers.ValidateFullName(req.FullName); err != nil {
+	if err := helpers.ValidateFullName(req.BarberEmployee.FullName); err != nil {
 		validations = append(validations, FieldValidation("full_name", err))
 	}
 

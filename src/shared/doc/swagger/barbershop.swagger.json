@@ -957,6 +957,40 @@
         ]
       }
     },
+    "/v1/multi-barber-employee": {
+      "post": {
+        "summary": "Create a barber",
+        "description": "API endpoint to create barber employee",
+        "operationId": "BarberService_CreateBarberEmployees",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateBarberEmployeesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateBarberEmployeesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "barbers"
+        ]
+      }
+    },
     "/v1/provinces": {
       "get": {
         "summary": "Get provinces",
@@ -1192,6 +1226,20 @@
         "serviceTimer": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "pbBarberEmployeeRequest": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string"
+        },
+        "nickName": {
+          "type": "string"
+        },
+        "fullName": {
+          "type": "string"
         }
       }
     },
@@ -1575,14 +1623,8 @@
     "pbCreateBarberEmployeeRequest": {
       "type": "object",
       "properties": {
-        "phone": {
-          "type": "string"
-        },
-        "nickName": {
-          "type": "string"
-        },
-        "fullName": {
-          "type": "string"
+        "barberEmployee": {
+          "$ref": "#/definitions/pbBarberEmployeeRequest"
         },
         "roleId": {
           "type": "integer",
@@ -1601,6 +1643,33 @@
         },
         "barberRole": {
           "$ref": "#/definitions/pbBarberRoles"
+        }
+      }
+    },
+    "pbCreateBarberEmployeesRequest": {
+      "type": "object",
+      "properties": {
+        "barberEmployees": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbBarberEmployeeRequest"
+          }
+        },
+        "roleId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "barberShopId": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateBarberEmployeesResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
         }
       }
     },

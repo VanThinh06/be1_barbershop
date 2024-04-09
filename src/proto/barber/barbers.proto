@@ -22,3 +22,9 @@ message BarberEmployees{
     Barbers barber = 1;
     BarberRoles barber_role = 2;
 }
+
+message BarberEmployeeRequest{
+    string phone = 1;
+    string nick_name = 2;
+    string full_name = 3;
+}
