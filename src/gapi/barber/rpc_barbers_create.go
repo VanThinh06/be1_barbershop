@@ -25,7 +25,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 		return nil, internalError(err)
 	}
 
-	arg := db.CreateBarbersParams{
+	arg := db.CreateBarberParams{
 		NickName: req.GetNickName(),
 		FullName: req.GetFullName(),
 		HashedPassword: sql.NullString{
@@ -39,7 +39,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 			Valid:  true,
 		},
 	}
-	res, err := server.Store.CreateBarbers(ctx, arg)
+	res, err := server.Store.CreateBarber(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pgconn.PgError); ok {
 			switch pqErr.ConstraintName {

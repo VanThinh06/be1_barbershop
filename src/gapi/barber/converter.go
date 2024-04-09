@@ -157,16 +157,17 @@ func convertCreateBarbers(res db.Barber) *barber.Barbers {
 		AvatarUrl: res.AvatarUrl.String,
 	}
 }
-func convertBarbers(res db.GetBarbersRow) *barber.Barbers {
+func convertBarbers(res db.Barber) *barber.Barbers {
 	return &barber.Barbers{
-		Id:        res.ID.String(),
-		GenderId:  int32(res.GenderID),
-		Email:     res.Email.String,
-		Phone:     res.Phone,
-		NickName:  res.NickName,
-		FullName:  res.FullName,
-		Haircut:   res.Haircut,
-		AvatarUrl: res.AvatarUrl.String,
+		Id:         res.ID.String(),
+		GenderId:   int32(res.GenderID),
+		Email:      res.Email.String,
+		Phone:      res.Phone,
+		NickName:   res.NickName,
+		FullName:   res.FullName,
+		Haircut:    res.Haircut,
+		AvatarUrl:  res.AvatarUrl.String,
+		WorkStatus: res.WorkStatus,
 	}
 }
 
@@ -182,22 +183,45 @@ func convertBarberContact(res db.GetUserBarberRow) *barber.Barbers {
 		AvatarUrl: res.AvatarUrl.String,
 	}
 }
+func convertBarberEmployee(res db.GetBarberRow) *barber.BarberDetail {
 
-func convertBarberEmployees(res []db.GetBarberEmployeesRow) []*barber.BarberEmployees {
-	var barberEmployees []*barber.BarberEmployees
+	barberEmployee := &barber.BarberDetail{
+		Barber: &barber.Barbers{
+			Id:         res.ID.String(),
+			GenderId:   int32(res.GenderID),
+			Email:      res.Email.String,
+			Phone:      res.Phone,
+			NickName:   res.NickName,
+			FullName:   res.FullName,
+			Haircut:    res.Haircut,
+			WorkStatus: res.WorkStatus,
+			AvatarUrl:  res.AvatarUrl.String,
+		},
+		BarberRole: &barber.BarberRoles{
+			Id:           res.BarberID.String(),
+			BarberId:     res.BarberID.String(),
+			BarberShopId: res.BarberShopID.String(),
+			RoleId:       int32(res.RoleID),
+		},
+	}
+	return barberEmployee
+}
+
+func convertBarberEmployees(res []db.GetBarberEmployeesRow) []*barber.BarberDetail {
+	var barberEmployees []*barber.BarberDetail
 
 	for _, item := range res {
-		barberEmployee := &barber.BarberEmployees{
+		barberEmployee := &barber.BarberDetail{
 			Barber: &barber.Barbers{
-				Id:        item.ID.String(),
-				GenderId:  int32(item.GenderID),
-				Email:     item.Email.String,
-				Phone:     item.Phone,
-				NickName:  item.NickName,
-				FullName:  item.FullName,
-				Haircut:   item.Haircut,
+				Id:         item.ID.String(),
+				GenderId:   int32(item.GenderID),
+				Email:      item.Email.String,
+				Phone:      item.Phone,
+				NickName:   item.NickName,
+				FullName:   item.FullName,
+				Haircut:    item.Haircut,
 				WorkStatus: item.WorkStatus,
-				AvatarUrl: item.AvatarUrl.String,
+				AvatarUrl:  item.AvatarUrl.String,
 			},
 			BarberRole: &barber.BarberRoles{
 				Id:           item.BarberID.String(),

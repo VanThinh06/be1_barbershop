@@ -7,6 +7,7 @@ import (
 	"barbershop/src/shared/utilities"
 	"context"
 	"database/sql"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -14,7 +15,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
-
 
 func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeeRequest) (*barber.CreateBarberEmployeeResponse, error) {
 
@@ -51,7 +51,8 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 
 	newUUID := uuid.New()
 	uuidPrefix := newUUID.String()[:8]
-	combinedNickName := req.BarberEmployee.NickName + uuidPrefix
+	trimNickName := strings.ReplaceAll(req.BarberEmployee.NickName, " ", "")
+	combinedNickName := strings.TrimSpace(trimNickName) + uuidPrefix
 
 	var hashedPasswordValid bool = hashedPassword != ""
 	arg := db.CreateBarberEmployeeParams{
@@ -65,38 +66,33 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 	}
 
 	errTx := make(chan error)
-	resultBarber := make(chan db.Barber)
-	resultBarberRole := make(chan db.BarberRole)
+	message := make(chan string)
 
 	go func() {
-		barber, role, err := server.txCreateBarberEmployee(ctx, req, arg)
+		str, err := server.txCreateBarberEmployee(ctx, req, arg)
 		errTx <- err
-		resultBarber <- barber
-		resultBarberRole <- role
+		message <- str
 	}()
 
 	err = <-errTx
-	rspBarber := <-resultBarber
-	rspRole := <-resultBarberRole
+	response := <-message
+	
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, "internal")
 	}
 
 	rsp := &barber.CreateBarberEmployeeResponse{
-		Barber:     convertCreateBarbers(rspBarber),
-		BarberRole: convertBarberRoles(rspRole),
+		Message: response,
 	}
 	return rsp, nil
 }
 
-func (server *Server) txCreateBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeeRequest, arg db.CreateBarberEmployeeParams) (db.Barber, db.BarberRole, error) {
-	var resBarber db.Barber
-	var resBarberRole db.BarberRole
+func (server *Server) txCreateBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeeRequest, arg db.CreateBarberEmployeeParams) (string, error) {
 
 	err := server.Store.ExecTx(ctx, func(q *db.Queries) error {
 		var err error
-		resBarber, err = server.Store.CreateBarberEmployee(ctx, arg)
+		resBarber, err := server.Store.CreateBarberEmployee(ctx, arg)
 		if err != nil {
 			if pqErr, ok := err.(*pgconn.PgError); ok {
 				switch pqErr.ConstraintName {
@@ -122,13 +118,13 @@ func (server *Server) txCreateBarberEmployee(ctx context.Context, req *barber.Cr
 			BarberShopID: barberShopID,
 			RoleID:       int16(req.RoleId),
 		}
-		resBarberRole, err = server.Store.CreateBarberRoles(ctx, argBarberRole)
+		_, err = server.Store.CreateBarberRoles(ctx, argBarberRole)
 		if err != nil {
 			return status.Errorf(codes.Internal, err.Error())
 		}
 		return nil
 	})
-	return resBarber, resBarberRole, err
+	return "", err
 }
 
 func validateCreateBarberEmployee(req *barber.CreateBarberEmployeeRequest) (validations []*errdetails.BadRequest_FieldViolation) {

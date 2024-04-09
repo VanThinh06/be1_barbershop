@@ -1,4 +1,4 @@
--- name: CreateBarbers :one
+-- name: CreateBarber :one
 INSERT INTO "Barbers" (
     gender_id,
     email,
@@ -32,24 +32,17 @@ VALUES (
   )
 RETURNING *;
 
--- name: GetBarbers :one
+-- name: GetBarber :one
 SELECT
   b.*, 
-  bs."name" as "shop_name",
-  bs."coordinates" as "shop_coordinates",
-  bs."interval_scheduler" as "shop_interval_scheduler",
-  bs."is_reputation" as "shop_reputation",
-  br."role_id" as "barber_role_id",
-  br."barber_shop_id" as "barber_role_barber_shop_id"
+  br.*
 FROM
   "Barbers" b
 JOIN
   "BarberRoles" br ON b."id" = br."barber_id"
-JOIN
-  "BarberShops" bs ON br."barber_shop_id" = bs."id"
 WHERE
   b."id" = $1
-  AND bs."id" = $2;
+  AND br."barber_shop_id" = $2;
 
 -- name: GetUserBarber :one
 SELECT 
@@ -64,6 +57,7 @@ WHERE  (
         (sqlc.arg(type_username)::varchar = 'phone' AND phone = $1)
     );
 
+
 -- name: GetBarberEmployees :many
 SELECT
   b.*,
@@ -72,10 +66,15 @@ FROM
   "Barbers" b
 JOIN
   "BarberRoles" br ON b."id" = br."barber_id"
+JOIN
+  "Roles" r ON br."role_id" = r."id"
 WHERE
-  br."barber_shop_id" = $1;
+  br."barber_shop_id" = $1
+  AND r."type" = 'Staff'
+ORDER BY
+  br."role_id";
 
--- name: UpdateBarbers :one
+-- name: UpdateBarber :one
 UPDATE "Barbers"
 SET 
   gender_id = coalesce(sqlc.narg('gender_id'), gender_id),
@@ -84,10 +83,11 @@ SET
   nick_name = coalesce(sqlc.narg('nick_name'), nick_name),
   full_name = coalesce(sqlc.narg('full_name'), full_name),
   haircut = coalesce(sqlc.narg('haircut'), haircut),
+  work_status = coalesce(sqlc.narg('work_status'), work_status),
   avatar_url = coalesce(sqlc.narg('avatar_url'), avatar_url)
   WHERE "id" = $1
 RETURNING *;
 
--- name: DeleteBarbers :exec
+-- name: DeleteBarber :exec
 DELETE FROM "Barbers"
 WHERE "id" = $1;

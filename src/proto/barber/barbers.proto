@@ -18,13 +18,13 @@ message Barbers {
     bool work_status = 9;
 }
 
-message BarberEmployees{
-    Barbers barber = 1;
-    BarberRoles barber_role = 2;
-}
-
-message BarberEmployeeRequest{
+message CreateBarberEmployee{
     string phone = 1;
     string nick_name = 2;
     string full_name = 3;
+}
+
+message BarberDetail{
+    Barbers barber = 1;
+    BarberRoles barber_role = 2;
 }

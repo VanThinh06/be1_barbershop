@@ -4,16 +4,18 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"barbershop/src/shared/helpers"
+	"barbershop/src/shared/utilities"
 	"context"
 	"database/sql"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarbersRequest) (*barber.UpdateBarbersResponse, error) {
+func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarberRequest) (*barber.UpdateBarberResponse, error) {
 	authPayload, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, unauthenticatedError(err)
@@ -25,11 +27,39 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 	}
 
 	if authPayload.Barber.BarberID.String() != req.Id {
-		return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to update barber")
+		barberShopId, err := uuid.Parse(req.BarberShopId)
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+		}
+		argBarberRoleAdmin := db.GetBarberRolesParams{
+			BarberID:     authPayload.Barber.BarberID,
+			BarberShopID: barberShopId,
+		}
+		barberRoleAmin, err := server.Store.GetBarberRoles(ctx, argBarberRoleAdmin)
+		if err != nil {
+			return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to update barber")
+		}
+		if barberRoleAmin.RoleID != int16(utilities.Admin) {
+			return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to update barber")
+		}
+
+		barberId, err := uuid.Parse(req.Id)
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "barber don't exist")
+		}
+		argBarberRole := db.GetBarberRolesParams{
+			BarberID:     barberId,
+			BarberShopID: barberShopId,
+		}
+		_, err = server.Store.GetBarberRoles(ctx, argBarberRole)
+		if err != nil {
+			return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to update barber")
+		}
 	}
 
-	arg := db.UpdateBarbersParams{
+	arg := db.UpdateBarberParams{
 		ID: uuid.MustParse(req.GetId()),
+
 		NickName: sql.NullString{
 			String: req.GetNickname(),
 			Valid:  req.Nickname != nil,
@@ -44,10 +74,19 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 			String: req.GetPhone(),
 			Valid:  req.Phone != nil,
 		},
-		// GenderID: sql.NullInt16{
-		// 	Int16: int16(req.GetGenderId()),
-		// 	Valid: req.GenderId != nil,
-		// },
+		Haircut: pgtype.Bool{
+			Bool:  req.GetHaircut(),
+			Valid: req.Haircut != nil,
+		},
+		GenderID: pgtype.Int2{
+			Int16: int16(req.GetGenderId()),
+			Valid: req.GenderId != nil,
+		},
+		WorkStatus: pgtype.Bool{
+			Bool:  req.GetWorkStatus(),
+			Valid: req.WorkStatus != nil,
+		},
+
 		Email: sql.NullString{
 			String: req.GetEmail(),
 			Valid:  req.Email != nil,
@@ -58,7 +97,7 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 		},
 	}
 
-	res, err := server.Store.UpdateBarbers(ctx, arg)
+	res, err := server.Store.UpdateBarber(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, returnError(codes.NotFound, "barber not found", err)
@@ -66,13 +105,13 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 		return nil, returnError(codes.PermissionDenied, "failed to update account", err)
 	}
 
-	rsp := &barber.UpdateBarbersResponse{
+	rsp := &barber.UpdateBarberResponse{
 		Barber: convertCreateBarbers(res),
 	}
 	return rsp, nil
 }
 
-func validateUpdateBarber(req *barber.UpdateBarbersRequest) (validations []*errdetails.BadRequest_FieldViolation) {
+func validateUpdateBarber(req *barber.UpdateBarberRequest) (validations []*errdetails.BadRequest_FieldViolation) {
 
 	validateField := func(value, fieldName string, validateFunc func(string) error) {
 		if value != "" {

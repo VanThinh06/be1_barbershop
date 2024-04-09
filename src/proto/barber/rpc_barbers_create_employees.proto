@@ -9,7 +9,7 @@ option go_package = "barbershop/src/pb/barber";
 
 
 message CreateBarberEmployeesRequest{
-    repeated BarberEmployeeRequest barber_employees = 1;
+    repeated CreateBarberEmployee barber_employees = 1;
     int32 role_id = 2;
     string barber_shop_id = 3;
 }

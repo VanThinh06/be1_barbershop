@@ -13,5 +13,5 @@ message GetBarberEmployeeRequest{
 }
 
 message GetBarberEmployeeResponse {
-    repeated BarberEmployees barber_employees = 1;
+    repeated BarberDetail barber_details = 1;
 }

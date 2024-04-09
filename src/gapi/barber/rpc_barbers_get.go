@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (server *Server) GetBarber(ctx context.Context, req *barber.GetBarbersRequest) (*barber.GetBarbersResponse, error) {
@@ -15,12 +16,20 @@ func (server *Server) GetBarber(ctx context.Context, req *barber.GetBarbersReque
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}
-
-	arg := db.GetBarbersParams{
-		ID:   uuid.MustParse(req.Id),
-		ID_2: uuid.MustParse(req.BarberShopId),
+	idBarber, err := uuid.Parse(req.GetId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barber don't exist")
 	}
-	res, err := server.Store.GetBarbers(ctx, arg)
+	idBarberShop, err := uuid.Parse(req.GetBarberShopId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershop don't exist")
+	}
+	
+	arg := db.GetBarberParams{
+		ID:           idBarber,
+		BarberShopID: idBarberShop,
+	}
+	res, err := server.Store.GetBarber(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, returnError(codes.NotFound, "barber not found", err)
@@ -29,7 +38,7 @@ func (server *Server) GetBarber(ctx context.Context, req *barber.GetBarbersReque
 	}
 
 	rsp := &barber.GetBarbersResponse{
-		Barber: convertBarbers(res),
+		BarberDetail : convertBarberEmployee(res),
 	}
 	return rsp, nil
 }

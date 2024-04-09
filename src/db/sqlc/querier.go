@@ -14,6 +14,7 @@ import (
 type Querier interface {
 	ChangePasswordCustomer(ctx context.Context, arg ChangePasswordCustomerParams) (Customer, error)
 	CreateAppointments(ctx context.Context, arg CreateAppointmentsParams) (CreateAppointmentsRow, error)
+	CreateBarber(ctx context.Context, arg CreateBarberParams) (Barber, error)
 	CreateBarberEmployee(ctx context.Context, arg CreateBarberEmployeeParams) (Barber, error)
 	CreateBarberManagers(ctx context.Context, arg CreateBarberManagersParams) (BarberManager, error)
 	CreateBarberRoles(ctx context.Context, arg CreateBarberRolesParams) (BarberRole, error)
@@ -21,25 +22,24 @@ type Querier interface {
 	CreateBarberShopChains(ctx context.Context, arg CreateBarberShopChainsParams) (BarberShopChain, error)
 	CreateBarberShopServiceCategories(ctx context.Context, arg CreateBarberShopServiceCategoriesParams) (BarberShopServiceCategory, error)
 	CreateBarberShopServices(ctx context.Context, barbershopCategoryID uuid.UUID) (BarberShopService, error)
-	CreateBarbers(ctx context.Context, arg CreateBarbersParams) (Barber, error)
 	CreateCustomer(ctx context.Context, arg CreateCustomerParams) (Customer, error)
 	CreateServiceCategories(ctx context.Context, arg CreateServiceCategoriesParams) (ServiceCategory, error)
 	CreateServicesForAppointments(ctx context.Context, arg CreateServicesForAppointmentsParams) ([]BarberShopServicesAppointment, error)
 	CreateSessionBarber(ctx context.Context, arg CreateSessionBarberParams) (SessionsBarber, error)
 	CreateSessionsCustomer(ctx context.Context, arg CreateSessionsCustomerParams) (SessionsCustomer, error)
+	DeleteBarber(ctx context.Context, id uuid.UUID) error
 	DeleteBarberManagers(ctx context.Context, arg DeleteBarberManagersParams) error
 	DeleteBarberRoles(ctx context.Context, id uuid.UUID) error
 	DeleteBarberShopChains(ctx context.Context, id uuid.UUID) error
 	DeleteBarberShopServiceCategories(ctx context.Context, id uuid.UUID) error
 	DeleteBarberShopServices(ctx context.Context, id uuid.UUID) error
 	DeleteBarberShops(ctx context.Context, id uuid.UUID) error
-	DeleteBarbers(ctx context.Context, id uuid.UUID) error
 	DeleteServiceCategories(ctx context.Context, id int16) error
+	GetBarber(ctx context.Context, arg GetBarberParams) (GetBarberRow, error)
 	GetBarberEmployees(ctx context.Context, barberShopID uuid.UUID) ([]GetBarberEmployeesRow, error)
 	GetBarberRoles(ctx context.Context, arg GetBarberRolesParams) (BarberRole, error)
 	GetBarberShop(ctx context.Context, id uuid.UUID) (BarberShop, error)
 	GetBarberShopChains(ctx context.Context, id uuid.UUID) (BarberShopChain, error)
-	GetBarbers(ctx context.Context, arg GetBarbersParams) (GetBarbersRow, error)
 	GetCustomer(ctx context.Context, id uuid.UUID) (Customer, error)
 	GetDefaultPasswordEmployee(ctx context.Context, id uuid.UUID) (sql.NullString, error)
 	GetDistricts(ctx context.Context, provinceID int16) ([]District, error)
@@ -57,11 +57,11 @@ type Querier interface {
 	ListBarbersRoles(ctx context.Context, barberShopID uuid.UUID) ([]ListBarbersRolesRow, error)
 	ListNearbyBarberShops(ctx context.Context, arg ListNearbyBarberShopsParams) ([]ListNearbyBarberShopsRow, error)
 	SearchByNameBarberShops(ctx context.Context, arg SearchByNameBarberShopsParams) ([]SearchByNameBarberShopsRow, error)
+	UpdateBarber(ctx context.Context, arg UpdateBarberParams) (Barber, error)
 	UpdateBarberRoles(ctx context.Context, arg UpdateBarberRolesParams) (BarberRole, error)
 	UpdateBarberShop(ctx context.Context, arg UpdateBarberShopParams) (BarberShop, error)
 	UpdateBarberShopChains(ctx context.Context, arg UpdateBarberShopChainsParams) (BarberShopChain, error)
 	UpdateBarberShopServiceCategories(ctx context.Context, arg UpdateBarberShopServiceCategoriesParams) (BarberShopServiceCategory, error)
-	UpdateBarbers(ctx context.Context, arg UpdateBarbersParams) (Barber, error)
 	UpdateCustomer(ctx context.Context, arg UpdateCustomerParams) (Customer, error)
 	UpdateServiceCategories(ctx context.Context, arg UpdateServiceCategoriesParams) (ServiceCategory, error)
 	UpdateSessionRefreshToken(ctx context.Context, arg UpdateSessionRefreshTokenParams) error

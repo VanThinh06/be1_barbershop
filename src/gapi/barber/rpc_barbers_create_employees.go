@@ -7,6 +7,7 @@ import (
 	"barbershop/src/shared/utilities"
 	"context"
 	"database/sql"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -41,85 +42,88 @@ func (server *Server) CreateBarberEmployees(ctx context.Context, req *barber.Cre
 		}
 	}
 
-	var responses string = ""
-	for _, b := range req.BarberEmployees {
-
-		validations := validateBarberEmployee(b)
-		if validations != nil {
-			return nil, inValidArgumentError(validations)
-		}
-
-		newUUID := uuid.New()
-		uuidPrefix := newUUID.String()[:8]
-		combinedNickName := b.NickName + uuidPrefix
-
-		var hashedPasswordValid bool = hashedPassword != ""
-		arg := db.CreateBarberEmployeeParams{
-			Phone: b.GetPhone(),
-			HashedPassword: sql.NullString{
-				String: hashedPassword,
-				Valid:  hashedPasswordValid,
-			},
-			NickName: combinedNickName,
-			FullName: b.GetFullName(),
-		}
-
-		barberResponse, err := server.createSingleBarber(ctx, req, arg)
-		if err != nil {
-			return nil, status.Error(codes.Internal, "internal")
-		}
-		responses += barberResponse + " "
+	response, err := server.createMultiBarber(ctx, req, hashedPassword)
+	if err != nil {
+		return nil, err
 	}
 
 	return &barber.CreateBarberEmployeesResponse{
-		Message: responses,
+		Message: response,
 	}, nil
 }
 
-func (server *Server) createSingleBarber(ctx context.Context, req *barber.CreateBarberEmployeesRequest,  arg db.CreateBarberEmployeeParams) (string, error) {
-	var resBarber db.Barber
+func (server *Server) createMultiBarber(ctx context.Context, req *barber.CreateBarberEmployeesRequest, hashedPassword string) (string, error) {
 	err := server.Store.ExecTx(ctx, func(q *db.Queries) error {
 		var err error
-		resBarber, err = server.Store.CreateBarberEmployee(ctx, arg)
-		if err != nil {
-			if pqErr, ok := err.(*pgconn.PgError); ok {
-				switch pqErr.ConstraintName {
-				case "Barbers_pkey":
-					return returnError(codes.AlreadyExists, "This id has already existed", err)
-				case "Barbers_email_key":
-					return returnError(codes.AlreadyExists, "This email has already existed", err)
-				case "Barbers_phone_key":
-					return returnError(codes.AlreadyExists, "This phone has already existed", err)
-				case "Barbers_nick_name_key":
-					return returnError(codes.AlreadyExists, "This nick name has already existed", err)
-				}
+		for _, b := range req.BarberEmployees {
+
+			validations := validateBarberEmployee(b)
+			if validations != nil {
+				return inValidArgumentError(validations)
 			}
-			return internalError(err)
-		}
 
-		barberShopID, err := uuid.Parse(req.BarberShopId)
-		if err != nil {
-			return status.Errorf(codes.InvalidArgument, "barbershops don't exist")
-		}
-		argBarberRole := db.CreateBarberRolesParams{
-			BarberID:     resBarber.ID,
-			BarberShopID: barberShopID,
-			RoleID:       int16(req.RoleId),
-		}
-		_, err = server.Store.CreateBarberRoles(ctx, argBarberRole)
-		if err != nil {
-			return status.Errorf(codes.Internal, err.Error())
-		}
+			newUUID := uuid.New()
+			uuidPrefix := newUUID.String()[:8]
+			trimNickName := strings.ReplaceAll(b.NickName, " ", "")
+			combinedNickName := strings.TrimSpace(trimNickName) + uuidPrefix
+			if err = helpers.ValidateNickName(combinedNickName); err != nil {
+				validations = append(validations, FieldValidation("nick_name", err))
+				return inValidArgumentError(validations)
+			}
 
-		return nil
+			var hashedPasswordValid bool = hashedPassword != ""
+			arg := db.CreateBarberEmployeeParams{
+				Phone: b.GetPhone(),
+				HashedPassword: sql.NullString{
+					String: hashedPassword,
+					Valid:  hashedPasswordValid,
+				},
+				NickName: combinedNickName,
+				FullName: b.GetFullName(),
+			}
+
+			resBarber, err := server.Store.CreateBarberEmployee(ctx, arg)
+			if err != nil {
+				if pqErr, ok := err.(*pgconn.PgError); ok {
+					strErr := ""
+					switch pqErr.ConstraintName {
+					case "Barbers_pkey":
+						strErr = arg.FullName + " 's id has already existed"
+						return returnError(codes.AlreadyExists, strErr, err)
+					case "Barbers_email_key":
+						strErr = arg.FullName + " 's email already exists"
+						return returnError(codes.AlreadyExists, strErr, err)
+					case "Barbers_phone_key":
+						strErr = arg.FullName + " 's phone number already exists"
+						return returnError(codes.AlreadyExists, strErr, err)
+					case "Barbers_nick_name_key":
+						strErr = arg.FullName + " 's nick name already exists"
+						return returnError(codes.AlreadyExists, strErr, err)
+					}
+				}
+				return internalError(err)
+			}
+
+			barberShopID, err := uuid.Parse(req.BarberShopId)
+			if err != nil {
+				return status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+			}
+			argBarberRole := db.CreateBarberRolesParams{
+				BarberID:     resBarber.ID,
+				BarberShopID: barberShopID,
+				RoleID:       int16(req.RoleId),
+			}
+			_, err = server.Store.CreateBarberRoles(ctx, argBarberRole)
+			if err != nil {
+				return err
+			}
+		}
+		return err
 	})
-	if err != nil {
-		return "", internalError(err)
-	}
 
-	return resBarber.NickName, nil
+	return "", err
 }
-func validateBarberEmployee(req *barber.BarberEmployeeRequest) (validations []*errdetails.BadRequest_FieldViolation) {
+func validateBarberEmployee(req *barber.CreateBarberEmployee) (validations []*errdetails.BadRequest_FieldViolation) {
 
 	if err := helpers.ValidatePhoneNumber(req.Phone); err != nil {
 		validations = append(validations, FieldValidation("phone", err))
