@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package pb;
+
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message DeleteBarberEmployeeRequest{
+    string id = 1;
+    string barber_shop_id = 2;
+}
+
+message DeleteBarberEmployeeResponse {
+    string status = 1;
+}

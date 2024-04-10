@@ -61,7 +61,7 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 			String: hashedPassword,
 			Valid:  hashedPasswordValid,
 		},
-		NickName: combinedNickName,
+		NickName: strings.ToUpper(combinedNickName),
 		FullName: req.BarberEmployee.GetFullName(),
 	}
 

@@ -24,13 +24,16 @@ import "barber/rpc_barbershops_search_by_name.proto";
 
 
 import "barber/rpc_barbers_create.proto";
+import "barber/rpc_barbers_get.proto";
+import "barber/rpc_barbers_update.proto";
+
 import "barber/rpc_barbers_create_employee.proto";
 import "barber/rpc_barbers_create_employees.proto";
-import "barber/rpc_barbers_get.proto";
 import "barber/rpc_barbers_get_employee.proto";
-import "barber/rpc_barbers_update.proto";
-import "barber/rpc_barber_login.proto";
-import "barber/rpc_barber_refresh_token.proto";
+import "barber/rpc_barbers_delete_employee.proto";
+
+import "barber/rpc_barbers_login.proto";
+import "barber/rpc_barbers_refresh_token.proto";
 
 
 import "barber/rpc_barber_managers_create.proto";
@@ -405,6 +408,18 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
     rpc UpdateBarber (UpdateBarberRequest) returns (UpdateBarberResponse) {
       option (google.api.http) = {
         patch: "/v1/barber-detail"
+        body: "*"
+      };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "API endpoint for barber authentication" 
+        summary: "Authenticate a barber"
+        tags: "barbers"
+      };
+    }
+
+    rpc DeleteBarberEmployee (DeleteBarberEmployeeRequest) returns (DeleteBarberEmployeeResponse) {
+      option (google.api.http) = {
+        delete: "/v1/barber/{id}"
         body: "*"
       };
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

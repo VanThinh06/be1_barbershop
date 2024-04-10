@@ -78,7 +78,7 @@ func (server *Server) createMultiBarber(ctx context.Context, req *barber.CreateB
 					String: hashedPassword,
 					Valid:  hashedPasswordValid,
 				},
-				NickName: combinedNickName,
+				NickName: strings.ToUpper(combinedNickName),
 				FullName: b.GetFullName(),
 			}
 

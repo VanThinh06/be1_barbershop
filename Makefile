@@ -44,8 +44,8 @@ sqlc_linux:
 proto:
 				protoc --proto_path=src/proto --go_out=src/pb --go_opt=paths=source_relative \
 				--go-grpc_out=src/pb --go-grpc_opt=paths=source_relative \
-				--grpc-gateway_out=src/pb --grpc-gateway_opt=paths=source_relative \
-				--openapiv2_out=src/shared/doc/swagger --openapiv2_opt=allow_merge=true,merge_file_name=barbershop \
+				--grpc-gateway_out=src/pb --grpc-gateway_opt=paths=source_relative,allow_delete_body=true \
+				--openapiv2_out=src/shared/doc/swagger --openapiv2_opt=allow_delete_body=true,allow_merge=true,merge_file_name=barbershop \
 				src/proto/barber/*.proto
 				statik -f -src=src/shared/doc/swagger -dest=src/shared/doc/ 
 

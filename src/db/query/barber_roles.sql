@@ -31,6 +31,6 @@ SET "role_id" = $1,
 WHERE "id" = $2
 RETURNING *;
 
--- name: DeleteBarberRoles :exec
+-- name: DeleteBarberRole :exec
 DELETE FROM "BarberRoles"
 WHERE "id" = $1;

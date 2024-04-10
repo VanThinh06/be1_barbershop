@@ -28,3 +28,15 @@ message BarberDetail{
     Barbers barber = 1;
     BarberRoles barber_role = 2;
 }
+
+message BarberUpdate{
+    string id = 1;
+    optional int32 gender_id = 2;
+    optional string email = 3;
+    optional string phone = 4;
+    optional string nickname = 5;
+    optional string full_name = 6;
+    optional bool haircut = 7;
+    optional bool work_status = 8;
+    optional string avatar_url = 9;
+}

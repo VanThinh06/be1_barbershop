@@ -1,0 +1,91 @@
+package gapi
+
+import (
+	db "barbershop/src/db/sqlc"
+	"barbershop/src/pb/barber"
+	"barbershop/src/shared/utilities"
+	"context"
+	"database/sql"
+
+	"github.com/google/uuid"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
+
+func (server *Server) DeleteBarberEmployee(ctx context.Context, req *barber.DeleteBarberEmployeeRequest) (*barber.DeleteBarberEmployeeResponse, error) {
+
+	payload, err := server.authorizeBarber(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+	}
+
+	if payload.Barber.BarberID.String() != req.Id {
+		barberShopId, err := uuid.Parse(req.BarberShopId)
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+		}
+		argBarberRoleAdmin := db.GetBarberRolesParams{
+			BarberID:     payload.Barber.BarberID,
+			BarberShopID: barberShopId,
+		}
+		roleAdmin, err := server.Store.GetBarberRoles(ctx, argBarberRoleAdmin)
+		if err != nil {
+			return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to update employee")
+		}
+		if roleAdmin.RoleID != int16(utilities.Admin) {
+			return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to update employee")
+		}
+	}
+
+	barberId, err := uuid.Parse(req.Id)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "employee don't exist")
+	}
+	barberShopId, err := uuid.Parse(req.BarberShopId)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
+	argBarberRole := db.GetBarberRolesParams{
+		BarberID:     barberId,
+		BarberShopID: barberShopId,
+	}
+	roleBarber, err := server.Store.GetBarberRoles(ctx, argBarberRole)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, returnError(codes.NotFound, "the employee does not belong to this barber shop ", err)
+		}
+		return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to delete employee")
+	}
+
+	err = server.Store.DeleteBarberRole(ctx, roleBarber.ID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "internal")
+	}
+	rsp := &barber.DeleteBarberEmployeeResponse{
+		Status: "success",
+	}
+
+	argBarber := db.GetBarberParams{
+		ID:           barberId,
+		BarberShopID: barberShopId,
+	}
+	resBarber, err := server.Store.GetBarberEmployee(ctx, argBarber)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "internal")
+	}
+	if !resBarber.HashedPassword.Valid && resBarber.RoleID == int16(utilities.NoRole) {
+		err = server.Store.DeleteBarber(ctx, barberId)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "internal")
+		}
+	}
+	// delete barber managers
+
+	// delete session barber
+
+	// delete appointment
+
+	// delete barber reviews
+
+	return rsp, nil
+}

@@ -26,7 +26,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 	}
 
 	arg := db.CreateBarberParams{
-		NickName: req.GetNickName(),
+		NickName: strings.ToLower(req.GetNickName()),
 		FullName: req.GetFullName(),
 		HashedPassword: sql.NullString{
 			String: hashedPassword,

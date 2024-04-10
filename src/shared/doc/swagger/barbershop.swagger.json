@@ -461,6 +461,51 @@
         ]
       }
     },
+    "/v1/barber/{id}": {
+      "delete": {
+        "summary": "Authenticate a barber",
+        "description": "API endpoint for barber authentication",
+        "operationId": "BarberService_DeleteBarberEmployee",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteBarberEmployeeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "barberShopId": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "barbers"
+        ]
+      }
+    },
     "/v1/barbershop-chains": {
       "post": {
         "summary": "Create barber chains",
@@ -1527,6 +1572,39 @@
         }
       }
     },
+    "pbBarberUpdate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "genderId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "fullName": {
+          "type": "string"
+        },
+        "haircut": {
+          "type": "boolean"
+        },
+        "workStatus": {
+          "type": "boolean"
+        },
+        "avatarUrl": {
+          "type": "string"
+        }
+      }
+    },
     "pbBarbers": {
       "type": "object",
       "properties": {
@@ -1925,6 +2003,14 @@
         }
       }
     },
+    "pbDeleteBarberEmployeeResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      }
+    },
     "pbDeleteBarberManagersResponse": {
       "type": "object",
       "properties": {
@@ -2259,35 +2345,10 @@
     "pbUpdateBarberRequest": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
+        "barber": {
+          "$ref": "#/definitions/pbBarberUpdate"
         },
         "barberShopId": {
-          "type": "string"
-        },
-        "genderId": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "email": {
-          "type": "string"
-        },
-        "phone": {
-          "type": "string"
-        },
-        "nickname": {
-          "type": "string"
-        },
-        "fullName": {
-          "type": "string"
-        },
-        "haircut": {
-          "type": "boolean"
-        },
-        "workStatus": {
-          "type": "boolean"
-        },
-        "avatarUrl": {
           "type": "string"
         }
       }
@@ -2295,8 +2356,8 @@
     "pbUpdateBarberResponse": {
       "type": "object",
       "properties": {
-        "barber": {
-          "$ref": "#/definitions/pbBarbers"
+        "message": {
+          "type": "string"
         }
       }
     },

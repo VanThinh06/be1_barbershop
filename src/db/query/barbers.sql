@@ -44,6 +44,18 @@ WHERE
   b."id" = $1
   AND br."barber_shop_id" = $2;
 
+-- name: GetBarberEmployee :one
+SELECT
+  b.*, 
+  br.*
+FROM
+  "Barbers" b
+LEFT JOIN
+  "BarberRoles" br ON b."id" = br."barber_id"
+WHERE
+  b."id" = $1
+  AND (br."barber_shop_id" = $2 OR br."barber_shop_id" IS NULL);
+
 -- name: GetUserBarber :one
 SELECT 
   b.*,
