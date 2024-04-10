@@ -257,6 +257,51 @@
         ]
       }
     },
+    "/v1/barber-employee/{id}": {
+      "delete": {
+        "summary": "Authenticate a barber",
+        "description": "API endpoint for barber authentication",
+        "operationId": "BarberService_DeleteBarberEmployee",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteBarberEmployeeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "barberShopId": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "barbers"
+        ]
+      }
+    },
     "/v1/barber-managers": {
       "delete": {
         "summary": "Delete a barber manager",
@@ -453,51 +498,6 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/pbRefreshTokenBarberRequest"
-            }
-          }
-        ],
-        "tags": [
-          "barbers"
-        ]
-      }
-    },
-    "/v1/barber/{id}": {
-      "delete": {
-        "summary": "Authenticate a barber",
-        "description": "API endpoint for barber authentication",
-        "operationId": "BarberService_DeleteBarberEmployee",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbDeleteBarberEmployeeResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "barberShopId": {
-                  "type": "string"
-                }
-              }
             }
           }
         ],
@@ -2006,7 +2006,7 @@
     "pbDeleteBarberEmployeeResponse": {
       "type": "object",
       "properties": {
-        "status": {
+        "message": {
           "type": "string"
         }
       }

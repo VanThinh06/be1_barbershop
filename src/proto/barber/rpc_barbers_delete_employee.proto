@@ -12,5 +12,5 @@ message DeleteBarberEmployeeRequest{
 }
 
 message DeleteBarberEmployeeResponse {
-    string status = 1;
+    string message = 1;
 }

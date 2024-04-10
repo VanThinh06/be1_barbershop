@@ -61,7 +61,7 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 			String: hashedPassword,
 			Valid:  hashedPasswordValid,
 		},
-		NickName: strings.ToUpper(combinedNickName),
+		NickName: strings.ToLower(combinedNickName),
 		FullName: req.BarberEmployee.GetFullName(),
 	}
 
@@ -76,7 +76,6 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 
 	err = <-errTx
 	response := <-message
-	
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, "internal")

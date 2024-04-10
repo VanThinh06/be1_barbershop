@@ -45,47 +45,35 @@ func (server *Server) DeleteBarberEmployee(ctx context.Context, req *barber.Dele
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 	}
-	argBarberRole := db.GetBarberRolesParams{
-		BarberID:     barberId,
+	argBarber := db.GetBarberEmployeeParams{
+		ID:           barberId,
 		BarberShopID: barberShopId,
 	}
-	roleBarber, err := server.Store.GetBarberRoles(ctx, argBarberRole)
+	resBarber, err := server.Store.GetBarberEmployee(ctx, argBarber)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, returnError(codes.NotFound, "the employee does not belong to this barber shop ", err)
 		}
 		return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to delete employee")
 	}
+	if !resBarber.ID_2.Valid {
+		return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to delete employee")
+	}
 
-	err = server.Store.DeleteBarberRole(ctx, roleBarber.ID)
+	err = server.Store.DeleteBarberRole(ctx, resBarber.ID_2.UUID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "internal")
 	}
+
 	rsp := &barber.DeleteBarberEmployeeResponse{
-		Status: "success",
+		Message: "Nhân viên " + resBarber.NickName + " đã được xóa thành công",
 	}
 
-	argBarber := db.GetBarberParams{
-		ID:           barberId,
-		BarberShopID: barberShopId,
-	}
-	resBarber, err := server.Store.GetBarberEmployee(ctx, argBarber)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "internal")
-	}
-	if !resBarber.HashedPassword.Valid && resBarber.RoleID == int16(utilities.NoRole) {
+	if !resBarber.HashedPassword.Valid {
 		err = server.Store.DeleteBarber(ctx, barberId)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "internal")
 		}
 	}
-	// delete barber managers
-
-	// delete session barber
-
-	// delete appointment
-
-	// delete barber reviews
-
 	return rsp, nil
 }

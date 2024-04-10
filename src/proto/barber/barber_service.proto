@@ -419,7 +419,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
 
     rpc DeleteBarberEmployee (DeleteBarberEmployeeRequest) returns (DeleteBarberEmployeeResponse) {
       option (google.api.http) = {
-        delete: "/v1/barber/{id}"
+        delete: "/v1/barber-employee/{id}"
         body: "*"
       };
       option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
