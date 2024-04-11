@@ -1,6 +1,7 @@
 package gapi
 
 import (
+	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"barbershop/src/shared/utilities"
 	"context"
@@ -25,13 +26,24 @@ func (server *Server) GetBarberEmployees(ctx context.Context, req *barber.GetBar
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 	}
-	barberEmployees, err := server.Store.GetBarberEmployees(ctx, barberShopID)
+
+	arg := db.GetBarberEmployeesParams{
+		BarberShopID: barberShopID,
+		Limit:        req.Limit,
+		Offset:       req.Limit * (req.Page - 1),
+	}
+	barberEmployees, err := server.Store.GetBarberEmployees(ctx, arg)
 	if err != nil {
 		return nil, internalError(err)
 	}
 
+	var totalEmployees int16 = 0
+	if len(barberEmployees) > 0 {
+		totalEmployees = int16(barberEmployees[0].TotalEmployees)
+	}
 	rsp := &barber.GetBarberEmployeeResponse{
-		BarberDetails: convertBarberEmployees(barberEmployees),
+		BarberDetails:  convertBarberEmployees(barberEmployees),
+		TotalEmployees: int32(totalEmployees),
 	}
 	return rsp, nil
 }

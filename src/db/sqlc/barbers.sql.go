@@ -251,21 +251,26 @@ func (q *Queries) GetBarberEmployee(ctx context.Context, arg GetBarberEmployeePa
 }
 
 const getBarberEmployees = `-- name: GetBarberEmployees :many
-SELECT
-  b.id, b.gender_id, b.phone, b.nick_name, b.email, b.hashed_password, b.full_name, b.haircut, b.work_status, b.avatar_url, b.password_changed_at, b.create_at,
-  br.id, br.barber_id, br.barber_shop_id, br.role_id
-FROM
-  "Barbers" b
-JOIN
-  "BarberRoles" br ON b."id" = br."barber_id"
-JOIN
-  "Roles" r ON br."role_id" = r."id"
-WHERE
-  br."barber_shop_id" = $1
+SELECT b.id, gender_id, phone, nick_name, email, hashed_password, full_name, haircut, work_status, avatar_url, password_changed_at, create_at, br.id, barber_id, barber_shop_id, role_id, r.id, name, type,
+       (SELECT COUNT(*) FROM "Barbers" b
+        JOIN "BarberRoles" br ON b."id" = br."barber_id"
+        JOIN "Roles" r ON br."role_id" = r."id"
+        WHERE br."barber_shop_id" = $1
+          AND r."type" = 'Staff') AS total_employees
+FROM "Barbers" b
+JOIN "BarberRoles" br ON b."id" = br."barber_id"
+JOIN "Roles" r ON br."role_id" = r."id"
+WHERE br."barber_shop_id" = $1
   AND r."type" = 'Staff'
-ORDER BY
-  br."role_id"
+ORDER BY br."role_id"
+LIMIT $2 OFFSET $3
 `
+
+type GetBarberEmployeesParams struct {
+	BarberShopID uuid.UUID `json:"barber_shop_id"`
+	Limit        int32     `json:"limit"`
+	Offset       int32     `json:"offset"`
+}
 
 type GetBarberEmployeesRow struct {
 	ID                uuid.UUID      `json:"id"`
@@ -284,10 +289,14 @@ type GetBarberEmployeesRow struct {
 	BarberID          uuid.UUID      `json:"barber_id"`
 	BarberShopID      uuid.UUID      `json:"barber_shop_id"`
 	RoleID            int16          `json:"role_id"`
+	ID_3              int16          `json:"id_3"`
+	Name              string         `json:"name"`
+	Type              sql.NullString `json:"type"`
+	TotalEmployees    int64          `json:"total_employees"`
 }
 
-func (q *Queries) GetBarberEmployees(ctx context.Context, barberShopID uuid.UUID) ([]GetBarberEmployeesRow, error) {
-	rows, err := q.db.Query(ctx, getBarberEmployees, barberShopID)
+func (q *Queries) GetBarberEmployees(ctx context.Context, arg GetBarberEmployeesParams) ([]GetBarberEmployeesRow, error) {
+	rows, err := q.db.Query(ctx, getBarberEmployees, arg.BarberShopID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -312,6 +321,10 @@ func (q *Queries) GetBarberEmployees(ctx context.Context, barberShopID uuid.UUID
 			&i.BarberID,
 			&i.BarberShopID,
 			&i.RoleID,
+			&i.ID_3,
+			&i.Name,
+			&i.Type,
+			&i.TotalEmployees,
 		); err != nil {
 			return nil, err
 		}

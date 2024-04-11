@@ -71,20 +71,19 @@ WHERE  (
 
 
 -- name: GetBarberEmployees :many
-SELECT
-  b.*,
-  br.*
-FROM
-  "Barbers" b
-JOIN
-  "BarberRoles" br ON b."id" = br."barber_id"
-JOIN
-  "Roles" r ON br."role_id" = r."id"
-WHERE
-  br."barber_shop_id" = $1
+SELECT *,
+       (SELECT COUNT(*) FROM "Barbers" b
+        JOIN "BarberRoles" br ON b."id" = br."barber_id"
+        JOIN "Roles" r ON br."role_id" = r."id"
+        WHERE br."barber_shop_id" = $1
+          AND r."type" = 'Staff') AS total_employees
+FROM "Barbers" b
+JOIN "BarberRoles" br ON b."id" = br."barber_id"
+JOIN "Roles" r ON br."role_id" = r."id"
+WHERE br."barber_shop_id" = $1
   AND r."type" = 'Staff'
-ORDER BY
-  br."role_id";
+ORDER BY br."role_id"
+LIMIT $2 OFFSET $3;
 
 -- name: UpdateBarber :one
 UPDATE "Barbers"

@@ -37,7 +37,7 @@ type Querier interface {
 	DeleteServiceCategories(ctx context.Context, id int16) error
 	GetBarber(ctx context.Context, arg GetBarberParams) (GetBarberRow, error)
 	GetBarberEmployee(ctx context.Context, arg GetBarberEmployeeParams) (GetBarberEmployeeRow, error)
-	GetBarberEmployees(ctx context.Context, barberShopID uuid.UUID) ([]GetBarberEmployeesRow, error)
+	GetBarberEmployees(ctx context.Context, arg GetBarberEmployeesParams) ([]GetBarberEmployeesRow, error)
 	GetBarberRoles(ctx context.Context, arg GetBarberRolesParams) (BarberRole, error)
 	GetBarberShop(ctx context.Context, id uuid.UUID) (BarberShop, error)
 	GetBarberShopChains(ctx context.Context, id uuid.UUID) (BarberShopChain, error)

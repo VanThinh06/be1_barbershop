@@ -250,6 +250,20 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
           }
         ],
         "tags": [
@@ -2068,6 +2082,10 @@
             "type": "object",
             "$ref": "#/definitions/pbBarberDetail"
           }
+        },
+        "totalEmployees": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
