@@ -123,7 +123,7 @@ func (server *Server) createMultiBarber(ctx context.Context, req *barber.CreateB
 
 	return "", err
 }
-func validateBarberEmployee(req *barber.CreateBarberEmployee) (validations []*errdetails.BadRequest_FieldViolation) {
+func validateBarberEmployee(req *barber.BarberEmployee) (validations []*errdetails.BadRequest_FieldViolation) {
 
 	if err := helpers.ValidatePhoneNumber(req.Phone); err != nil {
 		validations = append(validations, FieldValidation("phone", err))

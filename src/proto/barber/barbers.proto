@@ -18,7 +18,7 @@ message Barbers {
     bool work_status = 9;
 }
 
-message CreateBarberEmployee{
+message BarberEmployee{
     string phone = 1;
     string nick_name = 2;
     string full_name = 3;

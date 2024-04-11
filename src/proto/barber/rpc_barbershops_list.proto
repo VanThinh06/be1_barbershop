@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package pb;
-import "barber/barber_shops.proto";
+import "barber/rpc_barbershops_get.proto";
 
 option go_package = "barbershop/src/pb/barber";
 
@@ -9,5 +9,5 @@ option go_package = "barbershop/src/pb/barber";
 message ListBarberShopsRequest {}
 
 message ListBarberShopsResponse {
-    repeated BarberShopInList barber_shops = 1;
+    repeated GetBarberShopResponse barber_shops = 1;
 }

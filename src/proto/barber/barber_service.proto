@@ -140,9 +140,9 @@ rpc DeleteBarberShopChains (DeleteBarberShopChainsRequest) returns (DeleteBarber
 }
 
 ///barbershops
-rpc CreateBarberShops (CreateBarberShopsRequest) returns (CreateBarberShopsResponse){
+rpc CreateBarberShop (CreateBarberShopRequest) returns (CreateBarberShopResponse){
   option (google.api.http) = {
-            post: "/v1/barbershops"
+            post: "/v1/barbershop"
             body: "*"
           };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -163,9 +163,9 @@ rpc ListBarberShops (ListBarberShopsRequest) returns (ListBarberShopsResponse){
   };
 }
 
-rpc GetBarberShops (GetBarberShopsRequest) returns (GetBarberShopsResponse){
+rpc GetBarberShop (GetBarberShopRequest) returns (GetBarberShopResponse){
   option (google.api.http) = {
-            get: "/v1/barbershops/{id}"
+            get: "/v1/barbershop/{id}"
             };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
     description: "API endpoint to create a new barber shop"
@@ -198,7 +198,7 @@ rpc ListNearbyBarberShops (ListNearbyBarberShopsRequest) returns (ListNearbyBarb
   };
 }
 
-rpc UpdateBarberShops (UpdateBarberShopsRequest) returns (UpdateBarberShopsResponse){
+rpc UpdateBarberShop (UpdateBarberShopRequest) returns (UpdateBarberShopResponse){
   option (google.api.http) = {
             patch: "/v1/barbershops/{id}"
             body:  "*"

@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBarberShopsRequest) (*barber.UpdateBarberShopsResponse, error) {
+func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBarberShopRequest) (*barber.UpdateBarberShopResponse, error) {
 
 	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
@@ -67,8 +67,8 @@ func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBa
 		return nil, status.Error(codes.Internal, "internal")
 	}
 
-	rsp := &barber.UpdateBarberShopsResponse{
-		BarberShop: convertBarberShops(barberShop),
+	rsp := &barber.UpdateBarberShopResponse{
+		BarberShop: convertBarberShop(barberShop),
 	}
 	return rsp, nil
 }

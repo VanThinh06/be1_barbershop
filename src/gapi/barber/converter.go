@@ -17,8 +17,7 @@ func convertBarberRoles(res db.BarberRole) *barber.BarberRoles {
 	}
 }
 
-// / BarberShop
-// / chains
+// chains
 func ConvertBarberShopChains(res db.BarberShopChain) *barber.BarberShopChains {
 	return &barber.BarberShopChains{
 		Id:      res.ID.String(),
@@ -29,75 +28,75 @@ func ConvertBarberShopChains(res db.BarberShopChain) *barber.BarberShopChains {
 }
 
 // barbershops
-func convertBarberShops(barberShop db.BarberShop) *barber.BarberShops {
+func convertBarberShop(barberShop db.BarberShop) *barber.BarberShops {
 	var barberShopChainId string
 	if barberShop.BarberShopChainID.Valid {
 		barberShopChainId = barberShop.BarberShopChainID.UUID.String()
 	}
 	return &barber.BarberShops{
-		Id:                       barberShop.ID.String(),
-		BarberShopChainId:        barberShopChainId,
-		Name:                     barberShop.Name,
-		ProvinceId:               int32(barberShop.ProvinceID),
-		DistrictId:               int32(barberShop.DistrictID),
-		WardId:                   int32(barberShop.ProvinceID),
-		SpecificLocation:         barberShop.SpecificLocation,
-		Phone:                    barberShop.Phone,
-		Email:                    barberShop.Email,
-		WebsiteUrl:               barberShop.WebsiteUrl.String,
-		AvatarUrl:                barberShop.AvatarUrl,
-		CoverPhotoUrl:            barberShop.CoverPhotoUrl,
-		FacadePhotoUrl:           barberShop.FacadePhotoUrl,
-		RepresentativeName:       barberShop.RepresentativeName,
-		CitizenId:                barberShop.CitizenID,
-		RepresentativePhone:      barberShop.RepresentativePhone,
-		RepresentativeEmail:      barberShop.RepresentativeEmail,
-		RepresentativePhoneOther: barberShop.RepresentativePhoneOther.String,
-		StartTimeMonday:          barberShop.StartTimeMonday.Microseconds,
-		EndTimeMonday:            barberShop.EndTimeMonday.Microseconds,
-		StartTimeTuesday:         barberShop.StartTimeTuesday.Microseconds,
-		EndTimeTuesday:           barberShop.EndTimeTuesday.Microseconds,
-		StartTimeWednesday:       barberShop.StartTimeWednesday.Microseconds,
-		EndTimeWednesday:         barberShop.EndTimeWednesday.Microseconds,
-		StartTimeThursday:        barberShop.StartTimeThursday.Microseconds,
-		EndTimeThursday:          barberShop.EndTimeThursday.Microseconds,
-		StartTimeFriday:          barberShop.StartTimeFriday.Microseconds,
-		EndTimeFriday:            barberShop.EndTimeFriday.Microseconds,
-		StartTimeSaturday:        barberShop.StartTimeSaturday.Microseconds,
-		EndTimeSaturday:          barberShop.EndTimeSaturday.Microseconds,
-		StartTimeSunday:          barberShop.StartTimeSunday.Microseconds,
-		EndTimeSunday:            barberShop.EndTimeSunday.Microseconds,
-		IntervalScheduler:        int32(barberShop.IntervalScheduler),
-		IsMainBranch:             barberShop.IsMainBranch,
-		IsReputation:             barberShop.IsReputation,
-		IsVerified:               barberShop.IsVerified,
-		CreateAt:                 timestamppb.New(barberShop.CreateAt),
+		Id:                barberShop.ID.String(),
+		BarberShopChainId: barberShopChainId,
+		Name:              barberShop.Name,
+		ProvinceId:        int32(barberShop.ProvinceID),
+		DistrictId:        int32(barberShop.DistrictID),
+		WardId:            int32(barberShop.ProvinceID),
+		SpecificLocation:  barberShop.SpecificLocation,
+		Phone:             barberShop.Phone,
+		Email:             barberShop.Email,
+		WebsiteUrl:        barberShop.WebsiteUrl.String,
+		AvatarUrl:         barberShop.AvatarUrl,
+		CoverPhotoUrl:     barberShop.CoverPhotoUrl,
+		FacadePhotoUrl:    barberShop.FacadePhotoUrl,
+		IsMainBranch:      barberShop.IsMainBranch,
+		IsReputation:      barberShop.IsReputation,
+	}
+}
+
+func convertGetBarberShop(barberShop db.GetBarberShopRow) *barber.BarberShops {
+	return &barber.BarberShops{
+		Id:                barberShop.ID.String(),
+		BarberShopChainId: barberShop.BarberShopChainID.UUID.String(),
+		Name:              barberShop.Name,
+		ProvinceId:        int32(barberShop.ProvinceID),
+		DistrictId:        int32(barberShop.DistrictID),
+		WardId:            int32(barberShop.ProvinceID),
+		SpecificLocation:  barberShop.SpecificLocation,
+		Phone:             barberShop.Phone,
+		Email:             barberShop.Email,
+		WebsiteUrl:        barberShop.WebsiteUrl.String,
+		AvatarUrl:         barberShop.AvatarUrl,
+		CoverPhotoUrl:     barberShop.CoverPhotoUrl,
+		FacadePhotoUrl:    barberShop.FacadePhotoUrl,
+		IsMainBranch:      barberShop.IsMainBranch,
+		IsReputation:      barberShop.IsReputation,
 	}
 }
 
 // barbershops
-func convertListBarberShops(res []db.ListBarberShopsRow) []*barber.BarberShopInList {
-	var barberShops []*barber.BarberShopInList
+func convertListBarberShops(res []db.ListBarberShopsRow) []*barber.GetBarberShopResponse {
+	var barberShops []*barber.GetBarberShopResponse
 	for _, barberShop := range res {
-		barberShopPB := &barber.BarberShopInList{
-			Id:                barberShop.ID.String(),
-			BarberShopChainId: barberShop.BarberShopChainID.UUID.String(),
-			Name:              barberShop.Name,
-			ProvinceId:        int32(barberShop.ProvinceID),
-			DistrictId:        int32(barberShop.DistrictID),
-			WardId:            int32(barberShop.ProvinceID),
-			SpecificLocation:  barberShop.SpecificLocation,
-			Phone:             barberShop.Phone,
-			Email:             barberShop.Email,
-			WebsiteUrl:        barberShop.WebsiteUrl.String,
-			AvatarUrl:         barberShop.AvatarUrl,
-			CoverPhotoUrl:     barberShop.CoverPhotoUrl,
-			FacadePhotoUrl:    barberShop.FacadePhotoUrl,
-			ProvinceName:      barberShop.ProvinceName,
-			DistrictName:      barberShop.DistrictName,
-			WardName:          barberShop.WardName,
-			IsMainBranch:      barberShop.IsMainBranch,
-			IsReputation:      barberShop.IsReputation,
+		barberShopPB := &barber.GetBarberShopResponse{
+			BarberShop: &barber.BarberShops{
+				Id:                barberShop.ID.String(),
+				BarberShopChainId: barberShop.BarberShopChainID.UUID.String(),
+				Name:              barberShop.Name,
+				ProvinceId:        int32(barberShop.ProvinceID),
+				DistrictId:        int32(barberShop.DistrictID),
+				WardId:            int32(barberShop.ProvinceID),
+				SpecificLocation:  barberShop.SpecificLocation,
+				Phone:             barberShop.Phone,
+				Email:             barberShop.Email,
+				WebsiteUrl:        barberShop.WebsiteUrl.String,
+				AvatarUrl:         barberShop.AvatarUrl,
+				CoverPhotoUrl:     barberShop.CoverPhotoUrl,
+				FacadePhotoUrl:    barberShop.FacadePhotoUrl,
+				IsMainBranch:      barberShop.IsMainBranch,
+				IsReputation:      barberShop.IsReputation,
+			},
+			ProvinceName: barberShop.ProvinceName,
+			DistrictName: barberShop.DistrictName,
+			WardName:     barberShop.WardName,
 		}
 		barberShops = append(barberShops, barberShopPB)
 	}
@@ -155,19 +154,6 @@ func convertCreateBarbers(res db.Barber) *barber.Barbers {
 		FullName:  res.FullName,
 		Haircut:   res.Haircut,
 		AvatarUrl: res.AvatarUrl.String,
-	}
-}
-func convertBarbers(res db.Barber) *barber.Barbers {
-	return &barber.Barbers{
-		Id:         res.ID.String(),
-		GenderId:   int32(res.GenderID),
-		Email:      res.Email.String,
-		Phone:      res.Phone,
-		NickName:   res.NickName,
-		FullName:   res.FullName,
-		Haircut:    res.Haircut,
-		AvatarUrl:  res.AvatarUrl.String,
-		WorkStatus: res.WorkStatus,
 	}
 }
 

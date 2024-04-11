@@ -10,19 +10,19 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) GetBarberShops(ctx context.Context, req *barber.GetBarberShopsRequest) (*barber.GetBarberShopsResponse, error) {
+func (server *Server) GetBarberShop(ctx context.Context, req *barber.GetBarberShopRequest) (*barber.GetBarberShopResponse, error) {
 
 	_, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
-	idBarberShop, err := uuid.Parse(req.Id)
+	barberShopId, err := uuid.Parse(req.Id)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 	}
 
-	res, err := server.Store.GetBarberShop(ctx, idBarberShop)
+	res, err := server.Store.GetBarberShop(ctx, barberShopId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, status.Error(codes.NotFound, "barbershops don't exist")
@@ -30,8 +30,11 @@ func (server *Server) GetBarberShops(ctx context.Context, req *barber.GetBarberS
 		return nil, status.Errorf(codes.Internal, "internal")
 	}
 
-	rsp := &barber.GetBarberShopsResponse{
-		BarberShop: convertBarberShops(res),
+	rsp := &barber.GetBarberShopResponse{
+		BarberShop:   convertGetBarberShop(res),
+		ProvinceName: res.ProvinceName,
+		DistrictName: res.DistrictName,
+		WardName:     res.WardName,
 	}
 	return rsp, nil
 }

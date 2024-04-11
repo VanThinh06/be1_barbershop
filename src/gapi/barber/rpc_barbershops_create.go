@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) CreateBarberShops(ctx context.Context, req *barber.CreateBarberShopsRequest) (*barber.CreateBarberShopsResponse, error) {
+func (server *Server) CreateBarberShop(ctx context.Context, req *barber.CreateBarberShopRequest) (*barber.CreateBarberShopResponse, error) {
 
 	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
@@ -22,35 +22,28 @@ func (server *Server) CreateBarberShops(ctx context.Context, req *barber.CreateB
 	}
 
 	errTx := make(chan error)
-	resultBarberShop := make(chan db.BarberShop)
-	resultBarberRole := make(chan db.BarberRole)
+	resultMessage := make(chan string)
 
 	go func() {
-		barberShop, barberRole, err := server.txCreateBarberShop(ctx, req, payload)
+		message, err := server.txCreateBarberShop(ctx, req, payload)
 		errTx <- err
-		resultBarberShop <- barberShop
-		resultBarberRole <- barberRole
+		resultMessage <- message
 	}()
 
 	err = <-errTx
-	barberShop := <-resultBarberShop
-	barberRole := <-resultBarberRole
+	message := <-resultMessage
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, "internal")
 	}
 
-	rsp := &barber.CreateBarberShopsResponse{
-		BarberShop: convertBarberShops(barberShop),
-		BarberRole: convertBarberRoles(barberRole),
+	rsp := &barber.CreateBarberShopResponse{
+		Message: message,
 	}
 	return rsp, nil
 }
 
-func (server *Server) txCreateBarberShop(ctx context.Context, req *barber.CreateBarberShopsRequest, payload *token.BarberPayload) (db.BarberShop, db.BarberRole, error) {
-	var resBarberShop db.BarberShop
-	var resBarberRole db.BarberRole
-
+func (server *Server) txCreateBarberShop(ctx context.Context, req *barber.CreateBarberShopRequest, payload *token.BarberPayload) (string, error) {
 	err := server.Store.ExecTx(ctx, func(q *db.Queries) error {
 
 		var barberShopChainId uuid.NullUUID
@@ -149,7 +142,7 @@ func (server *Server) txCreateBarberShop(ctx context.Context, req *barber.Create
 			Latitude:          float64(req.Latitude),
 		}
 
-		resBarberShop, err = server.Store.CreateBarberShop(ctx, arg)
+		resBarberShop, err := server.Store.CreateBarberShop(ctx, arg)
 		if err != nil {
 			return internalError(err)
 		}
@@ -160,12 +153,12 @@ func (server *Server) txCreateBarberShop(ctx context.Context, req *barber.Create
 			RoleID:       int16(utilities.Admin),
 		}
 
-		resBarberRole, err = server.Store.CreateBarberRoles(ctx, argBarberRole)
+		_, err = server.Store.CreateBarberRoles(ctx, argBarberRole)
 		if err != nil {
 			return status.Errorf(codes.Internal, err.Error())
 		}
 		return nil
 	})
 
-	return resBarberShop, resBarberRole, err
+	return "", err
 }

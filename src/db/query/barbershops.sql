@@ -1,8 +1,14 @@
 
 -- name: GetBarberShop :one
-SELECT *
-FROM "BarberShops"
-WHERE id = $1;
+SELECT bs.*,
+    COALESCE(p.name, '') AS province_name,
+    COALESCE(d.name, '') AS district_name,
+    COALESCE(w.name, '') AS ward_name
+FROM "BarberShops" bs
+LEFT JOIN "Provinces" p ON bs."province_id" = p."id"
+LEFT JOIN "Districts" d ON bs."district_id" = d."id"
+LEFT JOIN "Wards" w ON bs."ward_id" = w."id"
+WHERE bs.id = $1;
 
 -- name: GetDefaultPasswordEmployee :one
 SELECT default_employee_password
