@@ -22,28 +22,24 @@ func (server *Server) CreateBarberShop(ctx context.Context, req *barber.CreateBa
 	}
 
 	errTx := make(chan error)
-	resultMessage := make(chan string)
-
 	go func() {
-		message, err := server.txCreateBarberShop(ctx, req, payload)
+		err := server.txCreateBarberShop(ctx, req, payload)
 		errTx <- err
-		resultMessage <- message
 	}()
-
 	err = <-errTx
-	message := <-resultMessage
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, "internal")
 	}
 
+	var message = "Congratulations! You have successfully registered for " + req.Name + "."
 	rsp := &barber.CreateBarberShopResponse{
 		Message: message,
 	}
+
 	return rsp, nil
 }
 
-func (server *Server) txCreateBarberShop(ctx context.Context, req *barber.CreateBarberShopRequest, payload *token.BarberPayload) (string, error) {
+func (server *Server) txCreateBarberShop(ctx context.Context, req *barber.CreateBarberShopRequest, payload *token.BarberPayload) error {
 	err := server.Store.ExecTx(ctx, func(q *db.Queries) error {
 
 		var barberShopChainId uuid.NullUUID
@@ -56,7 +52,6 @@ func (server *Server) txCreateBarberShop(ctx context.Context, req *barber.Create
 				Valid: req.BarberShopChainId != nil,
 			}
 		}
-
 		arg := db.CreateBarberShopParams{
 			BarberShopChainID: barberShopChainId,
 			Name:              req.Name,
@@ -141,24 +136,22 @@ func (server *Server) txCreateBarberShop(ctx context.Context, req *barber.Create
 			Longitude:         float64(req.Longitude),
 			Latitude:          float64(req.Latitude),
 		}
-
 		resBarberShop, err := server.Store.CreateBarberShop(ctx, arg)
 		if err != nil {
 			return internalError(err)
 		}
 
-		argBarberRole := db.CreateBarberRolesParams{
+		argBarberRole := db.CreateBarberRoleParams{
 			BarberID:     payload.Barber.BarberID,
 			BarberShopID: resBarberShop.ID,
 			RoleID:       int16(utilities.Admin),
 		}
-
-		_, err = server.Store.CreateBarberRoles(ctx, argBarberRole)
+		_, err = server.Store.CreateBarberRole(ctx, argBarberRole)
 		if err != nil {
 			return status.Errorf(codes.Internal, err.Error())
 		}
 		return nil
 	})
 
-	return "", err
+	return err
 }

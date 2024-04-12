@@ -54,7 +54,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 			}
 		}
 		return nil, internalError(err)
-	}
+	} 
 
 	rsp := &barber.CreateBarbersResponse{
 		Barber: convertCreateBarbers(res),

@@ -5,7 +5,6 @@ import (
 	"barbershop/src/pb/barber"
 	"barbershop/src/shared/helpers"
 	"barbershop/src/shared/token"
-	"barbershop/src/shared/utilities"
 	"context"
 	"database/sql"
 
@@ -50,8 +49,6 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 
 	barberPayload := token.Barber{
 		BarberID:       res.ID,
-		BarberRole:     int32(res.BarberRoleID.Int16),
-		BarberRoleType: utilities.MapRoleToRoleType[int32(res.BarberRoleID.Int16)],
 		Phone:          res.Phone,
 		Email:          res.Email.String,
 		FcmDevice:      req.FcmDevice,
@@ -88,7 +85,6 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 
 	rsp := &barber.LoginBarberResponse{
 		Barber:                convertBarberContact(res),
-		BarberRoleId:          int32(res.BarberRoleID.Int16),
 		AccessToken:           accessToken,
 		RefreshToken:          refreshToken,
 		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiresAt),

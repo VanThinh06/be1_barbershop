@@ -3,7 +3,6 @@ package gapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
-	"barbershop/src/shared/utilities"
 	"context"
 
 	"github.com/google/uuid"
@@ -13,14 +12,14 @@ import (
 
 func (server *Server) GetBarberEmployees(ctx context.Context, req *barber.GetBarberEmployeeRequest) (*barber.GetBarberEmployeeResponse, error) {
 
-	payload, err := server.authorizeBarber(ctx)
+	_, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
-	if payload.Barber.BarberRole != int32(utilities.Admin) {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
-	}
+	// if payload.Barber.BarberRole != int32(utilities.Admin) {
+	// 	return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+	// }
 
 	barberShopID, err := uuid.Parse(req.BarberShopId)
 	if err != nil {

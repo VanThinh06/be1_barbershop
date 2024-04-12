@@ -13,15 +13,11 @@ import (
 
 func (server *Server) CreateBarberShopServiceCategories(ctx context.Context, req *barber.CreateBarberShopServiceCategoriesRequest) (*barber.CreateBarberShopServiceCategoriesResponse, error) {
 
-	payload, err := server.authorizeBarber(ctx)
+	_, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
-	isAdmin := server.isAdministrator(payload)
-	if !isAdmin {
-		return nil, status.Errorf(codes.PermissionDenied, "No permission")
-	}
 
 	var barberShopID uuid.NullUUID
 	if req.BarberShopId != nil {

@@ -58,11 +58,8 @@ WHERE
 
 -- name: GetUserBarber :one
 SELECT 
-  b.*,
-  br."role_id" as "barber_role_id"
+  b.*
 FROM "Barbers" b
-LEFT JOIN
-  "BarberRoles" br ON b."id" = br."barber_id"
 WHERE  (
         (sqlc.arg(type_username)::varchar = 'email' AND email = $1)
         OR

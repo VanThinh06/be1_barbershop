@@ -12,7 +12,4 @@ message GetBarberShopRequest {
 
 message GetBarberShopResponse {
     BarberShops barber_shop = 1;
-    string province_name = 2;
-    string district_name = 3;
-    string ward_name = 4;
 }

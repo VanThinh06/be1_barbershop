@@ -25,4 +25,5 @@ message BarberShops {
     string province_name = 16;
     string district_name = 17;
     string ward_name = 18;
+    int32 role_id = 19;
 }

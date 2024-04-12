@@ -2,7 +2,6 @@ package gapi
 
 import (
 	"barbershop/src/shared/token"
-	"barbershop/src/shared/utilities"
 	"context"
 	"fmt"
 	"strings"
@@ -75,37 +74,5 @@ func (server *Server) authorizeCustomer(ctx context.Context) (*token.CustomerPay
 	}
 
 	return payload, nil
-}
-
-func (server *Server) isAdministrator(payload *token.BarberPayload) bool {
-	if payload.Barber.BarberRoleType != string(utilities.Administrator) {
-		return false
-	}
-	return true
-}
-
-func (server *Server) authorizeBarberAndCustomer(ctx context.Context) error {
-	_, err := server.authorizeBarber(ctx)
-	if err != nil {
-		_, err := server.authorizeCustomer(ctx)
-		if err != nil {
-			return fmt.Errorf("unauthenticated")
-		}
-	}
-	return nil
-}
-
-func (server *Server) checkCreateAccountBarberPermission(ctx context.Context, payload *token.BarberPayload, roleId int32) error {
-	var err error = fmt.Errorf("no permission to access")
-	if payload.Barber.BarberRoleType != string(utilities.Administrator) || payload.Barber.BarberRole != int32(utilities.Manager) {
-		return err
-	}
-
-	if payload.Barber.BarberRole == int32(utilities.Manager) {
-		if roleId != int32(utilities.Barber) {
-			return err
-		}
-	}
-	return nil
 }
 

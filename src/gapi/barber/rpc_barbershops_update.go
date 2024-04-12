@@ -3,7 +3,6 @@ package gapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
-	"barbershop/src/shared/utilities"
 	"context"
 	"database/sql"
 	"time"
@@ -16,13 +15,13 @@ import (
 
 func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBarberShopRequest) (*barber.UpdateBarberShopResponse, error) {
 
-	payload, err := server.authorizeBarber(ctx)
+	_, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}
-	if payload.Barber.BarberRole != int32(utilities.Admin) {
-		return nil, unauthenticatedError(err)
-	}
+	// if payload.Barber.BarberRole != int32(utilities.Admin) {
+	// 	return nil, unauthenticatedError(err)
+	// }
 
 	startTime := pgtype.Time{}
 	endTime := pgtype.Time{}
@@ -46,18 +45,6 @@ func (server *Server) UpdateBarberShop(ctx context.Context, req *barber.UpdateBa
 			String: req.GetName(),
 			Valid:  req.Name != nil,
 		},
-		// Longitude: sql.NullFloat64{
-		// 	Float64: req.GetLongtude().GetValue(),
-		// 	Valid:   req.Longtude != nil,
-		// },
-		// Latitude: sql.NullFloat64{
-		// 	Float64: req.GetLatitude().GetValue(),
-		// 	Valid:   req.Latitude != nil,
-		// },
-		// IsMainBranch: sql.NullBool{
-		// 	Bool:  req.GetIsMainBranch(),
-		// 	Valid: req.IsMainBranch != nil,
-		// },
 	}
 	barberShop, err := server.Store.UpdateBarberShop(ctx, arg)
 	if err != nil {

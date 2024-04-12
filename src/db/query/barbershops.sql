@@ -3,12 +3,43 @@
 SELECT bs.*,
     COALESCE(p.name, '') AS province_name,
     COALESCE(d.name, '') AS district_name,
-    COALESCE(w.name, '') AS ward_name
+    COALESCE(w.name, '') AS ward_name,
+    br.role_id AS role_id
 FROM "BarberShops" bs
 LEFT JOIN "Provinces" p ON bs."province_id" = p."id"
 LEFT JOIN "Districts" d ON bs."district_id" = d."id"
 LEFT JOIN "Wards" w ON bs."ward_id" = w."id"
-WHERE bs.id = $1;
+LEFT JOIN "BarberRoles" br ON bs."id" = br."barber_shop_id"
+WHERE bs.id = $1
+  AND br.barber_id = $2;
+
+-- name: ListBarberShops :many
+SELECT DISTINCT 
+    bs.id,
+    bs.barber_shop_chain_id,
+    bs.name,
+    bs.province_id,
+    bs.district_id,
+    bs.ward_id,
+    bs.specific_location,
+    bs.phone,
+    bs.email,
+    bs.website_url,
+    bs.avatar_url,
+    bs.cover_photo_url,
+    bs.facade_photo_url,
+    bs.is_main_branch,
+    bs.is_reputation,
+    COALESCE(p.name, '') AS province_name,
+    COALESCE(d.name, '') AS district_name,
+    COALESCE(w.name, '') AS ward_name,
+    br.role_id AS role_id
+FROM "BarberShops" bs
+LEFT JOIN "BarberRoles" br ON bs."id" = br."barber_shop_id"
+LEFT JOIN "Provinces" p ON bs."province_id" = p."id"
+LEFT JOIN "Districts" d ON bs."district_id" = d."id"
+LEFT JOIN "Wards" w ON bs."ward_id" = w."id"
+WHERE br."barber_id" = $1;
 
 -- name: GetDefaultPasswordEmployee :one
 SELECT default_employee_password
@@ -126,33 +157,6 @@ $28,
 $29,
         ST_GeographyFromText('POINT(' || sqlc.arg(longitude)::float8 || ' ' || sqlc.arg(latitude)::float8 || ')')
         ) RETURNING *; 
-
--- name: ListBarberShops :many
-SELECT DISTINCT 
-    bs.id,
-    bs.barber_shop_chain_id,
-    bs.name,
-    bs.province_id,
-    bs.district_id,
-    bs.ward_id,
-    bs.specific_location,
-    bs.phone,
-    bs.email,
-    bs.website_url,
-    bs.avatar_url,
-    bs.cover_photo_url,
-    bs.facade_photo_url,
-    bs.is_main_branch,
-    bs.is_reputation,
-    COALESCE(p.name, '') AS province_name,
-    COALESCE(d.name, '') AS district_name,
-    COALESCE(w.name, '') AS ward_name
-FROM "BarberShops" bs
-LEFT JOIN "BarberRoles" br ON bs."id" = br."barber_shop_id"
-LEFT JOIN "Provinces" p ON bs."province_id" = p."id"
-LEFT JOIN "Districts" d ON bs."district_id" = d."id"
-LEFT JOIN "Wards" w ON bs."ward_id" = w."id"
-WHERE br."barber_id" = $1;
 
 
 -- name: UpdateBarberShop :one

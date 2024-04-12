@@ -22,9 +22,7 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *barber.Refres
 	session, err := server.Store.GetSessionBarber(ctx, payload.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			if err != nil {
-				return nil, status.Error(codes.NotFound, "notFound")
-			}
+			return nil, status.Error(codes.NotFound, "notFound")
 		}
 
 		return nil, status.Error(codes.Internal, "unauthenticated")

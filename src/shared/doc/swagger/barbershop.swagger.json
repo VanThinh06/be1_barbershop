@@ -1466,6 +1466,10 @@
         },
         "wardName": {
           "type": "string"
+        },
+        "roleId": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -1968,15 +1972,6 @@
       "properties": {
         "barberShop": {
           "$ref": "#/definitions/pbBarberShops"
-        },
-        "provinceName": {
-          "type": "string"
-        },
-        "districtName": {
-          "type": "string"
-        },
-        "wardName": {
-          "type": "string"
         }
       }
     },
@@ -2073,7 +2068,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/pbGetBarberShopResponse"
+            "$ref": "#/definitions/pbBarberShops"
           }
         }
       }

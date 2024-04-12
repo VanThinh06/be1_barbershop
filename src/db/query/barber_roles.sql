@@ -1,4 +1,4 @@
--- name: CreateBarberRoles :one
+-- name: CreateBarberRole :one
 INSERT INTO "BarberRoles" (
     barber_id,
     barber_shop_id,
@@ -11,7 +11,7 @@ VALUES (
   )
 RETURNING *;
 
--- name: GetBarberRoles :one
+-- name: GetBarberRole :one
 SELECT *
 FROM "BarberRoles"
 WHERE "BarberRoles"."barber_id" = $1 AND "BarberRoles"."barber_shop_id" = $2;

@@ -24,11 +24,11 @@ func (server *Server) DeleteBarberEmployee(ctx context.Context, req *barber.Dele
 		if err != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 		}
-		argBarberRoleAdmin := db.GetBarberRolesParams{
+		argBarberRoleAdmin := db.GetBarberRoleParams{
 			BarberID:     payload.Barber.BarberID,
 			BarberShopID: barberShopId,
 		}
-		roleAdmin, err := server.Store.GetBarberRoles(ctx, argBarberRoleAdmin)
+		roleAdmin, err := server.Store.GetBarberRole(ctx, argBarberRoleAdmin)
 		if err != nil {
 			return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to update employee")
 		}

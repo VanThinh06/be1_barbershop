@@ -4,7 +4,6 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"barbershop/src/shared/helpers"
-	"barbershop/src/shared/utilities"
 	"context"
 	"database/sql"
 	"strings"
@@ -17,14 +16,14 @@ import (
 )
 
 func (server *Server) CreateBarberEmployees(ctx context.Context, req *barber.CreateBarberEmployeesRequest) (*barber.CreateBarberEmployeesResponse, error) {
-	payload, err := server.authorizeBarber(ctx)
+	_, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
-	if payload.Barber.BarberRoleType != string(utilities.Administrator) {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
-	}
+	// if payload.Barber.BarberRoleType != string(utilities.Administrator) {
+	// 	return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+	// }
 
 	barberShopID, err := uuid.Parse(req.BarberShopId)
 	if err != nil {
@@ -108,12 +107,12 @@ func (server *Server) createMultiBarber(ctx context.Context, req *barber.CreateB
 			if err != nil {
 				return status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 			}
-			argBarberRole := db.CreateBarberRolesParams{
+			argBarberRole := db.CreateBarberRoleParams{
 				BarberID:     resBarber.ID,
 				BarberShopID: barberShopID,
 				RoleID:       int16(req.RoleId),
 			}
-			_, err = server.Store.CreateBarberRoles(ctx, argBarberRole)
+			_, err = server.Store.CreateBarberRole(ctx, argBarberRole)
 			if err != nil {
 				return err
 			}

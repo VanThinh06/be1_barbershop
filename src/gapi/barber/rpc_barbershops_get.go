@@ -1,6 +1,7 @@
 package gapi
 
 import (
+	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"context"
 	"database/sql"
@@ -12,7 +13,7 @@ import (
 
 func (server *Server) GetBarberShop(ctx context.Context, req *barber.GetBarberShopRequest) (*barber.GetBarberShopResponse, error) {
 
-	_, err := server.authorizeBarber(ctx)
+	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
@@ -22,7 +23,11 @@ func (server *Server) GetBarberShop(ctx context.Context, req *barber.GetBarberSh
 		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 	}
 
-	res, err := server.Store.GetBarberShop(ctx, barberShopId)
+	arg := db.GetBarberShopParams{
+		ID:       barberShopId,
+		BarberID: payload.Barber.BarberID,
+	}
+	res, err := server.Store.GetBarberShop(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, status.Error(codes.NotFound, "barbershops don't exist")
@@ -31,10 +36,7 @@ func (server *Server) GetBarberShop(ctx context.Context, req *barber.GetBarberSh
 	}
 
 	rsp := &barber.GetBarberShopResponse{
-		BarberShop:   convertGetBarberShop(res),
-		ProvinceName: res.ProvinceName,
-		DistrictName: res.DistrictName,
-		WardName:     res.WardName,
+		BarberShop: convertGetBarberShop(res),
 	}
 	return rsp, nil
 }

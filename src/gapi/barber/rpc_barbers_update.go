@@ -33,11 +33,11 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 		if err != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 		}
-		argBarberRoleAdmin := db.GetBarberRolesParams{
+		argBarberRoleAdmin := db.GetBarberRoleParams{
 			BarberID:     authPayload.Barber.BarberID,
 			BarberShopID: barberShopId,
 		}
-		barberRoleAmin, err := server.Store.GetBarberRoles(ctx, argBarberRoleAdmin)
+		barberRoleAmin, err := server.Store.GetBarberRole(ctx, argBarberRoleAdmin)
 		if err != nil {
 			return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to update barber")
 		}
@@ -49,11 +49,11 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 		if err != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "barber don't exist")
 		}
-		argBarberRole := db.GetBarberRolesParams{
+		argBarberRole := db.GetBarberRoleParams{
 			BarberID:     barberId,
 			BarberShopID: barberShopId,
 		}
-		_, err = server.Store.GetBarberRoles(ctx, argBarberRole)
+		_, err = server.Store.GetBarberRole(ctx, argBarberRole)
 		if err != nil {
 			return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to update barber")
 		}

@@ -23,7 +23,17 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
-	if payload.Barber.BarberRoleType != string(utilities.Administrator) {
+	barberShopID, err := uuid.Parse(req.BarberShopId)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
+	argRole := db.GetBarberRoleParams{
+		BarberID:     payload.Barber.BarberID,
+		BarberShopID: barberShopID,
+	}
+
+	barberRole, err := server.Store.GetBarberRole(ctx, argRole)
+	if utilities.MapRoleType[int32(barberRole.RoleID)] != string(utilities.Administrator) {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
@@ -32,10 +42,6 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 		return nil, inValidArgumentError(validations)
 	}
 
-	barberShopID, err := uuid.Parse(req.BarberShopId)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
-	}
 	defaultPassword, err := server.Store.GetDefaultPasswordEmployee(ctx, barberShopID)
 	if err != nil {
 		return nil, internalError(err)
@@ -112,12 +118,12 @@ func (server *Server) txCreateBarberEmployee(ctx context.Context, req *barber.Cr
 		if err != nil {
 			return status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 		}
-		argBarberRole := db.CreateBarberRolesParams{
+		argBarberRole := db.CreateBarberRoleParams{
 			BarberID:     resBarber.ID,
 			BarberShopID: barberShopID,
 			RoleID:       int16(req.RoleId),
 		}
-		_, err = server.Store.CreateBarberRoles(ctx, argBarberRole)
+		_, err = server.Store.CreateBarberRole(ctx, argBarberRole)
 		if err != nil {
 			return status.Errorf(codes.Internal, err.Error())
 		}

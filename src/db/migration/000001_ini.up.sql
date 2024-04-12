@@ -25,6 +25,12 @@ CREATE TABLE "Roles" (
   "type" varchar(50)
 );
 
+CREATE TABLE "Permissions" (
+  "id" serial2 PRIMARY KEY,
+  "name" varchar(100) UNIQUE NOT NULL,
+  "description" varchar(255)
+);
+
 -- CREATE TABLE "PaymentOptions" (
 --     "id" serial2 PRIMARY KEY,
 --     "name" varchar(50) UNIQUE NOT NULL
@@ -34,6 +40,14 @@ CREATE TABLE "ServiceCategories" (
   "id" serial2 PRIMARY KEY,
   "name" varchar(50) UNIQUE NOT NULL,
   "is_global" bool NOT NULL DEFAULT false
+);
+
+CREATE TABLE "RolePermissions" (
+  "id" serial2 PRIMARY KEY, 
+  "role_id" int2 NOT NULL,
+  "permission_id" int2 NOT NULL,
+  FOREIGN KEY ("role_id") REFERENCES "Roles" ("id"),
+  FOREIGN KEY ("permission_id") REFERENCES "Permissions" ("id")
 );
 
 CREATE TABLE "BarberRoles" (
