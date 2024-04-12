@@ -343,7 +343,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
 }
 
 // Barber
-    rpc CreateBarber (CreateBarbersRequest) returns (CreateBarbersResponse){
+    rpc CreateBarber (CreateBarberRequest) returns (CreateBarberResponse){
         option (google.api.http) = {
                   post: "/v1/barber"
                   body: "*"
@@ -352,7 +352,6 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
           description: "API endpoint to create a new barber"
           summary: "Create a barber"
           tags: "barbers"
-
         };
     }
 

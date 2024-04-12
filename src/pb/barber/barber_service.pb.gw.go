@@ -996,7 +996,7 @@ func local_request_BarberService_ListAppointmentsByDate_0(ctx context.Context, m
 }
 
 func request_BarberService_CreateBarber_0(ctx context.Context, marshaler runtime.Marshaler, client BarberServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq CreateBarbersRequest
+	var protoReq CreateBarberRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -1013,7 +1013,7 @@ func request_BarberService_CreateBarber_0(ctx context.Context, marshaler runtime
 }
 
 func local_request_BarberService_CreateBarber_0(ctx context.Context, marshaler runtime.Marshaler, server BarberServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq CreateBarbersRequest
+	var protoReq CreateBarberRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)

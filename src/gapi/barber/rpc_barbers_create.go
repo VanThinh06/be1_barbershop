@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/codes"
 )
 
-func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarbersRequest) (*barber.CreateBarbersResponse, error) {
+func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarberRequest) (*barber.CreateBarberResponse, error) {
 
 	validations := validateCreateBarberAccountBarberShop(req)
 	if validations != nil {
@@ -56,13 +56,13 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 		return nil, internalError(err)
 	} 
 
-	rsp := &barber.CreateBarbersResponse{
+	rsp := &barber.CreateBarberResponse{
 		Barber: convertCreateBarbers(res),
 	}
 	return rsp, nil
 }
 
-func validateCreateBarberAccountBarberShop(req *barber.CreateBarbersRequest) (validations []*errdetails.BadRequest_FieldViolation) {
+func validateCreateBarberAccountBarberShop(req *barber.CreateBarberRequest) (validations []*errdetails.BadRequest_FieldViolation) {
 	if err := helpers.ValidateEmail(req.Email); err != nil {
 		validations = append(validations, FieldValidation("email", err))
 	}
@@ -82,6 +82,5 @@ func validateCreateBarberAccountBarberShop(req *barber.CreateBarbersRequest) (va
 	if err := helpers.ValidateFullName(req.FullName); err != nil {
 		validations = append(validations, FieldValidation("full name", err))
 	}
-
 	return validations
 }

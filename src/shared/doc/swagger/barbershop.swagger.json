@@ -100,7 +100,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbCreateBarbersResponse"
+              "$ref": "#/definitions/pbCreateBarberResponse"
             }
           },
           "default": {
@@ -116,7 +116,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbCreateBarbersRequest"
+              "$ref": "#/definitions/pbCreateBarberRequest"
             }
           }
         ],
@@ -1650,6 +1650,38 @@
         }
       }
     },
+    "pbCreateBarberRequest": {
+      "type": "object",
+      "properties": {
+        "genderId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "nickName": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "fullName": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateBarberResponse": {
+      "type": "object",
+      "properties": {
+        "barber": {
+          "$ref": "#/definitions/pbBarbers"
+        }
+      }
+    },
     "pbCreateBarberShopChainsRequest": {
       "type": "object",
       "properties": {
@@ -1833,38 +1865,6 @@
       "properties": {
         "serviceCategory": {
           "$ref": "#/definitions/pbBarberShopServiceCategories"
-        }
-      }
-    },
-    "pbCreateBarbersRequest": {
-      "type": "object",
-      "properties": {
-        "genderId": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "email": {
-          "type": "string"
-        },
-        "phone": {
-          "type": "string"
-        },
-        "nickName": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        },
-        "fullName": {
-          "type": "string"
-        }
-      }
-    },
-    "pbCreateBarbersResponse": {
-      "type": "object",
-      "properties": {
-        "barber": {
-          "$ref": "#/definitions/pbBarbers"
         }
       }
     },

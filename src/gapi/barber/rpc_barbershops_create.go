@@ -28,7 +28,7 @@ func (server *Server) CreateBarberShop(ctx context.Context, req *barber.CreateBa
 	}()
 	err = <-errTx
 	if err != nil {
-		return nil, status.Error(codes.Internal, "internal")
+		return nil, internalError(err)
 	}
 
 	var message = "Congratulations! You have successfully registered for " + req.Name + "."

@@ -26,12 +26,13 @@ func (server *Server) GetBarberEmployees(ctx context.Context, req *barber.GetBar
 		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 	}
 
-	arg := db.GetBarberEmployeesParams{
+	// check admin role
+	arg := db.ListEmployeesAdminParams{
 		BarberShopID: barberShopID,
 		Limit:        req.Limit,
 		Offset:       req.Limit * (req.Page - 1),
 	}
-	barberEmployees, err := server.Store.GetBarberEmployees(ctx, arg)
+	barberEmployees, err := server.Store.ListEmployeesAdmin(ctx, arg)
 	if err != nil {
 		return nil, internalError(err)
 	}

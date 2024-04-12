@@ -21,8 +21,8 @@ RETURNING *;
 INSERT INTO "Barbers" (
     phone,
     hashed_password,
-    nick_name,
-    full_name
+    full_name,
+    nick_name
   )
 VALUES (
     $1,
@@ -67,18 +67,18 @@ WHERE  (
     );
 
 
--- name: GetBarberEmployees :many
+-- name: ListEmployeesAdmin :many
 SELECT *,
        (SELECT COUNT(*) FROM "Barbers" b
         JOIN "BarberRoles" br ON b."id" = br."barber_id"
         JOIN "Roles" r ON br."role_id" = r."id"
         WHERE br."barber_shop_id" = $1
-          AND r."type" = 'Staff') AS total_employees
+          AND r."type" IN ('Staff', 'Management')) AS total_employees
 FROM "Barbers" b
 JOIN "BarberRoles" br ON b."id" = br."barber_id"
 JOIN "Roles" r ON br."role_id" = r."id"
 WHERE br."barber_shop_id" = $1
-  AND r."type" = 'Staff'
+  AND r."type" IN ('Staff', 'Management')
 ORDER BY br."role_id"
 LIMIT $2 OFFSET $3;
 

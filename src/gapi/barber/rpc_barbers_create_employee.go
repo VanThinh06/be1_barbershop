@@ -27,14 +27,15 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 	}
-	argRole := db.GetBarberRoleParams{
+
+	argCheckPermission := db.CheckBarberRolePermissionParams{
+		ID:           int16(utilities.ManageEmployee),
 		BarberID:     payload.Barber.BarberID,
 		BarberShopID: barberShopID,
 	}
-
-	barberRole, err := server.Store.GetBarberRole(ctx, argRole)
-	if utilities.MapRoleType[int32(barberRole.RoleID)] != string(utilities.Administrator) {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+	isPermission, err := server.Store.CheckBarberRolePermission(ctx, argCheckPermission)
+	if !isPermission {
+		return nil, noPermissionError(err)
 	}
 
 	validations := validateCreateBarberEmployee(req)
@@ -46,7 +47,6 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 	if err != nil {
 		return nil, internalError(err)
 	}
-
 	var hashedPassword string
 	if defaultPassword.Valid {
 		hashedPassword, err = helpers.HashPassword(defaultPassword.String)
@@ -57,8 +57,13 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 
 	newUUID := uuid.New()
 	uuidPrefix := newUUID.String()[:8]
-	trimNickName := strings.ReplaceAll(req.BarberEmployee.NickName, " ", "")
-	combinedNickName := strings.TrimSpace(trimNickName) + uuidPrefix
+	parts := strings.Split(req.BarberEmployee.FullName, " ")
+	nickName := parts[len(parts)-1]
+	combinedNickName := strings.TrimSpace(nickName) + uuidPrefix
+	if err = helpers.ValidateNickName(combinedNickName); err != nil {
+		validations = append(validations, FieldValidation("nick_name", err))
+		return nil, inValidArgumentError(validations)
+	}
 
 	var hashedPasswordValid bool = hashedPassword != ""
 	arg := db.CreateBarberEmployeeParams{

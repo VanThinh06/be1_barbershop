@@ -196,7 +196,7 @@ func convertBarberEmployee(res db.GetBarberRow) *barber.BarberDetail {
 	return barberEmployee
 }
 
-func convertBarberEmployees(res []db.GetBarberEmployeesRow) []*barber.BarberDetail {
+func convertBarberEmployees(res []db.ListEmployeesAdminRow) []*barber.BarberDetail {
 	var barberEmployees []*barber.BarberDetail
 
 	for _, item := range res {

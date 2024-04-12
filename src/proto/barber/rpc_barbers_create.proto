@@ -7,7 +7,7 @@ import "barber/barbers.proto";
 option go_package = "barbershop/src/pb/barber";
 
 
-message CreateBarbersRequest{
+message CreateBarberRequest{
     int32 gender_id = 1;
     string email = 2;
     string phone = 3;
@@ -16,6 +16,6 @@ message CreateBarbersRequest{
     string full_name = 6;
 }
 
-message CreateBarbersResponse {
+message CreateBarberResponse {
     Barbers barber = 1;
 }

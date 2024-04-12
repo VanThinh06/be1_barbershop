@@ -4,6 +4,7 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"barbershop/src/shared/helpers"
+	"barbershop/src/shared/utilities"
 	"context"
 	"database/sql"
 	"strings"
@@ -16,19 +17,26 @@ import (
 )
 
 func (server *Server) CreateBarberEmployees(ctx context.Context, req *barber.CreateBarberEmployeesRequest) (*barber.CreateBarberEmployeesResponse, error) {
-	_, err := server.authorizeBarber(ctx)
+	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
-
-	// if payload.Barber.BarberRoleType != string(utilities.Administrator) {
-	// 	return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
-	// }
 
 	barberShopID, err := uuid.Parse(req.BarberShopId)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 	}
+
+	argCheckPermission := db.CheckBarberRolePermissionParams{
+		ID:           int16(utilities.ManageEmployee),
+		BarberID:     payload.Barber.BarberID,
+		BarberShopID: barberShopID,
+	}
+	isPermission, err := server.Store.CheckBarberRolePermission(ctx, argCheckPermission)
+	if !isPermission {
+		return nil, noPermissionError(err)
+	}
+
 	defaultPassword, err := server.Store.GetDefaultPasswordEmployee(ctx, barberShopID)
 	if err != nil {
 		return nil, internalError(err)
@@ -63,8 +71,9 @@ func (server *Server) createMultiBarber(ctx context.Context, req *barber.CreateB
 
 			newUUID := uuid.New()
 			uuidPrefix := newUUID.String()[:8]
-			trimNickName := strings.ReplaceAll(b.NickName, " ", "")
-			combinedNickName := strings.TrimSpace(trimNickName) + uuidPrefix
+			parts := strings.Split(b.FullName, " ")
+			nickName := parts[len(parts)-1]
+			combinedNickName := strings.TrimSpace(nickName) + uuidPrefix
 			if err = helpers.ValidateNickName(combinedNickName); err != nil {
 				validations = append(validations, FieldValidation("nick_name", err))
 				return inValidArgumentError(validations)
