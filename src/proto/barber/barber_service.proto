@@ -44,11 +44,8 @@ import "barber/rpc_appointments_create.proto";
 import "barber/rpc_appointments_list_bydate.proto";
 
 import "barber/rpc_service_categories_create.proto";
-import "barber/rpc_service_categories_get.proto";
 import "barber/rpc_service_categories_delete.proto";
 import "barber/rpc_service_categories_update.proto";
-
-import "barber/rpc_barbershop_service_categories_create.proto";
 
 
 import "google/api/annotations.proto";
@@ -256,63 +253,40 @@ rpc DeleteBarberManagers (DeleteBarberManagersRequest) returns (DeleteBarberMana
   };
 }
 
-  // service categories
-  rpc CreateBarberShopServiceCategories (CreateBarberShopServiceCategoriesRequest) returns (CreateBarberShopServiceCategoriesResponse){
-    option (google.api.http) = {
-              post: "/v1/barbershop/service-categories"
-              body: "*"
-            };
-    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      description: "API endpoint to create a new barber"
-      summary: "Create a service category"
-      tags: "barber shops"
-    };
-  }
-
 
 
 /// SERVICE CATEGORIES
-rpc CreateServiceCategories (CreateServiceCategoriesRequest) returns (CreateServiceCategoriesResponse){
+rpc CreateServiceCategory (CreateServiceCategoryRequest) returns (CreateServiceCategoryResponse){
   option (google.api.http) = {
-    post: "/v1/service-categories"
+    post: "/v1/service-category"
     body: "*"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
   description: "API endpoint to create a service category"
-  summary: "Create service categories"
-  tags: "service categories"
-};
-}
-rpc GetServiceCategories (GetServiceCategoriesRequest) returns (GetServiceCategoriesResponse){
-  option (google.api.http) = {
-    get: "/v1/service-categories/{id}"
-  };
-  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-  description: "API endpoint to get a service category"
-  summary: "Get service categories"
+  summary: "Create service category"
   tags: "service categories"
 };
 }
 
-rpc UpdateServiceCategories (UpdateServiceCategoriesRequest) returns (UpdateServiceCategoriesResponse){
+rpc UpdateServiceCategory (UpdateServiceCategoryRequest) returns (UpdateServiceCategoryResponse){
   option (google.api.http) = {
-    patch: "/v1/service-categories/{id}"
+    patch: "/v1/service-category/{id}"
     body: "*"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
   description: "API endpoint to update a service category"
-  summary: "Update service categories"
+  summary: "Update service category"
   tags: "service categories"
 };
 }
 
-rpc DeleteServiceCategories (DeleteServiceCategoriesRequest) returns (DeleteServiceCategoriesResponse){
+rpc DeleteServiceCategory (DeleteServiceCategoryRequest) returns (DeleteServiceCategoryResponse){
   option (google.api.http) = {
-    delete: "/v1/service-categories/{id}"
+    delete: "/v1/service-category/{id}"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
   description: "API endpoint to delete a service category"
-  summary: "Delete service categories"
+  summary: "Delete service category"
   tags: "service categories"
 };
 }

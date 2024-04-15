@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) DeleteServiceCategories(ctx context.Context, req *barber.DeleteServiceCategoriesRequest) (*barber.DeleteServiceCategoriesResponse, error) {
+func (server *Server) DeleteServiceCategory(ctx context.Context, req *barber.DeleteServiceCategoryRequest) (*barber.DeleteServiceCategoryResponse, error) {
 
 	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
@@ -24,8 +24,8 @@ func (server *Server) DeleteServiceCategories(ctx context.Context, req *barber.D
 		return nil, status.Errorf(codes.Internal, "internal")
 	}
 
-	rsp := &barber.DeleteServiceCategoriesResponse{
-		Status: "success",
+	rsp := &barber.DeleteServiceCategoryResponse{
+		Message: "success",
 	}
 	return rsp, nil
 }

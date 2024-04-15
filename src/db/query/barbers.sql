@@ -35,11 +35,14 @@ RETURNING *;
 -- name: GetBarber :one
 SELECT
   b.*, 
-  br.*
+  br.*,
+  bs."name" AS barber_shop_name
 FROM
   "Barbers" b
 JOIN
   "BarberRoles" br ON b."id" = br."barber_id"
+JOIN
+  "BarberShops" bs ON br."barber_shop_id" = bs."id"
 WHERE
   b."id" = $1
   AND br."barber_shop_id" = $2;
@@ -67,7 +70,7 @@ WHERE  (
     );
 
 
--- name: ListEmployeesAdmin :many
+-- name: ListEmployees :many
 SELECT *,
        (SELECT COUNT(*) FROM "Barbers" b
         JOIN "BarberRoles" br ON b."id" = br."barber_id"

@@ -1,20 +1,12 @@
--- name: CreateServiceCategories :one
-INSERT INTO "ServiceCategories" ("name", "is_global")
+-- name: CreateServiceCategory :one
+INSERT INTO "ServiceCategories" ("name", "barber_shop_id")
 VALUES ($1, $2)
 RETURNING *;
 
--- name: GetServiceCategories :one
-SELECT *
-FROM "ServiceCategories"
-WHERE "id" = $1;
-
--- name: UpdateServiceCategories :one
+-- name: UpdateServiceCategory :exec
 UPDATE "ServiceCategories"
-SET "name" = coalesce(sqlc.narg('name'), name),
-    "is_global" = coalesce(sqlc.narg('is_global'), is_global),
-    "update_at" = NOW()
-WHERE "id" = sqlc.arg('id')
-RETURNING *;
+SET "name" = coalesce(sqlc.narg('name'), name)
+WHERE "id" = $1;
 
 -- name: DeleteServiceCategories :exec
 DELETE FROM "ServiceCategories"

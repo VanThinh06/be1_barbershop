@@ -41,6 +41,7 @@ message CreateBarberShopRequest {
     float longitude = 32;
     float latitude = 33;
     int32 interval_scheduler = 34;
+    
 }
 
 message CreateBarberShopResponse {

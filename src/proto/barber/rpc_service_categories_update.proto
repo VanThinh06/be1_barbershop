@@ -1,17 +1,15 @@
 syntax = "proto3";
 
 package pb;
-import "barber/service_categories.proto";
 
 option go_package = "barbershop/src/pb/barber";
 
 
-message UpdateServiceCategoriesRequest {
+message UpdateServiceCategoryRequest {
     optional string name = 1;
-    optional bool is_global = 2;
-    string id = 3;
+    int32 id = 2;
 }
 
-message UpdateServiceCategoriesResponse {
-    ServiceCategories service_categories = 1;
+message UpdateServiceCategoryResponse {
+    string message = 1;
 }

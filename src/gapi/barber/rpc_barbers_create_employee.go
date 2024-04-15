@@ -77,31 +77,28 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 	}
 
 	errTx := make(chan error)
-	message := make(chan string)
 
 	go func() {
-		str, err := server.txCreateBarberEmployee(ctx, req, arg)
+		err := server.txCreateBarberEmployee(ctx, req, arg)
 		errTx <- err
-		message <- str
 	}()
 
 	err = <-errTx
-	response := <-message
 
 	if err != nil {
-		return nil, status.Error(codes.Internal, "internal")
+		return nil, err
 	}
 
 	rsp := &barber.CreateBarberEmployeeResponse{
-		Message: response,
+		Message: "Barber added successfully.",
 	}
 	return rsp, nil
 }
 
-func (server *Server) txCreateBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeeRequest, arg db.CreateBarberEmployeeParams) (string, error) {
+func (server *Server) txCreateBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeeRequest, arg db.CreateBarberEmployeeParams) error {
 
 	err := server.Store.ExecTx(ctx, func(q *db.Queries) error {
-		var err error
+
 		resBarber, err := server.Store.CreateBarberEmployee(ctx, arg)
 		if err != nil {
 			if pqErr, ok := err.(*pgconn.PgError); ok {
@@ -130,11 +127,11 @@ func (server *Server) txCreateBarberEmployee(ctx context.Context, req *barber.Cr
 		}
 		_, err = server.Store.CreateBarberRole(ctx, argBarberRole)
 		if err != nil {
-			return status.Errorf(codes.Internal, err.Error())
+			return err
 		}
-		return nil
+		return err
 	})
-	return "", err
+	return err
 }
 
 func validateCreateBarberEmployee(req *barber.CreateBarberEmployeeRequest) (validations []*errdetails.BadRequest_FieldViolation) {

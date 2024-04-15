@@ -19,31 +19,26 @@ func (server *Server) DeleteBarberEmployee(ctx context.Context, req *barber.Dele
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
+	barberShopId, err := uuid.Parse(req.BarberShopId)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
+
 	if payload.Barber.BarberID.String() != req.Id {
-		barberShopId, err := uuid.Parse(req.BarberShopId)
-		if err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
-		}
-		argBarberRoleAdmin := db.GetBarberRoleParams{
+		argCheckPermission := db.CheckBarberRolePermissionParams{
+			ID:           int16(utilities.ManageEmployee),
 			BarberID:     payload.Barber.BarberID,
 			BarberShopID: barberShopId,
 		}
-		roleAdmin, err := server.Store.GetBarberRole(ctx, argBarberRoleAdmin)
-		if err != nil {
-			return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to update employee")
-		}
-		if roleAdmin.RoleID != int16(utilities.Admin) {
-			return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to update employee")
+		isPermission, err := server.Store.CheckBarberRolePermission(ctx, argCheckPermission)
+		if !isPermission {
+			return nil, noPermissionError(err)
 		}
 	}
 
 	barberId, err := uuid.Parse(req.Id)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "employee don't exist")
-	}
-	barberShopId, err := uuid.Parse(req.BarberShopId)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 	}
 	argBarber := db.GetBarberEmployeeParams{
 		ID:           barberId,
@@ -52,7 +47,7 @@ func (server *Server) DeleteBarberEmployee(ctx context.Context, req *barber.Dele
 	resBarber, err := server.Store.GetBarberEmployee(ctx, argBarber)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, returnError(codes.NotFound, "the employee does not belong to this barber shop ", err)
+			return nil, returnError(codes.NotFound, "the employee does not belong to this barber shop", err)
 		}
 		return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to delete employee")
 	}
@@ -66,7 +61,7 @@ func (server *Server) DeleteBarberEmployee(ctx context.Context, req *barber.Dele
 	}
 
 	rsp := &barber.DeleteBarberEmployeeResponse{
-		Message: "Nhân viên " + resBarber.NickName + " đã được xóa thành công",
+		Message: "Employee " + resBarber.NickName + " has been successfully deleted",
 	}
 
 	if !resBarber.HashedPassword.Valid {

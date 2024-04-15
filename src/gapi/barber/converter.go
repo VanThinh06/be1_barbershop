@@ -187,16 +187,17 @@ func convertBarberEmployee(res db.GetBarberRow) *barber.BarberDetail {
 			AvatarUrl:  res.AvatarUrl.String,
 		},
 		BarberRole: &barber.BarberRoles{
-			Id:           res.BarberID.String(),
-			BarberId:     res.BarberID.String(),
-			BarberShopId: res.BarberShopID.String(),
-			RoleId:       int32(res.RoleID),
+			Id:             res.BarberID.String(),
+			BarberId:       res.BarberID.String(),
+			BarberShopId:   res.BarberShopID.String(),
+			RoleId:         int32(res.RoleID),
+			BarberShopName: res.BarberShopName,
 		},
 	}
 	return barberEmployee
 }
 
-func convertBarberEmployees(res []db.ListEmployeesAdminRow) []*barber.BarberDetail {
+func convertBarberEmployees(res []db.ListEmployeesRow) []*barber.BarberDetail {
 	var barberEmployees []*barber.BarberDetail
 
 	for _, item := range res {
@@ -247,29 +248,25 @@ func ConvertListBarberManagers(res []db.BarberManager) []*barber.BarberManagers 
 	return barberManagers
 }
 
-func convertBSServiceCategories(serviceCategory db.BarberShopServiceCategory) *barber.BarberShopServiceCategories {
-	return &barber.BarberShopServiceCategories{
-		Id: serviceCategory.ID.String(),
+func convertBSServiceCategories(serviceCategory db.ServiceCategory) *barber.ServiceCategories {
+	return &barber.ServiceCategories{
+		Id: int32(serviceCategory.ID),
+		Name: serviceCategory.Name,
+		BarberShopId: serviceCategory.BarberShopID.UUID.String(),
 	}
 }
 
-func convertListBSServiceCategories(res []db.ListBarberShopServiceCategoriesRow) []*barber.BarberShopServiceCategories {
-	var barbers []*barber.BarberShopServiceCategories
-	for _, item := range res {
-		barber := &barber.BarberShopServiceCategories{
-			Id: item.ID.String(),
-		}
-		barbers = append(barbers, barber)
-	}
-	return barbers
-}
+// func convertListBSServiceCategories(res []db.ListBarberShopServiceCategoriesRow) []*barber.BarberShopServiceCategories {
+// 	var barbers []*barber.BarberShopServiceCategories
+// 	for _, item := range res {
+// 		barber := &barber.BarberShopServiceCategories{
+// 			Id: item.ID.String(),
+// 		}
+// 		barbers = append(barbers, barber)
+// 	}
+// 	return barbers
+// }
 
-func convertBarberShopServices(service db.BarberShopService) *barber.BarberShopServices {
-	return &barber.BarberShopServices{
-		Id:                   service.ID.String(),
-		BarbershopCategoryId: service.BarbershopCategoryID.String(),
-	}
-}
 
 func convertProvinces(res []db.Province) []*barber.Provinces {
 	var provinces []*barber.Provinces

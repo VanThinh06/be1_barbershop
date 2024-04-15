@@ -10,4 +10,5 @@ message BarberRoles {
     string barber_id = 2;
     string barber_shop_id = 3;
     int32 role_id = 4;
+    string barber_shop_name =5;
 }

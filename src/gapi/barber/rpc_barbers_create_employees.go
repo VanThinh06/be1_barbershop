@@ -26,7 +26,6 @@ func (server *Server) CreateBarberEmployees(ctx context.Context, req *barber.Cre
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 	}
-
 	argCheckPermission := db.CheckBarberRolePermissionParams{
 		ID:           int16(utilities.ManageEmployee),
 		BarberID:     payload.Barber.BarberID,
@@ -49,17 +48,17 @@ func (server *Server) CreateBarberEmployees(ctx context.Context, req *barber.Cre
 		}
 	}
 
-	response, err := server.createMultiBarber(ctx, req, hashedPassword)
+	err = server.createMultiBarber(ctx, req, hashedPassword)
 	if err != nil {
 		return nil, err
 	}
 
 	return &barber.CreateBarberEmployeesResponse{
-		Message: response,
+		Message: "Barber added successfully.",
 	}, nil
 }
 
-func (server *Server) createMultiBarber(ctx context.Context, req *barber.CreateBarberEmployeesRequest, hashedPassword string) (string, error) {
+func (server *Server) createMultiBarber(ctx context.Context, req *barber.CreateBarberEmployeesRequest, hashedPassword string) error {
 	err := server.Store.ExecTx(ctx, func(q *db.Queries) error {
 		var err error
 		for _, b := range req.BarberEmployees {
@@ -129,7 +128,7 @@ func (server *Server) createMultiBarber(ctx context.Context, req *barber.CreateB
 		return err
 	})
 
-	return "", err
+	return err
 }
 func validateBarberEmployee(req *barber.BarberEmployee) (validations []*errdetails.BadRequest_FieldViolation) {
 

@@ -5,10 +5,10 @@ package pb;
 option go_package = "barbershop/src/pb/barber";
 
 
-message DeleteServiceCategoriesRequest{
+message DeleteServiceCategoryRequest{
     string id = 1;
 }
 
-message DeleteServiceCategoriesResponse{
-    string status = 1;
+message DeleteServiceCategoryResponse{
+    string message = 1;
 }

@@ -36,11 +36,6 @@ CREATE TABLE "Permissions" (
 --     "name" varchar(50) UNIQUE NOT NULL
 -- );
 
-CREATE TABLE "ServiceCategories" (
-  "id" serial2 PRIMARY KEY,
-  "name" varchar(50) UNIQUE NOT NULL,
-  "is_global" bool NOT NULL DEFAULT false
-);
 
 CREATE TABLE "RolePermissions" (
   "id" serial2 PRIMARY KEY, 
@@ -120,16 +115,16 @@ CREATE TABLE "BarberShops" (
 --     FOREIGN KEY ("payment_option_id") REFERENCES "PaymentOptions"("id")
 -- );
 
-
-CREATE TABLE "BarberShopServiceCategories" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "barber_shop_id" uuid NOT NULL,
-  "service_category_id" int2 NOT NULL
+CREATE TABLE "ServiceCategories" (
+  "id" serial2 PRIMARY KEY,
+  "name" varchar(50) UNIQUE NOT NULL,
+  "barber_shop_id" uuid,
+  FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id")
 );
 
 CREATE TABLE "BarberShopServices" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "barbershop_category_id" uuid NOT NULL,
+  "category_id" int2 NOT NULL,
   "gender_id" int2 NOT NULL,
   "name" varchar(100) NOT NULL,
   "timer" int2 NOT NULL DEFAULT 0,
@@ -280,11 +275,9 @@ CREATE UNIQUE INDEX ON "BarberManagers" ("manager_id", "barber_id");
 
 CREATE INDEX ON "ServiceCategories" ("name");
 
-CREATE UNIQUE INDEX ON "BarberShopServiceCategories" ("barber_shop_id", "service_category_id");
+CREATE INDEX ON "BarberShopServices" ("category_id");
 
-CREATE INDEX ON "BarberShopServices" ("barbershop_category_id");
-
-CREATE UNIQUE INDEX ON "BarberShopServices" ("barbershop_category_id", "name");
+CREATE UNIQUE INDEX ON "BarberShopServices" ("category_id", "name");
 
 CREATE INDEX ON "Customers" ("phone");
 
@@ -332,11 +325,7 @@ ALTER TABLE "BarberManagers" ADD FOREIGN KEY ("manager_id") REFERENCES "Barbers"
 
 ALTER TABLE "SessionsBarber" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("id");
 
-ALTER TABLE "BarberShopServiceCategories" ADD FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id");
-
-ALTER TABLE "BarberShopServiceCategories" ADD FOREIGN KEY ("service_category_id") REFERENCES "ServiceCategories" ("id");
-
-ALTER TABLE "BarberShopServices" ADD FOREIGN KEY ("barbershop_category_id") REFERENCES "BarberShopServiceCategories" ("id");
+ALTER TABLE "BarberShopServices" ADD FOREIGN KEY ("category_id") REFERENCES "ServiceCategories" ("id");
 
 ALTER TABLE "BarberShopServices" ADD FOREIGN KEY ("gender_id") REFERENCES "Genders" ("id");
 

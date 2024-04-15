@@ -1,11 +1,11 @@
 -- name: CreateBarberShopServices :one
-INSERT INTO "BarberShopServices" (
-    barbershop_category_id
-  )
-VALUES ($1)
-RETURNING *;
+-- INSERT INTO "BarberShopServices" (
+--     category_id
+--   )
+-- VALUES ($1)
+-- RETURNING *;
 
--- name: DeleteBarberShopServices :exec
-DELETE FROM "BarberShopServices"
-WHERE
-  "id" = $1;
+-- -- name: DeleteBarberShopServices :exec
+-- DELETE FROM "BarberShopServices"
+-- WHERE
+--   "id" = $1;
