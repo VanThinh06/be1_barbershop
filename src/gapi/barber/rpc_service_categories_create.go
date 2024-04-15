@@ -47,7 +47,7 @@ func (server *Server) CreateServiceCategory(ctx context.Context, req *barber.Cre
 		if pqErr, ok := err.(*pgconn.PgError); ok {
 			switch pqErr.ConstraintName {
 			case "ServiceCategories_name_key":
-				return nil, status.Errorf(codes.Internal, "service category already exists.")
+				return nil, status.Errorf(codes.AlreadyExists, "service category already exists.")
 			}
 		}
 		return nil, status.Errorf(codes.Internal, "failed to create barber shop")
