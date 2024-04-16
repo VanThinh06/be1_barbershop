@@ -17,7 +17,7 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 
 	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+		return nil, status.Errorf(codes.Unauthenticated,	 "unauthenticated")
 	}
 
 	barberShopId, err := uuid.Parse(req.GetBarberShopId())
