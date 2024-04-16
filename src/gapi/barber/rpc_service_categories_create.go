@@ -54,7 +54,7 @@ func (server *Server) CreateServiceCategory(ctx context.Context, req *barber.Cre
 	}
 
 	rsp := &barber.CreateServiceCategoryResponse{
-		ServiceCategory: convertBSServiceCategories(serviceCategory),
+		ServiceCategory: convertServiceCategory(serviceCategory),
 	}
 	return rsp, nil
 }

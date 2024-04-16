@@ -1,39 +1,69 @@
 package gapi
 
 import (
+	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
+	"barbershop/src/shared/utilities"
 	"context"
+	"database/sql"
+
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgconn"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) CreateBarberShopServices(ctx context.Context, req *barber.CreateBarberShopServicesRequest) (*barber.CreateBarberShopServicesResponse, error) {
+func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.CreateBarberShopServiceRequest) (*barber.CreateBarberShopServiceResponse, error) {
 
-	_, err := server.authorizeBarber(ctx)
+	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
-	// var BarberShopId uuid.NullUUID
-	// if req.BarberShopId != nil {
-	// 	BarberShopId = uuid.NullUUID{
-	// 		UUID:  uuid.MustParse(req.GetBarberShopId()),
-	// 		Valid: req.BarberShopId != nil,
-	// 	}
-	// }
+	barberShopId, err := uuid.Parse(req.GetBarberShopId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
 
+	argCheckPermission := db.CheckBarberRolePermissionParams{
+		ID:           int16(utilities.ManageService),
+		BarberID:     payload.Barber.BarberID,
+		BarberShopID: barberShopId,
+	}
+	isPermission, err := server.Store.CheckBarberRolePermission(ctx, argCheckPermission)
+	if !isPermission {
+		return nil, noPermissionError(err)
+	}
 
-	// service, err := server.Store.CreateBarberShopServices(ctx, BarberShopId.UUID)
-	// if err != nil {
-	// 	if pqErr, ok := err.(*pq.Error); ok {
-	// 		switch pqErr.Code.Name() {
-	// 		}
-	// 	}
-	// 	return nil, status.Errorf(codes.Internal, "internal")
-	// }
+	arg := db.CreateBarberShopServiceParams{
+		CategoryID: int16(req.GetBarbershopCategoryId()),
+		GenderID:   int16(req.GetGenderId()),
+		Name:       req.GetName(),
+		Timer:      int16(req.GetTimer()),
+		Price:      req.GetPrice(),
+		Description: sql.NullString{
+			String: req.GetDescription(),
+			Valid:  req.Description != nil,
+		},
+		ImageUrl: sql.NullString{
+			String: req.GetImageUrl(),
+			Valid:  req.ImageUrl != nil,
+		},
+		BarberShopID: barberShopId,
+	}
+	service, err := server.Store.CreateBarberShopService(ctx, arg)
+	if err != nil {
+		if pqErr, ok := err.(*pgconn.PgError); ok {
+			switch pqErr.ConstraintName {
+			case "BarberShopServices_category_id_name_idx":
+				return nil, status.Errorf(codes.AlreadyExists, "service already exists.")
+			}
+		}
+		return nil, status.Errorf(codes.Internal, "internal")
+	}
 
-	// rsp := &barber.CreateBarberShopServicesResponse{
-	// 	BarbershopService: convertBarberShopServices(service),
-	// }
-	return nil, nil
+	rsp := &barber.CreateBarberShopServiceResponse{
+		BarberShopService: convertBarberShopService(service),
+	}
+	return rsp, nil
 }

@@ -248,10 +248,10 @@ func ConvertListBarberManagers(res []db.BarberManager) []*barber.BarberManagers 
 	return barberManagers
 }
 
-func convertBSServiceCategories(serviceCategory db.ServiceCategory) *barber.ServiceCategories {
+func convertServiceCategory(serviceCategory db.ServiceCategory) *barber.ServiceCategories {
 	return &barber.ServiceCategories{
-		Id: int32(serviceCategory.ID),
-		Name: serviceCategory.Name,
+		Id:           int32(serviceCategory.ID),
+		Name:         serviceCategory.Name,
 		BarberShopId: serviceCategory.BarberShopID.UUID.String(),
 	}
 }
@@ -267,6 +267,19 @@ func convertBSServiceCategories(serviceCategory db.ServiceCategory) *barber.Serv
 // 	return barbers
 // }
 
+func convertBarberShopService(res db.BarberShopService) *barber.BarberShopServices {
+	return &barber.BarberShopServices{
+		Id:           res.ID.String(),
+		CategoryId:   int32(res.CategoryID),
+		BarberShopId: res.BarberShopID.String(),
+		GenderId:     int32(res.GenderID),
+		Name:         res.Name,
+		Timer:        int32(res.Timer),
+		Price:        res.Price,
+		Description:  res.Description.String,
+		ImageUrl:     res.ImageUrl.String,
+	}
+}
 
 func convertProvinces(res []db.Province) []*barber.Provinces {
 	var provinces []*barber.Provinces

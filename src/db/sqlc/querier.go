@@ -21,6 +21,7 @@ type Querier interface {
 	CreateBarberRole(ctx context.Context, arg CreateBarberRoleParams) (BarberRole, error)
 	CreateBarberShop(ctx context.Context, arg CreateBarberShopParams) (BarberShop, error)
 	CreateBarberShopChains(ctx context.Context, arg CreateBarberShopChainsParams) (BarberShopChain, error)
+	CreateBarberShopService(ctx context.Context, arg CreateBarberShopServiceParams) (BarberShopService, error)
 	CreateCustomer(ctx context.Context, arg CreateCustomerParams) (Customer, error)
 	CreateServiceCategory(ctx context.Context, arg CreateServiceCategoryParams) (ServiceCategory, error)
 	CreateServicesForAppointments(ctx context.Context, arg CreateServicesForAppointmentsParams) ([]BarberShopServicesAppointment, error)

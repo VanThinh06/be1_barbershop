@@ -124,13 +124,15 @@ CREATE TABLE "ServiceCategories" (
 
 CREATE TABLE "BarberShopServices" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "barber_shop_id" uuid NOT NULL,
   "category_id" int2 NOT NULL,
   "gender_id" int2 NOT NULL,
   "name" varchar(100) NOT NULL,
   "timer" int2 NOT NULL DEFAULT 0,
   "price" real NOT NULL DEFAULT 0,
   "description" varchar(500),
-  "image_url" varchar(120)
+  "image_url" varchar(120),
+  FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id")
 );
 
 CREATE TABLE "Barbers" (

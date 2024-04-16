@@ -37,6 +37,7 @@ const (
 	BarberService_CreateServiceCategory_FullMethodName   = "/pb.BarberService/CreateServiceCategory"
 	BarberService_UpdateServiceCategory_FullMethodName   = "/pb.BarberService/UpdateServiceCategory"
 	BarberService_DeleteServiceCategory_FullMethodName   = "/pb.BarberService/DeleteServiceCategory"
+	BarberService_CreateBarberShopService_FullMethodName = "/pb.BarberService/CreateBarberShopService"
 	BarberService_CreateAppointments_FullMethodName      = "/pb.BarberService/CreateAppointments"
 	BarberService_ListAppointmentsByDate_FullMethodName  = "/pb.BarberService/ListAppointmentsByDate"
 	BarberService_CreateBarber_FullMethodName            = "/pb.BarberService/CreateBarber"
@@ -81,6 +82,7 @@ type BarberServiceClient interface {
 	CreateServiceCategory(ctx context.Context, in *CreateServiceCategoryRequest, opts ...grpc.CallOption) (*CreateServiceCategoryResponse, error)
 	UpdateServiceCategory(ctx context.Context, in *UpdateServiceCategoryRequest, opts ...grpc.CallOption) (*UpdateServiceCategoryResponse, error)
 	DeleteServiceCategory(ctx context.Context, in *DeleteServiceCategoryRequest, opts ...grpc.CallOption) (*DeleteServiceCategoryResponse, error)
+	CreateBarberShopService(ctx context.Context, in *CreateBarberShopServiceRequest, opts ...grpc.CallOption) (*CreateBarberShopServiceResponse, error)
 	// Appointments
 	CreateAppointments(ctx context.Context, in *CreateAppointmentsRequest, opts ...grpc.CallOption) (*CreateAppointmentsResponse, error)
 	ListAppointmentsByDate(ctx context.Context, in *ListAppointmentsByDateRequest, opts ...grpc.CallOption) (*ListAppointmentsByDateResponse, error)
@@ -270,6 +272,15 @@ func (c *barberServiceClient) DeleteServiceCategory(ctx context.Context, in *Del
 	return out, nil
 }
 
+func (c *barberServiceClient) CreateBarberShopService(ctx context.Context, in *CreateBarberShopServiceRequest, opts ...grpc.CallOption) (*CreateBarberShopServiceResponse, error) {
+	out := new(CreateBarberShopServiceResponse)
+	err := c.cc.Invoke(ctx, BarberService_CreateBarberShopService_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *barberServiceClient) CreateAppointments(ctx context.Context, in *CreateAppointmentsRequest, opts ...grpc.CallOption) (*CreateAppointmentsResponse, error) {
 	out := new(CreateAppointmentsResponse)
 	err := c.cc.Invoke(ctx, BarberService_CreateAppointments_FullMethodName, in, out, opts...)
@@ -424,6 +435,7 @@ type BarberServiceServer interface {
 	CreateServiceCategory(context.Context, *CreateServiceCategoryRequest) (*CreateServiceCategoryResponse, error)
 	UpdateServiceCategory(context.Context, *UpdateServiceCategoryRequest) (*UpdateServiceCategoryResponse, error)
 	DeleteServiceCategory(context.Context, *DeleteServiceCategoryRequest) (*DeleteServiceCategoryResponse, error)
+	CreateBarberShopService(context.Context, *CreateBarberShopServiceRequest) (*CreateBarberShopServiceResponse, error)
 	// Appointments
 	CreateAppointments(context.Context, *CreateAppointmentsRequest) (*CreateAppointmentsResponse, error)
 	ListAppointmentsByDate(context.Context, *ListAppointmentsByDateRequest) (*ListAppointmentsByDateResponse, error)
@@ -501,6 +513,9 @@ func (UnimplementedBarberServiceServer) UpdateServiceCategory(context.Context, *
 }
 func (UnimplementedBarberServiceServer) DeleteServiceCategory(context.Context, *DeleteServiceCategoryRequest) (*DeleteServiceCategoryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteServiceCategory not implemented")
+}
+func (UnimplementedBarberServiceServer) CreateBarberShopService(context.Context, *CreateBarberShopServiceRequest) (*CreateBarberShopServiceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateBarberShopService not implemented")
 }
 func (UnimplementedBarberServiceServer) CreateAppointments(context.Context, *CreateAppointmentsRequest) (*CreateAppointmentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAppointments not implemented")
@@ -881,6 +896,24 @@ func _BarberService_DeleteServiceCategory_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BarberService_CreateBarberShopService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateBarberShopServiceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).CreateBarberShopService(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_CreateBarberShopService_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).CreateBarberShopService(ctx, req.(*CreateBarberShopServiceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BarberService_CreateAppointments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateAppointmentsRequest)
 	if err := dec(in); err != nil {
@@ -1211,6 +1244,10 @@ var BarberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteServiceCategory",
 			Handler:    _BarberService_DeleteServiceCategory_Handler,
+		},
+		{
+			MethodName: "CreateBarberShopService",
+			Handler:    _BarberService_CreateBarberShopService_Handler,
 		},
 		{
 			MethodName: "CreateAppointments",

@@ -47,6 +47,9 @@ import "barber/rpc_service_categories_create.proto";
 import "barber/rpc_service_categories_delete.proto";
 import "barber/rpc_service_categories_update.proto";
 
+import "barber/rpc_barbershop_services_create.proto";
+
+
 
 import "google/api/annotations.proto";
 
@@ -290,6 +293,19 @@ rpc DeleteServiceCategory (DeleteServiceCategoryRequest) returns (DeleteServiceC
   tags: "service categories"
 };
 }
+
+rpc CreateBarberShopService (CreateBarberShopServiceRequest) returns (CreateBarberShopServiceResponse){
+  option (google.api.http) = {
+    post: "/v1/service"
+    body: "*"
+  };
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+  description: "API endpoint to create a service"
+  summary: "Create service"
+  tags: "service"
+};
+}
+
 
 // Appointments
 rpc CreateAppointments (CreateAppointmentsRequest) returns (CreateAppointmentsResponse){

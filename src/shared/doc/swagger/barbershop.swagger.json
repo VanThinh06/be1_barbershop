@@ -1040,6 +1040,40 @@
         ]
       }
     },
+    "/v1/service": {
+      "post": {
+        "summary": "Create service",
+        "description": "API endpoint to create a service",
+        "operationId": "BarberService_CreateBarberShopService",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateBarberShopServiceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateBarberShopServiceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "service"
+        ]
+      }
+    },
     "/v1/service-category": {
       "post": {
         "summary": "Create service category",
@@ -1316,6 +1350,42 @@
         "updateAt": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "pbBarberShopServices": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "barberShopId": {
+          "type": "string"
+        },
+        "categoryId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "genderId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "timer": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "price": {
+          "type": "number",
+          "format": "float"
+        },
+        "description": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
         }
       }
     },
@@ -1755,6 +1825,50 @@
       "properties": {
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "pbCreateBarberShopServiceRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "barbershopCategoryId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "barberShopId": {
+          "type": "string"
+        },
+        "genderId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "timer": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "price": {
+          "type": "number",
+          "format": "float"
+        },
+        "description": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateBarberShopServiceResponse": {
+      "type": "object",
+      "properties": {
+        "barberShopService": {
+          "$ref": "#/definitions/pbBarberShopServices"
         }
       }
     },

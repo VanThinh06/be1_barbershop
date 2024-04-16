@@ -122,14 +122,15 @@ type BarberShopReview struct {
 }
 
 type BarberShopService struct {
-	ID          uuid.UUID      `json:"id"`
-	CategoryID  uuid.UUID      `json:"category_id"`
-	GenderID    int16          `json:"gender_id"`
-	Name        string         `json:"name"`
-	Timer       int16          `json:"timer"`
-	Price       float32        `json:"price"`
-	Description sql.NullString `json:"description"`
-	ImageUrl    sql.NullString `json:"image_url"`
+	ID           uuid.UUID      `json:"id"`
+	BarberShopID uuid.UUID      `json:"barber_shop_id"`
+	CategoryID   int16          `json:"category_id"`
+	GenderID     int16          `json:"gender_id"`
+	Name         string         `json:"name"`
+	Timer        int16          `json:"timer"`
+	Price        float32        `json:"price"`
+	Description  sql.NullString `json:"description"`
+	ImageUrl     sql.NullString `json:"image_url"`
 }
 
 type BarberShopServicesAppointment struct {
