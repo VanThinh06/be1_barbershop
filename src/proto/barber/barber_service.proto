@@ -44,8 +44,9 @@ import "barber/rpc_appointments_create.proto";
 import "barber/rpc_appointments_list_bydate.proto";
 
 import "barber/rpc_service_categories_create.proto";
-import "barber/rpc_service_categories_delete.proto";
+import "barber/rpc_service_categories_list.proto";
 import "barber/rpc_service_categories_update.proto";
+import "barber/rpc_service_categories_delete.proto";
 
 import "barber/rpc_barbershop_services_create.proto";
 
@@ -261,12 +262,23 @@ rpc DeleteBarberManagers (DeleteBarberManagersRequest) returns (DeleteBarberMana
 /// SERVICE CATEGORIES
 rpc CreateServiceCategory (CreateServiceCategoryRequest) returns (CreateServiceCategoryResponse){
   option (google.api.http) = {
-    post: "/v1/service-category"
+    post: "/v1/service-categories"
     body: "*"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
   description: "API endpoint to create a service category"
   summary: "Create service category"
+  tags: "service categories"
+};
+}
+
+rpc ListServiceCategories (ListServiceCategoriesRequest) returns (ListServiceCategoriesResponse){
+  option (google.api.http) = {
+    get: "/v1/service-categories/{barber_shop_id}"
+  };
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+  description: "API endpoint to create a service category"
+  summary: "Get service category"
   tags: "service categories"
 };
 }
@@ -296,7 +308,7 @@ rpc DeleteServiceCategory (DeleteServiceCategoryRequest) returns (DeleteServiceC
 
 rpc CreateBarberShopService (CreateBarberShopServiceRequest) returns (CreateBarberShopServiceResponse){
   option (google.api.http) = {
-    post: "/v1/service"
+    post: "/v1/services"
     body: "*"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

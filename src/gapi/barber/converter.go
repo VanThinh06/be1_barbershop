@@ -256,16 +256,18 @@ func convertServiceCategory(serviceCategory db.ServiceCategory) *barber.ServiceC
 	}
 }
 
-// func convertListBSServiceCategories(res []db.ListBarberShopServiceCategoriesRow) []*barber.BarberShopServiceCategories {
-// 	var barbers []*barber.BarberShopServiceCategories
-// 	for _, item := range res {
-// 		barber := &barber.BarberShopServiceCategories{
-// 			Id: item.ID.String(),
-// 		}
-// 		barbers = append(barbers, barber)
-// 	}
-// 	return barbers
-// }
+func convertListServiceCategories(res []db.ServiceCategory) []*barber.ServiceCategories {
+	var serviceCategories []*barber.ServiceCategories
+	for _, item := range res {
+		serviceCategory := &barber.ServiceCategories{
+			Id:           int32(item.ID),
+			Name:         item.Name,
+			BarberShopId: item.BarberShopID.UUID.String(),
+		}
+		serviceCategories = append(serviceCategories, serviceCategory)
+	}
+	return serviceCategories
+}
 
 func convertBarberShopService(res db.BarberShopService) *barber.BarberShopServices {
 	return &barber.BarberShopServices{

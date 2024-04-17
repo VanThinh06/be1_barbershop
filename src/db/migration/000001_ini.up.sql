@@ -132,6 +132,7 @@ CREATE TABLE "BarberShopServices" (
   "price" real NOT NULL DEFAULT 0,
   "description" varchar(500),
   "image_url" varchar(120),
+  "combo_services" text[],
   FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id")
 );
 

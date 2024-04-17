@@ -1040,41 +1040,7 @@
         ]
       }
     },
-    "/v1/service": {
-      "post": {
-        "summary": "Create service",
-        "description": "API endpoint to create a service",
-        "operationId": "BarberService_CreateBarberShopService",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbCreateBarberShopServiceResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbCreateBarberShopServiceRequest"
-            }
-          }
-        ],
-        "tags": [
-          "service"
-        ]
-      }
-    },
-    "/v1/service-category": {
+    "/v1/service-categories": {
       "post": {
         "summary": "Create service category",
         "description": "API endpoint to create a service category",
@@ -1101,6 +1067,38 @@
             "schema": {
               "$ref": "#/definitions/pbCreateServiceCategoryRequest"
             }
+          }
+        ],
+        "tags": [
+          "service categories"
+        ]
+      }
+    },
+    "/v1/service-categories/{barberShopId}": {
+      "get": {
+        "summary": "Get service category",
+        "description": "API endpoint to create a service category",
+        "operationId": "BarberService_ListServiceCategories",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListServiceCategoriesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barberShopId",
+            "in": "path",
+            "required": true,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1181,6 +1179,40 @@
         ],
         "tags": [
           "service categories"
+        ]
+      }
+    },
+    "/v1/services": {
+      "post": {
+        "summary": "Create service",
+        "description": "API endpoint to create a service",
+        "operationId": "BarberService_CreateBarberShopService",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateBarberShopServiceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateBarberShopServiceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "service"
         ]
       }
     },
@@ -2091,6 +2123,18 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/pbBarberShops"
+          }
+        }
+      }
+    },
+    "pbListServiceCategoriesResponse": {
+      "type": "object",
+      "properties": {
+        "serviceCategories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbServiceCategories"
           }
         }
       }

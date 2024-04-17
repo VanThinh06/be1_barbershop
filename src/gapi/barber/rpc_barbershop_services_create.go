@@ -56,7 +56,7 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 		if pqErr, ok := err.(*pgconn.PgError); ok {
 			switch pqErr.ConstraintName {
 			case "BarberShopServices_category_id_fkey":
-				return nil, status.Errorf(codes.NotFound, "service don't exist")
+				return nil, status.Errorf(codes.NotFound, "service category don't exist")
 			case "BarberShopServices_category_id_name_idx":
 				return nil, status.Errorf(codes.AlreadyExists, "service already exists.")
 			case "BarberShopServices_barber_shop_id":
