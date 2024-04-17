@@ -1831,10 +1831,7 @@
     "pbCreateBarberShopServiceRequest": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "barbershopCategoryId": {
+        "categoryId": {
           "type": "integer",
           "format": "int32"
         },

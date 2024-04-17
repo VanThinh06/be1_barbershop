@@ -17,7 +17,7 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 
 	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated,	 "unauthenticated")
+		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
 	barberShopId, err := uuid.Parse(req.GetBarberShopId())
@@ -36,7 +36,7 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 	}
 
 	arg := db.CreateBarberShopServiceParams{
-		CategoryID: int16(req.GetBarbershopCategoryId()),
+		CategoryID: int16(req.GetCategoryId()),
 		GenderID:   int16(req.GetGenderId()),
 		Name:       req.GetName(),
 		Timer:      int16(req.GetTimer()),
@@ -55,8 +55,12 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 	if err != nil {
 		if pqErr, ok := err.(*pgconn.PgError); ok {
 			switch pqErr.ConstraintName {
+			case "BarberShopServices_category_id_fkey":
+				return nil, status.Errorf(codes.NotFound, "service don't exist")
 			case "BarberShopServices_category_id_name_idx":
 				return nil, status.Errorf(codes.AlreadyExists, "service already exists.")
+			case "BarberShopServices_barber_shop_id":
+				return nil, status.Errorf(codes.NotFound, "barbershops don't exist")
 			}
 		}
 		return nil, status.Errorf(codes.Internal, "internal")
