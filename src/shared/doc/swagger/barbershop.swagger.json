@@ -1212,7 +1212,39 @@
           }
         ],
         "tags": [
-          "service"
+          "barbershop services"
+        ]
+      }
+    },
+    "/v1/services/{barberShopId}": {
+      "get": {
+        "summary": "List services",
+        "description": "API endpoint to get list services",
+        "operationId": "BarberService_ListBarberShopServices",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListBarberShopServicesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barberShopId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "barbershop services"
         ]
       }
     },
@@ -1418,6 +1450,12 @@
         },
         "imageUrl": {
           "type": "string"
+        },
+        "comboServices": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -1890,6 +1928,12 @@
         },
         "imageUrl": {
           "type": "string"
+        },
+        "comboServices": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -2086,6 +2130,18 @@
         }
       }
     },
+    "pbListBarberShopServicesResponse": {
+      "type": "object",
+      "properties": {
+        "barberShopServices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbListItemBarberShopService"
+          }
+        }
+      }
+    },
     "pbListBarberShopsResponse": {
       "type": "object",
       "properties": {
@@ -2095,6 +2151,21 @@
             "type": "object",
             "$ref": "#/definitions/pbBarberShops"
           }
+        }
+      }
+    },
+    "pbListItemBarberShopService": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "categoryId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
         }
       }
     },

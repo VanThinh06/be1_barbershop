@@ -14,4 +14,5 @@ message BarberShopServices {
     float price = 7;
     string description = 8;
     string image_url = 9;
+    repeated string combo_services = 10;
 }

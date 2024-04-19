@@ -35,11 +35,28 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 		return nil, noPermissionError(err)
 	}
 
+	// check combo services
+	var timer = int64(req.GetTimer())
+	if len(req.ComboServices) != 0 {
+		var listComboServices []uuid.UUID
+		for _, item := range req.ComboServices {
+			uuidService, err := uuid.Parse(item)
+			if err != nil {
+				return nil, status.Errorf(codes.NotFound, "service don't exist")
+			}
+			listComboServices = append(listComboServices, uuidService)
+		}
+		timer, err = server.Store.GetTimerBarberShopServices(ctx, listComboServices)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "internal")
+		}
+	}
+
 	arg := db.CreateBarberShopServiceParams{
 		CategoryID: int16(req.GetCategoryId()),
 		GenderID:   int16(req.GetGenderId()),
 		Name:       req.GetName(),
-		Timer:      int16(req.GetTimer()),
+		Timer:      int16(timer),
 		Price:      req.GetPrice(),
 		Description: sql.NullString{
 			String: req.GetDescription(),
@@ -49,7 +66,8 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 			String: req.GetImageUrl(),
 			Valid:  req.ImageUrl != nil,
 		},
-		BarberShopID: barberShopId,
+		BarberShopID:  barberShopId,
+		ComboServices: req.ComboServices,
 	}
 	service, err := server.Store.CreateBarberShopService(ctx, arg)
 	if err != nil {
