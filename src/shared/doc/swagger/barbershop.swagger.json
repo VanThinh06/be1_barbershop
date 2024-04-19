@@ -2160,9 +2160,8 @@
         "id": {
           "type": "string"
         },
-        "categoryId": {
-          "type": "integer",
-          "format": "int32"
+        "categoryName": {
+          "type": "string"
         },
         "name": {
           "type": "string"

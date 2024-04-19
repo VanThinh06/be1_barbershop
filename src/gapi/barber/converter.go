@@ -290,7 +290,7 @@ func convertListBarberShopServices(res []db.ListBarberShopServicesRow) []*barber
 		service := &barber.ListItemBarberShopService{
 			Id:         item.ID.String(),
 			Name:       item.Name,
-			CategoryId: int32(item.CategoryID),
+			CategoryName: item.CategoryName,
 		}
 		services = append(services, service)
 	}

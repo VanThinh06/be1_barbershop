@@ -19,9 +19,10 @@ FROM "BarberShopServices"
 WHERE "id" = ANY($1::uuid[]);
 
 -- name: ListBarberShopServices :many
-SELECT "id", "name", "category_id"
-FROM "BarberShopServices"
-WHERE "barber_shop_id" = $1;
+SELECT bs."id", bs."name", sc."name" as "category_name"
+FROM "BarberShopServices" bs
+JOIN "ServiceCategories" sc ON bs."category_id" = sc."id"
+WHERE bs."barber_shop_id" = $1;
 
 -- -- name: DeleteBarberShopServices :exec
 -- DELETE FROM "BarberShopServices"

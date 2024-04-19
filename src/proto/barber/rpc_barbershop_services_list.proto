@@ -16,6 +16,6 @@ message ListBarberShopServicesResponse {
 
 message ListItemBarberShopService {
     string id = 1;
-    int32 category_id = 2;
+    string category_name = 2;
     string name = 3;
 }
