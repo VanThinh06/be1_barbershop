@@ -52,6 +52,7 @@ func (server *Server) txCreateBarberShop(ctx context.Context, req *barber.Create
 				Valid: req.BarberShopChainId != nil,
 			}
 		}
+
 		arg := db.CreateBarberShopParams{
 			BarberShopChainID: barberShopChainId,
 			Name:              req.Name,
