@@ -15,7 +15,7 @@ dropdb:
 				docker exec -it postgres1 dropdb barbershop
 
 migratecreate:
-				migrate create -ext sql -dir src/db/migration -seq barbershop
+				migrate create -ext sql -dir src/db/migration -seq add_column_barbershopservice
 				
 migrateup:
 				migrate -path src/db/migration -database "postgres://mtt16:Vanthinh11@localhost:5433/BarberShop?sslmode=disable" up

@@ -133,6 +133,7 @@ CREATE TABLE "BarberShopServices" (
   "description" varchar(500),
   "image_url" varchar(120),
   "combo_services" text[],
+  "is_active" BOOLEAN NOT NULL DEFAULT FALSE,
   FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id")
 );
 
@@ -280,7 +281,7 @@ CREATE INDEX ON "ServiceCategories" ("name");
 
 CREATE INDEX ON "BarberShopServices" ("category_id");
 
-CREATE UNIQUE INDEX ON "BarberShopServices" ("category_id", "name");
+CREATE UNIQUE INDEX ON "BarberShopServices" ("category_id", "name", "gender_id");
 
 CREATE INDEX ON "Customers" ("phone");
 

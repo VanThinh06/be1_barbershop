@@ -288,9 +288,49 @@ func convertListBarberShopServices(res []db.ListBarberShopServicesRow) []*barber
 	var services []*barber.ListItemBarberShopService
 	for _, item := range res {
 		service := &barber.ListItemBarberShopService{
-			Id:         item.ID.String(),
-			Name:       item.Name,
+			Id:           item.ID.String(),
+			Name:         item.Name,
 			CategoryName: item.CategoryName,
+		}
+		services = append(services, service)
+	}
+	return services
+}
+
+func convertListServicesByCategory(res []db.ListServicesByCategoryRow) []*barber.BarberShopServices {
+	var services []*barber.BarberShopServices
+	for _, item := range res {
+		service := &barber.BarberShopServices{
+			Id:            item.ServiceID.UUID.String(),
+			CategoryId:    int32(item.CategoryID),
+			GenderId:      int32(item.GenderID.Int16),
+			Name:          item.ServiceName.String,
+			Timer:         int32(item.Timer.Int16),
+			Price:         item.Price.Float32,
+			Description:   item.Description.String,
+			ImageUrl:      item.ImageUrl.String,
+			ComboServices: item.ComboServices,
+			IsActive:      item.IsActive.Bool,
+			CategoryName:  item.CategoryName,
+		}
+		services = append(services, service)
+	}
+	return services
+}
+
+func convertListComboServices(res []db.ListComboServicesRow) []*barber.BarberShopServices {
+	var services []*barber.BarberShopServices
+	for _, item := range res {
+		service := &barber.BarberShopServices{
+			Id:            item.ServiceID.String(),
+			GenderId:      int32(item.GenderID),
+			Name:          item.ServiceName,
+			Timer:         int32(item.Timer),
+			Price:         item.Price,
+			Description:   item.Description.String,
+			ImageUrl:      item.ImageUrl.String,
+			ComboServices: item.ComboServices,
+			IsActive:      item.IsActive,
 		}
 		services = append(services, service)
 	}

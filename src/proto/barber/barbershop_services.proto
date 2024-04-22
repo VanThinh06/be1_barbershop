@@ -15,4 +15,6 @@ message BarberShopServices {
     string description = 8;
     string image_url = 9;
     repeated string combo_services = 10;
+    string category_name = 11;
+    bool is_active = 12;
 }
