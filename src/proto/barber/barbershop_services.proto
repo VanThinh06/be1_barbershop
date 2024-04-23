@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package pb;
 
+import "google/protobuf/timestamp.proto";
+
 option go_package = "barbershop/src/pb/barber";
 
 message BarberShopServices {
@@ -12,9 +14,12 @@ message BarberShopServices {
     string name = 5;
     int32 timer = 6;
     float price = 7;
-    string description = 8;
-    string image_url = 9;
-    repeated string combo_services = 10;
-    string category_name = 11;
-    bool is_active = 12;
+    optional float discount_price = 8;
+    optional google.protobuf.Timestamp discount_start_time = 9;
+    optional google.protobuf.Timestamp discount_end_time = 10;
+    string description = 11;
+    string image_url = 12;
+    repeated string combo_services = 13;
+    string category_name = 14;
+    bool is_active = 15;
 }

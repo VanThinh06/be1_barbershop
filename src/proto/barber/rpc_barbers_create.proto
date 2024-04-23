@@ -8,12 +8,10 @@ option go_package = "barbershop/src/pb/barber";
 
 
 message CreateBarberRequest{
-    int32 gender_id = 1;
-    string email = 2;
+    string nick_name = 1;
+    string full_name = 2;
     string phone = 3;
-    string nick_name = 4;
-    string password = 5;
-    string full_name = 6;
+    string password = 4;
 }
 
 message CreateBarberResponse {

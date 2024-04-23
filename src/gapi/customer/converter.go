@@ -11,7 +11,7 @@ func convertCustomer(res db.Customer) *customer.Customer {
 	return &customer.Customer{
 		Phone:             res.Phone.String,
 		Email:             res.Email,
-		Gender:            int32(res.GenderID),
+		Gender:            int32(res.GenderID.Int16),
 		Name:              res.Name,
 		Avatar:            res.Avatar.String,
 		CustomerId:        res.ID.String(),

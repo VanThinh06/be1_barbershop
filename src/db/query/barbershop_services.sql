@@ -37,6 +37,9 @@ SELECT
     bs."image_url",
     bs."gender_id",
     bs."is_active",
+    bs."discount_price",
+    bs."discount_start_time",
+    bs."discount_end_time",
     combo_services
 FROM 
     "ServiceCategories" sc
@@ -60,6 +63,9 @@ SELECT
     bs."description",
     bs."image_url",
     bs."is_active",
+    bs."discount_price",
+    bs."discount_start_time",
+    bs."discount_end_time",
     combo_services
 FROM 
     "BarberShopServices" bs
@@ -80,6 +86,9 @@ SET
     description = coalesce(sqlc.narg('description'), description),
     image_url = coalesce(sqlc.narg('image_url'), image_url),
     is_active = coalesce(sqlc.narg('is_active'), is_active),
+    discount_price = coalesce(sqlc.narg('discount_price'), discount_price),
+    discount_start_time = coalesce(sqlc.narg('discount_start_time'), discount_start_time),
+    discount_end_time = coalesce(sqlc.narg('discount_end_time'), discount_end_time),
     combo_services = CASE 
                         WHEN COALESCE(sqlc.narg('combo_services'), '{}')::text[] != '{}' THEN COALESCE(sqlc.narg('combo_services'), '{}')::text[]
                         ELSE combo_services

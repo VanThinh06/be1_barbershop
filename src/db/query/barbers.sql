@@ -1,7 +1,5 @@
 -- name: CreateBarber :one
 INSERT INTO "Barbers" (
-    gender_id,
-    email,
     phone,
     hashed_password,
     nick_name,
@@ -11,9 +9,7 @@ VALUES (
     $1,
     $2,
     $3,
-    $4,
-    $5,
-    $6
+    $4
   )
 RETURNING *;
 

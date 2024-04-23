@@ -91,6 +91,18 @@ func (server *Server) UpdateBarberShopService(ctx context.Context, req *barber.U
 			String: req.GetImageUrl(),
 			Valid:  req.ImageUrl != nil,
 		},
+		DiscountPrice:  pgtype.Float4{
+			Float32: req.GetDiscountPrice(),
+			Valid:   req.DiscountPrice != nil,
+		},
+		DiscountStartTime: pgtype.Timestamp{
+			Time: req.GetDiscountStartTime().AsTime(),
+			Valid: req.DiscountStartTime != nil,
+		},
+		DiscountEndTime: pgtype.Timestamp{
+			Time: req.GetDiscountEndTime().AsTime(),
+			Valid: req.DiscountEndTime != nil,
+		},
 		ComboServices: req.ComboServices,
 		ID:            idService,
 	}

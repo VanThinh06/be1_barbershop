@@ -142,7 +142,7 @@ CREATE TABLE "BarberShopServices" (
 
 CREATE TABLE "Barbers" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "gender_id" int2 NOT NULL DEFAULT 1,
+  "gender_id" int2,
   "phone" varchar(15) UNIQUE NOT NULL,
   "nick_name" varchar(50) UNIQUE NOT NULL,
   "email" varchar(50) UNIQUE,
@@ -177,7 +177,7 @@ CREATE TABLE "Customers" (
   "name" varchar(50) NOT NULL,
   "email" varchar(50) UNIQUE NOT NULL,
   "phone" varchar(15) UNIQUE,
-  "gender_id" int2 NOT NULL,
+  "gender_id" int2 ,
   "hashed_password" varchar(50),
   "avatar" varchar(120),
   "is_social_auth" bool DEFAULT false,

@@ -150,7 +150,7 @@ func ConvertListBarberShopsNearby(res []db.ListNearbyBarberShopsRow) []*barber.B
 func convertCreateBarbers(res db.Barber) *barber.Barbers {
 	return &barber.Barbers{
 		Id:        res.ID.String(),
-		GenderId:  int32(res.GenderID),
+		GenderId:  int32(res.GenderID.Int16),
 		Email:     res.Email.String,
 		Phone:     res.Phone,
 		NickName:  res.NickName,
@@ -163,7 +163,7 @@ func convertCreateBarbers(res db.Barber) *barber.Barbers {
 func convertBarberContact(res db.Barber) *barber.Barbers {
 	return &barber.Barbers{
 		Id:        res.ID.String(),
-		GenderId:  int32(res.GenderID),
+		GenderId:  int32(res.GenderID.Int16),
 		Email:     res.Email.String,
 		Phone:     res.Phone,
 		NickName:  res.NickName,
@@ -177,7 +177,7 @@ func convertBarberEmployee(res db.GetBarberRow) *barber.BarberDetail {
 	barberEmployee := &barber.BarberDetail{
 		Barber: &barber.Barbers{
 			Id:         res.ID.String(),
-			GenderId:   int32(res.GenderID),
+			GenderId:   int32(res.GenderID.Int16),
 			Email:      res.Email.String,
 			Phone:      res.Phone,
 			NickName:   res.NickName,
@@ -204,7 +204,7 @@ func convertBarberEmployees(res []db.ListEmployeesRow) []*barber.BarberDetail {
 		barberEmployee := &barber.BarberDetail{
 			Barber: &barber.Barbers{
 				Id:         item.ID.String(),
-				GenderId:   int32(item.GenderID),
+				GenderId:   int32(item.GenderID.Int16),
 				Email:      item.Email.String,
 				Phone:      item.Phone,
 				NickName:   item.NickName,
@@ -301,17 +301,20 @@ func convertListServicesByCategory(res []db.ListServicesByCategoryRow) []*barber
 	var services []*barber.BarberShopServices
 	for _, item := range res {
 		service := &barber.BarberShopServices{
-			Id:            item.ServiceID.UUID.String(),
-			CategoryId:    int32(item.CategoryID),
-			GenderId:      int32(item.GenderID.Int16),
-			Name:          item.ServiceName.String,
-			Timer:         int32(item.Timer.Int16),
-			Price:         item.Price.Float32,
-			Description:   item.Description.String,
-			ImageUrl:      item.ImageUrl.String,
-			ComboServices: item.ComboServices,
-			IsActive:      item.IsActive.Bool,
-			CategoryName:  item.CategoryName,
+			Id:                item.ServiceID.UUID.String(),
+			CategoryId:        int32(item.CategoryID),
+			GenderId:          int32(item.GenderID.Int16),
+			Name:              item.ServiceName.String,
+			Timer:             int32(item.Timer.Int16),
+			Price:             item.Price.Float32,
+			Description:       item.Description.String,
+			ImageUrl:          item.ImageUrl.String,
+			ComboServices:     item.ComboServices,
+			IsActive:          item.IsActive.Bool,
+			CategoryName:      item.CategoryName,
+			DiscountPrice:     &item.DiscountPrice.Float32,
+			DiscountStartTime: timestamppb.New(item.DiscountStartTime.Time),
+			DiscountEndTime:   timestamppb.New(item.DiscountEndTime.Time),
 		}
 		services = append(services, service)
 	}
@@ -322,15 +325,18 @@ func convertListComboServices(res []db.ListComboServicesRow) []*barber.BarberSho
 	var services []*barber.BarberShopServices
 	for _, item := range res {
 		service := &barber.BarberShopServices{
-			Id:            item.ServiceID.String(),
-			GenderId:      int32(item.GenderID),
-			Name:          item.ServiceName,
-			Timer:         int32(item.Timer),
-			Price:         item.Price,
-			Description:   item.Description.String,
-			ImageUrl:      item.ImageUrl.String,
-			ComboServices: item.ComboServices,
-			IsActive:      item.IsActive,
+			Id:                item.ServiceID.String(),
+			GenderId:          int32(item.GenderID),
+			Name:              item.ServiceName,
+			Timer:             int32(item.Timer),
+			Price:             item.Price,
+			Description:       item.Description.String,
+			ImageUrl:          item.ImageUrl.String,
+			ComboServices:     item.ComboServices,
+			IsActive:          item.IsActive,
+			DiscountPrice:     &item.DiscountPrice.Float32,
+			DiscountStartTime: timestamppb.New(item.DiscountStartTime.Time),
+			DiscountEndTime:   timestamppb.New(item.DiscountEndTime.Time),
 		}
 		services = append(services, service)
 	}

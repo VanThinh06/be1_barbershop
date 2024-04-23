@@ -1541,6 +1541,18 @@
           "type": "number",
           "format": "float"
         },
+        "discountPrice": {
+          "type": "number",
+          "format": "float"
+        },
+        "discountStartTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "discountEndTime": {
+          "type": "string",
+          "format": "date-time"
+        },
         "description": {
           "type": "string"
         },
@@ -1807,23 +1819,16 @@
     "pbCreateBarberRequest": {
       "type": "object",
       "properties": {
-        "genderId": {
-          "type": "integer",
-          "format": "int32"
+        "nickName": {
+          "type": "string"
         },
-        "email": {
+        "fullName": {
           "type": "string"
         },
         "phone": {
           "type": "string"
         },
-        "nickName": {
-          "type": "string"
-        },
         "password": {
-          "type": "string"
-        },
-        "fullName": {
           "type": "string"
         }
       }
@@ -2565,6 +2570,18 @@
           "items": {
             "type": "string"
           }
+        },
+        "discountPrice": {
+          "type": "number",
+          "format": "float"
+        },
+        "discountStartTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "discountEndTime": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },

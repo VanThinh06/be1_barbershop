@@ -33,11 +33,6 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 			Valid:  true,
 		},
 		Phone:    req.GetPhone(),
-		GenderID: int16(req.GetGenderId()),
-		Email: sql.NullString{
-			String: strings.ToLower(req.GetEmail()),
-			Valid:  true,
-		},
 	}
 	res, err := server.Store.CreateBarber(ctx, arg)
 	if err != nil {
@@ -45,8 +40,6 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 			switch pqErr.ConstraintName {
 			case "Barbers_pkey":
 				return nil, returnError(codes.AlreadyExists, "This id has already existed", err)
-			case "Barbers_email_key":
-				return nil, returnError(codes.AlreadyExists, "This email has already existed", err)
 			case "Barbers_phone_key":
 				return nil, returnError(codes.AlreadyExists, "This phone has already existed", err)
 			case "Barbers_nick_name_key":
@@ -63,9 +56,6 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 }
 
 func validateCreateBarberAccountBarberShop(req *barber.CreateBarberRequest) (validations []*errdetails.BadRequest_FieldViolation) {
-	if err := helpers.ValidateEmail(req.Email); err != nil {
-		validations = append(validations, FieldValidation("email", err))
-	}
 
 	if err := helpers.ValidatePhoneNumber(req.Phone); err != nil {
 		validations = append(validations, FieldValidation("phone", err))
