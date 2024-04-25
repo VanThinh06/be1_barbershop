@@ -12,5 +12,5 @@ message GetBarberShopServicesRequest{
 }
 
 message GetBarberShopServicesResponse {
-    BarberShopServices barbershop_services = 1;
+    BarberShopServices barber_shop_service = 1;
 }

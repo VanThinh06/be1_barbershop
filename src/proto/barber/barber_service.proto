@@ -52,6 +52,8 @@ import "barber/rpc_barbershop_services_create.proto";
 import "barber/rpc_barbershop_services_list.proto";
 import "barber/rpc_barbershop_services_list_by_category.proto";
 import "barber/rpc_barbershop_services_update.proto";
+import "barber/rpc_barbershop_services_get.proto";
+
 
 
 
@@ -318,6 +320,17 @@ rpc CreateBarberShopService (CreateBarberShopServiceRequest) returns (CreateBarb
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
   description: "API endpoint to create a service"
   summary: "Create service"
+  tags: "barbershop services"
+};
+}
+
+rpc GetBarberShopServices (GetBarberShopServicesRequest) returns (GetBarberShopServicesResponse){
+  option (google.api.http) = {
+    get: "/v1/services/{id}"
+  };
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+  description: "API endpoint to get list services"
+  summary: "List services"
   tags: "barbershop services"
 };
 }

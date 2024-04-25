@@ -13,6 +13,11 @@ combo_services
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 RETURNING *;
 
+-- name: GetBarberShopService :one
+SELECT * 
+FROM "BarberShopServices" 
+WHERE "id" = $1;
+
 -- name: GetTimerBarberShopServices :one
 SELECT SUM("timer") AS total_timer
 FROM "BarberShopServices"
