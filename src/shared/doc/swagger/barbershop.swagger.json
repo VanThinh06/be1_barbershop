@@ -1312,7 +1312,7 @@
         ]
       }
     },
-    "/v1/services/{barberShopId}": {
+    "/v1/services/barbershops/{barberShopId}/services": {
       "get": {
         "summary": "List services",
         "description": "API endpoint to get list services",

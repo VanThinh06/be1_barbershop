@@ -14,9 +14,11 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 RETURNING *;
 
 -- name: GetBarberShopService :one
-SELECT * 
-FROM "BarberShopServices" 
-WHERE "id" = $1;
+SELECT bs.*, sc."name" AS "category_name"
+FROM "BarberShopServices" bs
+LEFT JOIN 
+    "ServiceCategories" sc ON sc."id" = bs."category_id"
+WHERE bs."id" = $1;
 
 -- name: GetTimerBarberShopServices :one
 SELECT SUM("timer") AS total_timer
@@ -91,9 +93,9 @@ SET
     description = coalesce(sqlc.narg('description'), description),
     image_url = coalesce(sqlc.narg('image_url'), image_url),
     is_active = coalesce(sqlc.narg('is_active'), is_active),
-    discount_price = coalesce(sqlc.narg('discount_price'), discount_price),
-    discount_start_time = coalesce(sqlc.narg('discount_start_time'), discount_start_time),
-    discount_end_time = coalesce(sqlc.narg('discount_end_time'), discount_end_time),
+    discount_price = sqlc.narg('discount_price'),
+    discount_start_time = sqlc.narg('discount_start_time'),
+    discount_end_time = sqlc.narg('discount_end_time'),
     combo_services = CASE 
                         WHEN COALESCE(sqlc.narg('combo_services'), '{}')::text[] != '{}' THEN COALESCE(sqlc.narg('combo_services'), '{}')::text[]
                         ELSE combo_services

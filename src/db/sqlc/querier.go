@@ -38,7 +38,7 @@ type Querier interface {
 	GetBarberRole(ctx context.Context, arg GetBarberRoleParams) (BarberRole, error)
 	GetBarberShop(ctx context.Context, arg GetBarberShopParams) (GetBarberShopRow, error)
 	GetBarberShopChains(ctx context.Context, id uuid.UUID) (BarberShopChain, error)
-	GetBarberShopService(ctx context.Context, id uuid.UUID) (BarberShopService, error)
+	GetBarberShopService(ctx context.Context, id uuid.UUID) (GetBarberShopServiceRow, error)
 	GetCustomer(ctx context.Context, id uuid.UUID) (Customer, error)
 	GetDefaultPasswordEmployee(ctx context.Context, id uuid.UUID) (sql.NullString, error)
 	GetDistricts(ctx context.Context, provinceID int16) ([]District, error)

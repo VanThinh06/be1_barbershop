@@ -269,22 +269,24 @@ func convertListServiceCategories(res []db.ServiceCategory) []*barber.ServiceCat
 	return serviceCategories
 }
 
+
+
 func convertBarberShopService(res db.BarberShopService) *barber.BarberShopServices {
 	return &barber.BarberShopServices{
-		Id:            res.ID.String(),
-		CategoryId:    int32(res.CategoryID),
-		BarberShopId:  res.BarberShopID.String(),
-		GenderId:      int32(res.GenderID),
-		Name:          res.Name,
-		Timer:         int32(res.Timer),
-		Price:         res.Price,
-		Description:   res.Description.String,
-		ImageUrl:      res.ImageUrl.String,
-		ComboServices: res.ComboServices,
-		DiscountPrice: &res.DiscountPrice.Float32,
+		Id:                res.ID.String(),
+		CategoryId:        int32(res.CategoryID),
+		BarberShopId:      res.BarberShopID.String(),
+		GenderId:          int32(res.GenderID),
+		Name:              res.Name,
+		Timer:             int32(res.Timer),
+		Price:             res.Price,
+		Description:       res.Description.String,
+		ImageUrl:          res.ImageUrl.String,
+		ComboServices:     res.ComboServices,
+		DiscountPrice:     &res.DiscountPrice.Float32,
 		DiscountStartTime: timestamppb.New(res.DiscountStartTime.Time),
-		DiscountEndTime: timestamppb.New(res.DiscountEndTime.Time),
-		IsActive: res.IsActive,
+		DiscountEndTime:   timestamppb.New(res.DiscountEndTime.Time),
+		IsActive:          res.IsActive,
 	}
 }
 

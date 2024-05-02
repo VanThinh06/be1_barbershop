@@ -74,14 +74,34 @@ func (q *Queries) CreateBarberShopService(ctx context.Context, arg CreateBarberS
 }
 
 const getBarberShopService = `-- name: GetBarberShopService :one
-SELECT id, barber_shop_id, category_id, gender_id, name, timer, price, discount_price, discount_start_time, discount_end_time, description, image_url, combo_services, is_active 
-FROM "BarberShopServices" 
-WHERE "id" = $1
+SELECT bs.id, bs.barber_shop_id, bs.category_id, bs.gender_id, bs.name, bs.timer, bs.price, bs.discount_price, bs.discount_start_time, bs.discount_end_time, bs.description, bs.image_url, bs.combo_services, bs.is_active, sc."name" AS "category_name"
+FROM "BarberShopServices" bs
+LEFT JOIN 
+    "ServiceCategories" sc ON sc."id" = bs."category_id"
+WHERE bs."id" = $1
 `
 
-func (q *Queries) GetBarberShopService(ctx context.Context, id uuid.UUID) (BarberShopService, error) {
+type GetBarberShopServiceRow struct {
+	ID                uuid.UUID        `json:"id"`
+	BarberShopID      uuid.UUID        `json:"barber_shop_id"`
+	CategoryID        int16            `json:"category_id"`
+	GenderID          int16            `json:"gender_id"`
+	Name              string           `json:"name"`
+	Timer             int16            `json:"timer"`
+	Price             float32          `json:"price"`
+	DiscountPrice     pgtype.Float4    `json:"discount_price"`
+	DiscountStartTime pgtype.Timestamp `json:"discount_start_time"`
+	DiscountEndTime   pgtype.Timestamp `json:"discount_end_time"`
+	Description       sql.NullString   `json:"description"`
+	ImageUrl          sql.NullString   `json:"image_url"`
+	ComboServices     []string         `json:"combo_services"`
+	IsActive          bool             `json:"is_active"`
+	CategoryName      sql.NullString   `json:"category_name"`
+}
+
+func (q *Queries) GetBarberShopService(ctx context.Context, id uuid.UUID) (GetBarberShopServiceRow, error) {
 	row := q.db.QueryRow(ctx, getBarberShopService, id)
-	var i BarberShopService
+	var i GetBarberShopServiceRow
 	err := row.Scan(
 		&i.ID,
 		&i.BarberShopID,
@@ -97,6 +117,7 @@ func (q *Queries) GetBarberShopService(ctx context.Context, id uuid.UUID) (Barbe
 		&i.ImageUrl,
 		&i.ComboServices,
 		&i.IsActive,
+		&i.CategoryName,
 	)
 	return i, err
 }
@@ -310,9 +331,9 @@ SET
     description = coalesce($7, description),
     image_url = coalesce($8, image_url),
     is_active = coalesce($9, is_active),
-    discount_price = coalesce($10, discount_price),
-    discount_start_time = coalesce($11, discount_start_time),
-    discount_end_time = coalesce($12, discount_end_time),
+    discount_price = $10,
+    discount_start_time = $11,
+    discount_end_time = $12,
     combo_services = CASE 
                         WHEN COALESCE($13, '{}')::text[] != '{}' THEN COALESCE($13, '{}')::text[]
                         ELSE combo_services
