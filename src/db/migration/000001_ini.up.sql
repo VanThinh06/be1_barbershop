@@ -31,12 +31,6 @@ CREATE TABLE "Permissions" (
   "description" varchar(255)
 );
 
--- CREATE TABLE "PaymentOptions" (
---     "id" serial2 PRIMARY KEY,
---     "name" varchar(50) UNIQUE NOT NULL
--- );
-
-
 CREATE TABLE "RolePermissions" (
   "id" serial2 PRIMARY KEY, 
   "role_id" int2 NOT NULL,
@@ -103,18 +97,6 @@ CREATE TABLE "BarberShops" (
   "create_at" timestamptz NOT NULL DEFAULT (now())
 );
 
--- CREATE TABLE "PaymentMethods" (
---     "id" PRIMARY KEY DEFAULT (uuid_generate_v4()),
---     "branch_id" uuid NOT NULL,
---     "payment_option_id" uuid NOT NULL,
---     "account_number" VARCHAR(20),
---     "bank_name" VARCHAR(50),
---     "branch_name" VARCHAR(50),
---     "account_holder_name" VARCHAR(100),
---     "create_at" timestamptz NOT NULL DEFAULT (now()),
---     FOREIGN KEY ("payment_option_id") REFERENCES "PaymentOptions"("id")
--- );
-
 CREATE TABLE "ServiceCategories" (
   "id" serial2 PRIMARY KEY,
   "name" varchar(50) UNIQUE NOT NULL,
@@ -153,11 +135,6 @@ CREATE TABLE "Barbers" (
   "avatar_url" varchar(120),
   "password_changed_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
   "create_at" timestamptz NOT NULL DEFAULT (now())
-);
-
-CREATE TABLE "BarberManagers" (
-  "barber_id" uuid NOT NULL,
-  "manager_id" uuid NOT NULL
 );
 
 CREATE TABLE "SessionsBarber" (
@@ -274,12 +251,6 @@ CREATE INDEX ON "Barbers" ("email");
 
 CREATE INDEX ON "Barbers" ("nick_name");
 
-CREATE INDEX ON "BarberManagers" ("barber_id");
-
-CREATE INDEX ON "BarberManagers" ("manager_id");
-
-CREATE UNIQUE INDEX ON "BarberManagers" ("manager_id", "barber_id");
-
 CREATE INDEX ON "ServiceCategories" ("name");
 
 CREATE INDEX ON "BarberShopServices" ("category_id");
@@ -325,10 +296,6 @@ ALTER TABLE "BarberShops" ADD FOREIGN KEY ("ward_id") REFERENCES "Wards" ("id");
 ALTER TABLE "BarberShops" ADD FOREIGN KEY ("barber_shop_chain_id") REFERENCES "BarberShopChains" ("id");
 
 ALTER TABLE "Barbers" ADD FOREIGN KEY ("gender_id") REFERENCES "Genders" ("id");
-
-ALTER TABLE "BarberManagers" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("id");
-
-ALTER TABLE "BarberManagers" ADD FOREIGN KEY ("manager_id") REFERENCES "Barbers" ("id");
 
 ALTER TABLE "SessionsBarber" ADD FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("id");
 

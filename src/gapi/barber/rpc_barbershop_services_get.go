@@ -27,7 +27,7 @@ func (server *Server) GetBarberShopServices(ctx context.Context, req *barber.Get
 	}
 
 	rsp := &barber.GetBarberShopServicesResponse{
-		BarberShopServices: convertBarberShopService(res),
+		BarberShopService: convertBarberShopService(res),
 	}
 	return rsp, nil
 }
