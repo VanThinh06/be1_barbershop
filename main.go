@@ -22,6 +22,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rakyll/statik/fs"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -52,9 +53,12 @@ func main() {
 }
 
 func runGatewayServer(config utilities.Config, store db.StoreMain, firebase db.FirebaseApp) {
-	grpcMux := runtime.NewServeMux()
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	grpcMux := runtime.NewServeMux()
+	transportCredentials := insecure.NewCredentials()
+	_ = []grpc.DialOption{grpc.WithTransportCredentials(transportCredentials)}
 
 	server, err := gapi.NewServer(config, store, firebase)
 	if err != nil {

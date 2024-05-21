@@ -13,8 +13,6 @@ type Config struct {
 	DBSource                  string        `mapstructure:"DB_SOURCE"`
 	HTTPServerAddress         string        `mapstructure:"HTTP_SERVER_ADDRESS"`
 	GRPCServerAddress         string        `mapstructure:"GRPC_SERVER_ADDRESS"`
-	HTTPServerAddressCustomer string        `mapstructure:"HTTP_SERVER_ADDRESS_CUSTOMER"`
-	GRPCServerAddressCustomer string        `mapstructure:"GRPC_SERVER_ADDRESS_CUSTOMER"`
 	TokenSymmetricKey         string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
 	TokenSymmetricKeyCustomer string        `mapstructure:"TOKEN_SYMMETRIC_KEY_CUSTOMER"`
 	AccessTokenDuration       time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`

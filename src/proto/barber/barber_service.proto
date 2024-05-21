@@ -86,18 +86,6 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 
 service BarberService {
   
-  /// BARBER ROLES
-rpc UpdateBarberRoles (UpdateBarberRolesRequest) returns (UpdateBarberRolesResponse){
-  option (google.api.http) = {
-    put: "/v1/barber-roles"
-    body: "*"
-  };
-  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-  description: "API endpoint to update role_id a barber roles"
-  summary: "Update barber roles"
-  tags: "barber roles"
-};
-}
 
 //BARBERSHOP 
 // chains
@@ -228,40 +216,6 @@ rpc DeleteBarberShops (DeleteBarberShopsRequest) returns (DeleteBarberShopsRespo
   };
 }
 
-// BARBERMANAGERS
-rpc CreateBarberManagers (CreateBarberManagersRequest) returns (CreateBarberManagersResponse){
-  option (google.api.http) = {
-            post: "/v1/barber-managers"
-            body: "*"
-          };
-  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-    description: "API endpoint to create a new barber manager"
-    summary: "Create a barber manager"
-    tags: "barber managers"
-  };
-}
-
-rpc ListBarberManagers (ListBarberManagersRequest) returns (ListBarberManagersResponse){
-  option (google.api.http) = {
-            get: "/v1/barber-managers/{id}"
-          };
-  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-    description: "API endpoint to get detail barber manager"
-    summary: "Get a barber manager"
-    tags: "barber managers"
-  };
-}
-
-rpc DeleteBarberManagers (DeleteBarberManagersRequest) returns (DeleteBarberManagersResponse){
-  option (google.api.http) = {
-            delete: "/v1/barber-managers"
-          };
-  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-    description: "API endpoint to get detail barber manager"
-    summary: "Delete a barber manager"
-    tags: "barber managers"
-  };
-}
 
 
 
