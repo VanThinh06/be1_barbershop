@@ -7,6 +7,15 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+func convertListPermission(res []db.Permission) []string {
+	permissions := make([]string, len(res))
+	for i, item := range res {
+		permissions[i] = item.Name
+	}
+	return permissions
+}
+
+
 // BarberRoles
 func convertBarberRoles(res db.BarberRole) *barber.BarberRoles {
 	return &barber.BarberRoles{
@@ -226,27 +235,7 @@ func convertBarberEmployees(res []db.ListEmployeesRow) []*barber.BarberDetail {
 	return barberEmployees
 }
 
-func convertBarberManagers(res db.BarberManager) *barber.BarberManagers {
-	return &barber.BarberManagers{
-		BarberId:  res.BarberID.String(),
-		ManagerId: res.ManagerID.String(),
-	}
-}
 
-func ConvertListBarberManagers(res []db.BarberManager) []*barber.BarberManagers {
-	var barberManagers []*barber.BarberManagers
-
-	for _, item := range res {
-		barberManager := &barber.BarberManagers{
-
-			BarberId:  item.BarberID.String(),
-			ManagerId: item.ManagerID.String(),
-		}
-		barberManagers = append(barberManagers, barberManager)
-	}
-
-	return barberManagers
-}
 
 func convertServiceCategory(serviceCategory db.ServiceCategory) *barber.ServiceCategories {
 	return &barber.ServiceCategories{

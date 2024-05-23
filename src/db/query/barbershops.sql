@@ -176,4 +176,3 @@ RETURNING *;
 DELETE FROM "BarberShops"
 WHERE id = $1;
 
-

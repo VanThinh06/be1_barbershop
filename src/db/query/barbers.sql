@@ -98,3 +98,20 @@ RETURNING *;
 -- name: DeleteBarber :exec
 DELETE FROM "Barbers"
 WHERE "id" = $1;
+
+-- name: GetPermissionFromBarberShop :many
+SELECT
+    p.id,
+    p.name,
+    p.description
+FROM
+    "Barbers" b
+JOIN
+    "BarberRoles" br ON b.id = br.barber_id
+JOIN
+    "RolePermissions" rp ON br.role_id = rp.role_id
+JOIN
+    "Permissions" p ON rp.permission_id = p.id
+WHERE
+    b.id = $1
+    AND br.barber_shop_id = $2;

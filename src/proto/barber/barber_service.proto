@@ -26,6 +26,7 @@ import "barber/rpc_barbershops_search_by_name.proto";
 import "barber/rpc_barbers_create.proto";
 import "barber/rpc_barbers_get.proto";
 import "barber/rpc_barbers_update.proto";
+import "barber/rpc_barbers_permission.proto";
 
 import "barber/rpc_barbers_create_employee.proto";
 import "barber/rpc_barbers_create_employees.proto";
@@ -34,11 +35,6 @@ import "barber/rpc_barbers_delete_employee.proto";
 
 import "barber/rpc_barbers_login.proto";
 import "barber/rpc_barbers_refresh_token.proto";
-
-
-import "barber/rpc_barber_managers_create.proto";
-import "barber/rpc_barber_managers_list.proto";
-import "barber/rpc_barber_managers_delete.proto";
 
 import "barber/rpc_appointments_create.proto";
 import "barber/rpc_appointments_list_bydate.proto";
@@ -470,6 +466,17 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       };
     }
 
+    rpc GetPermissionFromBarberShop (GetPermissionFromBarberShopRequest) returns (GetPermissionFromBarberShopResponse){
+      option (google.api.http) = {
+                post: "/v1/barber/getPermission"
+                body: "*"
+              };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        description: "API endpoint to update a new barber shop"
+        summary: "Get permission from barber shop"
+        tags: "barber shops"
+      };
+    }
 
     /// lookup
     rpc GetProvinces (GetProvincesRequest) returns (GetProvincesResponse) {
