@@ -10,7 +10,6 @@ import (
 type Barber struct {
 	BarberID       uuid.UUID `json:"barber_id"`
 	NickName       string    `json:"nick_name"`
-	
 	Phone          string    `json:"phone"`
 	Email          string    `json:"email"`
 	FcmDevice      string    `json:"fcm_device"`

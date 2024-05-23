@@ -7,12 +7,12 @@ option go_package = "barbershop/src/pb/barber";
 
 
 message RefreshTokenBarberRequest{
-    string refresh_token = 3;
+    string refresh_token = 1;
 }
 
 message RefreshTokenBarberResponse {
-    string access_token = 3;
-    google.protobuf.Timestamp access_token_expires_at =4;
-    string refresh_token = 5; 
-    google.protobuf.Timestamp  refresh_token_expires_at = 6;
+    string access_token = 1;
+    google.protobuf.Timestamp access_token_expires_at =2;
+    string refresh_token = 3; 
+    google.protobuf.Timestamp  refresh_token_expires_at = 4;
 }

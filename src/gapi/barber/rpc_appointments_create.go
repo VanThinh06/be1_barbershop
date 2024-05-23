@@ -10,7 +10,7 @@ import (
 
 	"firebase.google.com/go/v4/messaging"
 	"github.com/google/uuid"
-	"github.com/jackc/pgconn"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/lib/pq"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
@@ -98,10 +98,15 @@ func (server *Server) CreateAppointments(ctx context.Context, req *barber.Create
 func (server *Server) TxCreateAppointment(ctx context.Context, req *barber.CreateAppointmentsRequest) (db.CreateAppointmentsRow, error) {
 	var resAppointment db.CreateAppointmentsRow
 	err := server.Store.ExecTx(ctx, func(q *db.Queries) error {
-		listServices, err := helpers.ConvertStringListToUUIDList(req.GetServiceId())
-		if err != nil {
-			return status.Errorf(codes.InvalidArgument, "services do not exist")
+		var listService []uuid.UUID
+		for _, v := range req.GetServiceId() {
+			service, err := uuid.Parse(v)
+			if err != nil {
+				return status.Errorf(codes.InvalidArgument, "service do not exist")
+			}
+			listService = append(listService, service)
 		}
+		
 
 		arg := db.CreateAppointmentsParams{
 			CustomerID:          uuid.MustParse(req.GetCustomerId()),
@@ -109,7 +114,7 @@ func (server *Server) TxCreateAppointment(ctx context.Context, req *barber.Creat
 			AppointmentDateTime: req.GetAppointmentDateTime().AsTime(),
 		}
 
-		resAppointment, err = q.CreateAppointments(ctx, arg)
+		resAppointment, err := q.CreateAppointments(ctx, arg)
 		if err != nil {
 			if pqErr, ok := err.(*pgconn.PgError); ok {
 				switch pqErr.ConstraintName {
@@ -122,7 +127,7 @@ func (server *Server) TxCreateAppointment(ctx context.Context, req *barber.Creat
 
 		argServiceAppointment := db.CreateServicesForAppointmentsParams{
 			AppointmentsServiceID: resAppointment.ID,
-			ServicesID:            listServices,
+			ServicesID:            listService,
 		}
 
 		_, err = q.CreateServicesForAppointments(ctx, argServiceAppointment)

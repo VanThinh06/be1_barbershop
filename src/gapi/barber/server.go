@@ -3,6 +3,7 @@ package gapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
+	"barbershop/src/pb/customer"
 	"barbershop/src/shared/token"
 	"barbershop/src/shared/utilities"
 	"fmt"
@@ -14,6 +15,7 @@ import (
 // Server servers gRPC requests for our barbershop
 type Server struct {
 	barber.UnimplementedBarberServiceServer
+	customer.UnimplementedCustomerBarberShopServer
 	config     utilities.Config
 	Store      db.StoreMain
 	tokenMaker token.Maker

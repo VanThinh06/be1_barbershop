@@ -38,7 +38,7 @@ var MapRoleType = map[int32]string{
 type EnumPermission int32
 
 const (
-	NoPermisson EnumGender = iota
+	NoPermission EnumGender = iota
 	ViewEmployeeInformation
 	ManageEmployee
 	ViewServiceList
