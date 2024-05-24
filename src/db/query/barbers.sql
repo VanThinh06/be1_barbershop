@@ -57,14 +57,17 @@ WHERE
 
 -- name: GetUserBarber :one
 SELECT 
-  b.*
-FROM "Barbers" b
-WHERE  (
-        (sqlc.arg(type_username)::varchar = 'email' AND email = $1)
-        OR
-        (sqlc.arg(type_username)::varchar = 'phone' AND phone = $1)
-    );
-
+    b.*,
+    br.role_id,
+    br.barber_shop_id
+FROM 
+    "Barbers" b
+LEFT JOIN 
+    "BarberRoles" br ON b.id = br.barber_id
+WHERE 
+    (sqlc.arg(type_username)::varchar = 'email' AND b.email = $1)
+    OR
+    (sqlc.arg(type_username)::varchar = 'phone' AND b.phone = $1);
 
 -- name: ListEmployees :many
 SELECT *,

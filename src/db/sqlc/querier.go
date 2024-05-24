@@ -45,7 +45,7 @@ type Querier interface {
 	GetSessionBarber(ctx context.Context, id uuid.UUID) (SessionsBarber, error)
 	GetSessionsCustomer(ctx context.Context, id uuid.UUID) (SessionsCustomer, error)
 	GetTimerBarberShopServices(ctx context.Context, dollar_1 []uuid.UUID) (int64, error)
-	GetUserBarber(ctx context.Context, arg GetUserBarberParams) (Barber, error)
+	GetUserBarber(ctx context.Context, arg GetUserBarberParams) (GetUserBarberRow, error)
 	GetUserCustomer(ctx context.Context, arg GetUserCustomerParams) (Customer, error)
 	GetWards(ctx context.Context, districtID int16) ([]Ward, error)
 	ListAppointmentsByDate(ctx context.Context, arg ListAppointmentsByDateParams) ([]ListAppointmentsByDateRow, error)

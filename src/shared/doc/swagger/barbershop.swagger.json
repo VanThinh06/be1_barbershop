@@ -1346,6 +1346,54 @@
         }
       }
     },
+    "pbAuthenticationBarber": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "genderId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "nickName": {
+          "type": "string"
+        },
+        "fullName": {
+          "type": "string"
+        },
+        "avatarUrl": {
+          "type": "string"
+        },
+        "barberRoleId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "barberShopId": {
+          "type": "string"
+        },
+        "accessToken": {
+          "type": "string"
+        },
+        "accessTokenExpiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "refreshToken": {
+          "type": "string"
+        },
+        "refreshTokenExpiresAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "pbBarberDetail": {
       "type": "object",
       "properties": {
@@ -2249,25 +2297,7 @@
       "type": "object",
       "properties": {
         "barber": {
-          "$ref": "#/definitions/pbBarbers"
-        },
-        "barberRoleId": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "accessToken": {
-          "type": "string"
-        },
-        "accessTokenExpiresAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "refreshToken": {
-          "type": "string"
-        },
-        "refreshTokenExpiresAt": {
-          "type": "string",
-          "format": "date-time"
+          "$ref": "#/definitions/pbAuthenticationBarber"
         }
       }
     },

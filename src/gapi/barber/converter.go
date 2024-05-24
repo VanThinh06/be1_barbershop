@@ -169,7 +169,7 @@ func convertCreateBarbers(res db.Barber) *barber.Barbers {
 	}
 }
 
-func convertBarberContact(res db.Barber) *barber.Barbers {
+func convertBarberContact(res db.GetUserBarberRow) *barber.Barbers {
 	return &barber.Barbers{
 		Id:        res.ID.String(),
 		GenderId:  int32(res.GenderID.Int16),

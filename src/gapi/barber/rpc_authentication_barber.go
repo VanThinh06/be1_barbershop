@@ -174,17 +174,26 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 	}
 
 	rsp := &barber.LoginBarberResponse{
-		Barber:                convertBarberContact(res),
-		AccessToken:           accessToken,
-		RefreshToken:          refreshToken,
-		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiresAt),
-		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiresAt),
+		Barber: &barber.AuthenticationBarber{
+			Id:                    res.ID.String(),
+			GenderId:              int32(res.GenderID.Int16),
+			Email:                 res.Email.String,
+			Phone:                 res.Phone,
+			NickName:              res.NickName,
+			FullName:              res.FullName,
+			AvatarUrl:             res.AvatarUrl.String,
+			AccessToken:           accessToken,
+			RefreshToken:          refreshToken,
+			AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiresAt),
+			RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiresAt),
+			BarberRoleId:          int32(res.RoleID.Int16),
+			BarberShopId:          res.BarberShopID.UUID.String(),
+		},
 	}
 	return rsp, nil
 }
 
-
-// authenticate barber refresh token 
+// authenticate barber refresh token
 func (server *Server) RefreshTokenBarber(ctx context.Context, req *barber.RefreshTokenBarberRequest) (*barber.RefreshTokenBarberResponse, error) {
 	payload, err := server.tokenMaker.VerifyToken(req.RefreshToken)
 	if err != nil {
@@ -197,12 +206,12 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *barber.Refres
 			return nil, utils.NotFoundError(err, "not found")
 		}
 
-		return nil,  utils.UnauthenticatedError(err)
+		return nil, utils.UnauthenticatedError(err)
 	}
 
 	if session.IsBlocked {
 		_ = fmt.Errorf("incorrect block user")
-		return nil,  utils.UnauthenticatedError(err)
+		return nil, utils.UnauthenticatedError(err)
 
 	}
 
@@ -216,20 +225,20 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *barber.Refres
 	if session.RefreshToken != req.RefreshToken {
 		_ = fmt.Errorf("incorrect session user")
 
-		return nil,  utils.UnauthenticatedError(err)
+		return nil, utils.UnauthenticatedError(err)
 
 	}
 
 	if time.Now().After(session.ExpiresAt) {
 		_ = fmt.Errorf("expired session")
-		return nil,  utils.UnauthenticatedError(err)
+		return nil, utils.UnauthenticatedError(err)
 
 	}
 
 	if session.ClientIp != server.extractMetadata(ctx).ClientIP {
 		err := fmt.Errorf("incorrect clientIP")
 		if err != nil {
-			return nil,  utils.UnauthenticatedError(err)
+			return nil, utils.UnauthenticatedError(err)
 		}
 	}
 
