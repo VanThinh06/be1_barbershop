@@ -1210,6 +1210,38 @@
         ]
       }
     },
+    "/v1/services/detail/{id}": {
+      "get": {
+        "summary": "Service detail",
+        "description": "API endpoint to service detail",
+        "operationId": "BarberService_GetBarberShopServices",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetBarberShopServicesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "barbershop services"
+        ]
+      }
+    },
     "/v1/services/{barberShopId}": {
       "get": {
         "summary": "List services",
@@ -1232,38 +1264,6 @@
         "parameters": [
           {
             "name": "barberShopId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "barbershop services"
-        ]
-      }
-    },
-    "/v1/services/{id}": {
-      "get": {
-        "summary": "List services",
-        "description": "API endpoint to get list services",
-        "operationId": "BarberService_GetBarberShopServices",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbGetBarberShopServicesResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
             "in": "path",
             "required": true,
             "type": "string"

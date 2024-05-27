@@ -16,7 +16,9 @@ RETURNING *;
 -- name: GetBarberShopService :one
 SELECT * 
 FROM "BarberShopServices" 
-WHERE "id" = $1;
+WHERE "id" = $1
+
+;
 
 -- name: GetTimerBarberShopServices :one
 SELECT SUM("timer") AS total_timer
