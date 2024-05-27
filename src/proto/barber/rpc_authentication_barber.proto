@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "barbershop/src/pb/barber";
+
+
+message ForgotPasswordBarberRequest{
+    string email = 1;
+}
+
+message ForgotPasswordBarberResponse {
+    string message = 1;
+}
+
+message VerifyOtpBarberRequest{
+    string code = 1;
+    string barber_id = 2;
+}
+
+message VerifyOtpBarberResponse {
+    string message = 1;
+}
+
+message ResetPasswordBarberRequest{
+    string barber_id = 1;
+    string code = 2;
+    string password = 3;
+}
+
+message ResetPasswordBarberResponse {
+    string message = 1;
+}

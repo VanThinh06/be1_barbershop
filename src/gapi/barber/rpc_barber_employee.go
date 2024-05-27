@@ -373,7 +373,7 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 	if authPayload.Barber.BarberID.String() != req.Barber.Id {
 		barberShopId, err := uuid.Parse(req.BarberShopId)
 		if err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+			return nil, status.Errorf(codes.InvalidArgument, "barbershop don't exist")
 		}
 
 		argCheckPermission := db.CheckBarberRolePermissionParams{
@@ -462,6 +462,42 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 
 	rsp := &barber.UpdateBarberResponse{
 		Message: "Your information has been successfully updated.",
+	}
+	return rsp, nil
+}
+
+// barber get permissions from barber shop
+func (server *Server) GetPermissionFromBarberShop(ctx context.Context, req *barber.GetPermissionFromBarberShopRequest) (*barber.GetPermissionFromBarberShopResponse, error) {
+	authPayload, err := server.authorizeBarber(ctx)
+	if err != nil {
+		return nil, unauthenticatedError(err)
+	}
+
+	barberShopId, err := uuid.Parse(req.BarberShopId)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershop don't exist")
+	}
+
+	barberId, err := uuid.Parse(req.GetBarberId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barber don't exist")
+	}
+	if authPayload.Barber.BarberID.String() != req.GetBarberId() {
+		return nil, status.Errorf(codes.InvalidArgument, "barber don't exist")
+	}
+
+	argPermission := db.GetPermissionFromBarberShopParams{
+		ID:           barberId,
+		BarberShopID: barberShopId,
+	}
+
+	permission, err := server.Store.GetPermissionFromBarberShop(ctx, argPermission)
+	if err != nil {
+		return nil, utils.InternalError(err)
+	}
+
+	rsp := &barber.GetPermissionFromBarberShopResponse{
+		Permission: convertListPermission(permission),
 	}
 	return rsp, nil
 }

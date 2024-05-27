@@ -149,6 +149,15 @@ CREATE TABLE "SessionsBarber" (
   "create_at" timestamptz NOT NULL DEFAULT (now())
 );
 
+CREATE TABLE "OTPRequests" (
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "barber_id" uuid NOT NULL,
+  "otp" varchar(6) NOT NULL,
+  "requested_at" timestamptz NOT NULL DEFAULT (now()),
+  "is_confirm" bool NOT NULL DEFAULT false,
+  FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("id")
+);
+
 CREATE TABLE "Customers" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" varchar(50) NOT NULL,

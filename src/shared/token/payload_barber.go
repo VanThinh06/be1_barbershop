@@ -40,6 +40,7 @@ func NewPayload(barber Barber, duration time.Duration) (*BarberPayload, error) {
 var (
 	ErrInvalidToken = errors.New("token is invalid")
 	ErrExpiredToken = errors.New("token has expired")
+
 )
 
 func RePayloadBarber(id uuid.UUID, barber Barber, duration time.Duration) (*BarberPayload, error) {

@@ -20,6 +20,8 @@ type Config struct {
 	AccessTokenDuration       time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
 	RefreshTokenDuration      time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`
 	AesKey                    string        `mapstructure:"AES_KEY"`
+	AccountEmail              string        `mapstructure:"ACCOUNT_EMAIL"`
+	PasswordEmail             string        `mapstructure:"PASSWORD_EMAIL"`
 }
 
 func LoadConfig(path string) (config Config, err error) {
@@ -40,7 +42,6 @@ func LoadConfig(path string) (config Config, err error) {
 		return
 	}
 
-	
 	err = viper.Unmarshal(&config)
 	return
 }

@@ -38,11 +38,6 @@ type Barber struct {
 	CreateAt          time.Time      `json:"create_at"`
 }
 
-type BarberManager struct {
-	BarberID  uuid.UUID `json:"barber_id"`
-	ManagerID uuid.UUID `json:"manager_id"`
-}
-
 type BarberReview struct {
 	ID         uuid.UUID      `json:"id"`
 	BarberID   uuid.UUID      `json:"barber_id"`
@@ -165,6 +160,14 @@ type District struct {
 type Gender struct {
 	ID   int16  `json:"id"`
 	Name string `json:"name"`
+}
+
+type OTPRequest struct {
+	ID          uuid.UUID `json:"id"`
+	BarberID    uuid.UUID `json:"barber_id"`
+	Otp         string    `json:"otp"`
+	RequestedAt time.Time `json:"requested_at"`
+	IsConfirm   bool      `json:"is_confirm"`
 }
 
 type Permission struct {

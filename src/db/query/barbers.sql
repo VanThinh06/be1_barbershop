@@ -57,14 +57,17 @@ WHERE
 
 -- name: GetUserBarber :one
 SELECT 
-  b.*
-FROM "Barbers" b
-WHERE  (
-        (sqlc.arg(type_username)::varchar = 'email' AND email = $1)
-        OR
-        (sqlc.arg(type_username)::varchar = 'phone' AND phone = $1)
-    );
-
+    b.*,
+    br.role_id,
+    br.barber_shop_id
+FROM 
+    "Barbers" b
+LEFT JOIN 
+    "BarberRoles" br ON b.id = br.barber_id
+WHERE 
+    (sqlc.arg(type_username)::varchar = 'email' AND b.email = $1)
+    OR
+    (sqlc.arg(type_username)::varchar = 'phone' AND b.phone = $1);
 
 -- name: ListEmployees :many
 SELECT *,
@@ -95,6 +98,30 @@ SET
   WHERE "id" = $1
 RETURNING *;
 
+-- name: UpdatePasswordBarber :one
+UPDATE "Barbers"
+SET 
+  hashed_password = coalesce(sqlc.arg('hashed_password'), hashed_password)
+  WHERE "id" = $1
+RETURNING *;
+
 -- name: DeleteBarber :exec
 DELETE FROM "Barbers"
 WHERE "id" = $1;
+
+-- name: GetPermissionFromBarberShop :many
+SELECT
+    p.id,
+    p.name,
+    p.description
+FROM
+    "Barbers" b
+JOIN
+    "BarberRoles" br ON b.id = br.barber_id
+JOIN
+    "RolePermissions" rp ON br.role_id = rp.role_id
+JOIN
+    "Permissions" p ON rp.permission_id = p.id
+WHERE
+    b.id = $1
+    AND br.barber_shop_id = $2;

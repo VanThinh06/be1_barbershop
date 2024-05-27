@@ -14,10 +14,10 @@ import (
 type Querier interface {
 	ChangePasswordCustomer(ctx context.Context, arg ChangePasswordCustomerParams) (Customer, error)
 	CheckBarberRolePermission(ctx context.Context, arg CheckBarberRolePermissionParams) (bool, error)
+	ConfirmOTPRequest(ctx context.Context, arg ConfirmOTPRequestParams) error
 	CreateAppointments(ctx context.Context, arg CreateAppointmentsParams) (CreateAppointmentsRow, error)
 	CreateBarber(ctx context.Context, arg CreateBarberParams) (Barber, error)
 	CreateBarberEmployee(ctx context.Context, arg CreateBarberEmployeeParams) (Barber, error)
-	CreateBarberManagers(ctx context.Context, arg CreateBarberManagersParams) (BarberManager, error)
 	CreateBarberRole(ctx context.Context, arg CreateBarberRoleParams) (BarberRole, error)
 	CreateBarberShop(ctx context.Context, arg CreateBarberShopParams) (BarberShop, error)
 	CreateBarberShopChains(ctx context.Context, arg CreateBarberShopChainsParams) (BarberShopChain, error)
@@ -28,7 +28,6 @@ type Querier interface {
 	CreateSessionBarber(ctx context.Context, arg CreateSessionBarberParams) (SessionsBarber, error)
 	CreateSessionsCustomer(ctx context.Context, arg CreateSessionsCustomerParams) (SessionsCustomer, error)
 	DeleteBarber(ctx context.Context, id uuid.UUID) error
-	DeleteBarberManagers(ctx context.Context, arg DeleteBarberManagersParams) error
 	DeleteBarberRole(ctx context.Context, id uuid.UUID) error
 	DeleteBarberShopChains(ctx context.Context, id uuid.UUID) error
 	DeleteBarberShops(ctx context.Context, id uuid.UUID) error
@@ -42,15 +41,16 @@ type Querier interface {
 	GetCustomer(ctx context.Context, id uuid.UUID) (Customer, error)
 	GetDefaultPasswordEmployee(ctx context.Context, id uuid.UUID) (sql.NullString, error)
 	GetDistricts(ctx context.Context, provinceID int16) ([]District, error)
+	GetPermissionFromBarberShop(ctx context.Context, arg GetPermissionFromBarberShopParams) ([]Permission, error)
 	GetProvinces(ctx context.Context) ([]Province, error)
 	GetSessionBarber(ctx context.Context, id uuid.UUID) (SessionsBarber, error)
 	GetSessionsCustomer(ctx context.Context, id uuid.UUID) (SessionsCustomer, error)
 	GetTimerBarberShopServices(ctx context.Context, dollar_1 []uuid.UUID) (int64, error)
-	GetUserBarber(ctx context.Context, arg GetUserBarberParams) (Barber, error)
+	GetUserBarber(ctx context.Context, arg GetUserBarberParams) (GetUserBarberRow, error)
 	GetUserCustomer(ctx context.Context, arg GetUserCustomerParams) (Customer, error)
 	GetWards(ctx context.Context, districtID int16) ([]Ward, error)
+	InsertOTPRequest(ctx context.Context, arg InsertOTPRequestParams) error
 	ListAppointmentsByDate(ctx context.Context, arg ListAppointmentsByDateParams) ([]ListAppointmentsByDateRow, error)
-	ListBarberManagers(ctx context.Context, barberID uuid.UUID) ([]uuid.UUID, error)
 	ListBarberShopServices(ctx context.Context, barberShopID uuid.UUID) ([]ListBarberShopServicesRow, error)
 	ListBarberShops(ctx context.Context, barberID uuid.UUID) ([]ListBarberShopsRow, error)
 	ListBarbersRoles(ctx context.Context, barberShopID uuid.UUID) ([]ListBarbersRolesRow, error)
@@ -60,12 +60,15 @@ type Querier interface {
 	ListServiceCategories(ctx context.Context, barberShopID uuid.NullUUID) ([]ServiceCategory, error)
 	ListServicesByCategory(ctx context.Context, barberShopID uuid.UUID) ([]ListServicesByCategoryRow, error)
 	SearchByNameBarberShops(ctx context.Context, arg SearchByNameBarberShopsParams) ([]SearchByNameBarberShopsRow, error)
+	SelectOTPRequest(ctx context.Context, arg SelectOTPRequestParams) (SelectOTPRequestRow, error)
+	SelectRequestOTPNumber(ctx context.Context, barberID uuid.UUID) (int64, error)
 	UpdateBarber(ctx context.Context, arg UpdateBarberParams) (Barber, error)
 	UpdateBarberRoles(ctx context.Context, arg UpdateBarberRolesParams) (BarberRole, error)
 	UpdateBarberShop(ctx context.Context, arg UpdateBarberShopParams) (BarberShop, error)
 	UpdateBarberShopChains(ctx context.Context, arg UpdateBarberShopChainsParams) (BarberShopChain, error)
 	UpdateBarberShopService(ctx context.Context, arg UpdateBarberShopServiceParams) error
 	UpdateCustomer(ctx context.Context, arg UpdateCustomerParams) (Customer, error)
+	UpdatePasswordBarber(ctx context.Context, arg UpdatePasswordBarberParams) (Barber, error)
 	UpdateServiceCategory(ctx context.Context, arg UpdateServiceCategoryParams) error
 	UpdateSessionRefreshToken(ctx context.Context, arg UpdateSessionRefreshTokenParams) error
 	UpdateSessionsCustomer(ctx context.Context, arg UpdateSessionsCustomerParams) error

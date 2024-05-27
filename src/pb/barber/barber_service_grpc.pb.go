@@ -19,53 +19,51 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	BarberService_UpdateBarberRoles_FullMethodName       = "/pb.BarberService/UpdateBarberRoles"
-	BarberService_CreateBarberShopChains_FullMethodName  = "/pb.BarberService/CreateBarberShopChains"
-	BarberService_GetBarberShopChains_FullMethodName     = "/pb.BarberService/GetBarberShopChains"
-	BarberService_UpdateBarberShopChains_FullMethodName  = "/pb.BarberService/UpdateBarberShopChains"
-	BarberService_DeleteBarberShopChains_FullMethodName  = "/pb.BarberService/DeleteBarberShopChains"
-	BarberService_CreateBarberShop_FullMethodName        = "/pb.BarberService/CreateBarberShop"
-	BarberService_ListBarberShops_FullMethodName         = "/pb.BarberService/ListBarberShops"
-	BarberService_GetBarberShop_FullMethodName           = "/pb.BarberService/GetBarberShop"
-	BarberService_SearchByNameBarberShops_FullMethodName = "/pb.BarberService/SearchByNameBarberShops"
-	BarberService_ListNearbyBarberShops_FullMethodName   = "/pb.BarberService/ListNearbyBarberShops"
-	BarberService_UpdateBarberShop_FullMethodName        = "/pb.BarberService/UpdateBarberShop"
-	BarberService_DeleteBarberShops_FullMethodName       = "/pb.BarberService/DeleteBarberShops"
-	BarberService_CreateBarberManagers_FullMethodName    = "/pb.BarberService/CreateBarberManagers"
-	BarberService_ListBarberManagers_FullMethodName      = "/pb.BarberService/ListBarberManagers"
-	BarberService_DeleteBarberManagers_FullMethodName    = "/pb.BarberService/DeleteBarberManagers"
-	BarberService_CreateServiceCategory_FullMethodName   = "/pb.BarberService/CreateServiceCategory"
-	BarberService_ListServiceCategories_FullMethodName   = "/pb.BarberService/ListServiceCategories"
-	BarberService_UpdateServiceCategory_FullMethodName   = "/pb.BarberService/UpdateServiceCategory"
-	BarberService_DeleteServiceCategory_FullMethodName   = "/pb.BarberService/DeleteServiceCategory"
-	BarberService_CreateBarberShopService_FullMethodName = "/pb.BarberService/CreateBarberShopService"
-	BarberService_GetBarberShopServices_FullMethodName   = "/pb.BarberService/GetBarberShopServices"
-	BarberService_ListBarberShopServices_FullMethodName  = "/pb.BarberService/ListBarberShopServices"
-	BarberService_ListServicesByCategory_FullMethodName  = "/pb.BarberService/ListServicesByCategory"
-	BarberService_ListComboServices_FullMethodName       = "/pb.BarberService/ListComboServices"
-	BarberService_UpdateBarberShopService_FullMethodName = "/pb.BarberService/UpdateBarberShopService"
-	BarberService_CreateAppointments_FullMethodName      = "/pb.BarberService/CreateAppointments"
-	BarberService_ListAppointmentsByDate_FullMethodName  = "/pb.BarberService/ListAppointmentsByDate"
-	BarberService_CreateBarber_FullMethodName            = "/pb.BarberService/CreateBarber"
-	BarberService_CreateBarberEmployee_FullMethodName    = "/pb.BarberService/CreateBarberEmployee"
-	BarberService_CreateBarberEmployees_FullMethodName   = "/pb.BarberService/CreateBarberEmployees"
-	BarberService_GetBarberEmployees_FullMethodName      = "/pb.BarberService/GetBarberEmployees"
-	BarberService_GetBarber_FullMethodName               = "/pb.BarberService/GetBarber"
-	BarberService_UpdateBarber_FullMethodName            = "/pb.BarberService/UpdateBarber"
-	BarberService_DeleteBarberEmployee_FullMethodName    = "/pb.BarberService/DeleteBarberEmployee"
-	BarberService_LoginBarber_FullMethodName             = "/pb.BarberService/LoginBarber"
-	BarberService_RefreshTokenBarber_FullMethodName      = "/pb.BarberService/RefreshTokenBarber"
-	BarberService_GetProvinces_FullMethodName            = "/pb.BarberService/GetProvinces"
-	BarberService_GetDistricts_FullMethodName            = "/pb.BarberService/GetDistricts"
-	BarberService_GetWards_FullMethodName                = "/pb.BarberService/GetWards"
+	BarberService_CreateBarberShopChains_FullMethodName      = "/pb.BarberService/CreateBarberShopChains"
+	BarberService_GetBarberShopChains_FullMethodName         = "/pb.BarberService/GetBarberShopChains"
+	BarberService_UpdateBarberShopChains_FullMethodName      = "/pb.BarberService/UpdateBarberShopChains"
+	BarberService_DeleteBarberShopChains_FullMethodName      = "/pb.BarberService/DeleteBarberShopChains"
+	BarberService_CreateBarberShop_FullMethodName            = "/pb.BarberService/CreateBarberShop"
+	BarberService_ListBarberShops_FullMethodName             = "/pb.BarberService/ListBarberShops"
+	BarberService_GetBarberShop_FullMethodName               = "/pb.BarberService/GetBarberShop"
+	BarberService_SearchByNameBarberShops_FullMethodName     = "/pb.BarberService/SearchByNameBarberShops"
+	BarberService_ListNearbyBarberShops_FullMethodName       = "/pb.BarberService/ListNearbyBarberShops"
+	BarberService_UpdateBarberShop_FullMethodName            = "/pb.BarberService/UpdateBarberShop"
+	BarberService_DeleteBarberShops_FullMethodName           = "/pb.BarberService/DeleteBarberShops"
+	BarberService_CreateServiceCategory_FullMethodName       = "/pb.BarberService/CreateServiceCategory"
+	BarberService_ListServiceCategories_FullMethodName       = "/pb.BarberService/ListServiceCategories"
+	BarberService_UpdateServiceCategory_FullMethodName       = "/pb.BarberService/UpdateServiceCategory"
+	BarberService_DeleteServiceCategory_FullMethodName       = "/pb.BarberService/DeleteServiceCategory"
+	BarberService_CreateBarberShopService_FullMethodName     = "/pb.BarberService/CreateBarberShopService"
+	BarberService_GetBarberShopServices_FullMethodName       = "/pb.BarberService/GetBarberShopServices"
+	BarberService_ListBarberShopServices_FullMethodName      = "/pb.BarberService/ListBarberShopServices"
+	BarberService_ListServicesByCategory_FullMethodName      = "/pb.BarberService/ListServicesByCategory"
+	BarberService_ListComboServices_FullMethodName           = "/pb.BarberService/ListComboServices"
+	BarberService_UpdateBarberShopService_FullMethodName     = "/pb.BarberService/UpdateBarberShopService"
+	BarberService_CreateAppointments_FullMethodName          = "/pb.BarberService/CreateAppointments"
+	BarberService_ListAppointmentsByDate_FullMethodName      = "/pb.BarberService/ListAppointmentsByDate"
+	BarberService_CreateBarber_FullMethodName                = "/pb.BarberService/CreateBarber"
+	BarberService_CreateBarberEmployee_FullMethodName        = "/pb.BarberService/CreateBarberEmployee"
+	BarberService_CreateBarberEmployees_FullMethodName       = "/pb.BarberService/CreateBarberEmployees"
+	BarberService_GetBarberEmployees_FullMethodName          = "/pb.BarberService/GetBarberEmployees"
+	BarberService_GetBarber_FullMethodName                   = "/pb.BarberService/GetBarber"
+	BarberService_UpdateBarber_FullMethodName                = "/pb.BarberService/UpdateBarber"
+	BarberService_DeleteBarberEmployee_FullMethodName        = "/pb.BarberService/DeleteBarberEmployee"
+	BarberService_LoginBarber_FullMethodName                 = "/pb.BarberService/LoginBarber"
+	BarberService_RefreshTokenBarber_FullMethodName          = "/pb.BarberService/RefreshTokenBarber"
+	BarberService_ForgotPasswordBarber_FullMethodName        = "/pb.BarberService/ForgotPasswordBarber"
+	BarberService_VerifyOtpBarber_FullMethodName             = "/pb.BarberService/VerifyOtpBarber"
+	BarberService_ResetPasswordBarber_FullMethodName         = "/pb.BarberService/ResetPasswordBarber"
+	BarberService_GetPermissionFromBarberShop_FullMethodName = "/pb.BarberService/GetPermissionFromBarberShop"
+	BarberService_GetProvinces_FullMethodName                = "/pb.BarberService/GetProvinces"
+	BarberService_GetDistricts_FullMethodName                = "/pb.BarberService/GetDistricts"
+	BarberService_GetWards_FullMethodName                    = "/pb.BarberService/GetWards"
 )
 
 // BarberServiceClient is the client API for BarberService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BarberServiceClient interface {
-	// / BARBER ROLES
-	UpdateBarberRoles(ctx context.Context, in *UpdateBarberRolesRequest, opts ...grpc.CallOption) (*UpdateBarberRolesResponse, error)
 	// BARBERSHOP
 	// chains
 	CreateBarberShopChains(ctx context.Context, in *CreateBarberShopChainsRequest, opts ...grpc.CallOption) (*CreateBarberShopChainsResponse, error)
@@ -80,10 +78,6 @@ type BarberServiceClient interface {
 	ListNearbyBarberShops(ctx context.Context, in *ListNearbyBarberShopsRequest, opts ...grpc.CallOption) (*ListNearbyBarberShopsResponse, error)
 	UpdateBarberShop(ctx context.Context, in *UpdateBarberShopRequest, opts ...grpc.CallOption) (*UpdateBarberShopResponse, error)
 	DeleteBarberShops(ctx context.Context, in *DeleteBarberShopsRequest, opts ...grpc.CallOption) (*DeleteBarberShopsResponse, error)
-	// BARBERMANAGERS
-	CreateBarberManagers(ctx context.Context, in *CreateBarberManagersRequest, opts ...grpc.CallOption) (*CreateBarberManagersResponse, error)
-	ListBarberManagers(ctx context.Context, in *ListBarberManagersRequest, opts ...grpc.CallOption) (*ListBarberManagersResponse, error)
-	DeleteBarberManagers(ctx context.Context, in *DeleteBarberManagersRequest, opts ...grpc.CallOption) (*DeleteBarberManagersResponse, error)
 	// / SERVICE CATEGORIES
 	CreateServiceCategory(ctx context.Context, in *CreateServiceCategoryRequest, opts ...grpc.CallOption) (*CreateServiceCategoryResponse, error)
 	ListServiceCategories(ctx context.Context, in *ListServiceCategoriesRequest, opts ...grpc.CallOption) (*ListServiceCategoriesResponse, error)
@@ -108,6 +102,10 @@ type BarberServiceClient interface {
 	DeleteBarberEmployee(ctx context.Context, in *DeleteBarberEmployeeRequest, opts ...grpc.CallOption) (*DeleteBarberEmployeeResponse, error)
 	LoginBarber(ctx context.Context, in *LoginBarberRequest, opts ...grpc.CallOption) (*LoginBarberResponse, error)
 	RefreshTokenBarber(ctx context.Context, in *RefreshTokenBarberRequest, opts ...grpc.CallOption) (*RefreshTokenBarberResponse, error)
+	ForgotPasswordBarber(ctx context.Context, in *ForgotPasswordBarberRequest, opts ...grpc.CallOption) (*ForgotPasswordBarberResponse, error)
+	VerifyOtpBarber(ctx context.Context, in *VerifyOtpBarberRequest, opts ...grpc.CallOption) (*VerifyOtpBarberResponse, error)
+	ResetPasswordBarber(ctx context.Context, in *ResetPasswordBarberRequest, opts ...grpc.CallOption) (*ResetPasswordBarberResponse, error)
+	GetPermissionFromBarberShop(ctx context.Context, in *GetPermissionFromBarberShopRequest, opts ...grpc.CallOption) (*GetPermissionFromBarberShopResponse, error)
 	// / lookup
 	GetProvinces(ctx context.Context, in *GetProvincesRequest, opts ...grpc.CallOption) (*GetProvincesResponse, error)
 	GetDistricts(ctx context.Context, in *GetDistrictsRequest, opts ...grpc.CallOption) (*GetDistrictsResponse, error)
@@ -120,15 +118,6 @@ type barberServiceClient struct {
 
 func NewBarberServiceClient(cc grpc.ClientConnInterface) BarberServiceClient {
 	return &barberServiceClient{cc}
-}
-
-func (c *barberServiceClient) UpdateBarberRoles(ctx context.Context, in *UpdateBarberRolesRequest, opts ...grpc.CallOption) (*UpdateBarberRolesResponse, error) {
-	out := new(UpdateBarberRolesResponse)
-	err := c.cc.Invoke(ctx, BarberService_UpdateBarberRoles_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *barberServiceClient) CreateBarberShopChains(ctx context.Context, in *CreateBarberShopChainsRequest, opts ...grpc.CallOption) (*CreateBarberShopChainsResponse, error) {
@@ -224,33 +213,6 @@ func (c *barberServiceClient) UpdateBarberShop(ctx context.Context, in *UpdateBa
 func (c *barberServiceClient) DeleteBarberShops(ctx context.Context, in *DeleteBarberShopsRequest, opts ...grpc.CallOption) (*DeleteBarberShopsResponse, error) {
 	out := new(DeleteBarberShopsResponse)
 	err := c.cc.Invoke(ctx, BarberService_DeleteBarberShops_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *barberServiceClient) CreateBarberManagers(ctx context.Context, in *CreateBarberManagersRequest, opts ...grpc.CallOption) (*CreateBarberManagersResponse, error) {
-	out := new(CreateBarberManagersResponse)
-	err := c.cc.Invoke(ctx, BarberService_CreateBarberManagers_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *barberServiceClient) ListBarberManagers(ctx context.Context, in *ListBarberManagersRequest, opts ...grpc.CallOption) (*ListBarberManagersResponse, error) {
-	out := new(ListBarberManagersResponse)
-	err := c.cc.Invoke(ctx, BarberService_ListBarberManagers_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *barberServiceClient) DeleteBarberManagers(ctx context.Context, in *DeleteBarberManagersRequest, opts ...grpc.CallOption) (*DeleteBarberManagersResponse, error) {
-	out := new(DeleteBarberManagersResponse)
-	err := c.cc.Invoke(ctx, BarberService_DeleteBarberManagers_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -446,6 +408,42 @@ func (c *barberServiceClient) RefreshTokenBarber(ctx context.Context, in *Refres
 	return out, nil
 }
 
+func (c *barberServiceClient) ForgotPasswordBarber(ctx context.Context, in *ForgotPasswordBarberRequest, opts ...grpc.CallOption) (*ForgotPasswordBarberResponse, error) {
+	out := new(ForgotPasswordBarberResponse)
+	err := c.cc.Invoke(ctx, BarberService_ForgotPasswordBarber_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *barberServiceClient) VerifyOtpBarber(ctx context.Context, in *VerifyOtpBarberRequest, opts ...grpc.CallOption) (*VerifyOtpBarberResponse, error) {
+	out := new(VerifyOtpBarberResponse)
+	err := c.cc.Invoke(ctx, BarberService_VerifyOtpBarber_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *barberServiceClient) ResetPasswordBarber(ctx context.Context, in *ResetPasswordBarberRequest, opts ...grpc.CallOption) (*ResetPasswordBarberResponse, error) {
+	out := new(ResetPasswordBarberResponse)
+	err := c.cc.Invoke(ctx, BarberService_ResetPasswordBarber_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *barberServiceClient) GetPermissionFromBarberShop(ctx context.Context, in *GetPermissionFromBarberShopRequest, opts ...grpc.CallOption) (*GetPermissionFromBarberShopResponse, error) {
+	out := new(GetPermissionFromBarberShopResponse)
+	err := c.cc.Invoke(ctx, BarberService_GetPermissionFromBarberShop_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *barberServiceClient) GetProvinces(ctx context.Context, in *GetProvincesRequest, opts ...grpc.CallOption) (*GetProvincesResponse, error) {
 	out := new(GetProvincesResponse)
 	err := c.cc.Invoke(ctx, BarberService_GetProvinces_FullMethodName, in, out, opts...)
@@ -477,8 +475,6 @@ func (c *barberServiceClient) GetWards(ctx context.Context, in *GetWardsRequest,
 // All implementations must embed UnimplementedBarberServiceServer
 // for forward compatibility
 type BarberServiceServer interface {
-	// / BARBER ROLES
-	UpdateBarberRoles(context.Context, *UpdateBarberRolesRequest) (*UpdateBarberRolesResponse, error)
 	// BARBERSHOP
 	// chains
 	CreateBarberShopChains(context.Context, *CreateBarberShopChainsRequest) (*CreateBarberShopChainsResponse, error)
@@ -493,10 +489,6 @@ type BarberServiceServer interface {
 	ListNearbyBarberShops(context.Context, *ListNearbyBarberShopsRequest) (*ListNearbyBarberShopsResponse, error)
 	UpdateBarberShop(context.Context, *UpdateBarberShopRequest) (*UpdateBarberShopResponse, error)
 	DeleteBarberShops(context.Context, *DeleteBarberShopsRequest) (*DeleteBarberShopsResponse, error)
-	// BARBERMANAGERS
-	CreateBarberManagers(context.Context, *CreateBarberManagersRequest) (*CreateBarberManagersResponse, error)
-	ListBarberManagers(context.Context, *ListBarberManagersRequest) (*ListBarberManagersResponse, error)
-	DeleteBarberManagers(context.Context, *DeleteBarberManagersRequest) (*DeleteBarberManagersResponse, error)
 	// / SERVICE CATEGORIES
 	CreateServiceCategory(context.Context, *CreateServiceCategoryRequest) (*CreateServiceCategoryResponse, error)
 	ListServiceCategories(context.Context, *ListServiceCategoriesRequest) (*ListServiceCategoriesResponse, error)
@@ -521,6 +513,10 @@ type BarberServiceServer interface {
 	DeleteBarberEmployee(context.Context, *DeleteBarberEmployeeRequest) (*DeleteBarberEmployeeResponse, error)
 	LoginBarber(context.Context, *LoginBarberRequest) (*LoginBarberResponse, error)
 	RefreshTokenBarber(context.Context, *RefreshTokenBarberRequest) (*RefreshTokenBarberResponse, error)
+	ForgotPasswordBarber(context.Context, *ForgotPasswordBarberRequest) (*ForgotPasswordBarberResponse, error)
+	VerifyOtpBarber(context.Context, *VerifyOtpBarberRequest) (*VerifyOtpBarberResponse, error)
+	ResetPasswordBarber(context.Context, *ResetPasswordBarberRequest) (*ResetPasswordBarberResponse, error)
+	GetPermissionFromBarberShop(context.Context, *GetPermissionFromBarberShopRequest) (*GetPermissionFromBarberShopResponse, error)
 	// / lookup
 	GetProvinces(context.Context, *GetProvincesRequest) (*GetProvincesResponse, error)
 	GetDistricts(context.Context, *GetDistrictsRequest) (*GetDistrictsResponse, error)
@@ -532,9 +528,6 @@ type BarberServiceServer interface {
 type UnimplementedBarberServiceServer struct {
 }
 
-func (UnimplementedBarberServiceServer) UpdateBarberRoles(context.Context, *UpdateBarberRolesRequest) (*UpdateBarberRolesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateBarberRoles not implemented")
-}
 func (UnimplementedBarberServiceServer) CreateBarberShopChains(context.Context, *CreateBarberShopChainsRequest) (*CreateBarberShopChainsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBarberShopChains not implemented")
 }
@@ -567,15 +560,6 @@ func (UnimplementedBarberServiceServer) UpdateBarberShop(context.Context, *Updat
 }
 func (UnimplementedBarberServiceServer) DeleteBarberShops(context.Context, *DeleteBarberShopsRequest) (*DeleteBarberShopsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBarberShops not implemented")
-}
-func (UnimplementedBarberServiceServer) CreateBarberManagers(context.Context, *CreateBarberManagersRequest) (*CreateBarberManagersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateBarberManagers not implemented")
-}
-func (UnimplementedBarberServiceServer) ListBarberManagers(context.Context, *ListBarberManagersRequest) (*ListBarberManagersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListBarberManagers not implemented")
-}
-func (UnimplementedBarberServiceServer) DeleteBarberManagers(context.Context, *DeleteBarberManagersRequest) (*DeleteBarberManagersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteBarberManagers not implemented")
 }
 func (UnimplementedBarberServiceServer) CreateServiceCategory(context.Context, *CreateServiceCategoryRequest) (*CreateServiceCategoryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateServiceCategory not implemented")
@@ -640,6 +624,18 @@ func (UnimplementedBarberServiceServer) LoginBarber(context.Context, *LoginBarbe
 func (UnimplementedBarberServiceServer) RefreshTokenBarber(context.Context, *RefreshTokenBarberRequest) (*RefreshTokenBarberResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefreshTokenBarber not implemented")
 }
+func (UnimplementedBarberServiceServer) ForgotPasswordBarber(context.Context, *ForgotPasswordBarberRequest) (*ForgotPasswordBarberResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ForgotPasswordBarber not implemented")
+}
+func (UnimplementedBarberServiceServer) VerifyOtpBarber(context.Context, *VerifyOtpBarberRequest) (*VerifyOtpBarberResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyOtpBarber not implemented")
+}
+func (UnimplementedBarberServiceServer) ResetPasswordBarber(context.Context, *ResetPasswordBarberRequest) (*ResetPasswordBarberResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetPasswordBarber not implemented")
+}
+func (UnimplementedBarberServiceServer) GetPermissionFromBarberShop(context.Context, *GetPermissionFromBarberShopRequest) (*GetPermissionFromBarberShopResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPermissionFromBarberShop not implemented")
+}
 func (UnimplementedBarberServiceServer) GetProvinces(context.Context, *GetProvincesRequest) (*GetProvincesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProvinces not implemented")
 }
@@ -660,24 +656,6 @@ type UnsafeBarberServiceServer interface {
 
 func RegisterBarberServiceServer(s grpc.ServiceRegistrar, srv BarberServiceServer) {
 	s.RegisterService(&BarberService_ServiceDesc, srv)
-}
-
-func _BarberService_UpdateBarberRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateBarberRolesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BarberServiceServer).UpdateBarberRoles(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BarberService_UpdateBarberRoles_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BarberServiceServer).UpdateBarberRoles(ctx, req.(*UpdateBarberRolesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _BarberService_CreateBarberShopChains_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -874,60 +852,6 @@ func _BarberService_DeleteBarberShops_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BarberServiceServer).DeleteBarberShops(ctx, req.(*DeleteBarberShopsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BarberService_CreateBarberManagers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateBarberManagersRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BarberServiceServer).CreateBarberManagers(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BarberService_CreateBarberManagers_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BarberServiceServer).CreateBarberManagers(ctx, req.(*CreateBarberManagersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BarberService_ListBarberManagers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListBarberManagersRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BarberServiceServer).ListBarberManagers(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BarberService_ListBarberManagers_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BarberServiceServer).ListBarberManagers(ctx, req.(*ListBarberManagersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BarberService_DeleteBarberManagers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteBarberManagersRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BarberServiceServer).DeleteBarberManagers(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BarberService_DeleteBarberManagers_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BarberServiceServer).DeleteBarberManagers(ctx, req.(*DeleteBarberManagersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1310,6 +1234,78 @@ func _BarberService_RefreshTokenBarber_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BarberService_ForgotPasswordBarber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ForgotPasswordBarberRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).ForgotPasswordBarber(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_ForgotPasswordBarber_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).ForgotPasswordBarber(ctx, req.(*ForgotPasswordBarberRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BarberService_VerifyOtpBarber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyOtpBarberRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).VerifyOtpBarber(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_VerifyOtpBarber_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).VerifyOtpBarber(ctx, req.(*VerifyOtpBarberRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BarberService_ResetPasswordBarber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetPasswordBarberRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).ResetPasswordBarber(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_ResetPasswordBarber_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).ResetPasswordBarber(ctx, req.(*ResetPasswordBarberRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BarberService_GetPermissionFromBarberShop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPermissionFromBarberShopRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).GetPermissionFromBarberShop(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_GetPermissionFromBarberShop_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).GetPermissionFromBarberShop(ctx, req.(*GetPermissionFromBarberShopRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BarberService_GetProvinces_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetProvincesRequest)
 	if err := dec(in); err != nil {
@@ -1372,10 +1368,6 @@ var BarberService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*BarberServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "UpdateBarberRoles",
-			Handler:    _BarberService_UpdateBarberRoles_Handler,
-		},
-		{
 			MethodName: "CreateBarberShopChains",
 			Handler:    _BarberService_CreateBarberShopChains_Handler,
 		},
@@ -1418,18 +1410,6 @@ var BarberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteBarberShops",
 			Handler:    _BarberService_DeleteBarberShops_Handler,
-		},
-		{
-			MethodName: "CreateBarberManagers",
-			Handler:    _BarberService_CreateBarberManagers_Handler,
-		},
-		{
-			MethodName: "ListBarberManagers",
-			Handler:    _BarberService_ListBarberManagers_Handler,
-		},
-		{
-			MethodName: "DeleteBarberManagers",
-			Handler:    _BarberService_DeleteBarberManagers_Handler,
 		},
 		{
 			MethodName: "CreateServiceCategory",
@@ -1514,6 +1494,22 @@ var BarberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RefreshTokenBarber",
 			Handler:    _BarberService_RefreshTokenBarber_Handler,
+		},
+		{
+			MethodName: "ForgotPasswordBarber",
+			Handler:    _BarberService_ForgotPasswordBarber_Handler,
+		},
+		{
+			MethodName: "VerifyOtpBarber",
+			Handler:    _BarberService_VerifyOtpBarber_Handler,
+		},
+		{
+			MethodName: "ResetPasswordBarber",
+			Handler:    _BarberService_ResetPasswordBarber_Handler,
+		},
+		{
+			MethodName: "GetPermissionFromBarberShop",
+			Handler:    _BarberService_GetPermissionFromBarberShop_Handler,
 		},
 		{
 			MethodName: "GetProvinces",

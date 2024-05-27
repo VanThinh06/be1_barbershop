@@ -316,52 +316,16 @@
         ]
       }
     },
-    "/v1/barber-managers": {
-      "delete": {
-        "summary": "Delete a barber manager",
-        "description": "API endpoint to get detail barber manager",
-        "operationId": "BarberService_DeleteBarberManagers",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbDeleteBarberManagersResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "barberId",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "managerId",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "barber managers"
-        ]
-      },
+    "/v1/barber/forgot-password": {
       "post": {
-        "summary": "Create a barber manager",
-        "description": "API endpoint to create a new barber manager",
-        "operationId": "BarberService_CreateBarberManagers",
+        "summary": "forgot password barber",
+        "description": "API endpoint for barber authentication",
+        "operationId": "BarberService_ForgotPasswordBarber",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbCreateBarberManagersResponse"
+              "$ref": "#/definitions/pbForgotPasswordBarberResponse"
             }
           },
           "default": {
@@ -377,57 +341,25 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbCreateBarberManagersRequest"
+              "$ref": "#/definitions/pbForgotPasswordBarberRequest"
             }
           }
         ],
         "tags": [
-          "barber managers"
+          "authentication"
         ]
       }
     },
-    "/v1/barber-managers/{id}": {
-      "get": {
-        "summary": "Get a barber manager",
-        "description": "API endpoint to get detail barber manager",
-        "operationId": "BarberService_ListBarberManagers",
+    "/v1/barber/getPermission": {
+      "post": {
+        "summary": "Get permission from barber shop",
+        "description": "API endpoint to update a new barber shop",
+        "operationId": "BarberService_GetPermissionFromBarberShop",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbListBarberManagersResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "barber managers"
-        ]
-      }
-    },
-    "/v1/barber-roles": {
-      "put": {
-        "summary": "Update barber roles",
-        "description": "API endpoint to update role_id a barber roles",
-        "operationId": "BarberService_UpdateBarberRoles",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbUpdateBarberRolesResponse"
+              "$ref": "#/definitions/pbGetPermissionFromBarberShopResponse"
             }
           },
           "default": {
@@ -443,12 +375,12 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbUpdateBarberRolesRequest"
+              "$ref": "#/definitions/pbGetPermissionFromBarberShopRequest"
             }
           }
         ],
         "tags": [
-          "barber roles"
+          "barber shops"
         ]
       }
     },
@@ -517,6 +449,74 @@
         ],
         "tags": [
           "barbers"
+        ]
+      }
+    },
+    "/v1/barber/reset-password": {
+      "post": {
+        "summary": "reset password barber",
+        "description": "API endpoint for barber authentication",
+        "operationId": "BarberService_ResetPasswordBarber",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbResetPasswordBarberResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbResetPasswordBarberRequest"
+            }
+          }
+        ],
+        "tags": [
+          "authentication"
+        ]
+      }
+    },
+    "/v1/barber/verify-otp": {
+      "post": {
+        "summary": "forgot password barber",
+        "description": "API endpoint for barber authentication",
+        "operationId": "BarberService_VerifyOtpBarber",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbVerifyOtpBarberResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbVerifyOtpBarberRequest"
+            }
+          }
+        ],
+        "tags": [
+          "authentication"
         ]
       }
     },
@@ -1448,6 +1448,54 @@
         }
       }
     },
+    "pbAuthenticationBarber": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "genderId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "nickName": {
+          "type": "string"
+        },
+        "fullName": {
+          "type": "string"
+        },
+        "avatarUrl": {
+          "type": "string"
+        },
+        "barberRoleId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "barberShopId": {
+          "type": "string"
+        },
+        "accessToken": {
+          "type": "string"
+        },
+        "accessTokenExpiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "refreshToken": {
+          "type": "string"
+        },
+        "refreshTokenExpiresAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "pbBarberDetail": {
       "type": "object",
       "properties": {
@@ -1470,25 +1518,6 @@
         },
         "fullName": {
           "type": "string"
-        }
-      }
-    },
-    "pbBarberManagers": {
-      "type": "object",
-      "properties": {
-        "barberId": {
-          "type": "string"
-        },
-        "managerId": {
-          "type": "string"
-        },
-        "createAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updateAt": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },
@@ -1829,25 +1858,6 @@
         }
       }
     },
-    "pbCreateBarberManagersRequest": {
-      "type": "object",
-      "properties": {
-        "barberId": {
-          "type": "string"
-        },
-        "managerId": {
-          "type": "string"
-        }
-      }
-    },
-    "pbCreateBarberManagersResponse": {
-      "type": "object",
-      "properties": {
-        "barberManager": {
-          "$ref": "#/definitions/pbBarberManagers"
-        }
-      }
-    },
     "pbCreateBarberRequest": {
       "type": "object",
       "properties": {
@@ -2111,14 +2121,6 @@
         }
       }
     },
-    "pbDeleteBarberManagersResponse": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
-        }
-      }
-    },
     "pbDeleteBarberShopChainsResponse": {
       "type": "object",
       "properties": {
@@ -2156,6 +2158,22 @@
         "provinceId": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "pbForgotPasswordBarberRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "pbForgotPasswordBarberResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
         }
       }
     },
@@ -2230,6 +2248,28 @@
         }
       }
     },
+    "pbGetPermissionFromBarberShopRequest": {
+      "type": "object",
+      "properties": {
+        "barberId": {
+          "type": "string"
+        },
+        "barberShopId": {
+          "type": "string"
+        }
+      }
+    },
+    "pbGetPermissionFromBarberShopResponse": {
+      "type": "object",
+      "properties": {
+        "permission": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "pbGetProvincesResponse": {
       "type": "object",
       "properties": {
@@ -2262,17 +2302,6 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/pbAppointments"
-          }
-        }
-      }
-    },
-    "pbListBarberManagersResponse": {
-      "type": "object",
-      "properties": {
-        "barberManager": {
-          "type": "array",
-          "items": {
-            "type": "string"
           }
         }
       }
@@ -2386,25 +2415,7 @@
       "type": "object",
       "properties": {
         "barber": {
-          "$ref": "#/definitions/pbBarbers"
-        },
-        "barberRoleId": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "accessToken": {
-          "type": "string"
-        },
-        "accessTokenExpiresAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "refreshToken": {
-          "type": "string"
-        },
-        "refreshTokenExpiresAt": {
-          "type": "string",
-          "format": "date-time"
+          "$ref": "#/definitions/pbAuthenticationBarber"
         }
       }
     },
@@ -2444,6 +2455,28 @@
         "refreshTokenExpiresAt": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "pbResetPasswordBarberRequest": {
+      "type": "object",
+      "properties": {
+        "barberId": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "pbResetPasswordBarberResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
         }
       }
     },
@@ -2505,26 +2538,6 @@
       "properties": {
         "message": {
           "type": "string"
-        }
-      }
-    },
-    "pbUpdateBarberRolesRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "roleId": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "pbUpdateBarberRolesResponse": {
-      "type": "object",
-      "properties": {
-        "barberRole": {
-          "$ref": "#/definitions/pbBarberRoles"
         }
       }
     },
@@ -2634,6 +2647,25 @@
       }
     },
     "pbUpdateServiceCategoryResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "pbVerifyOtpBarberRequest": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "barberId": {
+          "type": "string"
+        }
+      }
+    },
+    "pbVerifyOtpBarberResponse": {
       "type": "object",
       "properties": {
         "message": {

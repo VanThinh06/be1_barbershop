@@ -14,6 +14,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -174,17 +175,26 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 	}
 
 	rsp := &barber.LoginBarberResponse{
-		Barber:                convertBarberContact(res),
-		AccessToken:           accessToken,
-		RefreshToken:          refreshToken,
-		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiresAt),
-		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiresAt),
+		Barber: &barber.AuthenticationBarber{
+			Id:                    res.ID.String(),
+			GenderId:              int32(res.GenderID.Int16),
+			Email:                 res.Email.String,
+			Phone:                 res.Phone,
+			NickName:              res.NickName,
+			FullName:              res.FullName,
+			AvatarUrl:             res.AvatarUrl.String,
+			AccessToken:           accessToken,
+			RefreshToken:          refreshToken,
+			AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiresAt),
+			RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiresAt),
+			BarberRoleId:          int32(res.RoleID.Int16),
+			BarberShopId:          res.BarberShopID.UUID.String(),
+		},
 	}
 	return rsp, nil
 }
 
-
-// authenticate barber refresh token 
+// authenticate barber refresh token
 func (server *Server) RefreshTokenBarber(ctx context.Context, req *barber.RefreshTokenBarberRequest) (*barber.RefreshTokenBarberResponse, error) {
 	payload, err := server.tokenMaker.VerifyToken(req.RefreshToken)
 	if err != nil {
@@ -197,12 +207,12 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *barber.Refres
 			return nil, utils.NotFoundError(err, "not found")
 		}
 
-		return nil,  utils.UnauthenticatedError(err)
+		return nil, utils.UnauthenticatedError(err)
 	}
 
 	if session.IsBlocked {
 		_ = fmt.Errorf("incorrect block user")
-		return nil,  utils.UnauthenticatedError(err)
+		return nil, utils.UnauthenticatedError(err)
 
 	}
 
@@ -216,20 +226,20 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *barber.Refres
 	if session.RefreshToken != req.RefreshToken {
 		_ = fmt.Errorf("incorrect session user")
 
-		return nil,  utils.UnauthenticatedError(err)
+		return nil, utils.UnauthenticatedError(err)
 
 	}
 
 	if time.Now().After(session.ExpiresAt) {
 		_ = fmt.Errorf("expired session")
-		return nil,  utils.UnauthenticatedError(err)
+		return nil, utils.UnauthenticatedError(err)
 
 	}
 
 	if session.ClientIp != server.extractMetadata(ctx).ClientIP {
 		err := fmt.Errorf("incorrect clientIP")
 		if err != nil {
-			return nil,  utils.UnauthenticatedError(err)
+			return nil, utils.UnauthenticatedError(err)
 		}
 	}
 
@@ -267,6 +277,135 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *barber.Refres
 		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiresAt),
 		RefreshToken:          refresh_token,
 		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiresAt),
+	}
+	return rsp, nil
+}
+
+// authenticate barber forgot password
+func (server *Server) ForgotPasswordBarber(ctx context.Context, req *barber.ForgotPasswordBarberRequest) (*barber.ForgotPasswordBarberResponse, error) {
+	contact := db.GetUserBarberParams{
+		TypeUsername: "email",
+		Email: sql.NullString{
+			String: req.GetEmail(),
+			Valid:  true,
+		},
+	}
+	user, err := server.Store.GetUserBarber(ctx, contact)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, utils.NotFoundError(err, "account does not exist")
+		}
+		return nil, utils.InvalidError(err, "email is incorrect")
+	}
+
+	countOTP, err := server.Store.SelectRequestOTPNumber(ctx, user.ID)
+	if err != nil {
+		return nil, utils.InternalError(err)
+	}
+
+	if countOTP >= 5 {
+		return nil, utils.ReturnError(codes.ResourceExhausted, err, "too many requests. please try again tomorrow.")
+	}
+
+	otp := utils.GenerateOTP()
+	argOTP := db.InsertOTPRequestParams{
+		BarberID: user.ID,
+		Otp:      otp,
+	}
+
+	err = utils.SendOTP(req.GetEmail(), otp)
+	if err != nil {
+		return nil, utils.InternalError(err)
+	}
+
+	err = server.Store.InsertOTPRequest(ctx, argOTP)
+	if err != nil {
+		return nil, utils.InternalError(err)
+	}
+
+	rsp := &barber.ForgotPasswordBarberResponse{
+		Message: user.ID.String(),
+	}
+	return rsp, nil
+}
+
+// authenticate barber verify otp
+func (server *Server) VerifyOtpBarber(ctx context.Context, req *barber.VerifyOtpBarberRequest) (*barber.VerifyOtpBarberResponse, error) {
+
+	barberId, err := uuid.Parse(req.GetBarberId())
+	if err != nil {
+		return nil, utils.NotFoundError(err, "barber don't exist")
+	}
+	argOtpRequest := db.SelectOTPRequestParams{
+		BarberID: barberId,
+		Otp:      req.Code,
+	}
+	resOtp, err := server.Store.SelectOTPRequest(ctx, argOtpRequest)
+	if err != nil {
+		return nil, utils.InternalError(err)
+	}
+
+	if time.Now().UTC().Sub(resOtp.RequestedAt) > time.Minute*10 {
+		return nil, utils.ReturnError(codes.ResourceExhausted, err, "invalid or expired OTP")
+	}
+
+	argConfirmOTPRequest := db.ConfirmOTPRequestParams{
+		IsConfirm: true,
+		ID:        resOtp.ID,
+	}
+	err = server.Store.ConfirmOTPRequest(ctx, argConfirmOTPRequest)
+	if err != nil {
+		return nil, utils.InternalError(err)
+	}
+
+	rsp := &barber.VerifyOtpBarberResponse{
+		Message: resOtp.Otp,
+	}
+	return rsp, nil
+}
+
+// authenticate barber reset password
+func (server *Server) ResetPasswordBarber(ctx context.Context, req *barber.ResetPasswordBarberRequest) (*barber.ResetPasswordBarberResponse, error) {
+
+	err := helpers.ValidatePassword(req.GetPassword())
+	if err != nil {
+		return nil, utils.InvalidError(err, "invalid password format")
+	}
+
+	barberId, err := uuid.Parse(req.GetBarberId())
+	if err != nil {
+		return nil, utils.NotFoundError(err, "barber don't exist")
+	}
+	argOtpRequest := db.SelectOTPRequestParams{
+		BarberID: barberId,
+		Otp:      req.Code,
+	}
+	resOtp, err := server.Store.SelectOTPRequest(ctx, argOtpRequest)
+	if err != nil {
+		return nil, utils.InternalError(err)
+	}
+	if !resOtp.IsConfirm {
+		return nil, utils.ReturnError(codes.ResourceExhausted, err, "invalid OTP")
+	}
+
+	hashedPassword, err := helpers.HashPassword(req.GetPassword())
+	if err != nil {
+		return nil, utils.InternalError(err)
+	}
+	argUpdatePasswordBarber := db.UpdatePasswordBarberParams{
+		HashedPassword: sql.NullString{
+			String: hashedPassword,
+			Valid:  true,
+		},
+		ID: barberId,
+	}
+	resBarber, err := server.Store.UpdatePasswordBarber(ctx, argUpdatePasswordBarber)
+	if err != nil {
+		return nil, utils.InternalError(err)
+	}
+
+	rsp := &barber.ResetPasswordBarberResponse{
+		Message: resBarber.NickName,
 	}
 	return rsp, nil
 }

@@ -39,7 +39,8 @@ func main() {
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
-
+	defer conn.Close(ctx)
+	
 	app, err := firebase.NewApp(context.Background(), nil)
 	if err != nil {
 		log.Fatalf("Khởi tạo ứng dụng Firebase thất bại: %v", err)
