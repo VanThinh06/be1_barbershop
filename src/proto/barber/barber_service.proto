@@ -275,11 +275,11 @@ rpc CreateBarberShopService (CreateBarberShopServiceRequest) returns (CreateBarb
 
 rpc GetBarberShopServices (GetBarberShopServicesRequest) returns (GetBarberShopServicesResponse){
   option (google.api.http) = {
-    get: "/v1/services/{id}"
+    get: "/v1/services/detail/{id}"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-  description: "API endpoint to get list services"
-  summary: "List services"
+  description: "API endpoint to service detail"
+  summary: "Service detail"
   tags: "barbershop services"
 };
 }

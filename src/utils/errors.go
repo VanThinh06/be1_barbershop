@@ -19,7 +19,7 @@ func InvalidArgumentError(validations []*errdetails.BadRequest_FieldViolation) e
 	statusInvalid := status.New(codes.InvalidArgument, msgError)
 
 	statusDetail, err := statusInvalid.WithDetails(badRequest)
-
+	
 	if err != nil {
 		return statusInvalid.Err()
 	}

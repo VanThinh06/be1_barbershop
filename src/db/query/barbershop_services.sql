@@ -14,11 +14,19 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 RETURNING *;
 
 -- name: GetBarberShopService :one
+<<<<<<< HEAD
 SELECT bs.*, sc."name" AS "category_name"
 FROM "BarberShopServices" bs
 LEFT JOIN 
     "ServiceCategories" sc ON sc."id" = bs."category_id"
 WHERE bs."id" = $1;
+=======
+SELECT * 
+FROM "BarberShopServices" 
+WHERE "id" = $1
+
+;
+>>>>>>> b9d6ab0e93f78ed9ed8809bc93f0681bf819961e
 
 -- name: GetTimerBarberShopServices :one
 SELECT SUM("timer") AS total_timer

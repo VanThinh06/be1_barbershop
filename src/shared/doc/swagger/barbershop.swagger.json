@@ -1344,10 +1344,10 @@
         ]
       }
     },
-    "/v1/services/{id}": {
+    "/v1/services/detail/{id}": {
       "get": {
-        "summary": "List services",
-        "description": "API endpoint to get list services",
+        "summary": "Service detail",
+        "description": "API endpoint to service detail",
         "operationId": "BarberService_GetBarberShopServices",
         "responses": {
           "200": {
