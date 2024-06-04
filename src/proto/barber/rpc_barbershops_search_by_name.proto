@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package pb;
-import "barber/barber_shops.proto";
+import "barber/barbershop.proto";
 import "google/protobuf/wrappers.proto";
 option go_package = "barbershop/src/pb/barber";
 
@@ -13,5 +13,5 @@ message SearchByNameBarberShopsRequest {
 }
 
 message SearchByNameBarberShopsResponse {
-    repeated BarberShops barber_shops = 1;
+    repeated BarberShop barber_shops = 1;
 }

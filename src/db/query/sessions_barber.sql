@@ -1,5 +1,6 @@
 -- name: CreateSessionBarber :one
 INSERT INTO "SessionsBarber" (
+  id,
   barber_id,
   refresh_token,
   user_agent,
@@ -15,6 +16,7 @@ VALUES (
   $4,
   $5,
   $6,
+  $7,
   now() + interval '30 minutes' 
 )
 RETURNING *;

@@ -5,21 +5,22 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type StoreMain interface {
 	Querier
-	DB() *pgx.Conn
+	DB() *pgxpool.Pool
 	WithTx(tx pgx.Tx) *Queries
 	ExecTx(ctx context.Context, fn func(*Queries) error) error
 }
 
 type SQLStore struct {
-	db *pgx.Conn
+	db *pgxpool.Pool
 	*Queries
 }
 
-func (s *SQLStore) DB() *pgx.Conn {
+func (s *SQLStore) DB() *pgxpool.Pool {
 	return s.db
 }
 
@@ -44,7 +45,7 @@ func (s *SQLStore) ExecTx(ctx context.Context, fn func(*Queries) error) error {
 	return tx.Commit(ctx)
 }
 
-func NewStore(db *pgx.Conn) StoreMain {
+func NewStore(db *pgxpool.Pool) StoreMain {
 	return &SQLStore{
 		db:      db,
 		Queries: New(db),

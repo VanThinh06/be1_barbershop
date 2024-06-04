@@ -949,16 +949,16 @@
         ]
       }
     },
-    "/v1/combo-services/{barberShopId}": {
+    "/v1/combo-service/barbershop/{barberShopId}": {
       "get": {
         "summary": "List services",
         "description": "API endpoint to get list services",
-        "operationId": "BarberService_ListComboServices",
+        "operationId": "BarberService_ListComboService",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbListServicesByCategoryResponse"
+              "$ref": "#/definitions/pbListBarberShopServiceResponse"
             }
           },
           "default": {
@@ -1069,6 +1069,72 @@
         },
         "tags": [
           "lookup"
+        ]
+      }
+    },
+    "/v1/service": {
+      "post": {
+        "summary": "Create service",
+        "description": "API endpoint to create a service",
+        "operationId": "BarberService_CreateBarberShopService",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateBarberShopServiceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateBarberShopServiceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "barbershop services"
+        ]
+      },
+      "patch": {
+        "summary": "Update service category",
+        "description": "API endpoint to update a service category",
+        "operationId": "BarberService_UpdateBarberShopService",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateBarberShopServiceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateBarberShopServiceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "service categories"
         ]
       }
     },
@@ -1214,82 +1280,16 @@
         ]
       }
     },
-    "/v1/services": {
-      "post": {
-        "summary": "Create service",
-        "description": "API endpoint to create a service",
-        "operationId": "BarberService_CreateBarberShopService",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbCreateBarberShopServiceResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbCreateBarberShopServiceRequest"
-            }
-          }
-        ],
-        "tags": [
-          "barbershop services"
-        ]
-      },
-      "patch": {
-        "summary": "Update service category",
-        "description": "API endpoint to update a service category",
-        "operationId": "BarberService_UpdateBarberShopService",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbUpdateBarberShopServiceResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbUpdateBarberShopServiceRequest"
-            }
-          }
-        ],
-        "tags": [
-          "service categories"
-        ]
-      }
-    },
-    "/v1/services-by-category/{barberShopId}": {
+    "/v1/service/barbershop/{barberShopId}": {
       "get": {
         "summary": "List services",
         "description": "API endpoint to get list services",
-        "operationId": "BarberService_ListServicesByCategory",
+        "operationId": "BarberService_ListBarberShopService",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbListServicesByCategoryResponse"
+              "$ref": "#/definitions/pbListBarberShopServiceResponse"
             }
           },
           "default": {
@@ -1312,48 +1312,16 @@
         ]
       }
     },
-    "/v1/services/barbershops/{barberShopId}/services": {
-      "get": {
-        "summary": "List services",
-        "description": "API endpoint to get list services",
-        "operationId": "BarberService_ListBarberShopServices",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbListBarberShopServicesResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "barberShopId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "barbershop services"
-        ]
-      }
-    },
-    "/v1/services/detail/{id}": {
+    "/v1/service/{id}": {
       "get": {
         "summary": "Service detail",
         "description": "API endpoint to service detail",
-        "operationId": "BarberService_GetBarberShopServices",
+        "operationId": "BarberService_GetBarberShopService",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbGetBarberShopServicesResponse"
+              "$ref": "#/definitions/pbGetBarberShopServiceResponse"
             }
           },
           "default": {
@@ -1373,6 +1341,45 @@
         ],
         "tags": [
           "barbershop services"
+        ]
+      },
+      "delete": {
+        "summary": "Update service category",
+        "description": "API endpoint to update a service category",
+        "operationId": "BarberService_DeleteBarberShopService",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteBarberShopServiceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "title": "delete"
+            }
+          }
+        ],
+        "tags": [
+          "service categories"
         ]
       }
     },
@@ -1542,99 +1549,7 @@
         }
       }
     },
-    "pbBarberShopChains": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "founder": {
-          "type": "string"
-        },
-        "foundingDate": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "website": {
-          "type": "string"
-        },
-        "createAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updateAt": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "pbBarberShopServices": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "barberShopId": {
-          "type": "string"
-        },
-        "categoryId": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "genderId": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "name": {
-          "type": "string"
-        },
-        "timer": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "price": {
-          "type": "number",
-          "format": "float"
-        },
-        "discountPrice": {
-          "type": "number",
-          "format": "float"
-        },
-        "discountStartTime": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "discountEndTime": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "description": {
-          "type": "string"
-        },
-        "imageUrl": {
-          "type": "string"
-        },
-        "comboServices": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "categoryName": {
-          "type": "string"
-        },
-        "isActive": {
-          "type": "boolean"
-        }
-      }
-    },
-    "pbBarberShops": {
+    "pbBarberShop": {
       "type": "object",
       "properties": {
         "id": {
@@ -1697,6 +1612,98 @@
         "roleId": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "pbBarberShopChains": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "founder": {
+          "type": "string"
+        },
+        "foundingDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "website": {
+          "type": "string"
+        },
+        "createAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updateAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "pbBarberShopService": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "barberShopId": {
+          "type": "string"
+        },
+        "categoryId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "genderId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "timer": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "price": {
+          "type": "number",
+          "format": "float"
+        },
+        "discountPrice": {
+          "type": "number",
+          "format": "float"
+        },
+        "discountStartTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "discountEndTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "comboServices": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "categoryName": {
+          "type": "string"
+        },
+        "isActive": {
+          "type": "boolean"
         }
       }
     },
@@ -2084,13 +2091,14 @@
             "type": "string"
           }
         }
-      }
+      },
+      "title": "insert"
     },
     "pbCreateBarberShopServiceResponse": {
       "type": "object",
       "properties": {
         "barberShopService": {
-          "$ref": "#/definitions/pbBarberShopServices"
+          "$ref": "#/definitions/pbBarberShopService"
         }
       }
     },
@@ -2122,6 +2130,14 @@
       }
     },
     "pbDeleteBarberShopChainsResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "pbDeleteBarberShopServiceResponse": {
       "type": "object",
       "properties": {
         "status": {
@@ -2205,15 +2221,15 @@
       "type": "object",
       "properties": {
         "barberShop": {
-          "$ref": "#/definitions/pbBarberShops"
+          "$ref": "#/definitions/pbBarberShop"
         }
       }
     },
-    "pbGetBarberShopServicesResponse": {
+    "pbGetBarberShopServiceResponse": {
       "type": "object",
       "properties": {
         "barberShopService": {
-          "$ref": "#/definitions/pbBarberShopServices"
+          "$ref": "#/definitions/pbBarberShopService"
         }
       }
     },
@@ -2306,14 +2322,14 @@
         }
       }
     },
-    "pbListBarberShopServicesResponse": {
+    "pbListBarberShopServiceResponse": {
       "type": "object",
       "properties": {
         "barberShopServices": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/pbListItemBarberShopService"
+            "$ref": "#/definitions/pbBarberShopService"
           }
         }
       }
@@ -2325,22 +2341,8 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/pbBarberShops"
+            "$ref": "#/definitions/pbBarberShop"
           }
-        }
-      }
-    },
-    "pbListItemBarberShopService": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "categoryName": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
         }
       }
     },
@@ -2368,7 +2370,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/pbBarberShops"
+            "$ref": "#/definitions/pbBarberShop"
           }
         }
       }
@@ -2381,18 +2383,6 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/pbServiceCategories"
-          }
-        }
-      }
-    },
-    "pbListServicesByCategoryResponse": {
-      "type": "object",
-      "properties": {
-        "barberShopServices": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/pbBarberShopServices"
           }
         }
       }
@@ -2487,7 +2477,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/pbBarberShops"
+            "$ref": "#/definitions/pbBarberShop"
           }
         }
       }
@@ -2577,7 +2567,7 @@
       "type": "object",
       "properties": {
         "barberShop": {
-          "$ref": "#/definitions/pbBarberShops"
+          "$ref": "#/definitions/pbBarberShop"
         }
       }
     },
@@ -2636,7 +2626,8 @@
           "type": "string",
           "format": "date-time"
         }
-      }
+      },
+      "title": "update"
     },
     "pbUpdateBarberShopServiceResponse": {
       "type": "object",

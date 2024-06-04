@@ -4,7 +4,7 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/customer"
 	"barbershop/src/shared/token"
-	"barbershop/src/shared/utilities"
+	"barbershop/src/utils"
 	"fmt"
 
 	firebase "firebase.google.com/go/v4"
@@ -14,7 +14,7 @@ import (
 // Server servers gRPC requests for our barbershop
 type Server struct {
 	customer.UnimplementedCustomerBarberShopServer
-	config      utilities.Config
+	config      utils.Config
 	store       db.StoreMain
 	tokenMaker  token.CustomerMaker
 	Router      *gin.Engine
@@ -22,7 +22,7 @@ type Server struct {
 	firebaseApp *firebase.App
 }
 
-func NewServer(config utilities.Config, store db.StoreMain, firebase db.FirebaseApp) (*Server, error) {
+func NewServer(config utils.Config, store db.StoreMain, firebase db.FirebaseApp) (*Server, error) {
 	tokenMaker, err := token.NewPasetoMakerCustomer(config.TokenSymmetricKeyCustomer)
 	if err != nil {
 		return nil, fmt.Errorf("cannot create token maker: %w", err)

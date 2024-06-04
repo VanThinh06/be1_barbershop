@@ -35,7 +35,7 @@ type Querier interface {
 	GetBarber(ctx context.Context, arg GetBarberParams) (GetBarberRow, error)
 	GetBarberEmployee(ctx context.Context, arg GetBarberEmployeeParams) (GetBarberEmployeeRow, error)
 	GetBarberRole(ctx context.Context, arg GetBarberRoleParams) (BarberRole, error)
-	GetBarberShop(ctx context.Context, arg GetBarberShopParams) (GetBarberShopRow, error)
+	GetBarberShop(ctx context.Context, id uuid.UUID) (GetBarberShopRow, error)
 	GetBarberShopChains(ctx context.Context, id uuid.UUID) (BarberShopChain, error)
 	GetBarberShopService(ctx context.Context, id uuid.UUID) (GetBarberShopServiceRow, error)
 	GetCustomer(ctx context.Context, id uuid.UUID) (Customer, error)

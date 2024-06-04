@@ -13,6 +13,7 @@ import (
 
 const createSessionBarber = `-- name: CreateSessionBarber :one
 INSERT INTO "SessionsBarber" (
+  id,
   barber_id,
   refresh_token,
   user_agent,
@@ -28,12 +29,14 @@ VALUES (
   $4,
   $5,
   $6,
+  $7,
   now() + interval '30 minutes' 
 )
 RETURNING id, barber_id, refresh_token, user_agent, client_ip, fcm_device, is_blocked, expires_at, create_at
 `
 
 type CreateSessionBarberParams struct {
+	ID           uuid.UUID `json:"id"`
 	BarberID     uuid.UUID `json:"barber_id"`
 	RefreshToken string    `json:"refresh_token"`
 	UserAgent    string    `json:"user_agent"`
@@ -44,6 +47,7 @@ type CreateSessionBarberParams struct {
 
 func (q *Queries) CreateSessionBarber(ctx context.Context, arg CreateSessionBarberParams) (SessionsBarber, error) {
 	row := q.db.QueryRow(ctx, createSessionBarber,
+		arg.ID,
 		arg.BarberID,
 		arg.RefreshToken,
 		arg.UserAgent,

@@ -467,8 +467,7 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 }
 
 // barber get permissions from barber shop
-func (server *Server) GetPermissionFromBarberShop(ctx context.Context, req *barber.GetPermissionFrom
-	BarberShopRequest) (*barber.GetPermissionFromBarberShopResponse, error) {
+func (server *Server) GetPermissionFromBarberShop(ctx context.Context, req *barber.GetPermissionFromBarberShopRequest) (*barber.GetPermissionFromBarberShopResponse, error) {
 	authPayload, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, unauthenticatedError(err)

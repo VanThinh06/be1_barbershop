@@ -163,6 +163,7 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 
 	mtdt := server.extractMetadata(ctx)
 	_, err = server.Store.CreateSessionBarber(ctx, db.CreateSessionBarberParams{
+		ID:           refreshPayload.ID,
 		BarberID:     refreshPayload.Barber.BarberID,
 		RefreshToken: refreshToken,
 		UserAgent:    mtdt.UserAgent,

@@ -3,15 +3,12 @@
 SELECT bs.*,
     COALESCE(p.name, '') AS province_name,
     COALESCE(d.name, '') AS district_name,
-    COALESCE(w.name, '') AS ward_name,
-    br.role_id AS role_id
+    COALESCE(w.name, '') AS ward_name
 FROM "BarberShops" bs
 LEFT JOIN "Provinces" p ON bs."province_id" = p."id"
 LEFT JOIN "Districts" d ON bs."district_id" = d."id"
 LEFT JOIN "Wards" w ON bs."ward_id" = w."id"
-LEFT JOIN "BarberRoles" br ON bs."id" = br."barber_shop_id"
-WHERE bs.id = $1
-  AND br.barber_id = $2;
+WHERE bs.id = $1;
 
 -- name: ListBarberShops :many
 SELECT DISTINCT 

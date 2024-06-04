@@ -6,16 +6,16 @@ import (
 	customergapi "barbershop/src/gapi/customer"
 	"barbershop/src/pb/barber"
 	"barbershop/src/pb/customer"
+	"barbershop/src/utils"
 	"context"
 	"log"
 	"net"
 	"net/http"
 
 	_ "barbershop/src/shared/doc/statik"
-	"barbershop/src/shared/utilities"
 
 	_ "github.com/jackc/pgx/v4/stdlib"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/lib/pq"
 
 	firebase "firebase.google.com/go/v4"
@@ -30,17 +30,23 @@ import (
 
 func main() {
 
-	config, err := utilities.LoadConfig(".")
+	config, err := utils.LoadConfig(".")
 	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}
+
+	pgxpoolConfig, err := pgxpool.ParseConfig(config.DBSource)
+	if err != nil {
+		log.Fatalf("Unable to parse database configuration: %v", err)
+	}
+
 	ctx := context.Background()
-	conn, err := pgx.Connect(ctx, config.DBSource)
+	conn, err := pgxpool.NewWithConfig(ctx, pgxpoolConfig)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
-	defer conn.Close(ctx)
-	
+	defer conn.Close()
+
 	app, err := firebase.NewApp(context.Background(), nil)
 	if err != nil {
 		log.Fatalf("Khởi tạo ứng dụng Firebase thất bại: %v", err)
@@ -53,7 +59,7 @@ func main() {
 	runGrpcServer(config, store, firebaseApp)
 }
 
-func runGatewayServer(config utilities.Config, store db.StoreMain, firebase db.FirebaseApp) {
+func runGatewayServer(config utils.Config, store db.StoreMain, firebase db.FirebaseApp) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -101,7 +107,7 @@ func runGatewayServer(config utilities.Config, store db.StoreMain, firebase db.F
 	}
 }
 
-func runGrpcServer(config utilities.Config, store db.StoreMain, firebase db.FirebaseApp) {
+func runGrpcServer(config utils.Config, store db.StoreMain, firebase db.FirebaseApp) {
 	grpcServer := grpc.NewServer()
 
 	server, err := gapi.NewServer(config, store, firebase)

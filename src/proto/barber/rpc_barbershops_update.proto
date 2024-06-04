@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package pb;
-import "barber/barber_shops.proto";
+import "barber/barbershop.proto";
 import "barber/time_of_day.proto";
 import "google/protobuf/wrappers.proto";
 
@@ -29,5 +29,5 @@ message UpdateBarberShopRequest {
 }
 
 message UpdateBarberShopResponse {
-    BarberShops barber_shop = 1;
+    BarberShop barber_shop = 1;
 }

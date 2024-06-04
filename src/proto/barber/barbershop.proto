@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package pb;
+
+
+option go_package = "barbershop/src/pb/barber";
+
+message BarberShop {
+    string id = 1;
+    string barber_shop_chain_id = 2;
+    string name = 3;
+    int32 province_id = 4;
+    int32 district_id = 5;
+    int32 ward_id = 6;
+    string specific_location = 7;
+    string phone = 8;
+    string email = 9;
+    string website_url = 10;
+    string avatar_url = 11;
+    string cover_photo_url = 12;
+    string facade_photo_url = 13;
+    bool is_main_branch = 14;
+    bool is_reputation = 15;
+    string province_name = 16;
+    string district_name = 17;
+    string ward_name = 18;
+    int32 role_id = 19;
+}

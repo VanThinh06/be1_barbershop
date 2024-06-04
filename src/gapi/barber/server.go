@@ -5,7 +5,7 @@ import (
 	"barbershop/src/pb/barber"
 	"barbershop/src/pb/customer"
 	"barbershop/src/shared/token"
-	"barbershop/src/shared/utilities"
+	"barbershop/src/utils"
 	"fmt"
 
 	firebase "firebase.google.com/go/v4"
@@ -16,7 +16,7 @@ import (
 type Server struct {
 	barber.UnimplementedBarberServiceServer
 	customer.UnimplementedCustomerBarberShopServer
-	config     utilities.Config
+	config     utils.Config
 	Store      db.StoreMain
 	tokenMaker token.Maker
 	Router     *gin.Engine
@@ -24,7 +24,7 @@ type Server struct {
 	firebase   *firebase.App
 }
 
-func NewServer(config utilities.Config, store db.StoreMain, firebase db.FirebaseApp) (*Server, error) {
+func NewServer(config utils.Config, store db.StoreMain, firebase db.FirebaseApp) (*Server, error) {
 	tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
 	if err != nil {
 		return nil, fmt.Errorf("cannot create token maker: %w", err)
