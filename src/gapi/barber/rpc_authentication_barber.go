@@ -212,37 +212,35 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *barber.Refres
 	}
 
 	if session.IsBlocked {
-		_ = fmt.Errorf("incorrect block user")
+		err = fmt.Errorf("incorrect block user")
 		return nil, utils.UnauthenticatedError(err)
 
 	}
 
 	if session.BarberID != payload.Barber.BarberID {
-		_ = fmt.Errorf("incorrect session user")
+		err = fmt.Errorf("incorrect session user")
 
 		return nil, unauthenticatedError(err)
 
 	}
 
 	if session.RefreshToken != req.RefreshToken {
-		_ = fmt.Errorf("incorrect session user")
+		err = fmt.Errorf("incorrect session user")
 
 		return nil, utils.UnauthenticatedError(err)
 
 	}
 
 	if time.Now().After(session.ExpiresAt) {
-		_ = fmt.Errorf("expired session")
+		err = fmt.Errorf("expired session")
 		return nil, utils.UnauthenticatedError(err)
-
 	}
 
-	if session.ClientIp != server.extractMetadata(ctx).ClientIP {
-		err := fmt.Errorf("incorrect clientIP")
-		if err != nil {
-			return nil, utils.UnauthenticatedError(err)
-		}
-	}
+	// mtdt := server.extractMetadata(ctx)
+	// if session.ClientIp != mtdt.ClientIP {
+	// 	_ = fmt.Errorf("incorrect clientIP")
+	// 	return nil, utils.UnauthenticatedError(err)
+	// }
 
 	access_token, accessPayload, err := server.tokenMaker.RefreshToken(
 		payload.ID,

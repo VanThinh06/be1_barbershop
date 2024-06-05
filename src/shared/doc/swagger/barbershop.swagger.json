@@ -682,6 +682,102 @@
         ]
       }
     },
+    "/v1/barbershop/{barberShopId}/combo-service": {
+      "get": {
+        "summary": "List services",
+        "description": "API endpoint to get list services",
+        "operationId": "BarberService_ListComboService",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListBarberShopServiceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barberShopId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "barbershop services"
+        ]
+      }
+    },
+    "/v1/barbershop/{barberShopId}/service": {
+      "get": {
+        "summary": "List services",
+        "description": "API endpoint to get list services",
+        "operationId": "BarberService_ListBarberShopService",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListBarberShopServiceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barberShopId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "barbershop services"
+        ]
+      }
+    },
+    "/v1/barbershop/{barberShopId}/service-category": {
+      "get": {
+        "summary": "Get service category",
+        "description": "API endpoint to create a service category",
+        "operationId": "BarberService_ListServiceCategory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListServiceCategoryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barberShopId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "service categories"
+        ]
+      }
+    },
     "/v1/barbershop/{id}": {
       "get": {
         "summary": "Get a details barber shop",
@@ -949,38 +1045,6 @@
         ]
       }
     },
-    "/v1/combo-service/barbershop/{barberShopId}": {
-      "get": {
-        "summary": "List services",
-        "description": "API endpoint to get list services",
-        "operationId": "BarberService_ListComboService",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbListBarberShopServiceResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "barberShopId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "barbershop services"
-        ]
-      }
-    },
     "/v1/districts/{provinceId}": {
       "get": {
         "summary": "Get districts",
@@ -1138,7 +1202,7 @@
         ]
       }
     },
-    "/v1/service-categories": {
+    "/v1/service-category": {
       "post": {
         "summary": "Create service category",
         "description": "API endpoint to create a service category",
@@ -1165,38 +1229,6 @@
             "schema": {
               "$ref": "#/definitions/pbCreateServiceCategoryRequest"
             }
-          }
-        ],
-        "tags": [
-          "service categories"
-        ]
-      }
-    },
-    "/v1/service-categories/{barberShopId}": {
-      "get": {
-        "summary": "Get service category",
-        "description": "API endpoint to create a service category",
-        "operationId": "BarberService_ListServiceCategories",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbListServiceCategoriesResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "barberShopId",
-            "in": "path",
-            "required": true,
-            "type": "string"
           }
         ],
         "tags": [
@@ -1277,38 +1309,6 @@
         ],
         "tags": [
           "service categories"
-        ]
-      }
-    },
-    "/v1/service/barbershop/{barberShopId}": {
-      "get": {
-        "summary": "List services",
-        "description": "API endpoint to get list services",
-        "operationId": "BarberService_ListBarberShopService",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbListBarberShopServiceResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "barberShopId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "barbershop services"
         ]
       }
     },
@@ -2117,7 +2117,7 @@
       "type": "object",
       "properties": {
         "serviceCategory": {
-          "$ref": "#/definitions/pbServiceCategories"
+          "$ref": "#/definitions/pbServiceCategory"
         }
       }
     },
@@ -2375,14 +2375,14 @@
         }
       }
     },
-    "pbListServiceCategoriesResponse": {
+    "pbListServiceCategoryResponse": {
       "type": "object",
       "properties": {
         "serviceCategories": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/pbServiceCategories"
+            "$ref": "#/definitions/pbServiceCategory"
           }
         }
       }
@@ -2482,7 +2482,7 @@
         }
       }
     },
-    "pbServiceCategories": {
+    "pbServiceCategory": {
       "type": "object",
       "properties": {
         "id": {

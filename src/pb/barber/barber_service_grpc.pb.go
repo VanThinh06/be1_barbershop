@@ -31,7 +31,7 @@ const (
 	BarberService_UpdateBarberShop_FullMethodName            = "/pb.BarberService/UpdateBarberShop"
 	BarberService_DeleteBarberShops_FullMethodName           = "/pb.BarberService/DeleteBarberShops"
 	BarberService_CreateServiceCategory_FullMethodName       = "/pb.BarberService/CreateServiceCategory"
-	BarberService_ListServiceCategories_FullMethodName       = "/pb.BarberService/ListServiceCategories"
+	BarberService_ListServiceCategory_FullMethodName         = "/pb.BarberService/ListServiceCategory"
 	BarberService_UpdateServiceCategory_FullMethodName       = "/pb.BarberService/UpdateServiceCategory"
 	BarberService_DeleteServiceCategory_FullMethodName       = "/pb.BarberService/DeleteServiceCategory"
 	BarberService_CreateBarberShopService_FullMethodName     = "/pb.BarberService/CreateBarberShopService"
@@ -80,7 +80,7 @@ type BarberServiceClient interface {
 	DeleteBarberShops(ctx context.Context, in *DeleteBarberShopsRequest, opts ...grpc.CallOption) (*DeleteBarberShopsResponse, error)
 	// / SERVICE CATEGORIES
 	CreateServiceCategory(ctx context.Context, in *CreateServiceCategoryRequest, opts ...grpc.CallOption) (*CreateServiceCategoryResponse, error)
-	ListServiceCategories(ctx context.Context, in *ListServiceCategoriesRequest, opts ...grpc.CallOption) (*ListServiceCategoriesResponse, error)
+	ListServiceCategory(ctx context.Context, in *ListServiceCategoryRequest, opts ...grpc.CallOption) (*ListServiceCategoryResponse, error)
 	UpdateServiceCategory(ctx context.Context, in *UpdateServiceCategoryRequest, opts ...grpc.CallOption) (*UpdateServiceCategoryResponse, error)
 	DeleteServiceCategory(ctx context.Context, in *DeleteServiceCategoryRequest, opts ...grpc.CallOption) (*DeleteServiceCategoryResponse, error)
 	// service
@@ -229,9 +229,9 @@ func (c *barberServiceClient) CreateServiceCategory(ctx context.Context, in *Cre
 	return out, nil
 }
 
-func (c *barberServiceClient) ListServiceCategories(ctx context.Context, in *ListServiceCategoriesRequest, opts ...grpc.CallOption) (*ListServiceCategoriesResponse, error) {
-	out := new(ListServiceCategoriesResponse)
-	err := c.cc.Invoke(ctx, BarberService_ListServiceCategories_FullMethodName, in, out, opts...)
+func (c *barberServiceClient) ListServiceCategory(ctx context.Context, in *ListServiceCategoryRequest, opts ...grpc.CallOption) (*ListServiceCategoryResponse, error) {
+	out := new(ListServiceCategoryResponse)
+	err := c.cc.Invoke(ctx, BarberService_ListServiceCategory_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -492,7 +492,7 @@ type BarberServiceServer interface {
 	DeleteBarberShops(context.Context, *DeleteBarberShopsRequest) (*DeleteBarberShopsResponse, error)
 	// / SERVICE CATEGORIES
 	CreateServiceCategory(context.Context, *CreateServiceCategoryRequest) (*CreateServiceCategoryResponse, error)
-	ListServiceCategories(context.Context, *ListServiceCategoriesRequest) (*ListServiceCategoriesResponse, error)
+	ListServiceCategory(context.Context, *ListServiceCategoryRequest) (*ListServiceCategoryResponse, error)
 	UpdateServiceCategory(context.Context, *UpdateServiceCategoryRequest) (*UpdateServiceCategoryResponse, error)
 	DeleteServiceCategory(context.Context, *DeleteServiceCategoryRequest) (*DeleteServiceCategoryResponse, error)
 	// service
@@ -566,8 +566,8 @@ func (UnimplementedBarberServiceServer) DeleteBarberShops(context.Context, *Dele
 func (UnimplementedBarberServiceServer) CreateServiceCategory(context.Context, *CreateServiceCategoryRequest) (*CreateServiceCategoryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateServiceCategory not implemented")
 }
-func (UnimplementedBarberServiceServer) ListServiceCategories(context.Context, *ListServiceCategoriesRequest) (*ListServiceCategoriesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListServiceCategories not implemented")
+func (UnimplementedBarberServiceServer) ListServiceCategory(context.Context, *ListServiceCategoryRequest) (*ListServiceCategoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListServiceCategory not implemented")
 }
 func (UnimplementedBarberServiceServer) UpdateServiceCategory(context.Context, *UpdateServiceCategoryRequest) (*UpdateServiceCategoryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateServiceCategory not implemented")
@@ -876,20 +876,20 @@ func _BarberService_CreateServiceCategory_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BarberService_ListServiceCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListServiceCategoriesRequest)
+func _BarberService_ListServiceCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListServiceCategoryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BarberServiceServer).ListServiceCategories(ctx, in)
+		return srv.(BarberServiceServer).ListServiceCategory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: BarberService_ListServiceCategories_FullMethodName,
+		FullMethod: BarberService_ListServiceCategory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BarberServiceServer).ListServiceCategories(ctx, req.(*ListServiceCategoriesRequest))
+		return srv.(BarberServiceServer).ListServiceCategory(ctx, req.(*ListServiceCategoryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1418,8 +1418,8 @@ var BarberService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BarberService_CreateServiceCategory_Handler,
 		},
 		{
-			MethodName: "ListServiceCategories",
-			Handler:    _BarberService_ListServiceCategories_Handler,
+			MethodName: "ListServiceCategory",
+			Handler:    _BarberService_ListServiceCategory_Handler,
 		},
 		{
 			MethodName: "UpdateServiceCategory",

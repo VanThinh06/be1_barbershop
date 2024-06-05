@@ -38,10 +38,7 @@ import "barber/rpc_authentication_barber.proto";
 import "barber/rpc_appointments_create.proto";
 import "barber/rpc_appointments_list_bydate.proto";
 
-import "barber/rpc_service_categories_create.proto";
-import "barber/rpc_service_categories_list.proto";
-import "barber/rpc_service_categories_update.proto";
-import "barber/rpc_service_categories_delete.proto";
+import "barber/rpc_service_category.proto";
 
 import "barber/rpc_barbershop_service.proto";
 
@@ -213,7 +210,7 @@ rpc DeleteBarberShops (DeleteBarberShopsRequest) returns (DeleteBarberShopsRespo
 /// SERVICE CATEGORIES
 rpc CreateServiceCategory (CreateServiceCategoryRequest) returns (CreateServiceCategoryResponse){
   option (google.api.http) = {
-    post: "/v1/service-categories"
+    post: "/v1/service-category"
     body: "*"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -223,9 +220,9 @@ rpc CreateServiceCategory (CreateServiceCategoryRequest) returns (CreateServiceC
 };
 }
 
-rpc ListServiceCategories (ListServiceCategoriesRequest) returns (ListServiceCategoriesResponse){
+rpc ListServiceCategory (ListServiceCategoryRequest) returns (ListServiceCategoryResponse){
   option (google.api.http) = {
-    get: "/v1/service-categories/{barber_shop_id}"
+    get: "/v1/barbershop/{barber_shop_id}/service-category"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
   description: "API endpoint to create a service category"
@@ -294,7 +291,7 @@ rpc GetBarberShopService (GetBarberShopServiceRequest) returns (GetBarberShopSer
 
 rpc ListBarberShopService (ListBarberShopServiceRequest) returns (ListBarberShopServiceResponse){
   option (google.api.http) = {
-    get: "/v1/service/barbershop/{barber_shop_id}"
+    get: "/v1/barbershop/{barber_shop_id}/service"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
   description: "API endpoint to get list services"
@@ -305,7 +302,7 @@ rpc ListBarberShopService (ListBarberShopServiceRequest) returns (ListBarberShop
 
 rpc ListComboService (ListBarberShopServiceRequest) returns (ListBarberShopServiceResponse){
   option (google.api.http) = {
-    get: "/v1/combo-service/barbershop/{barber_shop_id}"
+    get: "/v1/barbershop/{barber_shop_id}/combo-service"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
   description: "API endpoint to get list services"

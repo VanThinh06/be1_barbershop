@@ -236,18 +236,18 @@ func convertBarberEmployees(res []db.ListEmployeesRow) []*barber.BarberDetail {
 
 
 
-func convertServiceCategory(serviceCategory db.ServiceCategory) *barber.ServiceCategories {
-	return &barber.ServiceCategories{
+func convertServiceCategory(serviceCategory db.ServiceCategory) *barber.ServiceCategory {
+	return &barber.ServiceCategory{
 		Id:           int32(serviceCategory.ID),
 		Name:         serviceCategory.Name,
 		BarberShopId: serviceCategory.BarberShopID.UUID.String(),
 	}
 }
 
-func convertListServiceCategories(res []db.ServiceCategory) []*barber.ServiceCategories {
-	var serviceCategories []*barber.ServiceCategories
+func convertListServiceCategory(res []db.ServiceCategory) []*barber.ServiceCategory {
+	var serviceCategories []*barber.ServiceCategory
 	for _, item := range res {
-		serviceCategory := &barber.ServiceCategories{
+		serviceCategory := &barber.ServiceCategory{
 			Id:           int32(item.ID),
 			Name:         item.Name,
 			BarberShopId: item.BarberShopID.UUID.String(),
