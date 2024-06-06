@@ -4,6 +4,7 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"barbershop/src/shared/utilities"
+	"barbershop/src/utils"
 	"context"
 	"database/sql"
 
@@ -50,7 +51,7 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 		}
 		timer, err = server.Store.GetTimerBarberShopServices(ctx, listComboServices)
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, "internal")
+			return nil, utils.InternalError(err)
 		}
 	}
 
@@ -83,7 +84,7 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 				return nil, status.Errorf(codes.NotFound, "barbershops don't exist")
 			}
 		}
-		return nil, status.Errorf(codes.Internal, "internal")
+		return nil, utils.InternalError(err)
 	}
 
 	rsp := &barber.CreateBarberShopServiceResponse{
