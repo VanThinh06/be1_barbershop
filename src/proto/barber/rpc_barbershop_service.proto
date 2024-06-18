@@ -33,13 +33,14 @@ message GetBarberShopServiceResponse {
     BarberShopService barber_shop_service = 1;
 }
 
-// message ListBarberShopServiceRequest{
-//     string barber_shop_id = 1;
-// }
+//
+message ListServiceForComboServiceRequest{
+    string barber_shop_id = 1;
+}
 
-// message ListBarberShopServiceResponse {
-//     repeated ItemBarberShopService barber_shop_services = 1;
-// }
+message ListServiceForComboServiceResponse {
+    repeated ServiceForComboService barber_shop_services = 1;
+}
 
 // list
 message ListBarberShopServiceRequest{

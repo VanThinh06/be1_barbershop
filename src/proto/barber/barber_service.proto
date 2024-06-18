@@ -278,20 +278,20 @@ rpc GetBarberShopService (GetBarberShopServiceRequest) returns (GetBarberShopSer
 };
 }
 
-// rpc ListBarberShopService (ListBarberShopServiceRequest) returns (ListBarberShopServiceResponse){
-//   option (google.api.http) = {
-//     get: "/v1/service/barbershop/{barber_shop_id}"
-//   };
-//   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-//   description: "API endpoint to get list services"
-//   summary: "List services"
-//   tags: "barbershop services"
-// };
-// }
+rpc ListServiceForComboService (ListServiceForComboServiceRequest) returns (ListServiceForComboServiceResponse){
+  option (google.api.http) = {
+    get: "/v1/barbershop/{barber_shop_id}/services/combo"
+  };
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+  description: "API endpoint to get list services"
+  summary: "List services"
+  tags: "barbershop services"
+};
+}
 
 rpc ListBarberShopService (ListBarberShopServiceRequest) returns (ListBarberShopServiceResponse){
   option (google.api.http) = {
-    get: "/v1/barbershop/{barber_shop_id}/service"
+    get: "/v1/barbershop/{barber_shop_id}/services"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
   description: "API endpoint to get list services"

@@ -153,21 +153,6 @@ func ConvertListBarberShopsNearby(res []db.ListNearbyBarberShopsRow) []*barber.B
 	return barberShops
 }
 
-// barbers
-
-func convertCreateBarbers(res db.Barber) *barber.Barbers {
-	return &barber.Barbers{
-		Id:        res.ID.String(),
-		GenderId:  int32(res.GenderID.Int16),
-		Email:     res.Email.String,
-		Phone:     res.Phone,
-		NickName:  res.NickName,
-		FullName:  res.FullName,
-		Haircut:   res.Haircut,
-		AvatarUrl: res.AvatarUrl.String,
-	}
-}
-
 func convertBarberContact(res db.GetUserBarberRow) *barber.Barbers {
 	return &barber.Barbers{
 		Id:        res.ID.String(),
@@ -180,6 +165,7 @@ func convertBarberContact(res db.GetUserBarberRow) *barber.Barbers {
 		AvatarUrl: res.AvatarUrl.String,
 	}
 }
+
 func convertBarberEmployee(res db.GetBarberRow) *barber.BarberDetail {
 
 	barberEmployee := &barber.BarberDetail{
@@ -278,18 +264,18 @@ func convertBarberShopService(res db.BarberShopService) *barber.BarberShopServic
 	}
 }
 
-// func convertListBarberShopServices(res []db.ListBarberShopServicesRow) []*barber.ListItemBarberShopService {
-// 	var services []*barber.ListItemBarberShopService
-// 	for _, item := range res {
-// 		service := &barber.ListItemBarberShopService{
-// 			Id:           item.ID.String(),
-// 			Name:         item.Name,
-// 			CategoryName: item.CategoryName,
-// 		}
-// 		services = append(services, service)
-// 	}
-// 	return services
-// }
+func convertListServiceForComboService(res []db.ListServiceForComboServiceRow) []*barber.ServiceForComboService {
+	var services []*barber.ServiceForComboService
+	for _, item := range res {
+		service := &barber.ServiceForComboService{
+			Id:           item.ID.String(),
+			Name:         item.Name,
+			CategoryName: item.CategoryName,
+		}
+		services = append(services, service)
+	}
+	return services
+}
 
 func convertListService(res []db.ListServicesByCategoryRow) []*barber.BarberShopService {
 	var services []*barber.BarberShopService

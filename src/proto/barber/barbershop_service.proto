@@ -24,7 +24,7 @@ message BarberShopService {
     bool is_active = 15;
 }
 
-message ItemBarberShopService {
+message ServiceForComboService {
     string id = 1;
     string category_name = 2;
     string name = 3;

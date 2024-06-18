@@ -135,40 +135,6 @@ func (q *Queries) GetTimerBarberShopServices(ctx context.Context, dollar_1 []uui
 	return total_timer, err
 }
 
-const listBarberShopServices = `-- name: ListBarberShopServices :many
-SELECT bs."id", bs."name", sc."name" as "category_name"
-FROM "BarberShopServices" bs
-JOIN "ServiceCategories" sc ON bs."category_id" = sc."id"
-WHERE bs."barber_shop_id" = $1
-AND bs."combo_services" IS NULL
-`
-
-type ListBarberShopServicesRow struct {
-	ID           uuid.UUID `json:"id"`
-	Name         string    `json:"name"`
-	CategoryName string    `json:"category_name"`
-}
-
-func (q *Queries) ListBarberShopServices(ctx context.Context, barberShopID uuid.UUID) ([]ListBarberShopServicesRow, error) {
-	rows, err := q.db.Query(ctx, listBarberShopServices, barberShopID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	items := []ListBarberShopServicesRow{}
-	for rows.Next() {
-		var i ListBarberShopServicesRow
-		if err := rows.Scan(&i.ID, &i.Name, &i.CategoryName); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const listComboServices = `-- name: ListComboServices :many
 SELECT 
     bs."id" AS "service_id",
@@ -230,6 +196,42 @@ func (q *Queries) ListComboServices(ctx context.Context, barberShopID uuid.UUID)
 			&i.DiscountEndTime,
 			&i.ComboServices,
 		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listServiceForComboService = `-- name: ListServiceForComboService :many
+SELECT bs."id", bs."name", sc."name" AS "category_name"
+FROM "BarberShopServices" bs
+JOIN "ServiceCategories" sc ON bs."category_id" = sc."id"
+WHERE bs."barber_shop_id" = $1
+AND bs."combo_services" IS NULL
+ORDER BY
+bs.category_id
+`
+
+type ListServiceForComboServiceRow struct {
+	ID           uuid.UUID `json:"id"`
+	Name         string    `json:"name"`
+	CategoryName string    `json:"category_name"`
+}
+
+func (q *Queries) ListServiceForComboService(ctx context.Context, barberShopID uuid.UUID) ([]ListServiceForComboServiceRow, error) {
+	rows, err := q.db.Query(ctx, listServiceForComboService, barberShopID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListServiceForComboServiceRow{}
+	for rows.Next() {
+		var i ListServiceForComboServiceRow
+		if err := rows.Scan(&i.ID, &i.Name, &i.CategoryName); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

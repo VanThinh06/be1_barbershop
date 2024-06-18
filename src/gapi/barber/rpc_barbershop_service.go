@@ -88,11 +88,25 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 	}
 
 	rsp := &barber.CreateBarberShopServiceResponse{
-		BarberShopService: convertBarberShopService(service),
+		BarberShopService: &barber.BarberShopService{
+			Id:                service.ID.String(),
+			CategoryId:        int32(service.CategoryID),
+			BarberShopId:      service.BarberShopID.String(),
+			GenderId:          int32(service.GenderID),
+			Name:              service.Name,
+			Timer:             int32(service.Timer),
+			Price:             service.Price,
+			Description:       service.Description.String,
+			ImageUrl:          service.ImageUrl.String,
+			ComboServices:     service.ComboServices,
+			DiscountPrice:     &service.DiscountPrice.Float32,
+			DiscountStartTime: timestamppb.New(service.DiscountStartTime.Time),
+			DiscountEndTime:   timestamppb.New(service.DiscountEndTime.Time),
+			IsActive:          service.IsActive,
+		},
 	}
 	return rsp, nil
 }
-
 
 // service detail
 func (server *Server) GetBarberShopService(ctx context.Context, req *barber.GetBarberShopServiceRequest) (*barber.GetBarberShopServiceResponse, error) {
@@ -112,6 +126,16 @@ func (server *Server) GetBarberShopService(ctx context.Context, req *barber.GetB
 		return nil, status.Error(codes.Internal, "internal")
 	}
 
+	discountStartTime := timestamppb.New(res.DiscountStartTime.Time)
+	if !res.DiscountStartTime.Valid {
+		discountStartTime = nil
+	}
+
+	discountEndTime := timestamppb.New(res.DiscountEndTime.Time)
+	if !res.DiscountEndTime.Valid {
+		discountEndTime = nil
+	}
+
 	rsp := &barber.GetBarberShopServiceResponse{
 		BarberShopService: &barber.BarberShopService{
 			Id:                res.ID.String(),
@@ -126,14 +150,13 @@ func (server *Server) GetBarberShopService(ctx context.Context, req *barber.GetB
 			ImageUrl:          res.ImageUrl.String,
 			ComboServices:     res.ComboServices,
 			DiscountPrice:     &res.DiscountPrice.Float32,
-			DiscountStartTime: timestamppb.New(res.DiscountStartTime.Time),
-			DiscountEndTime:   timestamppb.New(res.DiscountEndTime.Time),
+			DiscountStartTime: discountStartTime,
+			DiscountEndTime:   discountEndTime,
 			IsActive:          res.IsActive,
 		},
 	}
 	return rsp, nil
 }
-
 
 // service list
 func (server *Server) ListBarberShopService(ctx context.Context, req *barber.ListBarberShopServiceRequest) (*barber.ListBarberShopServiceResponse, error) {
@@ -168,6 +191,41 @@ func (server *Server) ListBarberShopService(ctx context.Context, req *barber.Lis
 	}
 	return rsp, nil
 }
+
+
+func (server *Server) ListServiceForComboService(ctx context.Context, req *barber.ListServiceForComboServiceRequest) (*barber.ListServiceForComboServiceResponse, error) {
+
+	payload, err := server.authorizeBarber(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+	}
+
+	barberShopId, err := uuid.Parse(req.BarberShopId)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
+
+	argCheckPermission := db.CheckBarberRolePermissionParams{
+		ID:           int16(utilities.ViewServiceList),
+		BarberID:     payload.Barber.BarberID,
+		BarberShopID: barberShopId,
+	}
+	isPermission, err := server.Store.CheckBarberRolePermission(ctx, argCheckPermission)
+	if !isPermission {
+		return nil, noPermissionError(err)
+	}
+
+	res, err := server.Store.ListServiceForComboService(ctx, barberShopId)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "internal")
+	}
+
+	rsp := &barber.ListServiceForComboServiceResponse{
+		BarberShopServices: convertListServiceForComboService(res),
+	}
+	return rsp, nil
+}
+
 
 // service list combo
 func (server *Server) ListComboService(ctx context.Context, req *barber.ListBarberShopServiceRequest) (*barber.ListBarberShopServiceResponse, error) {

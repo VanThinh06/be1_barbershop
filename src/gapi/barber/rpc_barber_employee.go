@@ -27,7 +27,7 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 
 	barberShopID, err := uuid.Parse(req.BarberShopId)
 	if err != nil {
-		return nil, utils.NotFoundError(err, "barber don't exist")
+		return nil, utils.NotFoundError(err, "barber shop don't exist")
 	}
 
 	argCheckPermission := db.CheckBarberRolePermissionParams{

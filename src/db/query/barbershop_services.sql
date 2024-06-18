@@ -26,12 +26,13 @@ SELECT SUM("timer") AS total_timer
 FROM "BarberShopServices"
 WHERE "id" = ANY($1::uuid[]);
 
--- name: ListBarberShopServices :many
-SELECT bs."id", bs."name", sc."name" as "category_name"
+-- name: ListServiceForComboService :many
+SELECT bs."id", bs."name", sc."name" AS "category_name"
 FROM "BarberShopServices" bs
 JOIN "ServiceCategories" sc ON bs."category_id" = sc."id"
 WHERE bs."barber_shop_id" = $1
-AND bs."combo_services" IS NULL;
+AND bs."combo_services" IS NULL
+ORDER BY bs.category_id;
 
 -- name: ListServicesByCategory :many
 SELECT 
