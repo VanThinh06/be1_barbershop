@@ -9,4 +9,6 @@ message ServiceCategory {
     int32 id = 1;
     string name = 2;
     string barber_shop_id = 3;
+    int32 position = 4;
+    bool hidden = 5;
 }

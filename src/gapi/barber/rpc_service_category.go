@@ -110,11 +110,11 @@ func (server *Server) UpdateServiceCategory(ctx context.Context, req *barber.Upd
 		ID: int16(req.Id),
 		Name: sql.NullString{
 			String: req.GetName(),
-			Valid: req.Name != nil,
+			Valid:  req.Name != nil,
 		},
 	}
 
-	 err = server.Store.UpdateServiceCategory(ctx, arg)
+	err = server.Store.UpdateServiceCategory(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {

@@ -82,7 +82,7 @@ func ValidatePhoneNumber(phoneNumber string) error {
 }
 
 func ValidateFullName(fullName string) error {
-	if err := ValidateString(fullName, 3, 50); err != nil {
+	if err := ValidateString(fullName, 1, 50); err != nil {
 		return err
 	}
 
@@ -102,8 +102,8 @@ func ValidateNickName(nickname string) error {
 
 	match, err := regexp.MatchString(nicknameRegex, nickname)
 	if err != nil {
-        return errors.New("error while validating nickname")
-    }
+		return errors.New("error while validating nickname")
+	}
 	if !match {
 		return errors.New("invalid nickname format")
 	}

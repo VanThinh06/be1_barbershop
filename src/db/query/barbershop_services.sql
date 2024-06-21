@@ -26,12 +26,13 @@ SELECT SUM("timer") AS total_timer
 FROM "BarberShopServices"
 WHERE "id" = ANY($1::uuid[]);
 
--- name: ListBarberShopServices :many
-SELECT bs."id", bs."name", sc."name" as "category_name"
+-- name: ListServiceForComboService :many
+SELECT bs."id", bs."name", sc."name" AS "category_name"
 FROM "BarberShopServices" bs
 JOIN "ServiceCategories" sc ON bs."category_id" = sc."id"
 WHERE bs."barber_shop_id" = $1
-AND bs."combo_services" IS NULL;
+AND bs."combo_services" IS NULL
+ORDER BY bs.category_id;
 
 -- name: ListServicesByCategory :many
 SELECT 
@@ -48,17 +49,22 @@ SELECT
     bs."discount_price",
     bs."discount_start_time",
     bs."discount_end_time",
-    combo_services
+    bs."combo_services"
 FROM 
     "ServiceCategories" sc
 LEFT JOIN 
     "BarberShopServices" bs ON sc."id" = bs."category_id"
+LEFT JOIN 
+    "CategoryPositions" cp ON sc."id" = cp."category_id"
 WHERE 
     bs."barber_shop_id" = $1
     AND (bs."combo_services" IS NULL OR bs."combo_services" = '{}')
+    AND (cp."hidden" = false)  -- Exclude hidden categories
 ORDER BY
-	sc."id",
-    bs."gender_id";
+    cp."position",  -- Sắp xếp theo vị trí của category
+    sc."id",
+    bs."gender_id"; -- Để phân loại theo gender_id nếu cần thiết
+
 
 
 -- name: ListComboServices :many

@@ -158,6 +158,19 @@ CREATE TABLE "ServiceCategories" (
 CREATE INDEX ON "ServiceCategories" ("name");
 CREATE INDEX ON "ServiceCategories" ("barber_shop_id");
 
+CREATE TABLE "CategoryPositions" (
+  "barber_shop_id" uuid NOT NULL,
+  "category_id" serial2 NOT NULL,
+  "position" int2 NOT NULL,
+  "hidden" boolean DEFAULT false,
+  PRIMARY KEY ("barber_shop_id", "category_id"),
+  FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id"),
+  FOREIGN KEY ("category_id") REFERENCES "ServiceCategories" ("id")
+);
+
+CREATE INDEX  ON "CategoryPositions" ("barber_shop_id");
+CREATE INDEX  ON "CategoryPositions" ("category_id");
+
 CREATE TABLE "BarberShopServices" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "barber_shop_id" uuid NOT NULL,

@@ -28,19 +28,16 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 	}
 
-	argCheckPermission := db.CheckBarberRolePermissionParams{
-		ID:           int16(utilities.ManageService),
-		BarberID:     payload.Barber.BarberID,
-		BarberShopID: barberShopId,
-	}
-	isPermission, err := server.Store.CheckBarberRolePermission(ctx, argCheckPermission)
-	if !isPermission {
-		return nil, noPermissionError(err)
+	permissionService := server.checkPermissionManageService(ctx, barberShopId, payload.Barber.BarberID)
+	if permissionService != nil {
+		return nil, permissionService
 	}
 
 	// check combo services
 	var timer = int64(req.GetTimer())
+	categoryId := int16(req.GetCategoryId())
 	if len(req.ComboServices) != 0 {
+		categoryId = int16(utils.COMBO_SERVICE_ID)
 		var listComboServices []uuid.UUID
 		for _, item := range req.ComboServices {
 			uuidService, err := uuid.Parse(item)
@@ -56,7 +53,7 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 	}
 
 	arg := db.CreateBarberShopServiceParams{
-		CategoryID: int16(req.GetCategoryId()),
+		CategoryID: categoryId,
 		GenderID:   int16(req.GetGenderId()),
 		Name:       req.GetName(),
 		Timer:      int16(timer),
@@ -88,11 +85,25 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 	}
 
 	rsp := &barber.CreateBarberShopServiceResponse{
-		BarberShopService: convertBarberShopService(service),
+		BarberShopService: &barber.BarberShopService{
+			Id:                service.ID.String(),
+			CategoryId:        int32(service.CategoryID),
+			BarberShopId:      service.BarberShopID.String(),
+			GenderId:          int32(service.GenderID),
+			Name:              service.Name,
+			Timer:             int32(service.Timer),
+			Price:             service.Price,
+			Description:       service.Description.String,
+			ImageUrl:          service.ImageUrl.String,
+			ComboServices:     service.ComboServices,
+			DiscountPrice:     &service.DiscountPrice.Float32,
+			DiscountStartTime: timestamppb.New(service.DiscountStartTime.Time),
+			DiscountEndTime:   timestamppb.New(service.DiscountEndTime.Time),
+			IsActive:          service.IsActive,
+		},
 	}
 	return rsp, nil
 }
-
 
 // service detail
 func (server *Server) GetBarberShopService(ctx context.Context, req *barber.GetBarberShopServiceRequest) (*barber.GetBarberShopServiceResponse, error) {
@@ -112,6 +123,16 @@ func (server *Server) GetBarberShopService(ctx context.Context, req *barber.GetB
 		return nil, status.Error(codes.Internal, "internal")
 	}
 
+	discountStartTime := timestamppb.New(res.DiscountStartTime.Time)
+	if !res.DiscountStartTime.Valid {
+		discountStartTime = nil
+	}
+
+	discountEndTime := timestamppb.New(res.DiscountEndTime.Time)
+	if !res.DiscountEndTime.Valid {
+		discountEndTime = nil
+	}
+
 	rsp := &barber.GetBarberShopServiceResponse{
 		BarberShopService: &barber.BarberShopService{
 			Id:                res.ID.String(),
@@ -126,14 +147,13 @@ func (server *Server) GetBarberShopService(ctx context.Context, req *barber.GetB
 			ImageUrl:          res.ImageUrl.String,
 			ComboServices:     res.ComboServices,
 			DiscountPrice:     &res.DiscountPrice.Float32,
-			DiscountStartTime: timestamppb.New(res.DiscountStartTime.Time),
-			DiscountEndTime:   timestamppb.New(res.DiscountEndTime.Time),
+			DiscountStartTime: discountStartTime,
+			DiscountEndTime:   discountEndTime,
 			IsActive:          res.IsActive,
 		},
 	}
 	return rsp, nil
 }
-
 
 // service list
 func (server *Server) ListBarberShopService(ctx context.Context, req *barber.ListBarberShopServiceRequest) (*barber.ListBarberShopServiceResponse, error) {
@@ -148,14 +168,9 @@ func (server *Server) ListBarberShopService(ctx context.Context, req *barber.Lis
 		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 	}
 
-	argCheckPermission := db.CheckBarberRolePermissionParams{
-		ID:           int16(utilities.ViewServiceList),
-		BarberID:     payload.Barber.BarberID,
-		BarberShopID: barberShopId,
-	}
-	isPermission, err := server.Store.CheckBarberRolePermission(ctx, argCheckPermission)
-	if !isPermission {
-		return nil, noPermissionError(err)
+	permissionService := server.checkPermissionViewService(ctx, barberShopId, payload.Barber.BarberID)
+	if permissionService != nil {
+		return nil, permissionService
 	}
 
 	res, err := server.Store.ListServicesByCategory(ctx, barberShopId)
@@ -165,6 +180,34 @@ func (server *Server) ListBarberShopService(ctx context.Context, req *barber.Lis
 
 	rsp := &barber.ListBarberShopServiceResponse{
 		BarberShopServices: convertListService(res),
+	}
+	return rsp, nil
+}
+
+func (server *Server) ListServiceForComboService(ctx context.Context, req *barber.ListServiceForComboServiceRequest) (*barber.ListServiceForComboServiceResponse, error) {
+
+	payload, err := server.authorizeBarber(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+	}
+
+	barberShopId, err := uuid.Parse(req.BarberShopId)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
+
+	permissionService := server.checkPermissionViewService(ctx, barberShopId, payload.Barber.BarberID)
+	if permissionService != nil {
+		return nil, permissionService
+	}
+
+	res, err := server.Store.ListServiceForComboService(ctx, barberShopId)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "internal")
+	}
+
+	rsp := &barber.ListServiceForComboServiceResponse{
+		BarberShopServices: convertListServiceForComboService(res),
 	}
 	return rsp, nil
 }
@@ -182,14 +225,9 @@ func (server *Server) ListComboService(ctx context.Context, req *barber.ListBarb
 		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 	}
 
-	argCheckPermission := db.CheckBarberRolePermissionParams{
-		ID:           int16(utilities.ViewServiceList),
-		BarberID:     payload.Barber.BarberID,
-		BarberShopID: barberShopId,
-	}
-	isPermission, err := server.Store.CheckBarberRolePermission(ctx, argCheckPermission)
-	if !isPermission {
-		return nil, noPermissionError(err)
+	permissionService := server.checkPermissionViewService(ctx, barberShopId, payload.Barber.BarberID)
+	if permissionService != nil {
+		return nil, permissionService
 	}
 
 	res, err := server.Store.ListComboServices(ctx, barberShopId)
@@ -216,14 +254,9 @@ func (server *Server) UpdateBarberShopService(ctx context.Context, req *barber.U
 		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 	}
 
-	argCheckPermission := db.CheckBarberRolePermissionParams{
-		ID:           int16(utilities.ManageService),
-		BarberID:     payload.Barber.BarberID,
-		BarberShopID: barberShopId,
-	}
-	isPermission, err := server.Store.CheckBarberRolePermission(ctx, argCheckPermission)
-	if !isPermission {
-		return nil, noPermissionError(err)
+	permissionService := server.checkPermissionManageService(ctx, barberShopId, payload.Barber.BarberID)
+	if permissionService != nil {
+		return nil, permissionService
 	}
 
 	var timer = int64(req.GetTimer())
@@ -335,7 +368,81 @@ func (server *Server) DeleteBarberShopService(ctx context.Context, req *barber.D
 	}
 
 	rsp := &barber.DeleteBarberShopServiceResponse{
-		Status: "success",
+		Message: "success",
 	}
 	return rsp, nil
+}
+
+// delete
+func (server *Server) UpdateCategoryPosition(ctx context.Context, req *barber.UpdateCategoryPositionRequest) (*barber.UpdateCategoryPositionResponse, error) {
+
+	payload, err := server.authorizeBarber(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+	}
+
+	barberShopID, err := uuid.Parse(req.GetBarberShopId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
+
+	permissionService := server.checkPermissionManageService(ctx, barberShopID, payload.Barber.BarberID)
+	if permissionService != nil {
+		return nil, permissionService
+	}
+
+	err = server.Store.ExecTx(ctx, func(q *db.Queries) error {
+		for _, v := range req.CategoryPositions {
+			arg := db.UpdateCategoryPositionParams{
+				BarberShopID: barberShopID,
+				CategoryID:   int16(v.CategoryId),
+				Position:     int16(v.Position),
+				Hidden: pgtype.Bool{
+					Bool:  v.Hidden,
+					Valid: true,
+				},
+			}
+
+			err := q.UpdateCategoryPosition(ctx, arg)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, utils.InternalError(err)
+	}
+
+	rsp := &barber.UpdateCategoryPositionResponse{
+		Message: "success",
+	}
+	return rsp, nil
+}
+
+func (server *Server) checkPermissionManageService(ctx context.Context, barberShopID uuid.UUID, barberID uuid.UUID) error {
+	argCheckPermission := db.CheckBarberRolePermissionParams{
+		ID:           int16(utilities.ManageService),
+		BarberID:     barberID,
+		BarberShopID: barberShopID,
+	}
+	isPermission, err := server.Store.CheckBarberRolePermission(ctx, argCheckPermission)
+	if !isPermission {
+		return noPermissionError(err)
+	}
+	return nil
+}
+
+func (server *Server) checkPermissionViewService(ctx context.Context, barberShopID uuid.UUID, barberID uuid.UUID) error {
+	argCheckPermission := db.CheckBarberRolePermissionParams{
+		ID:           int16(utilities.ViewServiceList),
+		BarberID:     barberID,
+		BarberShopID: barberShopID,
+	}
+	isPermission, err := server.Store.CheckBarberRolePermission(ctx, argCheckPermission)
+	if !isPermission {
+		return noPermissionError(err)
+	}
+	return nil
 }
