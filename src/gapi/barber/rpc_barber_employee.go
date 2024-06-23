@@ -57,15 +57,7 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 		}
 	}
 
-	newUUID := uuid.New()
-	uuidPrefix := newUUID.String()[:8]
-	parts := strings.Split(req.BarberEmployee.FullName, " ")
-	nickName := parts[len(parts)-1]
-	combinedNickName := strings.TrimSpace(nickName) + uuidPrefix
-	if err = helpers.ValidateNickName(combinedNickName); err != nil {
-		validations = append(validations, FieldValidation("nick_name", err))
-		return nil, inValidArgumentError(validations)
-	}
+	nickName := utils.GenerateNickName(req.BarberEmployee.FullName)
 
 	var hashedPasswordValid bool = hashedPassword != ""
 	arg := db.CreateBarberEmployeeParams{
@@ -74,7 +66,7 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 			String: hashedPassword,
 			Valid:  hashedPasswordValid,
 		},
-		NickName: strings.ToLower(combinedNickName),
+		NickName: strings.ToLower(nickName),
 		FullName: req.BarberEmployee.GetFullName(),
 	}
 
@@ -189,16 +181,7 @@ func (server *Server) txCreateMultiBarberEmployee(ctx context.Context, req *barb
 				return inValidArgumentError(validations)
 			}
 
-			newUUID := uuid.New()
-			uuidPrefix := newUUID.String()[:8]
-			parts := strings.Split(b.FullName, " ")
-			nickName := parts[len(parts)-1]
-			combinedNickName := strings.TrimSpace(nickName) + uuidPrefix
-			if err = helpers.ValidateNickName(combinedNickName); err != nil {
-				validations = append(validations, FieldValidation("nick_name", err))
-				return inValidArgumentError(validations)
-			}
-
+			nickName := utils.GenerateNickName(b.FullName)
 			var hashedPasswordValid bool = hashedPassword != ""
 			arg := db.CreateBarberEmployeeParams{
 				Phone: b.GetPhone(),
@@ -206,7 +189,7 @@ func (server *Server) txCreateMultiBarberEmployee(ctx context.Context, req *barb
 					String: hashedPassword,
 					Valid:  hashedPasswordValid,
 				},
-				NickName: strings.ToLower(combinedNickName),
+				NickName: strings.ToLower(nickName),
 				FullName: b.GetFullName(),
 			}
 

@@ -33,30 +33,11 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 		return nil, permissionService
 	}
 
-	// check combo services
-	var timer = int64(req.GetTimer())
-	categoryId := int16(req.GetCategoryId())
-	if len(req.ComboServices) != 0 {
-		categoryId = int16(utils.COMBO_SERVICE_ID)
-		var listComboServices []uuid.UUID
-		for _, item := range req.ComboServices {
-			uuidService, err := uuid.Parse(item)
-			if err != nil {
-				return nil, status.Errorf(codes.NotFound, "service don't exist")
-			}
-			listComboServices = append(listComboServices, uuidService)
-		}
-		timer, err = server.Store.GetTimerBarberShopServices(ctx, listComboServices)
-		if err != nil {
-			return nil, utils.InternalError(err)
-		}
-	}
-
 	arg := db.CreateBarberShopServiceParams{
-		CategoryID: categoryId,
+		CategoryID: int16(req.GetCategoryId()),
 		GenderID:   int16(req.GetGenderId()),
 		Name:       req.GetName(),
-		Timer:      int16(timer),
+		Timer:      int16(req.GetTimer()),
 		Price:      req.GetPrice(),
 		Description: sql.NullString{
 			String: req.GetDescription(),
@@ -66,8 +47,7 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 			String: req.GetImageUrl(),
 			Valid:  req.ImageUrl != nil,
 		},
-		BarberShopID:  barberShopId,
-		ComboServices: req.ComboServices,
+		BarberShopID: barberShopId,
 	}
 	service, err := server.Store.CreateBarberShopService(ctx, arg)
 	if err != nil {
@@ -95,11 +75,113 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 			Price:             service.Price,
 			Description:       service.Description.String,
 			ImageUrl:          service.ImageUrl.String,
-			ComboServices:     service.ComboServices,
 			DiscountPrice:     &service.DiscountPrice.Float32,
 			DiscountStartTime: timestamppb.New(service.DiscountStartTime.Time),
 			DiscountEndTime:   timestamppb.New(service.DiscountEndTime.Time),
 			IsActive:          service.IsActive,
+		},
+	}
+	return rsp, nil
+}
+
+func (server *Server) CreateComboService(ctx context.Context, req *barber.CreateComboServiceRequest) (*barber.CreateComboServiceResponse, error) {
+
+	payload, err := server.authorizeBarber(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+	}
+
+	barberShopId, err := uuid.Parse(req.GetBarberShopId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
+
+	permissionService := server.checkPermissionManageService(ctx, barberShopId, payload.Barber.BarberID)
+	if permissionService != nil {
+		return nil, permissionService
+	}
+
+	var timer = int64(req.GetTimer())
+	if len(req.GetServices()) != 0 {
+		var listServices []uuid.UUID
+		for _, item := range req.GetServices() {
+			uuidService, err := uuid.Parse(item)
+			if err != nil {
+				return nil, status.Errorf(codes.NotFound, "service don't exist")
+			}
+			listServices = append(listServices, uuidService)
+		}
+		timer, err = server.Store.GetTimerBarberShopServices(ctx, listServices)
+		if err != nil {
+			return nil, utils.InternalError(err)
+		}
+	}
+
+	var createdService db.ComboService
+	err = server.Store.ExecTx(ctx, func(q *db.Queries) error {
+		arg := db.CreateComboServicesParams{
+			GenderID: int16(req.GetGenderId()),
+			Name:     req.GetName(),
+			Timer:    int16(timer),
+			Price:    req.GetPrice(),
+			Description: sql.NullString{
+				String: req.GetDescription(),
+				Valid:  req.Description != nil,
+			},
+			ImageUrl: sql.NullString{
+				String: req.GetImageUrl(),
+				Valid:  req.ImageUrl != nil,
+			},
+			BarberShopID: barberShopId,
+		}
+		service, err := server.Store.CreateComboServices(ctx, arg)
+		if err != nil {
+			return utils.InternalError(err)
+		}
+
+		createdService = service
+		for _, v := range req.GetServices() {
+			barberShopServiceID, err := uuid.Parse(v)
+			if err != nil {
+				return status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+			}
+			arg := db.CreateComboServiceItemsParams{
+				ComboServiceID:      service.ID,
+				BarberShopServiceID: barberShopServiceID,
+			}
+			_, err = server.Store.CreateComboServiceItems(ctx, arg)
+			if err != nil {
+				return utils.InternalError(err)
+			}
+		}
+		return nil
+	})
+
+	if err != nil {
+		if pqErr, ok := err.(*pgconn.PgError); ok {
+			switch pqErr.ConstraintName {
+			case "BarberShopServices_category_id_fkey":
+				return nil, status.Errorf(codes.NotFound, "service category don't exist")
+			case "BarberShopServices_category_id_name_idx":
+				return nil, status.Errorf(codes.AlreadyExists, "service already exists.")
+			case "BarberShopServices_barber_shop_id":
+				return nil, status.Errorf(codes.NotFound, "barbershops don't exist")
+			}
+		}
+		return nil, utils.InternalError(err)
+	}
+
+	rsp := &barber.CreateComboServiceResponse{
+		Service: &barber.ComboService{
+			Id:           createdService.ID.String(),
+			BarberShopId: createdService.BarberShopID.String(),
+			GenderId:     int32(createdService.GenderID),
+			Name:         createdService.Name,
+			Timer:        int32(createdService.Timer),
+			Price:        createdService.Price,
+			Description:  createdService.Description.String,
+			ImageUrl:     createdService.ImageUrl.String,
+			IsActive:     createdService.IsActive,
 		},
 	}
 	return rsp, nil
@@ -145,11 +227,46 @@ func (server *Server) GetBarberShopService(ctx context.Context, req *barber.GetB
 			Price:             res.Price,
 			Description:       res.Description.String,
 			ImageUrl:          res.ImageUrl.String,
-			ComboServices:     res.ComboServices,
 			DiscountPrice:     &res.DiscountPrice.Float32,
 			DiscountStartTime: discountStartTime,
 			DiscountEndTime:   discountEndTime,
 			IsActive:          res.IsActive,
+		},
+	}
+	return rsp, nil
+}
+
+// combo service detail
+func (server *Server) GetComboService(ctx context.Context, req *barber.GetComboServiceRequest) (*barber.GetComboServiceResponse, error) {
+
+	_, err := server.authorizeBarber(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+	}
+
+	serviceId, err := uuid.Parse(req.GetId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
+
+	res, err := server.Store.GetComboService(ctx, serviceId)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "internal")
+	}
+
+	rsp := &barber.GetComboServiceResponse{
+		BarberShopService: &barber.ComboService{
+			Id:           res.ComboServiceID.String(),
+			BarberShopId: res.BarberShopServiceID.String(),
+			Name:         res.BarberShopServiceName,
+			
+			GenderId:     int32(res.GenderID),
+			Timer:        int32(res.Timer),
+			Price:        res.Price,
+			Description:  res.Description.String,
+			ImageUrl:     res.BarberShopServic,
+
+			IsActive: res.IsActive,
 		},
 	}
 	return rsp, nil
@@ -180,34 +297,6 @@ func (server *Server) ListBarberShopService(ctx context.Context, req *barber.Lis
 
 	rsp := &barber.ListBarberShopServiceResponse{
 		BarberShopServices: convertListService(res),
-	}
-	return rsp, nil
-}
-
-func (server *Server) ListServiceForComboService(ctx context.Context, req *barber.ListServiceForComboServiceRequest) (*barber.ListServiceForComboServiceResponse, error) {
-
-	payload, err := server.authorizeBarber(ctx)
-	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
-	}
-
-	barberShopId, err := uuid.Parse(req.BarberShopId)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
-	}
-
-	permissionService := server.checkPermissionViewService(ctx, barberShopId, payload.Barber.BarberID)
-	if permissionService != nil {
-		return nil, permissionService
-	}
-
-	res, err := server.Store.ListServiceForComboService(ctx, barberShopId)
-	if err != nil {
-		return nil, status.Error(codes.Internal, "internal")
-	}
-
-	rsp := &barber.ListServiceForComboServiceResponse{
-		BarberShopServices: convertListServiceForComboService(res),
 	}
 	return rsp, nil
 }
@@ -271,7 +360,7 @@ func (server *Server) UpdateBarberShopService(ctx context.Context, req *barber.U
 		}
 		timer, err = server.Store.GetTimerBarberShopServices(ctx, listComboServices)
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, "internal")
+			return nil, utils.InternalError(err)
 		}
 	}
 
@@ -281,30 +370,12 @@ func (server *Server) UpdateBarberShopService(ctx context.Context, req *barber.U
 	}
 
 	arg := db.UpdateBarberShopServiceParams{
-		CategoryID: pgtype.Int2{
-			Int16: int16(req.GetCategoryId()),
-			Valid: req.CategoryId != nil,
-		},
-		GenderID: pgtype.Int2{
-			Int16: int16(req.GetGenderId()),
-			Valid: req.GenderId != nil,
-		},
-		Name: sql.NullString{
-			String: req.GetName(),
-			Valid:  req.Name != nil,
-		},
-		IsActive: pgtype.Bool{
-			Bool:  req.GetIsActive(),
-			Valid: req.IsActive != nil,
-		},
-		Timer: pgtype.Int2{
-			Int16: int16(timer),
-			Valid: req.Timer != nil,
-		},
-		Price: pgtype.Float4{
-			Float32: req.GetPrice(),
-			Valid:   req.Price != nil,
-		},
+		CategoryID: int16(req.GetCategoryId()),
+		GenderID:   int16(req.GetGenderId()),
+		Name:       req.GetName(),
+		IsActive:   req.GetIsActive(),
+		Timer:      int16(timer),
+		Price:      req.GetPrice(),
 		Description: sql.NullString{
 			String: req.GetDescription(),
 			Valid:  req.Description != nil,
@@ -325,8 +396,7 @@ func (server *Server) UpdateBarberShopService(ctx context.Context, req *barber.U
 			Time:  req.GetDiscountEndTime().AsTime(),
 			Valid: req.DiscountEndTime != nil,
 		},
-		ComboServices: req.ComboServices,
-		ID:            idService,
+		ID: idService,
 	}
 	err = server.Store.UpdateBarberShopService(ctx, arg)
 	if err != nil {
@@ -340,7 +410,7 @@ func (server *Server) UpdateBarberShopService(ctx context.Context, req *barber.U
 				return nil, status.Errorf(codes.NotFound, "barbershops don't exist")
 			}
 		}
-		return nil, status.Errorf(codes.Internal, "internal")
+		return nil, utils.InternalError(err)
 	}
 
 	rsp := &barber.UpdateBarberShopServiceResponse{
@@ -397,10 +467,7 @@ func (server *Server) UpdateCategoryPosition(ctx context.Context, req *barber.Up
 				BarberShopID: barberShopID,
 				CategoryID:   int16(v.CategoryId),
 				Position:     int16(v.Position),
-				Hidden: pgtype.Bool{
-					Bool:  v.Hidden,
-					Valid: true,
-				},
+				Visible:      v.Visible,
 			}
 
 			err := q.UpdateCategoryPosition(ctx, arg)

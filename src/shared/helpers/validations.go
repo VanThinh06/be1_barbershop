@@ -95,21 +95,7 @@ func ValidateFullName(fullName string) error {
 	return nil
 }
 
-func ValidateNickName(nickname string) error {
-	if err := ValidateString(nickname, 1, 20); err != nil {
-		return err
-	}
 
-	match, err := regexp.MatchString(nicknameRegex, nickname)
-	if err != nil {
-		return errors.New("error while validating nickname")
-	}
-	if !match {
-		return errors.New("invalid nickname format")
-	}
-
-	return nil
-}
 
 func isVietnameseLetter(char rune) bool {
 	vietnameseCharset := []*unicode.RangeTable{

@@ -7,11 +7,11 @@ name,
 timer,
 price,
 description,
-image_url,
-combo_services
+image_url
   )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING *;
+
 
 -- name: GetBarberShopService :one
 SELECT bs.*, sc."name" AS "category_name"
@@ -26,13 +26,6 @@ SELECT SUM("timer") AS total_timer
 FROM "BarberShopServices"
 WHERE "id" = ANY($1::uuid[]);
 
--- name: ListServiceForComboService :many
-SELECT bs."id", bs."name", sc."name" AS "category_name"
-FROM "BarberShopServices" bs
-JOIN "ServiceCategories" sc ON bs."category_id" = sc."id"
-WHERE bs."barber_shop_id" = $1
-AND bs."combo_services" IS NULL
-ORDER BY bs.category_id;
 
 -- name: ListServicesByCategory :many
 SELECT 
@@ -48,8 +41,7 @@ SELECT
     bs."is_active",
     bs."discount_price",
     bs."discount_start_time",
-    bs."discount_end_time",
-    bs."combo_services"
+    bs."discount_end_time"
 FROM 
     "ServiceCategories" sc
 LEFT JOIN 
@@ -66,47 +58,20 @@ ORDER BY
     bs."gender_id"; -- Để phân loại theo gender_id nếu cần thiết
 
 
-
--- name: ListComboServices :many
-SELECT 
-    bs."id" AS "service_id",
-    bs."name" AS "service_name",
-    bs."gender_id",
-    bs."timer",
-    bs."price",
-    bs."description",
-    bs."image_url",
-    bs."is_active",
-    bs."discount_price",
-    bs."discount_start_time",
-    bs."discount_end_time",
-    combo_services
-FROM 
-    "BarberShopServices" bs
-WHERE 
-    bs."barber_shop_id" = $1
-    AND bs."combo_services" IS NOT NULL AND array_length(bs."combo_services", 1) > 0
-ORDER BY
-    bs."gender_id";
-
 -- name: UpdateBarberShopService :exec
 UPDATE "BarberShopServices"
 SET 
-    name = coalesce(sqlc.narg('name'), name),
-    timer = coalesce(sqlc.narg('timer'), timer),
-    category_id = coalesce(sqlc.narg('category_id'), category_id),
-    gender_id = coalesce(sqlc.narg('gender_id'), gender_id),
-    price = coalesce(sqlc.narg('price'), price),
-    description = coalesce(sqlc.narg('description'), description),
-    image_url = coalesce(sqlc.narg('image_url'), image_url),
-    is_active = coalesce(sqlc.narg('is_active'), is_active),
-    discount_price = sqlc.narg('discount_price'),
-    discount_start_time = sqlc.narg('discount_start_time'),
-    discount_end_time = sqlc.narg('discount_end_time'),
-    combo_services = CASE 
-                        WHEN COALESCE(sqlc.narg('combo_services'), '{}')::text[] != '{}' THEN COALESCE(sqlc.narg('combo_services'), '{}')::text[]
-                        ELSE combo_services
-                    END
+    name = COALESCE($2, name),
+    timer = COALESCE($3, timer),
+    category_id = COALESCE($4, category_id),
+    gender_id = COALESCE($5, gender_id),
+    price = COALESCE($6, price),
+    description = COALESCE($7, description),
+    image_url = COALESCE($8, image_url),
+    is_active = COALESCE($9, is_active),
+    discount_price = $10,
+    discount_start_time = $11,
+    discount_end_time = $12
 WHERE "id" = $1;
 
 
@@ -114,3 +79,62 @@ WHERE "id" = $1;
 -- DELETE FROM "BarberShopServices"
 -- WHERE
 --   "id" = $1;
+
+
+-- COMBO SERVICE
+-- name: CreateComboServices :one
+INSERT INTO "ComboServices" (
+barber_shop_id,
+name,
+gender_id,
+timer,
+price,
+description,
+image_url
+  )
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+RETURNING *;
+
+
+-- name: CreateComboServiceItems :one
+INSERT INTO "ComboServiceItems" (
+combo_service_id,
+barber_shop_service_id
+  )
+VALUES ($1, $2)
+RETURNING *;
+
+
+-- name: GetComboService :one
+SELECT 
+  csi.id AS combo_service_item_id,
+  csi.combo_service_id,
+  cs.name AS combo_service_name,
+  cs.description AS combo_service_description,
+  cs.price AS combo_service_price,
+  csi.barber_shop_service_id,
+  bss.name AS barber_shop_service_name,
+  bss.price AS barber_shop_service_price
+FROM 
+  "ComboServiceItems" csi
+JOIN 
+  "ComboServices" cs ON csi.combo_service_id = cs.id
+JOIN 
+  "BarberShopServices" bss ON csi.barber_shop_service_id = bss.id
+WHERE 
+  cs.id = $1;
+
+-- name: ListComboServices :many
+SELECT 
+  csi.id AS combo_service_item_id,
+  csi.combo_service_id,
+  cs.name AS combo_service_name,
+  cs.description AS combo_service_description,
+  cs.price AS combo_service_price,
+  csi.barber_shop_service_id
+FROM 
+  "ComboServiceItems" csi
+JOIN 
+  "ComboServices" cs ON csi.combo_service_id = cs.id
+WHERE 
+  cs.barber_shop_id = $1;

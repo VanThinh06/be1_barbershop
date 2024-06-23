@@ -31,15 +31,18 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 		return nil, utils.InternalError(err)
 	}
 
+	nickName := utils.GenerateNickName(req.FullName)
 	arg := db.CreateBarberParams{
-		NickName: strings.ToLower(req.GetNickName()),
+		NickName: strings.ToLower(nickName),
 		FullName: req.GetFullName(),
 		HashedPassword: sql.NullString{
 			String: hashedPassword,
 			Valid:  true,
 		},
 		Phone: req.GetPhone(),
+		Email: sql.NullString{String: req.GetEmail(), Valid: true},
 	}
+
 	res, err := server.Store.CreateBarber(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pgconn.PgError); ok {
