@@ -16,6 +16,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+// CreateBarberShopService
 func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.CreateBarberShopServiceRequest) (*barber.CreateBarberShopServiceResponse, error) {
 
 	payload, err := server.authorizeBarber(ctx)
@@ -105,7 +106,7 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 	return rsp, nil
 }
 
-// service detail
+// GetBarberShopService
 func (server *Server) GetBarberShopService(ctx context.Context, req *barber.GetBarberShopServiceRequest) (*barber.GetBarberShopServiceResponse, error) {
 
 	_, err := server.authorizeBarber(ctx)
@@ -133,11 +134,16 @@ func (server *Server) GetBarberShopService(ctx context.Context, req *barber.GetB
 		discountEndTime = nil
 	}
 
+	categoryName := res.CategoryName.String
+	if res.CategoryName.String == utils.COMBO_SERVICE_NAME {
+		categoryName = ""
+	}
+
 	rsp := &barber.GetBarberShopServiceResponse{
 		BarberShopService: &barber.BarberShopService{
 			Id:                res.ID.String(),
 			CategoryId:        int32(res.CategoryID),
-			CategoryName:      res.CategoryName.String,
+			CategoryName:      categoryName,
 			BarberShopId:      res.BarberShopID.String(),
 			GenderId:          int32(res.GenderID),
 			Name:              res.Name,
@@ -155,7 +161,7 @@ func (server *Server) GetBarberShopService(ctx context.Context, req *barber.GetB
 	return rsp, nil
 }
 
-// service list
+// ListBarberShopService
 func (server *Server) ListBarberShopService(ctx context.Context, req *barber.ListBarberShopServiceRequest) (*barber.ListBarberShopServiceResponse, error) {
 
 	payload, err := server.authorizeBarber(ctx)
@@ -184,6 +190,7 @@ func (server *Server) ListBarberShopService(ctx context.Context, req *barber.Lis
 	return rsp, nil
 }
 
+// ListServiceForComboService
 func (server *Server) ListServiceForComboService(ctx context.Context, req *barber.ListServiceForComboServiceRequest) (*barber.ListServiceForComboServiceResponse, error) {
 
 	payload, err := server.authorizeBarber(ctx)
@@ -212,7 +219,7 @@ func (server *Server) ListServiceForComboService(ctx context.Context, req *barbe
 	return rsp, nil
 }
 
-// service list combo
+// ListComboService
 func (server *Server) ListComboService(ctx context.Context, req *barber.ListBarberShopServiceRequest) (*barber.ListBarberShopServiceResponse, error) {
 
 	payload, err := server.authorizeBarber(ctx)
@@ -241,7 +248,7 @@ func (server *Server) ListComboService(ctx context.Context, req *barber.ListBarb
 	return rsp, nil
 }
 
-// update
+// UpdateBarberShopService
 func (server *Server) UpdateBarberShopService(ctx context.Context, req *barber.UpdateBarberShopServiceRequest) (*barber.UpdateBarberShopServiceResponse, error) {
 
 	payload, err := server.authorizeBarber(ctx)
@@ -349,7 +356,7 @@ func (server *Server) UpdateBarberShopService(ctx context.Context, req *barber.U
 	return rsp, nil
 }
 
-// delete
+// DeleteBarberShopService
 func (server *Server) DeleteBarberShopService(ctx context.Context, req *barber.DeleteBarberShopServiceRequest) (*barber.DeleteBarberShopServiceResponse, error) {
 
 	payload, err := server.authorizeBarber(ctx)
@@ -373,7 +380,7 @@ func (server *Server) DeleteBarberShopService(ctx context.Context, req *barber.D
 	return rsp, nil
 }
 
-// delete
+// UpdateCategoryPosition
 func (server *Server) UpdateCategoryPosition(ctx context.Context, req *barber.UpdateCategoryPositionRequest) (*barber.UpdateCategoryPositionResponse, error) {
 
 	payload, err := server.authorizeBarber(ctx)
