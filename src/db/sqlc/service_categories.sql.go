@@ -45,7 +45,7 @@ const listServiceCategories = `-- name: ListServiceCategories :many
 SELECT 
     sc.id, sc.name, sc.barber_shop_id,
     cp.position,
-    cp.hidden
+    cp.visible
 FROM 
     "ServiceCategories" sc
 LEFT JOIN 
@@ -61,7 +61,7 @@ type ListServiceCategoriesRow struct {
 	Name         string        `json:"name"`
 	BarberShopID uuid.NullUUID `json:"barber_shop_id"`
 	Position     pgtype.Int2   `json:"position"`
-	Hidden       pgtype.Bool   `json:"hidden"`
+	Visible      pgtype.Bool   `json:"visible"`
 }
 
 func (q *Queries) ListServiceCategories(ctx context.Context, barberShopID uuid.NullUUID) ([]ListServiceCategoriesRow, error) {
@@ -78,7 +78,7 @@ func (q *Queries) ListServiceCategories(ctx context.Context, barberShopID uuid.N
 			&i.Name,
 			&i.BarberShopID,
 			&i.Position,
-			&i.Hidden,
+			&i.Visible,
 		); err != nil {
 			return nil, err
 		}
@@ -91,19 +91,19 @@ func (q *Queries) ListServiceCategories(ctx context.Context, barberShopID uuid.N
 }
 
 const updateCategoryPosition = `-- name: UpdateCategoryPosition :exec
-INSERT INTO "CategoryPositions" ("barber_shop_id", "category_id", "position", "hidden")
+INSERT INTO "CategoryPositions" ("barber_shop_id", "category_id", "position", "visible")
 VALUES ($1, $2, $3, $4)
 ON CONFLICT ("barber_shop_id", "category_id") 
 DO UPDATE SET 
     "position" = EXCLUDED."position",
-    "hidden" = EXCLUDED."hidden"
+    "visible" = EXCLUDED."visible"
 `
 
 type UpdateCategoryPositionParams struct {
-	BarberShopID uuid.UUID   `json:"barber_shop_id"`
-	CategoryID   int16       `json:"category_id"`
-	Position     int16       `json:"position"`
-	Hidden       pgtype.Bool `json:"hidden"`
+	BarberShopID uuid.UUID `json:"barber_shop_id"`
+	CategoryID   int16     `json:"category_id"`
+	Position     int16     `json:"position"`
+	Visible      bool      `json:"visible"`
 }
 
 func (q *Queries) UpdateCategoryPosition(ctx context.Context, arg UpdateCategoryPositionParams) error {
@@ -111,7 +111,7 @@ func (q *Queries) UpdateCategoryPosition(ctx context.Context, arg UpdateCategory
 		arg.BarberShopID,
 		arg.CategoryID,
 		arg.Position,
-		arg.Hidden,
+		arg.Visible,
 	)
 	return err
 }

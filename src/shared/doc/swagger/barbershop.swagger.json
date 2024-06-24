@@ -691,7 +691,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbListBarberShopServiceResponse"
+              "$ref": "#/definitions/pbListComboServiceResponse"
             }
           },
           "default": {
@@ -756,38 +756,6 @@
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/pbListBarberShopServiceResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "barberShopId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "barbershop services"
-        ]
-      }
-    },
-    "/v1/barbershop/{barberShopId}/services/combo": {
-      "get": {
-        "summary": "List services",
-        "description": "API endpoint to get list services",
-        "operationId": "BarberService_ListServiceForComboService",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbListServiceForComboServiceResponse"
             }
           },
           "default": {
@@ -1108,6 +1076,72 @@
         ],
         "tags": [
           "category positions"
+        ]
+      }
+    },
+    "/v1/combo-service": {
+      "post": {
+        "summary": "Create service",
+        "description": "API endpoint to create a service",
+        "operationId": "BarberService_CreateComboService",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateComboServiceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateComboServiceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "barbershop services"
+        ]
+      }
+    },
+    "/v1/combo-service/{id}": {
+      "get": {
+        "summary": "Service detail",
+        "description": "API endpoint to service detail",
+        "operationId": "BarberService_GetComboService",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetComboServiceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "barbershop services"
         ]
       }
     },
@@ -1759,12 +1793,6 @@
         "imageUrl": {
           "type": "string"
         },
-        "comboServices": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "categoryName": {
           "type": "string"
         },
@@ -1850,8 +1878,62 @@
           "type": "integer",
           "format": "int32"
         },
-        "hidden": {
+        "visible": {
           "type": "boolean"
+        }
+      }
+    },
+    "pbComboService": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "barberShopId": {
+          "type": "string"
+        },
+        "genderId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "timer": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "price": {
+          "type": "number",
+          "format": "float"
+        },
+        "discountPrice": {
+          "type": "number",
+          "format": "float"
+        },
+        "discountStartTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "discountEndTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "isActive": {
+          "type": "boolean"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbBarberShopService"
+          }
         }
       }
     },
@@ -1950,13 +2032,13 @@
     "pbCreateBarberRequest": {
       "type": "object",
       "properties": {
-        "nickName": {
-          "type": "string"
-        },
         "fullName": {
           "type": "string"
         },
         "phone": {
+          "type": "string"
+        },
+        "email": {
           "type": "string"
         },
         "password": {
@@ -2166,12 +2248,6 @@
         },
         "imageUrl": {
           "type": "string"
-        },
-        "comboServices": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       },
       "title": "insert"
@@ -2181,6 +2257,50 @@
       "properties": {
         "barberShopService": {
           "$ref": "#/definitions/pbBarberShopService"
+        }
+      }
+    },
+    "pbCreateComboServiceRequest": {
+      "type": "object",
+      "properties": {
+        "barberShopId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "genderId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "timer": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "price": {
+          "type": "number",
+          "format": "float"
+        },
+        "description": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "COMBO SERVICE\ninsert"
+    },
+    "pbCreateComboServiceResponse": {
+      "type": "object",
+      "properties": {
+        "comboService": {
+          "$ref": "#/definitions/pbComboService"
         }
       }
     },
@@ -2334,6 +2454,14 @@
         }
       }
     },
+    "pbGetComboServiceResponse": {
+      "type": "object",
+      "properties": {
+        "barberShopService": {
+          "$ref": "#/definitions/pbComboService"
+        }
+      }
+    },
     "pbGetDistrictsResponse": {
       "type": "object",
       "properties": {
@@ -2428,6 +2556,18 @@
         }
       }
     },
+    "pbListComboServiceResponse": {
+      "type": "object",
+      "properties": {
+        "barberShopServices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbComboService"
+          }
+        }
+      }
+    },
     "pbListNearbyBarberShopsRequest": {
       "type": "object",
       "properties": {
@@ -2465,18 +2605,6 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/pbServiceCategory"
-          }
-        }
-      }
-    },
-    "pbListServiceForComboServiceResponse": {
-      "type": "object",
-      "properties": {
-        "barberShopServices": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/pbServiceForComboService"
           }
         }
       }
@@ -2598,20 +2726,6 @@
         }
       }
     },
-    "pbServiceForComboService": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "categoryName": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
     "pbTimeOfDay": {
       "type": "object",
       "properties": {
@@ -2722,12 +2836,6 @@
         "categoryId": {
           "type": "integer",
           "format": "int32"
-        },
-        "comboServices": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         },
         "discountPrice": {
           "type": "number",

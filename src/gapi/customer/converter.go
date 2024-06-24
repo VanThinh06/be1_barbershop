@@ -16,7 +16,7 @@ func convertCustomer(res db.Customer) *customer.Customer {
 		Avatar:            res.Avatar.String,
 		CustomerId:        res.ID.String(),
 		CreatedAt:         timestamppb.New(res.CreateAt),
-		PasswordChangedAt: timestamppb.New(res.PasswordChangedAt),
+		PasswordChangedAt: timestamppb.New(res.PasswordChangedAt.Time),
 		IsSocialAuth:      res.IsSocialAuth.Bool,
 	}
 }

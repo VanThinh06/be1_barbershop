@@ -17,7 +17,6 @@ message CreateBarberShopServiceRequest{
     float price = 6;
     optional string description = 7;
     optional string image_url = 8;
-    repeated string combo_services = 9;
 }
 
 message CreateBarberShopServiceResponse{
@@ -31,15 +30,6 @@ message GetBarberShopServiceRequest{
 
 message GetBarberShopServiceResponse {
     BarberShopService barber_shop_service = 1;
-}
-
-//
-message ListServiceForComboServiceRequest{
-    string barber_shop_id = 1;
-}
-
-message ListServiceForComboServiceResponse {
-    repeated ServiceForComboService barber_shop_services = 1;
 }
 
 // list
@@ -63,7 +53,6 @@ message UpdateBarberShopServiceRequest{
     optional string image_url = 8;
     optional bool is_active = 9;
     optional int32 category_id = 10;
-    repeated string combo_services = 11;
     optional float discount_price = 12;
     optional google.protobuf.Timestamp discount_start_time = 13;
     optional google.protobuf.Timestamp discount_end_time = 14;
@@ -91,3 +80,40 @@ message UpdateCategoryPositionRequest{
 message UpdateCategoryPositionResponse{
     string message = 1;
 }
+
+
+// COMBO SERVICE
+// insert
+message CreateComboServiceRequest{
+    string barber_shop_id = 1;
+    string name = 2;
+    int32 gender_id = 3;
+    int32 timer = 4;
+    float price = 5;
+    optional string description = 6;
+    optional string image_url = 7;
+    repeated string services = 8;
+}
+
+message CreateComboServiceResponse{
+    ComboService combo_service = 1;
+}
+
+// detail
+message GetComboServiceRequest{
+    string id = 1;
+}
+
+message GetComboServiceResponse {
+    ComboService barber_shop_service = 1;
+}
+
+// list
+message ListComboServiceRequest{
+    string barber_shop_id = 1;
+}
+
+message ListComboServiceResponse {
+    repeated ComboService barber_shop_services = 1;
+}
+

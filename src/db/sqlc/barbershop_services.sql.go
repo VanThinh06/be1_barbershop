@@ -22,23 +22,21 @@ name,
 timer,
 price,
 description,
-image_url,
-combo_services
+image_url
   )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-RETURNING id, barber_shop_id, category_id, gender_id, name, timer, price, discount_price, discount_start_time, discount_end_time, description, image_url, combo_services, is_active
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+RETURNING id, barber_shop_id, category_id, gender_id, name, timer, price, discount_price, discount_start_time, discount_end_time, description, image_url, is_active
 `
 
 type CreateBarberShopServiceParams struct {
-	BarberShopID  uuid.UUID      `json:"barber_shop_id"`
-	CategoryID    int16          `json:"category_id"`
-	GenderID      int16          `json:"gender_id"`
-	Name          string         `json:"name"`
-	Timer         int16          `json:"timer"`
-	Price         float32        `json:"price"`
-	Description   sql.NullString `json:"description"`
-	ImageUrl      sql.NullString `json:"image_url"`
-	ComboServices []string       `json:"combo_services"`
+	BarberShopID uuid.UUID      `json:"barber_shop_id"`
+	CategoryID   int16          `json:"category_id"`
+	GenderID     int16          `json:"gender_id"`
+	Name         string         `json:"name"`
+	Timer        int16          `json:"timer"`
+	Price        float32        `json:"price"`
+	Description  sql.NullString `json:"description"`
+	ImageUrl     sql.NullString `json:"image_url"`
 }
 
 func (q *Queries) CreateBarberShopService(ctx context.Context, arg CreateBarberShopServiceParams) (BarberShopService, error) {
@@ -51,7 +49,6 @@ func (q *Queries) CreateBarberShopService(ctx context.Context, arg CreateBarberS
 		arg.Price,
 		arg.Description,
 		arg.ImageUrl,
-		arg.ComboServices,
 	)
 	var i BarberShopService
 	err := row.Scan(
@@ -67,14 +64,95 @@ func (q *Queries) CreateBarberShopService(ctx context.Context, arg CreateBarberS
 		&i.DiscountEndTime,
 		&i.Description,
 		&i.ImageUrl,
-		&i.ComboServices,
+		&i.IsActive,
+	)
+	return i, err
+}
+
+const createComboServiceItems = `-- name: CreateComboServiceItems :one
+INSERT INTO "ComboServiceItems" (
+combo_service_id,
+barber_shop_service_id
+  )
+VALUES ($1, $2)
+RETURNING id, combo_service_id, barber_shop_service_id
+`
+
+type CreateComboServiceItemsParams struct {
+	ComboServiceID      uuid.UUID `json:"combo_service_id"`
+	BarberShopServiceID uuid.UUID `json:"barber_shop_service_id"`
+}
+
+func (q *Queries) CreateComboServiceItems(ctx context.Context, arg CreateComboServiceItemsParams) (ComboServiceItem, error) {
+	row := q.db.QueryRow(ctx, createComboServiceItems, arg.ComboServiceID, arg.BarberShopServiceID)
+	var i ComboServiceItem
+	err := row.Scan(&i.ID, &i.ComboServiceID, &i.BarberShopServiceID)
+	return i, err
+}
+
+const createComboServices = `-- name: CreateComboServices :one
+
+
+INSERT INTO "ComboServices" (
+barber_shop_id,
+name,
+gender_id,
+timer,
+price,
+description,
+image_url
+  )
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+RETURNING id, barber_shop_id, name, gender_id, timer, price, discount_price, discount_start_time, discount_end_time, description, image_url, is_active
+`
+
+type CreateComboServicesParams struct {
+	BarberShopID uuid.UUID      `json:"barber_shop_id"`
+	Name         string         `json:"name"`
+	GenderID     int16          `json:"gender_id"`
+	Timer        int16          `json:"timer"`
+	Price        float32        `json:"price"`
+	Description  sql.NullString `json:"description"`
+	ImageUrl     sql.NullString `json:"image_url"`
+}
+
+// -- name: DeleteBarberShopServices :exec
+// DELETE FROM "BarberShopServices"
+// WHERE
+//
+//	"id" = $1;
+//
+// COMBO SERVICE
+func (q *Queries) CreateComboServices(ctx context.Context, arg CreateComboServicesParams) (ComboService, error) {
+	row := q.db.QueryRow(ctx, createComboServices,
+		arg.BarberShopID,
+		arg.Name,
+		arg.GenderID,
+		arg.Timer,
+		arg.Price,
+		arg.Description,
+		arg.ImageUrl,
+	)
+	var i ComboService
+	err := row.Scan(
+		&i.ID,
+		&i.BarberShopID,
+		&i.Name,
+		&i.GenderID,
+		&i.Timer,
+		&i.Price,
+		&i.DiscountPrice,
+		&i.DiscountStartTime,
+		&i.DiscountEndTime,
+		&i.Description,
+		&i.ImageUrl,
 		&i.IsActive,
 	)
 	return i, err
 }
 
 const getBarberShopService = `-- name: GetBarberShopService :one
-SELECT bs.id, bs.barber_shop_id, bs.category_id, bs.gender_id, bs.name, bs.timer, bs.price, bs.discount_price, bs.discount_start_time, bs.discount_end_time, bs.description, bs.image_url, bs.combo_services, bs.is_active, sc."name" AS "category_name"
+SELECT bs.id, bs.barber_shop_id, bs.category_id, bs.gender_id, bs.name, bs.timer, bs.price, bs.discount_price, bs.discount_start_time, bs.discount_end_time, bs.description, bs.image_url, bs.is_active, sc."name" AS "category_name"
 FROM "BarberShopServices" bs
 LEFT JOIN 
     "ServiceCategories" sc ON sc."id" = bs."category_id"
@@ -94,7 +172,6 @@ type GetBarberShopServiceRow struct {
 	DiscountEndTime   pgtype.Timestamp `json:"discount_end_time"`
 	Description       sql.NullString   `json:"description"`
 	ImageUrl          sql.NullString   `json:"image_url"`
-	ComboServices     []string         `json:"combo_services"`
 	IsActive          bool             `json:"is_active"`
 	CategoryName      sql.NullString   `json:"category_name"`
 }
@@ -115,11 +192,79 @@ func (q *Queries) GetBarberShopService(ctx context.Context, id uuid.UUID) (GetBa
 		&i.DiscountEndTime,
 		&i.Description,
 		&i.ImageUrl,
-		&i.ComboServices,
 		&i.IsActive,
 		&i.CategoryName,
 	)
 	return i, err
+}
+
+const getComboService = `-- name: GetComboService :many
+SELECT 
+  cs.id,
+  cs.name AS combo_service_name,
+  cs.description AS combo_service_description,
+  cs.price AS combo_service_price,
+  cs.image_url AS combo_service_image_url,
+  cs.timer AS combo_service_timer,
+  cs.gender_id AS combo_service_gender,
+  cs.is_active AS combo_service_is_active,
+  bss.id AS barber_shop_service_id,
+  bss.name AS barber_shop_service_name,
+  bss.price AS barber_shop_service_price
+FROM 
+  "ComboServiceItems" csi
+JOIN 
+  "ComboServices" cs ON csi.combo_service_id = cs.id
+JOIN 
+  "BarberShopServices" bss ON csi.barber_shop_service_id = bss.id
+WHERE 
+  cs.id = $1
+`
+
+type GetComboServiceRow struct {
+	ID                      uuid.UUID      `json:"id"`
+	ComboServiceName        string         `json:"combo_service_name"`
+	ComboServiceDescription sql.NullString `json:"combo_service_description"`
+	ComboServicePrice       float32        `json:"combo_service_price"`
+	ComboServiceImageUrl    sql.NullString `json:"combo_service_image_url"`
+	ComboServiceTimer       int16          `json:"combo_service_timer"`
+	ComboServiceGender      int16          `json:"combo_service_gender"`
+	ComboServiceIsActive    bool           `json:"combo_service_is_active"`
+	BarberShopServiceID     uuid.UUID      `json:"barber_shop_service_id"`
+	BarberShopServiceName   string         `json:"barber_shop_service_name"`
+	BarberShopServicePrice  float32        `json:"barber_shop_service_price"`
+}
+
+func (q *Queries) GetComboService(ctx context.Context, id uuid.UUID) ([]GetComboServiceRow, error) {
+	rows, err := q.db.Query(ctx, getComboService, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetComboServiceRow{}
+	for rows.Next() {
+		var i GetComboServiceRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.ComboServiceName,
+			&i.ComboServiceDescription,
+			&i.ComboServicePrice,
+			&i.ComboServiceImageUrl,
+			&i.ComboServiceTimer,
+			&i.ComboServiceGender,
+			&i.ComboServiceIsActive,
+			&i.BarberShopServiceID,
+			&i.BarberShopServiceName,
+			&i.BarberShopServicePrice,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getTimerBarberShopServices = `-- name: GetTimerBarberShopServices :one
@@ -136,47 +281,45 @@ func (q *Queries) GetTimerBarberShopServices(ctx context.Context, dollar_1 []uui
 }
 
 const listComboServices = `-- name: ListComboServices :many
-
-
-
 SELECT 
-    bs."id" AS "service_id",
-    bs."name" AS "service_name",
-    bs."gender_id",
-    bs."timer",
-    bs."price",
-    bs."description",
-    bs."image_url",
-    bs."is_active",
-    bs."discount_price",
-    bs."discount_start_time",
-    bs."discount_end_time",
-    combo_services
+  cs.id,
+  cs.gender_id AS combo_service_gender,
+  cs.name AS combo_service_name,
+  cs.timer AS combo_service_timer,
+  cs.price AS combo_service_price,
+  cs.discount_price AS combo_service_discount_price,
+  cs.discount_start_time AS combo_service_discount_start_time,
+  cs.discount_end_time AS combo_service_discount_end_time,
+  cs.description AS combo_service_description,
+  cs.image_url AS combo_service_image_url,
+  cs.is_active AS combo_service_is_active,
+  ARRAY_AGG(csi.barber_shop_service_id) AS barber_shop_service_ids
 FROM 
-    "BarberShopServices" bs
+  "ComboServiceItems" csi
+JOIN 
+  "ComboServices" cs ON csi.combo_service_id = cs.id
 WHERE 
-    bs."barber_shop_id" = $1
-    AND bs."combo_services" IS NOT NULL AND array_length(bs."combo_services", 1) > 0
-ORDER BY
-    bs."gender_id"
+  cs.barber_shop_id = $1
+GROUP BY 
+  cs.id, cs.gender_id, cs.name, cs.timer, cs.price, cs.discount_price, 
+  cs.discount_start_time, cs.discount_end_time, cs.description, cs.image_url, cs.is_active
 `
 
 type ListComboServicesRow struct {
-	ServiceID         uuid.UUID        `json:"service_id"`
-	ServiceName       string           `json:"service_name"`
-	GenderID          int16            `json:"gender_id"`
-	Timer             int16            `json:"timer"`
-	Price             float32          `json:"price"`
-	Description       sql.NullString   `json:"description"`
-	ImageUrl          sql.NullString   `json:"image_url"`
-	IsActive          bool             `json:"is_active"`
-	DiscountPrice     pgtype.Float4    `json:"discount_price"`
-	DiscountStartTime pgtype.Timestamp `json:"discount_start_time"`
-	DiscountEndTime   pgtype.Timestamp `json:"discount_end_time"`
-	ComboServices     []string         `json:"combo_services"`
+	ID                            uuid.UUID        `json:"id"`
+	ComboServiceGender            int16            `json:"combo_service_gender"`
+	ComboServiceName              string           `json:"combo_service_name"`
+	ComboServiceTimer             int16            `json:"combo_service_timer"`
+	ComboServicePrice             float32          `json:"combo_service_price"`
+	ComboServiceDiscountPrice     pgtype.Float4    `json:"combo_service_discount_price"`
+	ComboServiceDiscountStartTime pgtype.Timestamp `json:"combo_service_discount_start_time"`
+	ComboServiceDiscountEndTime   pgtype.Timestamp `json:"combo_service_discount_end_time"`
+	ComboServiceDescription       sql.NullString   `json:"combo_service_description"`
+	ComboServiceImageUrl          sql.NullString   `json:"combo_service_image_url"`
+	ComboServiceIsActive          bool             `json:"combo_service_is_active"`
+	BarberShopServiceIds          interface{}      `json:"barber_shop_service_ids"`
 }
 
-// Để phân loại theo gender_id nếu cần thiết
 func (q *Queries) ListComboServices(ctx context.Context, barberShopID uuid.UUID) ([]ListComboServicesRow, error) {
 	rows, err := q.db.Query(ctx, listComboServices, barberShopID)
 	if err != nil {
@@ -187,54 +330,19 @@ func (q *Queries) ListComboServices(ctx context.Context, barberShopID uuid.UUID)
 	for rows.Next() {
 		var i ListComboServicesRow
 		if err := rows.Scan(
-			&i.ServiceID,
-			&i.ServiceName,
-			&i.GenderID,
-			&i.Timer,
-			&i.Price,
-			&i.Description,
-			&i.ImageUrl,
-			&i.IsActive,
-			&i.DiscountPrice,
-			&i.DiscountStartTime,
-			&i.DiscountEndTime,
-			&i.ComboServices,
+			&i.ID,
+			&i.ComboServiceGender,
+			&i.ComboServiceName,
+			&i.ComboServiceTimer,
+			&i.ComboServicePrice,
+			&i.ComboServiceDiscountPrice,
+			&i.ComboServiceDiscountStartTime,
+			&i.ComboServiceDiscountEndTime,
+			&i.ComboServiceDescription,
+			&i.ComboServiceImageUrl,
+			&i.ComboServiceIsActive,
+			&i.BarberShopServiceIds,
 		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listServiceForComboService = `-- name: ListServiceForComboService :many
-SELECT bs."id", bs."name", sc."name" AS "category_name"
-FROM "BarberShopServices" bs
-JOIN "ServiceCategories" sc ON bs."category_id" = sc."id"
-WHERE bs."barber_shop_id" = $1
-AND bs."combo_services" IS NULL
-ORDER BY bs.category_id
-`
-
-type ListServiceForComboServiceRow struct {
-	ID           uuid.UUID `json:"id"`
-	Name         string    `json:"name"`
-	CategoryName string    `json:"category_name"`
-}
-
-func (q *Queries) ListServiceForComboService(ctx context.Context, barberShopID uuid.UUID) ([]ListServiceForComboServiceRow, error) {
-	rows, err := q.db.Query(ctx, listServiceForComboService, barberShopID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	items := []ListServiceForComboServiceRow{}
-	for rows.Next() {
-		var i ListServiceForComboServiceRow
-		if err := rows.Scan(&i.ID, &i.Name, &i.CategoryName); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -259,8 +367,7 @@ SELECT
     bs."is_active",
     bs."discount_price",
     bs."discount_start_time",
-    bs."discount_end_time",
-    bs."combo_services"
+    bs."discount_end_time"
 FROM 
     "ServiceCategories" sc
 LEFT JOIN 
@@ -291,7 +398,6 @@ type ListServicesByCategoryRow struct {
 	DiscountPrice     pgtype.Float4    `json:"discount_price"`
 	DiscountStartTime pgtype.Timestamp `json:"discount_start_time"`
 	DiscountEndTime   pgtype.Timestamp `json:"discount_end_time"`
-	ComboServices     []string         `json:"combo_services"`
 }
 
 func (q *Queries) ListServicesByCategory(ctx context.Context, barberShopID uuid.UUID) ([]ListServicesByCategoryRow, error) {
@@ -317,7 +423,6 @@ func (q *Queries) ListServicesByCategory(ctx context.Context, barberShopID uuid.
 			&i.DiscountPrice,
 			&i.DiscountStartTime,
 			&i.DiscountEndTime,
-			&i.ComboServices,
 		); err != nil {
 			return nil, err
 		}
@@ -330,42 +435,40 @@ func (q *Queries) ListServicesByCategory(ctx context.Context, barberShopID uuid.
 }
 
 const updateBarberShopService = `-- name: UpdateBarberShopService :exec
+
+
 UPDATE "BarberShopServices"
 SET 
-    name = coalesce($2, name),
-    timer = coalesce($3, timer),
-    category_id = coalesce($4, category_id),
-    gender_id = coalesce($5, gender_id),
-    price = coalesce($6, price),
-    description = coalesce($7, description),
-    image_url = coalesce($8, image_url),
-    is_active = coalesce($9, is_active),
+    name = COALESCE($2, name),
+    timer = COALESCE($3, timer),
+    category_id = COALESCE($4, category_id),
+    gender_id = COALESCE($5, gender_id),
+    price = COALESCE($6, price),
+    description = COALESCE($7, description),
+    image_url = COALESCE($8, image_url),
+    is_active = COALESCE($9, is_active),
     discount_price = $10,
     discount_start_time = $11,
-    discount_end_time = $12,
-    combo_services = CASE 
-                        WHEN COALESCE($13, '{}')::text[] != '{}' THEN COALESCE($13, '{}')::text[]
-                        ELSE combo_services
-                    END
+    discount_end_time = $12
 WHERE "id" = $1
 `
 
 type UpdateBarberShopServiceParams struct {
 	ID                uuid.UUID        `json:"id"`
-	Name              sql.NullString   `json:"name"`
-	Timer             pgtype.Int2      `json:"timer"`
-	CategoryID        pgtype.Int2      `json:"category_id"`
-	GenderID          pgtype.Int2      `json:"gender_id"`
-	Price             pgtype.Float4    `json:"price"`
+	Name              string           `json:"name"`
+	Timer             int16            `json:"timer"`
+	CategoryID        int16            `json:"category_id"`
+	GenderID          int16            `json:"gender_id"`
+	Price             float32          `json:"price"`
 	Description       sql.NullString   `json:"description"`
 	ImageUrl          sql.NullString   `json:"image_url"`
-	IsActive          pgtype.Bool      `json:"is_active"`
+	IsActive          bool             `json:"is_active"`
 	DiscountPrice     pgtype.Float4    `json:"discount_price"`
 	DiscountStartTime pgtype.Timestamp `json:"discount_start_time"`
 	DiscountEndTime   pgtype.Timestamp `json:"discount_end_time"`
-	ComboServices     []string         `json:"combo_services"`
 }
 
+// Để phân loại theo gender_id nếu cần thiết
 func (q *Queries) UpdateBarberShopService(ctx context.Context, arg UpdateBarberShopServiceParams) error {
 	_, err := q.db.Exec(ctx, updateBarberShopService,
 		arg.ID,
@@ -380,7 +483,6 @@ func (q *Queries) UpdateBarberShopService(ctx context.Context, arg UpdateBarberS
 		arg.DiscountPrice,
 		arg.DiscountStartTime,
 		arg.DiscountEndTime,
-		arg.ComboServices,
 	)
 	return err
 }

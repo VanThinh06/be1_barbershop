@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -86,13 +85,13 @@ ORDER BY "Roles"."id"
 `
 
 type ListBarbersRolesRow struct {
-	ID           uuid.UUID      `json:"id"`
-	BarberID     uuid.UUID      `json:"barber_id"`
-	BarberShopID uuid.UUID      `json:"barber_shop_id"`
-	RoleID       int16          `json:"role_id"`
-	ID_2         int16          `json:"id_2"`
-	Name         string         `json:"name"`
-	Type         sql.NullString `json:"type"`
+	ID           uuid.UUID `json:"id"`
+	BarberID     uuid.UUID `json:"barber_id"`
+	BarberShopID uuid.UUID `json:"barber_shop_id"`
+	RoleID       int16     `json:"role_id"`
+	ID_2         int16     `json:"id_2"`
+	Name         string    `json:"name"`
+	Type         string    `json:"type"`
 }
 
 func (q *Queries) ListBarbersRoles(ctx context.Context, barberShopID uuid.UUID) ([]ListBarbersRolesRow, error) {

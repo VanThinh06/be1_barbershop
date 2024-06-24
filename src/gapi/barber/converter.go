@@ -15,16 +15,6 @@ func convertListPermission(res []db.Permission) []string {
 	return permissions
 }
 
-// BarberRoles
-func convertBarberRoles(res db.BarberRole) *barber.BarberRoles {
-	return &barber.BarberRoles{
-		Id:           res.BarberID.String(),
-		BarberId:     res.BarberID.String(),
-		BarberShopId: res.BarberShopID.String(),
-		RoleId:       int32(res.RoleID),
-	}
-}
-
 // chains
 func ConvertBarberShopChains(res db.BarberShopChain) *barber.BarberShopChains {
 	return &barber.BarberShopChains{
@@ -152,18 +142,6 @@ func ConvertListBarberShopsNearby(res []db.ListNearbyBarberShopsRow) []*barber.B
 	return barberShops
 }
 
-func convertBarberContact(res db.GetUserBarberRow) *barber.Barbers {
-	return &barber.Barbers{
-		Id:        res.ID.String(),
-		GenderId:  int32(res.GenderID.Int16),
-		Email:     res.Email.String,
-		Phone:     res.Phone,
-		NickName:  res.NickName,
-		FullName:  res.FullName,
-		Haircut:   res.Haircut,
-		AvatarUrl: res.AvatarUrl.String,
-	}
-}
 
 func convertBarberEmployee(res db.GetBarberRow) *barber.BarberDetail {
 
@@ -171,7 +149,7 @@ func convertBarberEmployee(res db.GetBarberRow) *barber.BarberDetail {
 		Barber: &barber.Barbers{
 			Id:         res.ID.String(),
 			GenderId:   int32(res.GenderID.Int16),
-			Email:      res.Email.String,
+			Email:      res.Email,
 			Phone:      res.Phone,
 			NickName:   res.NickName,
 			FullName:   res.FullName,
@@ -198,7 +176,7 @@ func convertBarberEmployees(res []db.ListEmployeesRow) []*barber.BarberDetail {
 			Barber: &barber.Barbers{
 				Id:         item.ID.String(),
 				GenderId:   int32(item.GenderID.Int16),
-				Email:      item.Email.String,
+				Email:      item.Email,
 				Phone:      item.Phone,
 				NickName:   item.NickName,
 				FullName:   item.FullName,
@@ -240,24 +218,11 @@ func convertListServiceCategory(res []db.ListServiceCategoriesRow) []*barber.Ser
 			Name:         item.Name,
 			BarberShopId: item.BarberShopID.UUID.String(),
 			Position:     int32(item.Position.Int16),
-			Hidden:       item.Hidden.Bool,
+			Hidden:       item.Visible.Bool,
 		}
 		serviceCategories = append(serviceCategories, serviceCategory)
 	}
 	return serviceCategories
-}
-
-func convertListServiceForComboService(res []db.ListServiceForComboServiceRow) []*barber.ServiceForComboService {
-	var services []*barber.ServiceForComboService
-	for _, item := range res {
-		service := &barber.ServiceForComboService{
-			Id:           item.ID.String(),
-			Name:         item.Name,
-			CategoryName: item.CategoryName,
-		}
-		services = append(services, service)
-	}
-	return services
 }
 
 func convertListService(res []db.ListServicesByCategoryRow) []*barber.BarberShopService {
@@ -272,7 +237,6 @@ func convertListService(res []db.ListServicesByCategoryRow) []*barber.BarberShop
 			Price:             item.Price.Float32,
 			Description:       item.Description.String,
 			ImageUrl:          item.ImageUrl.String,
-			ComboServices:     item.ComboServices,
 			IsActive:          item.IsActive.Bool,
 			CategoryName:      item.CategoryName,
 			DiscountPrice:     &item.DiscountPrice.Float32,
@@ -284,22 +248,14 @@ func convertListService(res []db.ListServicesByCategoryRow) []*barber.BarberShop
 	return services
 }
 
-func convertListComboService(res []db.ListComboServicesRow) []*barber.BarberShopService {
-	var services []*barber.BarberShopService
+func convertListComboService(res []db.ListComboServicesRow) []*barber.ComboService {
+	var services []*barber.ComboService
 	for _, item := range res {
-		service := &barber.BarberShopService{
-			Id:                item.ServiceID.String(),
-			GenderId:          int32(item.GenderID),
-			Name:              item.ServiceName,
-			Timer:             int32(item.Timer),
-			Price:             item.Price,
-			Description:       item.Description.String,
-			ImageUrl:          item.ImageUrl.String,
-			ComboServices:     item.ComboServices,
-			IsActive:          item.IsActive,
-			DiscountPrice:     &item.DiscountPrice.Float32,
-			DiscountStartTime: timestamppb.New(item.DiscountStartTime.Time),
-			DiscountEndTime:   timestamppb.New(item.DiscountEndTime.Time),
+		service := &barber.ComboService{
+			Id:          item.ID.String(),
+			Name:        item.ComboServiceName,
+			Price:       item.ComboServicePrice,
+			Description: item.ComboServiceDescription.String,
 		}
 		services = append(services, service)
 	}
@@ -350,34 +306,34 @@ func convertWards(res []db.Ward) []*barber.Wards {
 	return wards
 }
 
-func convertAppointments(appointment db.CreateAppointmentsRow) *barber.Appointments {
-	return &barber.Appointments{
-		Id:                  appointment.ID.String(),
-		BarberShopId:        appointment.BarberShopID.String(),
-		CustomerId:          appointment.CustomerID.String(),
-		BarberId:            appointment.BarberID.String(),
-		AppointmentDateTime: timestamppb.New(appointment.AppointmentDateTime),
-		Status:              int32(appointment.Status),
-		CreateAt:            timestamppb.New(appointment.CreateAt),
-		UpdateAt:            timestamppb.New(appointment.UpdateAt),
-	}
-}
+// func convertAppointments(appointment db.CreateAppointmentsRow) *barber.Appointments {
+// 	return &barber.Appointments{
+// 		Id:                  appointment.ID.String(),
+// 		BarberShopId:        appointment.BarberShopID.String(),
+// 		CustomerId:          appointment.CustomerID.String(),
+// 		BarberId:            appointment.BarberID.String(),
+// 		AppointmentDateTime: timestamppb.New(appointment.AppointmentDateTime),
+// 		Status:              int32(appointment.Status),
+// 		CreateAt:            timestamppb.New(appointment.CreateAt),
+// 		UpdateAt:            timestamppb.New(appointment.UpdateAt),
+// 	}
+// }
 
-func convertListAppointmentsByDate(res []db.ListAppointmentsByDateRow) []*barber.Appointments {
-	var appointments []*barber.Appointments
-	for _, appointment := range res {
-		appointment := &barber.Appointments{
-			Id:                  appointment.ID.String(),
-			CustomerId:          appointment.CustomerID.String(),
-			BarberId:            appointment.BarberID.String(),
-			BarberShopId:        appointment.BarberShopID.String(),
-			Status:              int32(appointment.Status),
-			AppointmentDateTime: timestamppb.New(appointment.AppointmentDateTime),
-			CreateAt:            timestamppb.New(appointment.CreateAt),
-			UpdateAt:            timestamppb.New(appointment.UpdateAt),
-			ServiceTimer:        int32(appointment.ServiceTimer),
-		}
-		appointments = append(appointments, appointment)
-	}
-	return appointments
-}
+// func convertListAppointmentsByDate(res []db.ListAppointmentsByDateRow) []*barber.Appointments {
+// 	var appointments []*barber.Appointments
+// 	for _, appointment := range res {
+// 		appointment := &barber.Appointments{
+// 			Id:                  appointment.ID.String(),
+// 			CustomerId:          appointment.CustomerID.String(),
+// 			BarberId:            appointment.BarberID.String(),
+// 			BarberShopId:        appointment.BarberShopID.String(),
+// 			Status:              int32(appointment.Status),
+// 			AppointmentDateTime: timestamppb.New(appointment.AppointmentDateTime),
+// 			CreateAt:            timestamppb.New(appointment.CreateAt),
+// 			UpdateAt:            timestamppb.New(appointment.UpdateAt),
+// 			ServiceTimer:        int32(appointment.ServiceTimer),
+// 		}
+// 		appointments = append(appointments, appointment)
+// 	}
+// 	return appointments
+// }

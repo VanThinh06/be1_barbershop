@@ -35,6 +35,3 @@ const (
 	ViewAppointmentList
 	ManageAppointment
 )
-
-var COMBO_SERVICE_ID = 2512
-var COMBO_SERVICE_NAME = "c2o5m1b2o"

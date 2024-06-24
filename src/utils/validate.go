@@ -16,8 +16,8 @@ func ValidateBarber(req *barber.CreateBarberRequest) (validations []*errdetails.
 		validations = append(validations, FieldValidation("password", err))
 	}
 
-	if err := helpers.ValidateNickName(req.NickName); err != nil {
-		validations = append(validations, FieldValidation("nick_name", err))
+	if err := helpers.ValidateEmail(req.Email); err != nil {
+		validations = append(validations, FieldValidation("email", err))
 	}
 
 	if err := helpers.ValidateFullName(req.FullName); err != nil {
@@ -53,7 +53,6 @@ func ValidateBarberUpdate(req *barber.UpdateBarberRequest) (validations []*errde
 
 	validateField(req.Barber.GetEmail(), "email", helpers.ValidateEmail)
 	validateField(req.Barber.GetPhone(), "phone", helpers.ValidatePhoneNumber)
-	validateField(req.Barber.GetNickname(), "nickname", helpers.ValidateNickName)
 	validateField(req.Barber.GetFullName(), "full_name", helpers.ValidateFullName)
 
 	return validations

@@ -31,15 +31,18 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 		return nil, utils.InternalError(err)
 	}
 
+	nickName := utils.GenerateNickName(req.FullName)
 	arg := db.CreateBarberParams{
-		NickName: strings.ToLower(req.GetNickName()),
+		NickName: strings.ToLower(nickName),
 		FullName: req.GetFullName(),
 		HashedPassword: sql.NullString{
 			String: hashedPassword,
 			Valid:  true,
 		},
 		Phone: req.GetPhone(),
+		Email: req.GetEmail(),
 	}
+
 	res, err := server.Store.CreateBarber(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pgconn.PgError); ok {
@@ -59,7 +62,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 		Barber: &barber.Barbers{
 			Id:        res.ID.String(),
 			GenderId:  int32(res.GenderID.Int16),
-			Email:     res.Email.String,
+			Email:     res.Email,
 			Phone:     res.Phone,
 			NickName:  res.NickName,
 			FullName:  res.FullName,
@@ -107,19 +110,13 @@ func (server *Server) GetBarber(ctx context.Context, req *barber.GetBarbersReque
 func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRequest) (*barber.LoginBarberResponse, error) {
 	contact := db.GetUserBarberParams{
 		TypeUsername: "phone",
-		Email: sql.NullString{
-			String: req.GetUsername(),
-			Valid:  true,
-		},
+		Email:        req.GetUsername(),
 	}
 
 	err := helpers.ValidatePhoneNumber(req.Username)
 	if err != nil {
 		contact.TypeUsername = "email"
-		contact.Email = sql.NullString{
-			String: req.GetUsername(),
-			Valid:  true,
-		}
+		contact.Email = req.GetUsername()
 	}
 
 	res, err := server.Store.GetUserBarber(ctx, contact)
@@ -141,7 +138,7 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 	barberPayload := token.Barber{
 		BarberID:  res.ID,
 		Phone:     res.Phone,
-		Email:     res.Email.String,
+		Email:     res.Email,
 		FcmDevice: req.FcmDevice,
 	}
 
@@ -179,7 +176,7 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 		Barber: &barber.AuthenticationBarber{
 			Id:                    res.ID.String(),
 			GenderId:              int32(res.GenderID.Int16),
-			Email:                 res.Email.String,
+			Email:                 res.Email,
 			Phone:                 res.Phone,
 			NickName:              res.NickName,
 			FullName:              res.FullName,
@@ -284,10 +281,7 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *barber.Refres
 func (server *Server) ForgotPasswordBarber(ctx context.Context, req *barber.ForgotPasswordBarberRequest) (*barber.ForgotPasswordBarberResponse, error) {
 	contact := db.GetUserBarberParams{
 		TypeUsername: "email",
-		Email: sql.NullString{
-			String: req.GetEmail(),
-			Valid:  true,
-		},
+		Email:        req.GetEmail(),
 	}
 	user, err := server.Store.GetUserBarber(ctx, contact)
 	if err != nil {
