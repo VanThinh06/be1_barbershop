@@ -2721,7 +2721,7 @@
           "type": "integer",
           "format": "int32"
         },
-        "hidden": {
+        "visible": {
           "type": "boolean"
         }
       }

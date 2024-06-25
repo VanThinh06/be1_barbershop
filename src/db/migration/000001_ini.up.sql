@@ -49,7 +49,7 @@ CREATE INDEX ON "Roles" ("name");
 CREATE TABLE "Permissions" (
   "id" serial2 PRIMARY KEY,
   "name" varchar(100) UNIQUE NOT NULL,
-  "description" varchar(255) NOT NULL
+  "description" varchar(255)
 );
 
 -- Create index on name

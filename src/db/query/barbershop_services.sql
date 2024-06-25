@@ -50,8 +50,7 @@ LEFT JOIN
     "CategoryPositions" cp ON sc."id" = cp."category_id"
 WHERE 
     bs."barber_shop_id" = $1
-    AND (bs."combo_services" IS NULL OR bs."combo_services" = '{}')
-    AND (cp."hidden" = false)  -- Exclude hidden categories
+    AND (cp."visible" = false)  
 ORDER BY
     cp."position",  -- Sắp xếp theo vị trí của category
     sc."id",
