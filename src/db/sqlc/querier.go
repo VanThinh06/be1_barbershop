@@ -58,7 +58,7 @@ type Querier interface {
 	InsertOTPRequest(ctx context.Context, arg InsertOTPRequestParams) error
 	ListBarberShops(ctx context.Context, barberID uuid.UUID) ([]ListBarberShopsRow, error)
 	ListBarbersRoles(ctx context.Context, barberShopID uuid.UUID) ([]ListBarbersRolesRow, error)
-	ListComboServices(ctx context.Context, barberShopID uuid.UUID) ([]ListComboServicesRow, error)
+	ListComboServices(ctx context.Context, barberShopID uuid.UUID) ([]ViewComboService, error)
 	ListEmployees(ctx context.Context, arg ListEmployeesParams) ([]ListEmployeesRow, error)
 	ListNearbyBarberShops(ctx context.Context, arg ListNearbyBarberShopsParams) ([]ListNearbyBarberShopsRow, error)
 	ListServiceCategories(ctx context.Context, barberShopID uuid.NullUUID) ([]ListServiceCategoriesRow, error)

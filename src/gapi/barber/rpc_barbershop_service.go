@@ -66,7 +66,7 @@ func (server *Server) CreateBarberShopService(ctx context.Context, req *barber.C
 	}
 
 	rsp := &barber.CreateBarberShopServiceResponse{
-		BarberShopService: &barber.BarberShopService{
+		Service: &barber.BarberShopService{
 			Id:                service.ID.String(),
 			CategoryId:        int32(service.CategoryID),
 			BarberShopId:      service.BarberShopID.String(),
@@ -217,7 +217,7 @@ func (server *Server) GetBarberShopService(ctx context.Context, req *barber.GetB
 	}
 
 	rsp := &barber.GetBarberShopServiceResponse{
-		BarberShopService: &barber.BarberShopService{
+		Service: &barber.BarberShopService{
 			Id:                res.ID.String(),
 			CategoryId:        int32(res.CategoryID),
 			CategoryName:      res.CategoryName.String,
@@ -279,7 +279,7 @@ func (server *Server) GetComboService(ctx context.Context, req *barber.GetComboS
 	}
 
 	rsp := &barber.GetComboServiceResponse{
-		BarberShopService: comboService,
+		ComboService: comboService,
 	}
 
 	return rsp, nil
@@ -309,7 +309,7 @@ func (server *Server) ListBarberShopService(ctx context.Context, req *barber.Lis
 	}
 
 	rsp := &barber.ListBarberShopServiceResponse{
-		BarberShopServices: convertListService(res),
+		Services: convertListService(res),
 	}
 	return rsp, nil
 }
@@ -338,7 +338,7 @@ func (server *Server) ListComboService(ctx context.Context, req *barber.ListComb
 	}
 
 	rsp := &barber.ListComboServiceResponse{
-		BarberShopServices: convertListComboService(res),
+		Services: convertListComboService(res),
 	}
 	return rsp, nil
 }

@@ -281,56 +281,22 @@ func (q *Queries) GetTimerBarberShopServices(ctx context.Context, dollar_1 []uui
 }
 
 const listComboServices = `-- name: ListComboServices :many
-SELECT 
-  cs.id,
-  cs.gender_id AS combo_service_gender,
-  cs.name AS combo_service_name,
-  cs.timer AS combo_service_timer,
-  cs.price AS combo_service_price,
-  cs.discount_price AS combo_service_discount_price,
-  cs.discount_start_time AS combo_service_discount_start_time,
-  cs.discount_end_time AS combo_service_discount_end_time,
-  cs.description AS combo_service_description,
-  cs.image_url AS combo_service_image_url,
-  cs.is_active AS combo_service_is_active,
-  ARRAY_AGG(csi.barber_shop_service_id) AS barber_shop_service_ids
-FROM 
-  "ComboServiceItems" csi
-JOIN 
-  "ComboServices" cs ON csi.combo_service_id = cs.id
-WHERE 
-  cs.barber_shop_id = $1
-GROUP BY 
-  cs.id, cs.gender_id, cs.name, cs.timer, cs.price, cs.discount_price, 
-  cs.discount_start_time, cs.discount_end_time, cs.description, cs.image_url, cs.is_active
+SELECT id, barber_shop_id, combo_service_gender, combo_service_name, combo_service_timer, combo_service_price, combo_service_discount_price, combo_service_discount_start_time, combo_service_discount_end_time, combo_service_description, combo_service_image_url, combo_service_is_active, barber_shop_service_ids FROM "view_combo_service"
+WHERE barber_shop_id = $1
 `
 
-type ListComboServicesRow struct {
-	ID                            uuid.UUID        `json:"id"`
-	ComboServiceGender            int16            `json:"combo_service_gender"`
-	ComboServiceName              string           `json:"combo_service_name"`
-	ComboServiceTimer             int16            `json:"combo_service_timer"`
-	ComboServicePrice             float32          `json:"combo_service_price"`
-	ComboServiceDiscountPrice     pgtype.Float4    `json:"combo_service_discount_price"`
-	ComboServiceDiscountStartTime pgtype.Timestamp `json:"combo_service_discount_start_time"`
-	ComboServiceDiscountEndTime   pgtype.Timestamp `json:"combo_service_discount_end_time"`
-	ComboServiceDescription       sql.NullString   `json:"combo_service_description"`
-	ComboServiceImageUrl          sql.NullString   `json:"combo_service_image_url"`
-	ComboServiceIsActive          bool             `json:"combo_service_is_active"`
-	BarberShopServiceIds          interface{}      `json:"barber_shop_service_ids"`
-}
-
-func (q *Queries) ListComboServices(ctx context.Context, barberShopID uuid.UUID) ([]ListComboServicesRow, error) {
+func (q *Queries) ListComboServices(ctx context.Context, barberShopID uuid.UUID) ([]ViewComboService, error) {
 	rows, err := q.db.Query(ctx, listComboServices, barberShopID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []ListComboServicesRow{}
+	items := []ViewComboService{}
 	for rows.Next() {
-		var i ListComboServicesRow
+		var i ViewComboService
 		if err := rows.Scan(
 			&i.ID,
+			&i.BarberShopID,
 			&i.ComboServiceGender,
 			&i.ComboServiceName,
 			&i.ComboServiceTimer,
@@ -376,7 +342,7 @@ LEFT JOIN
     "CategoryPositions" cp ON sc."id" = cp."category_id"
 WHERE 
     bs."barber_shop_id" = $1
-    AND (cp."visible" = false)  
+    AND (cp."visible" = true)  
 ORDER BY
     cp."position",  -- Sắp xếp theo vị trí của category
     sc."id",

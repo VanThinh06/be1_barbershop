@@ -142,7 +142,6 @@ func ConvertListBarberShopsNearby(res []db.ListNearbyBarberShopsRow) []*barber.B
 	return barberShops
 }
 
-
 func convertBarberEmployee(res db.GetBarberRow) *barber.BarberDetail {
 
 	barberEmployee := &barber.BarberDetail{
@@ -209,16 +208,12 @@ func convertListServiceCategory(res []db.ListServiceCategoriesRow) []*barber.Ser
 	var serviceCategories []*barber.ServiceCategory
 	for _, item := range res {
 
-		if item.ID == 2512 {
-			continue
-		}
-
 		serviceCategory := &barber.ServiceCategory{
 			Id:           int32(item.ID),
 			Name:         item.Name,
 			BarberShopId: item.BarberShopID.UUID.String(),
 			Position:     int32(item.Position.Int16),
-			Hidden:       item.Visible.Bool,
+			Visible:      item.Visible.Bool,
 		}
 		serviceCategories = append(serviceCategories, serviceCategory)
 	}
@@ -248,14 +243,22 @@ func convertListService(res []db.ListServicesByCategoryRow) []*barber.BarberShop
 	return services
 }
 
-func convertListComboService(res []db.ListComboServicesRow) []*barber.ComboService {
-	var services []*barber.ComboService
+func convertListComboService(res []db.ViewComboService) []*barber.ListComboServiceItem {
+	var services []*barber.ListComboServiceItem
 	for _, item := range res {
-		service := &barber.ComboService{
-			Id:          item.ID.String(),
-			Name:        item.ComboServiceName,
-			Price:       item.ComboServicePrice,
-			Description: item.ComboServiceDescription.String,
+		service := &barber.ListComboServiceItem{
+			Id:                item.ID.String(),
+			Name:              item.ComboServiceName,
+			Price:             item.ComboServicePrice,
+			Description:       item.ComboServiceDescription.String,
+			GenderId:          int32(item.ComboServiceGender),
+			Timer:             int32(item.ComboServiceTimer),
+			ImageUrl:          item.ComboServiceImageUrl.String,
+			IsActive:          item.ComboServiceIsActive,
+			DiscountPrice:     &item.ComboServiceDiscountPrice.Float32,
+			DiscountStartTime: timestamppb.New(item.ComboServiceDiscountStartTime.Time),
+			DiscountEndTime:   timestamppb.New(item.ComboServiceDiscountEndTime.Time),
+			Services:          item.BarberShopServiceIds,
 		}
 		services = append(services, service)
 	}

@@ -20,7 +20,7 @@ message CreateBarberShopServiceRequest{
 }
 
 message CreateBarberShopServiceResponse{
-    BarberShopService barber_shop_service = 1;
+    BarberShopService service = 1;
 }
 
 // detail
@@ -29,7 +29,7 @@ message GetBarberShopServiceRequest{
 }
 
 message GetBarberShopServiceResponse {
-    BarberShopService barber_shop_service = 1;
+    BarberShopService service = 1;
 }
 
 // list
@@ -38,7 +38,7 @@ message ListBarberShopServiceRequest{
 }
 
 message ListBarberShopServiceResponse {
-    repeated BarberShopService barber_shop_services = 1;
+    repeated BarberShopService services = 1;
 }
 
 // update
@@ -105,7 +105,7 @@ message GetComboServiceRequest{
 }
 
 message GetComboServiceResponse {
-    ComboService barber_shop_service = 1;
+    ComboService combo_service = 1;
 }
 
 // list
@@ -114,6 +114,6 @@ message ListComboServiceRequest{
 }
 
 message ListComboServiceResponse {
-    repeated ComboService barber_shop_services = 1;
+    repeated ListComboServiceItem services = 1;
 }
 

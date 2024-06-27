@@ -92,6 +92,28 @@ CREATE TABLE "ComboServiceItems" (
 CREATE INDEX ON "ComboServiceItems" ("combo_service_id");
 CREATE INDEX ON "ComboServiceItems" ("barber_shop_service_id");
 
+CREATE VIEW "view_combo_service" AS
+SELECT 
+  cs.id,
+  cs.barber_shop_id,
+  cs.gender_id AS combo_service_gender,
+  cs.name AS combo_service_name,
+  cs.timer AS combo_service_timer,
+  cs.price AS combo_service_price,
+  cs.discount_price AS combo_service_discount_price,
+  cs.discount_start_time AS combo_service_discount_start_time,
+  cs.discount_end_time AS combo_service_discount_end_time,
+  cs.description AS combo_service_description,
+  cs.image_url AS combo_service_image_url,
+  cs.is_active AS combo_service_is_active,
+  array_agg(csi.barber_shop_service_id) AS barber_shop_service_ids
+FROM 
+  "ComboServiceItems" csi
+JOIN 
+  "ComboServices" cs ON csi.combo_service_id = cs.id
+GROUP BY 
+  cs.id, cs.gender_id, cs.name, cs.timer, cs.price, cs.discount_price, 
+  cs.discount_start_time, cs.discount_end_time, cs.description, cs.image_url, cs.is_active;
 
 
 -- CREATE TABLE "BarberShopServices_Appointments" (

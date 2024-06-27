@@ -2255,7 +2255,7 @@
     "pbCreateBarberShopServiceResponse": {
       "type": "object",
       "properties": {
-        "barberShopService": {
+        "service": {
           "$ref": "#/definitions/pbBarberShopService"
         }
       }
@@ -2430,7 +2430,7 @@
     "pbGetBarberShopServiceResponse": {
       "type": "object",
       "properties": {
-        "barberShopService": {
+        "service": {
           "$ref": "#/definitions/pbBarberShopService"
         }
       }
@@ -2457,7 +2457,7 @@
     "pbGetComboServiceResponse": {
       "type": "object",
       "properties": {
-        "barberShopService": {
+        "comboService": {
           "$ref": "#/definitions/pbComboService"
         }
       }
@@ -2535,7 +2535,7 @@
     "pbListBarberShopServiceResponse": {
       "type": "object",
       "properties": {
-        "barberShopServices": {
+        "services": {
           "type": "array",
           "items": {
             "type": "object",
@@ -2556,14 +2556,67 @@
         }
       }
     },
+    "pbListComboServiceItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "barberShopId": {
+          "type": "string"
+        },
+        "genderId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "timer": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "price": {
+          "type": "number",
+          "format": "float"
+        },
+        "discountPrice": {
+          "type": "number",
+          "format": "float"
+        },
+        "discountStartTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "discountEndTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "isActive": {
+          "type": "boolean"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "pbListComboServiceResponse": {
       "type": "object",
       "properties": {
-        "barberShopServices": {
+        "services": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/pbComboService"
+            "$ref": "#/definitions/pbListComboServiceItem"
           }
         }
       }

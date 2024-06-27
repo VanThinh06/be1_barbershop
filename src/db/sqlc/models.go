@@ -223,6 +223,22 @@ type SessionsCustomer struct {
 	CreateAt     time.Time   `json:"create_at"`
 }
 
+type ViewComboService struct {
+	ID                            uuid.UUID        `json:"id"`
+	BarberShopID                  uuid.UUID        `json:"barber_shop_id"`
+	ComboServiceGender            int16            `json:"combo_service_gender"`
+	ComboServiceName              string           `json:"combo_service_name"`
+	ComboServiceTimer             int16            `json:"combo_service_timer"`
+	ComboServicePrice             float32          `json:"combo_service_price"`
+	ComboServiceDiscountPrice     pgtype.Float4    `json:"combo_service_discount_price"`
+	ComboServiceDiscountStartTime pgtype.Timestamp `json:"combo_service_discount_start_time"`
+	ComboServiceDiscountEndTime   pgtype.Timestamp `json:"combo_service_discount_end_time"`
+	ComboServiceDescription       sql.NullString   `json:"combo_service_description"`
+	ComboServiceImageUrl          sql.NullString   `json:"combo_service_image_url"`
+	ComboServiceIsActive          bool             `json:"combo_service_is_active"`
+	BarberShopServiceIds          []string         `json:"barber_shop_service_ids"`
+}
+
 type Ward struct {
 	ID         int16  `json:"id"`
 	Name       string `json:"name"`

@@ -39,6 +39,22 @@ message ComboService {
     repeated BarberShopService services = 13;
 }
 
+message ListComboServiceItem {
+    string id = 1;
+    string barber_shop_id = 2;
+    int32 gender_id = 3;
+    string name = 4;
+    int32 timer = 5;
+    float price = 6;
+    optional float discount_price = 7;
+    optional google.protobuf.Timestamp discount_start_time = 8;
+    optional google.protobuf.Timestamp discount_end_time = 9;
+    string description = 10;
+    string image_url = 11;
+    bool is_active = 12; 
+    repeated string services = 13;
+}
+
 message CategoryPosition {
     int32 category_id = 1;
     int32 position = 2;

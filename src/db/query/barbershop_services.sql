@@ -50,7 +50,7 @@ LEFT JOIN
     "CategoryPositions" cp ON sc."id" = cp."category_id"
 WHERE 
     bs."barber_shop_id" = $1
-    AND (cp."visible" = false)  
+    AND (cp."visible" = true)  
 ORDER BY
     cp."position",  -- Sắp xếp theo vị trí của category
     sc."id",
@@ -127,25 +127,5 @@ WHERE
   cs.id = $1;
 
 -- name: ListComboServices :many
-SELECT 
-  cs.id,
-  cs.gender_id AS combo_service_gender,
-  cs.name AS combo_service_name,
-  cs.timer AS combo_service_timer,
-  cs.price AS combo_service_price,
-  cs.discount_price AS combo_service_discount_price,
-  cs.discount_start_time AS combo_service_discount_start_time,
-  cs.discount_end_time AS combo_service_discount_end_time,
-  cs.description AS combo_service_description,
-  cs.image_url AS combo_service_image_url,
-  cs.is_active AS combo_service_is_active,
-  ARRAY_AGG(csi.barber_shop_service_id) AS barber_shop_service_ids
-FROM 
-  "ComboServiceItems" csi
-JOIN 
-  "ComboServices" cs ON csi.combo_service_id = cs.id
-WHERE 
-  cs.barber_shop_id = $1
-GROUP BY 
-  cs.id, cs.gender_id, cs.name, cs.timer, cs.price, cs.discount_price, 
-  cs.discount_start_time, cs.discount_end_time, cs.description, cs.image_url, cs.is_active;
+SELECT * FROM "view_combo_service"
+WHERE barber_shop_id = $1;
