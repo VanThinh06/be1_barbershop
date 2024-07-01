@@ -14,7 +14,6 @@ sql:
         emit_exact_table_names: false
         emit_interface: true
         overrides:
-
           - db_type: "uuid"
             go_type:
               import: "github.com/google/uuid"
@@ -52,11 +51,7 @@ sql:
           - db_type: "geography"
             go_type:
               type: "string"
-          
 
           - column: view_combo_service.barber_shop_service_ids
-            go_type: 
-              type: "string"
-              slice: true
-          
-
+            go_type:
+              type: "[]string"

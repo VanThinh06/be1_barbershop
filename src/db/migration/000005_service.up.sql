@@ -91,6 +91,7 @@ CREATE TABLE "ComboServiceItems" (
 -- Create indexes
 CREATE INDEX ON "ComboServiceItems" ("combo_service_id");
 CREATE INDEX ON "ComboServiceItems" ("barber_shop_service_id");
+CREATE UNIQUE INDEX ON "ComboServiceItems" ("combo_service_id", "barber_shop_service_id");
 
 CREATE VIEW "view_combo_service" AS
 SELECT 
