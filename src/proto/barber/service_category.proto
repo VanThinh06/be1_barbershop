@@ -12,3 +12,9 @@ message ServiceCategory {
     int32 position = 4;
     bool visible = 5;
 }
+
+message CategoryPosition {
+    int32 category_id = 1;
+    int32 position = 2;
+    bool visible = 3;
+}

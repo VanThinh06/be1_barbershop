@@ -52,6 +52,6 @@ sql:
             go_type:
               type: "string"
 
-          - column: view_combo_service.barber_shop_service_ids
+          - column: view_service_packages.service_item_ids
             go_type:
               type: "[]string"

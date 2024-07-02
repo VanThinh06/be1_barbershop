@@ -4,6 +4,7 @@ import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
 	"barbershop/src/shared/utilities"
+	"barbershop/src/utils"
 	"context"
 	"database/sql"
 
@@ -14,7 +15,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// create
+// CreateServiceCategory
 func (server *Server) CreateServiceCategory(ctx context.Context, req *barber.CreateServiceCategoryRequest) (*barber.CreateServiceCategoryResponse, error) {
 
 	payload, err := server.authorizeBarber(ctx)
@@ -62,7 +63,7 @@ func (server *Server) CreateServiceCategory(ctx context.Context, req *barber.Cre
 	return rsp, nil
 }
 
-// list
+// ListServiceCategory
 func (server *Server) ListServiceCategory(ctx context.Context, req *barber.ListServiceCategoryRequest) (*barber.ListServiceCategoryResponse, error) {
 
 	payload, err := server.authorizeBarber(ctx)
@@ -99,6 +100,7 @@ func (server *Server) ListServiceCategory(ctx context.Context, req *barber.ListS
 	return rsp, nil
 }
 
+// UpdateServiceCategory
 func (server *Server) UpdateServiceCategory(ctx context.Context, req *barber.UpdateServiceCategoryRequest) (*barber.UpdateServiceCategoryResponse, error) {
 
 	_, err := server.authorizeBarber(ctx)
@@ -129,7 +131,52 @@ func (server *Server) UpdateServiceCategory(ctx context.Context, req *barber.Upd
 	return rsp, nil
 }
 
-// delete
+// UpdateCategoryPosition
+func (server *Server) UpdateCategoryPosition(ctx context.Context, req *barber.UpdateCategoryPositionRequest) (*barber.UpdateCategoryPositionResponse, error) {
+
+	payload, err := server.authorizeBarber(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+	}
+
+	barberShopID, err := uuid.Parse(req.GetBarberShopId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
+
+	permissionService := server.checkPermissionManageService(ctx, barberShopID, payload.Barber.BarberID)
+	if permissionService != nil {
+		return nil, permissionService
+	}
+
+	err = server.Store.ExecTx(ctx, func(q *db.Queries) error {
+		for _, v := range req.CategoryPositions {
+			arg := db.UpdateCategoryPositionParams{
+				BarberShopID: barberShopID,
+				CategoryID:   int16(v.CategoryId),
+				Position:     int16(v.Position),
+				Visible:      v.Visible,
+			}
+
+			err := q.UpdateCategoryPosition(ctx, arg)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, utils.InternalError(err)
+	}
+
+	rsp := &barber.UpdateCategoryPositionResponse{
+		Message: "success",
+	}
+	return rsp, nil
+}
+
+// DeleteServiceCategory
 func (server *Server) DeleteServiceCategory(ctx context.Context, req *barber.DeleteServiceCategoryRequest) (*barber.DeleteServiceCategoryResponse, error) {
 
 	payload, err := server.authorizeBarber(ctx)

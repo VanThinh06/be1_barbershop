@@ -28,8 +28,8 @@ CREATE INDEX  ON "CategoryPositions" ("barber_shop_id");
 CREATE INDEX  ON "CategoryPositions" ("category_id");
 
 
--- Create BarberShopServices table
-CREATE TABLE "BarberShopServices" (
+-- Create ServiceItems table
+CREATE TABLE "ServiceItems" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "barber_shop_id" uuid NOT NULL,
   "category_id" int2 NOT NULL,
@@ -37,11 +37,11 @@ CREATE TABLE "BarberShopServices" (
   "name" varchar(100) NOT NULL,
   "timer" int2 NOT NULL DEFAULT 0,
   "price" real NOT NULL DEFAULT 0,
-  "discount_price" real, 
+  "discount_price" real DEFAULT 0, 
   "discount_start_time" timestamp, 
   "discount_end_time" timestamp, 
-  "description" varchar(500),
-  "image_url" varchar(120),
+  "description" varchar(500) DEFAULT '', 
+  "image_url" varchar(120)  DEFAULT '', 
   "is_active" BOOLEAN NOT NULL DEFAULT FALSE,
   FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id"),
   FOREIGN KEY ("category_id") REFERENCES "ServiceCategories" ("id"),
@@ -49,51 +49,52 @@ CREATE TABLE "BarberShopServices" (
 );
 
 -- Create indexes
-CREATE INDEX ON "BarberShopServices" ("barber_shop_id");
-CREATE INDEX ON "BarberShopServices" ("category_id");
-CREATE INDEX ON "BarberShopServices" ("gender_id");
-CREATE UNIQUE INDEX ON "BarberShopServices" ("barber_shop_id", "category_id", "name");
+CREATE INDEX ON "ServiceItems" ("barber_shop_id");
+CREATE INDEX ON "ServiceItems" ("category_id");
+CREATE INDEX ON "ServiceItems" ("gender_id");
+CREATE UNIQUE INDEX ON "ServiceItems" ("barber_shop_id", "category_id", "name");
 
 
--- Create ComboServices table
-CREATE TABLE "ComboServices" (
+-- Create ServicePackages table
+CREATE TABLE "ServicePackages" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "barber_shop_id" uuid NOT NULL,
   "name" varchar(100) NOT NULL,
   "gender_id" int2 NOT NULL,
   "timer" int2 NOT NULL DEFAULT 0,
   "price" real NOT NULL DEFAULT 0,
-  "discount_price" real, 
+  "discount_price" real DEFAULT 0, 
   "discount_start_time" timestamp, 
   "discount_end_time" timestamp, 
-  "description" varchar(500),
-  "image_url" varchar(120),
+  "description" varchar(500) DEFAULT '', 
+  "image_url" varchar(120) DEFAULT '', 
   "is_active" BOOLEAN NOT NULL DEFAULT FALSE,
   FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id"),
   FOREIGN KEY ("gender_id") REFERENCES "Genders" ("id")
 );
 
 -- Create indexes
-CREATE INDEX ON "ComboServices" ("barber_shop_id");
-CREATE INDEX ON "ComboServices" ("gender_id");
-CREATE UNIQUE INDEX ON "ComboServices" ("barber_shop_id", "name");
+CREATE INDEX ON "ServicePackages" ("barber_shop_id");
+CREATE INDEX ON "ServicePackages" ("gender_id");
+CREATE UNIQUE INDEX ON "ServicePackages" ("barber_shop_id", "name");
 
 
--- Create ComboServiceItems table
-CREATE TABLE "ComboServiceItems" (
+-- Create ServicePackageItems table
+CREATE TABLE "ServicePackageItems" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "combo_service_id" uuid NOT NULL,
-  "barber_shop_service_id" uuid NOT NULL,
-  FOREIGN KEY ("combo_service_id") REFERENCES "ComboServices" ("id"),
-  FOREIGN KEY ("barber_shop_service_id") REFERENCES "BarberShopServices" ("id")
+  "service_package_id" uuid NOT NULL,
+  "service_item_id" uuid NOT NULL,
+  FOREIGN KEY ("service_package_id") REFERENCES "ServicePackages" ("id"),
+  FOREIGN KEY ("service_item_id") REFERENCES "ServiceItems" ("id")
 );
 
 -- Create indexes
-CREATE INDEX ON "ComboServiceItems" ("combo_service_id");
-CREATE INDEX ON "ComboServiceItems" ("barber_shop_service_id");
-CREATE UNIQUE INDEX ON "ComboServiceItems" ("combo_service_id", "barber_shop_service_id");
+CREATE INDEX ON "ServicePackageItems" ("service_package_id");
+CREATE INDEX ON "ServicePackageItems" ("service_item_id");
+CREATE UNIQUE INDEX ON "ServicePackageItems" ("service_package_id", "service_item_id");
 
-CREATE VIEW "view_combo_service" AS
+-- Create view_service_packages view
+CREATE VIEW "view_service_packages" AS
 SELECT 
   cs.id,
   cs.barber_shop_id,
@@ -107,13 +108,13 @@ SELECT
   cs.description AS combo_service_description,
   cs.image_url AS combo_service_image_url,
   cs.is_active AS combo_service_is_active,
-  array_agg(csi.barber_shop_service_id) AS barber_shop_service_ids
+  array_agg(csi.service_item_id) AS service_item_ids
 FROM 
-  "ComboServiceItems" csi
+  "ServicePackageItems" csi
 JOIN 
-  "ComboServices" cs ON csi.combo_service_id = cs.id
+  "ServicePackages" cs ON csi.service_package_id = cs.id
 GROUP BY 
-  cs.id, cs.gender_id, cs.name, cs.timer, cs.price, cs.discount_price, 
+  cs.id, cs.barber_shop_id, cs.gender_id, cs.name, cs.timer, cs.price, cs.discount_price, 
   cs.discount_start_time, cs.discount_end_time, cs.description, cs.image_url, cs.is_active;
 
 

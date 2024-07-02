@@ -38,3 +38,12 @@ message DeleteServiceCategoryRequest{
 message DeleteServiceCategoryResponse{
     string message = 1;
 }
+
+message UpdateCategoryPositionRequest{
+    repeated CategoryPosition category_positions = 1;
+    string barber_shop_id = 2;
+}
+
+message UpdateCategoryPositionResponse{
+    string message = 1;
+}

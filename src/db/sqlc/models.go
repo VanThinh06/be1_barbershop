@@ -85,48 +85,11 @@ type BarberShopChain struct {
 	Website         sql.NullString `json:"website"`
 }
 
-type BarberShopService struct {
-	ID                uuid.UUID        `json:"id"`
-	BarberShopID      uuid.UUID        `json:"barber_shop_id"`
-	CategoryID        int16            `json:"category_id"`
-	GenderID          int16            `json:"gender_id"`
-	Name              string           `json:"name"`
-	Timer             int16            `json:"timer"`
-	Price             float32          `json:"price"`
-	DiscountPrice     pgtype.Float4    `json:"discount_price"`
-	DiscountStartTime pgtype.Timestamp `json:"discount_start_time"`
-	DiscountEndTime   pgtype.Timestamp `json:"discount_end_time"`
-	Description       sql.NullString   `json:"description"`
-	ImageUrl          sql.NullString   `json:"image_url"`
-	IsActive          bool             `json:"is_active"`
-}
-
 type CategoryPosition struct {
 	BarberShopID uuid.UUID `json:"barber_shop_id"`
 	CategoryID   int16     `json:"category_id"`
 	Position     int16     `json:"position"`
 	Visible      bool      `json:"visible"`
-}
-
-type ComboService struct {
-	ID                uuid.UUID        `json:"id"`
-	BarberShopID      uuid.UUID        `json:"barber_shop_id"`
-	Name              string           `json:"name"`
-	GenderID          int16            `json:"gender_id"`
-	Timer             int16            `json:"timer"`
-	Price             float32          `json:"price"`
-	DiscountPrice     pgtype.Float4    `json:"discount_price"`
-	DiscountStartTime pgtype.Timestamp `json:"discount_start_time"`
-	DiscountEndTime   pgtype.Timestamp `json:"discount_end_time"`
-	Description       sql.NullString   `json:"description"`
-	ImageUrl          sql.NullString   `json:"image_url"`
-	IsActive          bool             `json:"is_active"`
-}
-
-type ComboServiceItem struct {
-	ID                  uuid.UUID `json:"id"`
-	ComboServiceID      uuid.UUID `json:"combo_service_id"`
-	BarberShopServiceID uuid.UUID `json:"barber_shop_service_id"`
 }
 
 type Customer struct {
@@ -198,6 +161,43 @@ type ServiceCategory struct {
 	BarberShopID uuid.NullUUID `json:"barber_shop_id"`
 }
 
+type ServiceItem struct {
+	ID                uuid.UUID        `json:"id"`
+	BarberShopID      uuid.UUID        `json:"barber_shop_id"`
+	CategoryID        int16            `json:"category_id"`
+	GenderID          int16            `json:"gender_id"`
+	Name              string           `json:"name"`
+	Timer             int16            `json:"timer"`
+	Price             float32          `json:"price"`
+	DiscountPrice     pgtype.Float4    `json:"discount_price"`
+	DiscountStartTime pgtype.Timestamp `json:"discount_start_time"`
+	DiscountEndTime   pgtype.Timestamp `json:"discount_end_time"`
+	Description       sql.NullString   `json:"description"`
+	ImageUrl          sql.NullString   `json:"image_url"`
+	IsActive          bool             `json:"is_active"`
+}
+
+type ServicePackage struct {
+	ID                uuid.UUID        `json:"id"`
+	BarberShopID      uuid.UUID        `json:"barber_shop_id"`
+	Name              string           `json:"name"`
+	GenderID          int16            `json:"gender_id"`
+	Timer             int16            `json:"timer"`
+	Price             float32          `json:"price"`
+	DiscountPrice     pgtype.Float4    `json:"discount_price"`
+	DiscountStartTime pgtype.Timestamp `json:"discount_start_time"`
+	DiscountEndTime   pgtype.Timestamp `json:"discount_end_time"`
+	Description       sql.NullString   `json:"description"`
+	ImageUrl          sql.NullString   `json:"image_url"`
+	IsActive          bool             `json:"is_active"`
+}
+
+type ServicePackageItem struct {
+	ID               uuid.UUID `json:"id"`
+	ServicePackageID uuid.UUID `json:"service_package_id"`
+	ServiceItemID    uuid.UUID `json:"service_item_id"`
+}
+
 type SessionsBarber struct {
 	ID           uuid.UUID `json:"id"`
 	BarberID     uuid.UUID `json:"barber_id"`
@@ -223,7 +223,7 @@ type SessionsCustomer struct {
 	CreateAt     time.Time   `json:"create_at"`
 }
 
-type ViewComboService struct {
+type ViewServicePackage struct {
 	ID                            uuid.UUID        `json:"id"`
 	BarberShopID                  uuid.UUID        `json:"barber_shop_id"`
 	ComboServiceGender            int16            `json:"combo_service_gender"`
@@ -236,7 +236,7 @@ type ViewComboService struct {
 	ComboServiceDescription       sql.NullString   `json:"combo_service_description"`
 	ComboServiceImageUrl          sql.NullString   `json:"combo_service_image_url"`
 	ComboServiceIsActive          bool             `json:"combo_service_is_active"`
-	BarberShopServiceIds          []string         `json:"barber_shop_service_ids"`
+	ServiceItemIds                []string         `json:"service_item_ids"`
 }
 
 type Ward struct {

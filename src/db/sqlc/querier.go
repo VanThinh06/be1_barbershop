@@ -20,16 +20,11 @@ type Querier interface {
 	CreateBarberRole(ctx context.Context, arg CreateBarberRoleParams) (BarberRole, error)
 	CreateBarberShop(ctx context.Context, arg CreateBarberShopParams) (BarberShop, error)
 	CreateBarberShopChains(ctx context.Context, arg CreateBarberShopChainsParams) (BarberShopChain, error)
-	CreateBarberShopService(ctx context.Context, arg CreateBarberShopServiceParams) (BarberShopService, error)
-	CreateComboServiceItems(ctx context.Context, arg CreateComboServiceItemsParams) (ComboServiceItem, error)
-	// -- name: DeleteBarberShopServices :exec
-	// DELETE FROM "BarberShopServices"
-	// WHERE
-	//   "id" = $1;
-	// COMBO SERVICE
-	CreateComboServices(ctx context.Context, arg CreateComboServicesParams) (ComboService, error)
 	CreateCustomer(ctx context.Context, arg CreateCustomerParams) (Customer, error)
 	CreateServiceCategory(ctx context.Context, arg CreateServiceCategoryParams) (ServiceCategory, error)
+	CreateServiceItem(ctx context.Context, arg CreateServiceItemParams) (ServiceItem, error)
+	CreateServicePackage(ctx context.Context, arg CreateServicePackageParams) (ServicePackage, error)
+	CreateServicePackageItem(ctx context.Context, arg CreateServicePackageItemParams) (ServicePackageItem, error)
 	CreateSessionBarber(ctx context.Context, arg CreateSessionBarberParams) (SessionsBarber, error)
 	CreateSessionsCustomer(ctx context.Context, arg CreateSessionsCustomerParams) (SessionsCustomer, error)
 	DeleteBarber(ctx context.Context, id uuid.UUID) error
@@ -42,26 +37,26 @@ type Querier interface {
 	GetBarberRole(ctx context.Context, arg GetBarberRoleParams) (BarberRole, error)
 	GetBarberShop(ctx context.Context, id uuid.UUID) (GetBarberShopRow, error)
 	GetBarberShopChains(ctx context.Context, id uuid.UUID) (BarberShopChain, error)
-	GetBarberShopService(ctx context.Context, id uuid.UUID) (GetBarberShopServiceRow, error)
-	GetComboService(ctx context.Context, id uuid.UUID) ([]GetComboServiceRow, error)
 	GetCustomer(ctx context.Context, id uuid.UUID) (Customer, error)
 	GetDefaultPasswordEmployee(ctx context.Context, id uuid.UUID) (sql.NullString, error)
 	GetDistricts(ctx context.Context, provinceID int16) ([]District, error)
 	GetPermissionFromBarberShop(ctx context.Context, arg GetPermissionFromBarberShopParams) ([]Permission, error)
 	GetProvinces(ctx context.Context) ([]Province, error)
+	GetServiceItem(ctx context.Context, id uuid.UUID) (GetServiceItemRow, error)
+	GetServicePackage(ctx context.Context, id uuid.UUID) ([]GetServicePackageRow, error)
 	GetSessionBarber(ctx context.Context, id uuid.UUID) (SessionsBarber, error)
 	GetSessionsCustomer(ctx context.Context, id uuid.UUID) (SessionsCustomer, error)
-	GetTimerBarberShopServices(ctx context.Context, dollar_1 []uuid.UUID) (int64, error)
+	GetTimerServiceItem(ctx context.Context, dollar_1 []uuid.UUID) (int64, error)
 	GetUserBarber(ctx context.Context, arg GetUserBarberParams) (GetUserBarberRow, error)
 	GetUserCustomer(ctx context.Context, arg GetUserCustomerParams) (Customer, error)
 	GetWards(ctx context.Context, districtID int16) ([]Ward, error)
 	InsertOTPRequest(ctx context.Context, arg InsertOTPRequestParams) error
 	ListBarberShops(ctx context.Context, barberID uuid.UUID) ([]ListBarberShopsRow, error)
 	ListBarbersRoles(ctx context.Context, barberShopID uuid.UUID) ([]ListBarbersRolesRow, error)
-	ListComboServices(ctx context.Context, barberShopID uuid.UUID) ([]ViewComboService, error)
 	ListEmployees(ctx context.Context, arg ListEmployeesParams) ([]ListEmployeesRow, error)
 	ListNearbyBarberShops(ctx context.Context, arg ListNearbyBarberShopsParams) ([]ListNearbyBarberShopsRow, error)
 	ListServiceCategories(ctx context.Context, barberShopID uuid.NullUUID) ([]ListServiceCategoriesRow, error)
+	ListServicePackages(ctx context.Context, barberShopID uuid.UUID) ([]ViewServicePackage, error)
 	ListServicesByCategory(ctx context.Context, barberShopID uuid.UUID) ([]ListServicesByCategoryRow, error)
 	SearchByNameBarberShops(ctx context.Context, arg SearchByNameBarberShopsParams) ([]SearchByNameBarberShopsRow, error)
 	SelectOTPRequest(ctx context.Context, arg SelectOTPRequestParams) (SelectOTPRequestRow, error)
@@ -70,14 +65,16 @@ type Querier interface {
 	UpdateBarberRoles(ctx context.Context, arg UpdateBarberRolesParams) (BarberRole, error)
 	UpdateBarberShop(ctx context.Context, arg UpdateBarberShopParams) (BarberShop, error)
 	UpdateBarberShopChains(ctx context.Context, arg UpdateBarberShopChainsParams) (BarberShopChain, error)
-	// Để phân loại theo gender_id nếu cần thiết
-	UpdateBarberShopService(ctx context.Context, arg UpdateBarberShopServiceParams) error
 	UpdateCategoryPosition(ctx context.Context, arg UpdateCategoryPositionParams) error
 	UpdateCustomer(ctx context.Context, arg UpdateCustomerParams) (Customer, error)
 	UpdatePasswordBarber(ctx context.Context, arg UpdatePasswordBarberParams) (Barber, error)
 	UpdateServiceCategory(ctx context.Context, arg UpdateServiceCategoryParams) error
+	// Để phân loại theo gender_id nếu cần thiết
+	UpdateServiceItem(ctx context.Context, arg UpdateServiceItemParams) error
+	UpdateServicePackage(ctx context.Context, arg UpdateServicePackageParams) (ServicePackage, error)
 	UpdateSessionRefreshToken(ctx context.Context, arg UpdateSessionRefreshTokenParams) error
 	UpdateSessionsCustomer(ctx context.Context, arg UpdateSessionsCustomerParams) error
+	UpsertServicePackageItem(ctx context.Context, arg UpsertServicePackageItemParams) error
 }
 
 var _ Querier = (*Queries)(nil)

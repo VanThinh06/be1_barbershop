@@ -220,10 +220,10 @@ func convertListServiceCategory(res []db.ListServiceCategoriesRow) []*barber.Ser
 	return serviceCategories
 }
 
-func convertListService(res []db.ListServicesByCategoryRow) []*barber.BarberShopService {
-	var services []*barber.BarberShopService
+func convertListService(res []db.ListServicesByCategoryRow) []*barber.ServiceItem {
+	var services []*barber.ServiceItem
 	for _, item := range res {
-		service := &barber.BarberShopService{
+		service := &barber.ServiceItem{
 			Id:                item.ServiceID.UUID.String(),
 			CategoryId:        int32(item.CategoryID),
 			GenderId:          int32(item.GenderID.Int16),
@@ -243,10 +243,10 @@ func convertListService(res []db.ListServicesByCategoryRow) []*barber.BarberShop
 	return services
 }
 
-func convertListComboService(res []db.ViewComboService) []*barber.ListComboServiceItem {
-	var services []*barber.ListComboServiceItem
+func convertListServiceItem(res []db.ViewServicePackage) []*barber.ServicePackage {
+	var services []*barber.ServicePackage
 	for _, item := range res {
-		service := &barber.ListComboServiceItem{
+		service := &barber.ServicePackage{
 			Id:                item.ID.String(),
 			Name:              item.ComboServiceName,
 			Price:             item.ComboServicePrice,
@@ -255,10 +255,11 @@ func convertListComboService(res []db.ViewComboService) []*barber.ListComboServi
 			Timer:             int32(item.ComboServiceTimer),
 			ImageUrl:          item.ComboServiceImageUrl.String,
 			IsActive:          item.ComboServiceIsActive,
-			DiscountPrice:     &item.ComboServiceDiscountPrice.Float32,
+			DiscountPrice:     item.ComboServiceDiscountPrice.Float32,
 			DiscountStartTime: timestamppb.New(item.ComboServiceDiscountStartTime.Time),
 			DiscountEndTime:   timestamppb.New(item.ComboServiceDiscountEndTime.Time),
-			Services:          item.BarberShopServiceIds,
+			ServiceItem:       item.ServiceItemIds,
+			BarberShopId:      item.BarberShopID.String(),
 		}
 		services = append(services, service)
 	}
