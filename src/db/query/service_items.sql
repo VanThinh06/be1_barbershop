@@ -57,7 +57,7 @@ ORDER BY
     bs."gender_id"; -- Để phân loại theo gender_id nếu cần thiết
 
 
--- name: UpdateServiceItem :exec
+-- name: UpdateServiceItem :one
 UPDATE "ServiceItems"
 SET 
     name = COALESCE($2, name),
@@ -71,7 +71,8 @@ SET
     discount_price = COALESCE($10, 0),
     discount_start_time = $11,
     discount_end_time = $12
-WHERE "id" = $1;
+WHERE "id" = $1
+RETURNING *;
 
 
 -- -- name: DeleteServiceItem :exec

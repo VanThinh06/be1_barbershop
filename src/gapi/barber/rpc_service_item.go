@@ -215,7 +215,7 @@ func (server *Server) UpdateServiceItem(ctx context.Context, req *barber.UpdateS
 		},
 		ID: idService,
 	}
-	err = server.Store.UpdateServiceItem(ctx, arg)
+	res, err := server.Store.UpdateServiceItem(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pgconn.PgError); ok {
 			switch pqErr.ConstraintName {
@@ -230,8 +230,31 @@ func (server *Server) UpdateServiceItem(ctx context.Context, req *barber.UpdateS
 		return nil, utils.InternalError(err)
 	}
 
+	discountStartTime := timestamppb.New(res.DiscountStartTime.Time)
+	if !res.DiscountStartTime.Valid {
+		discountStartTime = nil
+	}
+
+	discountEndTime := timestamppb.New(res.DiscountEndTime.Time)
+	if !res.DiscountEndTime.Valid {
+		discountEndTime = nil
+	}
 	rsp := &barber.UpdateServiceItemResponse{
-		Message: "the service has been updated successfully.",
+		Service: &barber.ServiceItem{
+			Id:                res.ID.String(),
+			CategoryId:        int32(res.CategoryID),
+			BarberShopId:      res.BarberShopID.String(),
+			GenderId:          int32(res.GenderID),
+			Name:              res.Name,
+			Timer:             int32(res.Timer),
+			Price:             res.Price,
+			Description:       res.Description.String,
+			ImageUrl:          res.ImageUrl.String,
+			DiscountPrice:     &res.DiscountPrice.Float32,
+			DiscountStartTime: discountStartTime,
+			DiscountEndTime:   discountEndTime,
+			IsActive:          res.IsActive,
+		},
 	}
 	return rsp, nil
 }

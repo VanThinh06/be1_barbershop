@@ -209,7 +209,7 @@ func (q *Queries) ListServicesByCategory(ctx context.Context, barberShopID uuid.
 	return items, nil
 }
 
-const updateServiceItem = `-- name: UpdateServiceItem :exec
+const updateServiceItem = `-- name: UpdateServiceItem :one
 
 
 UPDATE "ServiceItems"
@@ -226,6 +226,7 @@ SET
     discount_start_time = $11,
     discount_end_time = $12
 WHERE "id" = $1
+RETURNING id, barber_shop_id, category_id, gender_id, name, timer, price, discount_price, discount_start_time, discount_end_time, description, image_url, is_active
 `
 
 type UpdateServiceItemParams struct {
@@ -244,8 +245,8 @@ type UpdateServiceItemParams struct {
 }
 
 // Để phân loại theo gender_id nếu cần thiết
-func (q *Queries) UpdateServiceItem(ctx context.Context, arg UpdateServiceItemParams) error {
-	_, err := q.db.Exec(ctx, updateServiceItem,
+func (q *Queries) UpdateServiceItem(ctx context.Context, arg UpdateServiceItemParams) (ServiceItem, error) {
+	row := q.db.QueryRow(ctx, updateServiceItem,
 		arg.ID,
 		arg.Name,
 		arg.Timer,
@@ -259,5 +260,21 @@ func (q *Queries) UpdateServiceItem(ctx context.Context, arg UpdateServiceItemPa
 		arg.DiscountStartTime,
 		arg.DiscountEndTime,
 	)
-	return err
+	var i ServiceItem
+	err := row.Scan(
+		&i.ID,
+		&i.BarberShopID,
+		&i.CategoryID,
+		&i.GenderID,
+		&i.Name,
+		&i.Timer,
+		&i.Price,
+		&i.DiscountPrice,
+		&i.DiscountStartTime,
+		&i.DiscountEndTime,
+		&i.Description,
+		&i.ImageUrl,
+		&i.IsActive,
+	)
+	return i, err
 }

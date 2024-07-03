@@ -284,19 +284,21 @@ func (server *Server) UpdateServicePackage(ctx context.Context, req *barber.Upda
 	}
 
 	rsp := &barber.UpdateServicePackageResponse{
-		Id:                servicePackage.ID.String(),
-		Name:              servicePackage.Name,
-		GenderId:          int32(servicePackage.GenderID),
-		Timer:             int32(servicePackage.Timer),
-		Price:             servicePackage.Price,
-		Description:       servicePackage.Description.String,
-		ImageUrl:          servicePackage.ImageUrl.String,
-		IsActive:          servicePackage.IsActive,
-		BarberShopId:      servicePackage.BarberShopID.String(),
-		DiscountPrice:     servicePackage.DiscountPrice.Float32,
-		DiscountStartTime: timestamppb.New(servicePackage.DiscountStartTime.Time),
-		DiscountEndTime:   timestamppb.New(servicePackage.DiscountEndTime.Time),
-		ServiceItems:      req.GetServiceItems(),
+		ServicePackage: &barber.ServicePackage{
+			Id:                servicePackage.ID.String(),
+			Name:              servicePackage.Name,
+			GenderId:          int32(servicePackage.GenderID),
+			Timer:             int32(servicePackage.Timer),
+			Price:             servicePackage.Price,
+			Description:       servicePackage.Description.String,
+			ImageUrl:          servicePackage.ImageUrl.String,
+			IsActive:          servicePackage.IsActive,
+			BarberShopId:      servicePackage.BarberShopID.String(),
+			DiscountPrice:     servicePackage.DiscountPrice.Float32,
+			DiscountStartTime: timestamppb.New(servicePackage.DiscountStartTime.Time),
+			DiscountEndTime:   timestamppb.New(servicePackage.DiscountEndTime.Time),
+			ServiceItems:       req.GetServiceItems(),
+		},
 	}
 	return rsp, nil
 }

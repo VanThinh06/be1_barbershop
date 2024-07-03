@@ -258,7 +258,7 @@ func convertListServiceItem(res []db.ViewServicePackage) []*barber.ServicePackag
 			DiscountPrice:     item.ComboServiceDiscountPrice.Float32,
 			DiscountStartTime: timestamppb.New(item.ComboServiceDiscountStartTime.Time),
 			DiscountEndTime:   timestamppb.New(item.ComboServiceDiscountEndTime.Time),
-			ServiceItem:       item.ServiceItemIds,
+			ServiceItems:       item.ServiceItemIds,
 			BarberShopId:      item.BarberShopID.String(),
 		}
 		services = append(services, service)

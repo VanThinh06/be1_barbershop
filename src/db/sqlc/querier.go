@@ -70,7 +70,7 @@ type Querier interface {
 	UpdatePasswordBarber(ctx context.Context, arg UpdatePasswordBarberParams) (Barber, error)
 	UpdateServiceCategory(ctx context.Context, arg UpdateServiceCategoryParams) error
 	// Để phân loại theo gender_id nếu cần thiết
-	UpdateServiceItem(ctx context.Context, arg UpdateServiceItemParams) error
+	UpdateServiceItem(ctx context.Context, arg UpdateServiceItemParams) (ServiceItem, error)
 	UpdateServicePackage(ctx context.Context, arg UpdateServicePackageParams) (ServicePackage, error)
 	UpdateSessionRefreshToken(ctx context.Context, arg UpdateSessionRefreshTokenParams) error
 	UpdateSessionsCustomer(ctx context.Context, arg UpdateSessionsCustomerParams) error

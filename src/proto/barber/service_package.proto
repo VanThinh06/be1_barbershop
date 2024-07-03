@@ -20,7 +20,7 @@ message ServicePackage {
     string description = 10;
     string image_url = 11;
     bool is_active = 12; 
-    repeated string service_item = 13;
+    repeated string service_items = 13;
 }
 
 message ServicePackageItem {

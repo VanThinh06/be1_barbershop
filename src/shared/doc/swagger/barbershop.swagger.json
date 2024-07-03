@@ -2748,7 +2748,7 @@
         "isActive": {
           "type": "boolean"
         },
-        "serviceItem": {
+        "serviceItems": {
           "type": "array",
           "items": {
             "type": "string"
@@ -2970,8 +2970,8 @@
     "pbUpdateServiceItemResponse": {
       "type": "object",
       "properties": {
-        "message": {
-          "type": "string"
+        "service": {
+          "$ref": "#/definitions/pbServiceItem"
         }
       }
     },
@@ -3031,53 +3031,8 @@
     "pbUpdateServicePackageResponse": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "barberShopId": {
-          "type": "string"
-        },
-        "genderId": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "name": {
-          "type": "string"
-        },
-        "timer": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "price": {
-          "type": "number",
-          "format": "float"
-        },
-        "description": {
-          "type": "string"
-        },
-        "imageUrl": {
-          "type": "string"
-        },
-        "isActive": {
-          "type": "boolean"
-        },
-        "discountPrice": {
-          "type": "number",
-          "format": "float"
-        },
-        "discountStartTime": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "discountEndTime": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "serviceItems": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "servicePackage": {
+          "$ref": "#/definitions/pbServicePackage"
         }
       }
     },

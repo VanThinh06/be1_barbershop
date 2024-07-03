@@ -59,7 +59,7 @@ message UpdateServiceItemRequest{
 }
 
 message UpdateServiceItemResponse{
-    string message = 1;
+    ServiceItem service = 1;
 }
 
 // delete
