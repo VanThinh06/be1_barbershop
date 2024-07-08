@@ -2426,7 +2426,7 @@
     "pbGetServicePackageResponse": {
       "type": "object",
       "properties": {
-        "servicePackageItem": {
+        "servicePackage": {
           "$ref": "#/definitions/pbServicePackageItem"
         }
       }

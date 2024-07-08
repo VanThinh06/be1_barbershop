@@ -127,7 +127,7 @@ func (server *Server) GetServicePackage(ctx context.Context, req *barber.GetServ
 	}
 
 	rsp := &barber.GetServicePackageResponse{
-		ServicePackageItem: convertServicePackageItem(res),
+		ServicePackage: convertServicePackageItem(res),
 	}
 
 	return rsp, nil
@@ -185,6 +185,7 @@ func (server *Server) UpdateServicePackage(ctx context.Context, req *barber.Upda
 	}
 
 	var listServiceItems []uuid.UUID
+
 	for _, item := range req.GetServiceItems() {
 		uuidServiceItem, err := uuid.Parse(item)
 		if err != nil {
@@ -194,11 +195,26 @@ func (server *Server) UpdateServicePackage(ctx context.Context, req *barber.Upda
 	}
 
 	arg := db.UpdateServicePackageParams{
-		GenderID: int16(req.GetGenderId()),
-		Name:     req.GetName(),
-		IsActive: req.GetIsActive(),
-		Timer:    int16(req.GetTimer()),
-		Price:    req.GetPrice(),
+		GenderID: pgtype.Int2{
+			Int16: int16(req.GetGenderId()),
+			Valid: req.GenderId != nil,
+		},
+		Name: sql.NullString{
+			String: req.GetName(),
+			Valid:  req.Name != nil,
+		},
+		IsActive: pgtype.Bool{
+			Bool:  req.GetIsActive(),
+			Valid: req.IsActive != nil,
+		},
+		Timer: pgtype.Int2{
+			Int16: int16(req.GetTimer()),
+			Valid: req.Timer != nil,
+		},
+		Price: pgtype.Float4{
+			Float32: req.GetPrice(),
+			Valid:   req.Price != nil,
+		},
 		Description: sql.NullString{
 			String: req.GetDescription(),
 			Valid:  req.Description != nil,

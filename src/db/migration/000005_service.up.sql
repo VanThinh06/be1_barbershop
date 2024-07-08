@@ -109,9 +109,9 @@ SELECT
   cs.image_url AS combo_service_image_url,
   cs.is_active AS combo_service_is_active,
   json_agg(json_build_object(
-    'service_item_id', si.id,
-    'service_item_name', si.name,
-    'service_item_price', si.price
+    'id', si.id,
+    'name', si.name,
+    'price', si.price
   )) AS service_items
 FROM 
   "ServicePackageItems" csi

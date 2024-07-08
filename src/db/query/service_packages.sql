@@ -39,11 +39,11 @@ SET
   gender_id = COALESCE(sqlc.narg('gender_id'), gender_id),
   timer = COALESCE(sqlc.narg('timer'), timer),
   price = COALESCE(sqlc.narg('price'), price),
-  discount_price = COALESCE(sqlc.narg('discount_price'), 0),
-  discount_start_time = sqlc.narg('discount_start_time'),
-  discount_end_time = sqlc.narg('discount_end_time'),
-  description = COALESCE(sqlc.narg('description'), ''),
-  image_url = COALESCE(sqlc.narg('image_url'), ''),
+  discount_price = COALESCE(sqlc.narg('discount_price'), discount_price),
+  discount_start_time = COALESCE(sqlc.narg('discount_start_time'), discount_start_time),
+  discount_end_time = COALESCE(sqlc.narg('discount_end_time'), discount_start_time),
+  description = COALESCE(sqlc.narg('description'), description),
+  image_url = COALESCE(sqlc.narg('image_url'), image_url),
   is_active = COALESCE(sqlc.narg('is_active'), is_active)
 WHERE id = sqlc.arg('id')
 RETURNING *;
@@ -56,6 +56,9 @@ WITH upserted AS (
 )
 DELETE FROM "ServicePackageItems" AS csi
 WHERE csi.service_package_id = $1
-  AND csi.service_item_id NOT IN (
-    SELECT unnest($2::uuid[])
-);
+  AND (
+    ($2::uuid[]) IS NOT NULL
+    AND csi.service_item_id NOT IN (
+      SELECT unnest($2::uuid[])
+    )
+  );

@@ -273,7 +273,7 @@ func convertServicePackageItem(item db.ViewServicePackage) *barber.ServicePackag
 		Timer:             int32(item.ComboServiceTimer),
 		ImageUrl:          item.ComboServiceImageUrl.String,
 		IsActive:          item.ComboServiceIsActive,
-		DiscountPrice:     float32(item.ComboServicePrice),
+		DiscountPrice:     item.ComboServiceDiscountPrice.Float32,
 		DiscountStartTime: timestamppb.New(item.ComboServiceDiscountStartTime.Time),
 		DiscountEndTime:   timestamppb.New(item.ComboServiceDiscountEndTime.Time),
 		ServiceItems:      convertServiceItems(item.ServiceItems), // Convert ServiceItems here
@@ -294,7 +294,7 @@ func convertListServiceItem(res []db.ViewServicePackage) []*barber.ServicePackag
 			Timer:             int32(item.ComboServiceTimer),
 			ImageUrl:          item.ComboServiceImageUrl.String,
 			IsActive:          item.ComboServiceIsActive,
-			DiscountPrice:     float32(item.ComboServicePrice),
+			DiscountPrice:     item.ComboServiceDiscountPrice.Float32,
 			DiscountStartTime: timestamppb.New(item.ComboServiceDiscountStartTime.Time),
 			DiscountEndTime:   timestamppb.New(item.ComboServiceDiscountEndTime.Time),
 			ServiceItems:      convertServiceItems(item.ServiceItems), // Convert ServiceItems here
