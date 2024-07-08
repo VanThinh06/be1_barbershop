@@ -59,24 +59,24 @@ ORDER BY
 
 -- name: UpdateServiceItem :one
 UPDATE "ServiceItems"
-SET 
-    name = COALESCE($2, name),
-    timer = COALESCE($3, timer),
-    category_id = COALESCE($4, category_id),
-    gender_id = COALESCE($5, gender_id),
-    price = COALESCE($6, price),
-    description = COALESCE($7, ''),
-    image_url = COALESCE($8, ''),
-    is_active = COALESCE($9, is_active),
-    discount_price = COALESCE($10, 0),
-    discount_start_time = $11,
-    discount_end_time = $12
-WHERE "id" = $1
+SET
+  name = COALESCE(sqlc.narg('name'), name),
+  gender_id = COALESCE(sqlc.narg('gender_id'), gender_id),
+  timer = COALESCE(sqlc.narg('timer'), timer),
+  category_id = COALESCE(sqlc.narg('category_id'), category_id),
+  price = COALESCE(sqlc.narg('price'), price),
+  discount_price = COALESCE(sqlc.narg('discount_price'), 0),
+  discount_start_time = sqlc.narg('discount_start_time'),
+  discount_end_time = sqlc.narg('discount_end_time'),
+  description = COALESCE(sqlc.narg('description'), ''),
+  image_url = COALESCE(sqlc.narg('image_url'), ''),
+  is_active = COALESCE(sqlc.narg('is_active'), is_active)
+WHERE id = sqlc.arg('id')
 RETURNING *;
 
 
--- -- name: DeleteServiceItem :exec
--- DELETE FROM "ServiceItems"
--- WHERE
---   "id" = $1;
+-- name: DeleteServiceItem :exec
+DELETE FROM "ServiceItems"
+WHERE
+  "id" = $1;
 

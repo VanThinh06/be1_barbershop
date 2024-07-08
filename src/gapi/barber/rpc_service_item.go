@@ -76,7 +76,7 @@ func (server *Server) CreateServiceItem(ctx context.Context, req *barber.CreateS
 			Price:             service.Price,
 			Description:       service.Description.String,
 			ImageUrl:          service.ImageUrl.String,
-			DiscountPrice:     &service.DiscountPrice.Float32,
+			DiscountPrice:     service.DiscountPrice.Float32,
 			DiscountStartTime: timestamppb.New(service.DiscountStartTime.Time),
 			DiscountEndTime:   timestamppb.New(service.DiscountEndTime.Time),
 			IsActive:          service.IsActive,
@@ -125,7 +125,7 @@ func (server *Server) GetServiceItem(ctx context.Context, req *barber.GetService
 			Price:             res.Price,
 			Description:       res.Description.String,
 			ImageUrl:          res.ImageUrl.String,
-			DiscountPrice:     &res.DiscountPrice.Float32,
+			DiscountPrice:     res.DiscountPrice.Float32,
 			DiscountStartTime: discountStartTime,
 			DiscountEndTime:   discountEndTime,
 			IsActive:          res.IsActive,
@@ -187,12 +187,30 @@ func (server *Server) UpdateServiceItem(ctx context.Context, req *barber.UpdateS
 	}
 
 	arg := db.UpdateServiceItemParams{
-		CategoryID: int16(req.GetCategoryId()),
-		GenderID:   int16(req.GetGenderId()),
-		Name:       req.GetName(),
-		IsActive:   req.GetIsActive(),
-		Timer:      int16(req.GetTimer()),
-		Price:      req.GetPrice(),
+		CategoryID: pgtype.Int2{
+			Int16: int16(req.GetCategoryId()),
+			Valid: req.CategoryId != nil,
+		},
+		GenderID: pgtype.Int2{
+			Int16: int16(req.GetGenderId()),
+			Valid: req.GenderId != nil,
+		},
+		Name: sql.NullString{
+			String: req.GetName(),
+			Valid:  req.Name != nil,
+		},
+		IsActive: pgtype.Bool{
+			Bool:  req.GetIsActive(),
+			Valid: req.IsActive != nil,
+		},
+		Timer: pgtype.Int2{
+			Int16: int16(req.GetTimer()),
+			Valid: req.Timer != nil,
+		},
+		Price: pgtype.Float4{
+			Float32: req.GetPrice(),
+			Valid:   req.Price != nil,
+		},
 		Description: sql.NullString{
 			String: req.GetDescription(),
 			Valid:  req.Description != nil,
@@ -250,7 +268,7 @@ func (server *Server) UpdateServiceItem(ctx context.Context, req *barber.UpdateS
 			Price:             res.Price,
 			Description:       res.Description.String,
 			ImageUrl:          res.ImageUrl.String,
-			DiscountPrice:     &res.DiscountPrice.Float32,
+			DiscountPrice:     res.DiscountPrice.Float32,
 			DiscountStartTime: discountStartTime,
 			DiscountEndTime:   discountEndTime,
 			IsActive:          res.IsActive,

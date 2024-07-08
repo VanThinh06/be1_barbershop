@@ -12,7 +12,6 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // CreateServicePackage
@@ -97,19 +96,15 @@ func (server *Server) CreateServicePackage(ctx context.Context, req *barber.Crea
 		return nil, utils.InternalError(err)
 	}
 
-	rsp := &barber.CreateServicePackageResponse{
-		ServicePackage: &barber.ServicePackage{
-			Id:           createdService.ID.String(),
-			BarberShopId: createdService.BarberShopID.String(),
-			GenderId:     int32(createdService.GenderID),
-			Name:         createdService.Name,
-			Timer:        int32(createdService.Timer),
-			Price:        createdService.Price,
-			Description:  createdService.Description.String,
-			ImageUrl:     createdService.ImageUrl.String,
-			IsActive:     createdService.IsActive,
-		},
+	res, err := server.Store.GetServicePackage(ctx, createdService.ID)
+	if err != nil {
+		return nil, utils.InternalError(err)
 	}
+
+	rsp := &barber.CreateServicePackageResponse{
+		ServicePackage: convertServicePackageItem(res),
+	}
+
 	return rsp, nil
 }
 
@@ -131,31 +126,8 @@ func (server *Server) GetServicePackage(ctx context.Context, req *barber.GetServ
 		return nil, status.Error(codes.Internal, "internal")
 	}
 
-	var serviceItems []*barber.ServiceItem
-	var servicePackageItem *barber.ServicePackageItem
-	for _, v := range res {
-		service := &barber.ServiceItem{
-			Id:    v.BarberShopServiceID.String(),
-			Name:  v.BarberShopServiceName,
-			Price: v.BarberShopServicePrice,
-		}
-		serviceItems = append(serviceItems, service)
-
-		servicePackageItem = &barber.ServicePackageItem{
-			Id:           v.ID.String(),
-			Name:         v.ComboServiceName,
-			GenderId:     int32(v.ComboServiceGender),
-			Timer:        int32(v.ComboServiceTimer),
-			Price:        v.ComboServicePrice,
-			Description:  v.ComboServiceDescription.String,
-			ImageUrl:     v.ComboServiceImageUrl.String,
-			IsActive:     v.ComboServiceIsActive,
-			ServiceItems: serviceItems,
-		}
-	}
-
 	rsp := &barber.GetServicePackageResponse{
-		ServicePackageItem: servicePackageItem,
+		ServicePackageItem: convertServicePackageItem(res),
 	}
 
 	return rsp, nil
@@ -283,22 +255,13 @@ func (server *Server) UpdateServicePackage(ctx context.Context, req *barber.Upda
 		return nil, utils.InternalError(err)
 	}
 
+	res, err := server.Store.GetServicePackage(ctx, servicePackage.ID)
+	if err != nil {
+		return nil, utils.InternalError(err)
+	}
+
 	rsp := &barber.UpdateServicePackageResponse{
-		ServicePackage: &barber.ServicePackage{
-			Id:                servicePackage.ID.String(),
-			Name:              servicePackage.Name,
-			GenderId:          int32(servicePackage.GenderID),
-			Timer:             int32(servicePackage.Timer),
-			Price:             servicePackage.Price,
-			Description:       servicePackage.Description.String,
-			ImageUrl:          servicePackage.ImageUrl.String,
-			IsActive:          servicePackage.IsActive,
-			BarberShopId:      servicePackage.BarberShopID.String(),
-			DiscountPrice:     servicePackage.DiscountPrice.Float32,
-			DiscountStartTime: timestamppb.New(servicePackage.DiscountStartTime.Time),
-			DiscountEndTime:   timestamppb.New(servicePackage.DiscountEndTime.Time),
-			ServiceItems:       req.GetServiceItems(),
-		},
+		ServicePackage: convertServicePackageItem(res),
 	}
 	return rsp, nil
 }
