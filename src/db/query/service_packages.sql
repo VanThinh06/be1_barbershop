@@ -53,17 +53,17 @@ WHERE barber_shop_id = $1;
 -- name: UpdateServicePackage :one
 UPDATE "ServicePackages"
 SET
-  name = COALESCE($2, name),
-  gender_id = COALESCE($3, gender_id),
-  timer = COALESCE($4, timer),
-  price = COALESCE($5, price),
-  discount_price = COALESCE($6, 0),
-  discount_start_time = $7,
-  discount_end_time = $8,
-  description = COALESCE($9, ''),
-  image_url = COALESCE($10, ''),
-  is_active = COALESCE($11, is_active)
-WHERE id = $1
+  name = COALESCE(sqlc.narg('name'), name),
+  gender_id = COALESCE(sqlc.narg('gender_id'), gender_id),
+  timer = COALESCE(sqlc.narg('timer'), timer),
+  price = COALESCE(sqlc.narg('price'), price),
+  discount_price = COALESCE(sqlc.narg('discount_price'), 0),
+  discount_start_time = sqlc.narg('discount_start_time'),
+  discount_end_time = sqlc.narg('discount_end_time'),
+  description = COALESCE(sqlc.narg('description'), ''),
+  image_url = COALESCE(sqlc.narg('image_url'), ''),
+  is_active = COALESCE(sqlc.narg('is_active'), is_active)
+WHERE id = sqlc.arg('id')
 RETURNING *;
 
 -- name: UpsertServicePackageItem :exec

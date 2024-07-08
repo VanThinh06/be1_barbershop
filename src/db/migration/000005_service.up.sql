@@ -17,7 +17,7 @@ CREATE TABLE "CategoryPositions" (
   "barber_shop_id" uuid NOT NULL,
   "category_id" serial2 NOT NULL,
   "position" int2 NOT NULL,
-  "visible" boolean NOT NULL DEFAULT true,
+  "visible" boolean NOT NULL DEFAULT TRUE,
   PRIMARY KEY ("barber_shop_id", "category_id"),
   FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id"),
   FOREIGN KEY ("category_id") REFERENCES "ServiceCategories" ("id")

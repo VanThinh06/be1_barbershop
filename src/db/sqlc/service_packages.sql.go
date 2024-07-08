@@ -197,37 +197,36 @@ func (q *Queries) ListServicePackages(ctx context.Context, barberShopID uuid.UUI
 const updateServicePackage = `-- name: UpdateServicePackage :one
 UPDATE "ServicePackages"
 SET
-  name = COALESCE($2, name),
-  gender_id = COALESCE($3, gender_id),
-  timer = COALESCE($4, timer),
-  price = COALESCE($5, price),
-  discount_price = COALESCE($6, 0),
-  discount_start_time = $7,
-  discount_end_time = $8,
-  description = COALESCE($9, ''),
-  image_url = COALESCE($10, ''),
-  is_active = COALESCE($11, is_active)
-WHERE id = $1
+  name = COALESCE($1, name),
+  gender_id = COALESCE($2, gender_id),
+  timer = COALESCE($3, timer),
+  price = COALESCE($4, price),
+  discount_price = COALESCE($5, 0),
+  discount_start_time = $6,
+  discount_end_time = $7,
+  description = COALESCE($8, ''),
+  image_url = COALESCE($9, ''),
+  is_active = COALESCE($10, is_active)
+WHERE id = $11
 RETURNING id, barber_shop_id, name, gender_id, timer, price, discount_price, discount_start_time, discount_end_time, description, image_url, is_active
 `
 
 type UpdateServicePackageParams struct {
-	ID                uuid.UUID        `json:"id"`
-	Name              string           `json:"name"`
-	GenderID          int16            `json:"gender_id"`
-	Timer             int16            `json:"timer"`
-	Price             float32          `json:"price"`
+	Name              sql.NullString   `json:"name"`
+	GenderID          pgtype.Int2      `json:"gender_id"`
+	Timer             pgtype.Int2      `json:"timer"`
+	Price             pgtype.Float4    `json:"price"`
 	DiscountPrice     pgtype.Float4    `json:"discount_price"`
 	DiscountStartTime pgtype.Timestamp `json:"discount_start_time"`
 	DiscountEndTime   pgtype.Timestamp `json:"discount_end_time"`
 	Description       sql.NullString   `json:"description"`
 	ImageUrl          sql.NullString   `json:"image_url"`
-	IsActive          bool             `json:"is_active"`
+	IsActive          pgtype.Bool      `json:"is_active"`
+	ID                uuid.UUID        `json:"id"`
 }
 
 func (q *Queries) UpdateServicePackage(ctx context.Context, arg UpdateServicePackageParams) (ServicePackage, error) {
 	row := q.db.QueryRow(ctx, updateServicePackage,
-		arg.ID,
 		arg.Name,
 		arg.GenderID,
 		arg.Timer,
@@ -238,6 +237,7 @@ func (q *Queries) UpdateServicePackage(ctx context.Context, arg UpdateServicePac
 		arg.Description,
 		arg.ImageUrl,
 		arg.IsActive,
+		arg.ID,
 	)
 	var i ServicePackage
 	err := row.Scan(
