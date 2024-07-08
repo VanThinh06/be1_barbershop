@@ -22,27 +22,9 @@ VALUES ($1, $2)
 RETURNING *;
 
 
--- name: GetServicePackage :many
-SELECT 
-  cs.id,
-  cs.name AS combo_service_name,
-  cs.description AS combo_service_description,
-  cs.price AS combo_service_price,
-  cs.image_url AS combo_service_image_url,
-  cs.timer AS combo_service_timer,
-  cs.gender_id AS combo_service_gender,
-  cs.is_active AS combo_service_is_active,
-  bss.id AS barber_shop_service_id,
-  bss.name AS barber_shop_service_name,
-  bss.price AS barber_shop_service_price
-FROM 
-  "ServicePackageItems" csi
-JOIN 
-  "ServicePackages" cs ON csi.combo_service_id = cs.id
-JOIN 
-  "ServiceItems" bss ON csi.barber_shop_service_id = bss.id
-WHERE 
-  cs.id = $1;
+-- name: GetServicePackage :one
+SELECT * FROM "view_service_packages"
+WHERE id = $1;
 
 
 -- name: ListServicePackages :many

@@ -14,7 +14,7 @@ message ServiceItem {
     string name = 5;
     int32 timer = 6;
     float price = 7;
-    optional float discount_price = 8;
+    float discount_price = 8;
     optional google.protobuf.Timestamp discount_start_time = 9;
     optional google.protobuf.Timestamp discount_end_time = 10;
     string description = 11;

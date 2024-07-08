@@ -52,6 +52,6 @@ sql:
             go_type:
               type: "string"
 
-          - column: view_service_packages.service_item_ids
+          - column: view_service_packages.service_items
             go_type:
-              type: "[]string"
+              type: "[]ServiceItem"

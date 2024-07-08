@@ -19,7 +19,7 @@ message CreateServicePackageRequest{
 }
 
 message CreateServicePackageResponse{
-    ServicePackage service_package = 1;
+    ServicePackageItem service_package = 1;
 }
 
 // detail
@@ -28,7 +28,7 @@ message GetServicePackageRequest{
 }
 
 message GetServicePackageResponse {
-    ServicePackageItem service_package_item = 1;
+    ServicePackageItem service_package = 1;
 }
 
 // list
@@ -37,7 +37,7 @@ message ListServicePackageRequest{
 }
 
 message ListServicePackageResponse {
-    repeated ServicePackage service_packages = 1;
+    repeated ServicePackageItem service_packages = 1;
 }
 
 message UpdateServicePackageRequest{
@@ -57,5 +57,5 @@ message UpdateServicePackageRequest{
 }
 
 message UpdateServicePackageResponse{
-    ServicePackage service_package = 1;
+    ServicePackageItem service_package = 1;
 }

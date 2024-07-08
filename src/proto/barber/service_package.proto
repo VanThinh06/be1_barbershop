@@ -7,21 +7,6 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "barbershop/src/pb/barber";
 
-message ServicePackage {
-    string id = 1;
-    string barber_shop_id = 2;
-    int32 gender_id = 3;
-    string name = 4;
-    int32 timer = 5;
-    float price = 6;
-    float discount_price = 7;
-    optional google.protobuf.Timestamp discount_start_time = 8;
-    optional google.protobuf.Timestamp discount_end_time = 9;
-    string description = 10;
-    string image_url = 11;
-    bool is_active = 12; 
-    repeated string service_items = 13;
-}
 
 message ServicePackageItem {
     string id = 1;

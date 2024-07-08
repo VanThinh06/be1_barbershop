@@ -108,11 +108,17 @@ SELECT
   cs.description AS combo_service_description,
   cs.image_url AS combo_service_image_url,
   cs.is_active AS combo_service_is_active,
-  array_agg(csi.service_item_id) AS service_item_ids
+  json_agg(json_build_object(
+    'service_item_id', si.id,
+    'service_item_name', si.name,
+    'service_item_price', si.price
+  )) AS service_items
 FROM 
   "ServicePackageItems" csi
 JOIN 
   "ServicePackages" cs ON csi.service_package_id = cs.id
+LEFT JOIN 
+  "ServiceItems" si ON csi.service_item_id = si.id
 GROUP BY 
   cs.id, cs.barber_shop_id, cs.gender_id, cs.name, cs.timer, cs.price, cs.discount_price, 
   cs.discount_start_time, cs.discount_end_time, cs.description, cs.image_url, cs.is_active;
