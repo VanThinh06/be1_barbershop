@@ -103,16 +103,6 @@ func (server *Server) GetServiceItem(ctx context.Context, req *barber.GetService
 		return nil, status.Error(codes.Internal, "internal")
 	}
 
-	discountStartTime := timestamppb.New(res.DiscountStartTime.Time)
-	if !res.DiscountStartTime.Valid {
-		discountStartTime = nil
-	}
-
-	discountEndTime := timestamppb.New(res.DiscountEndTime.Time)
-	if !res.DiscountEndTime.Valid {
-		discountEndTime = nil
-	}
-
 	rsp := &barber.GetServiceItemResponse{
 		Service: &barber.ServiceItem{
 			Id:                res.ID.String(),
@@ -126,8 +116,8 @@ func (server *Server) GetServiceItem(ctx context.Context, req *barber.GetService
 			Description:       res.Description.String,
 			ImageUrl:          res.ImageUrl.String,
 			DiscountPrice:     res.DiscountPrice.Float32,
-			DiscountStartTime: discountStartTime,
-			DiscountEndTime:   discountEndTime,
+			DiscountStartTime: utils.ConvertToTimestampProto(res.DiscountStartTime),
+			DiscountEndTime:   utils.ConvertToTimestampProto(res.DiscountEndTime),
 			IsActive:          res.IsActive,
 		},
 	}
@@ -248,15 +238,6 @@ func (server *Server) UpdateServiceItem(ctx context.Context, req *barber.UpdateS
 		return nil, utils.InternalError(err)
 	}
 
-	discountStartTime := timestamppb.New(res.DiscountStartTime.Time)
-	if !res.DiscountStartTime.Valid {
-		discountStartTime = nil
-	}
-
-	discountEndTime := timestamppb.New(res.DiscountEndTime.Time)
-	if !res.DiscountEndTime.Valid {
-		discountEndTime = nil
-	}
 	rsp := &barber.UpdateServiceItemResponse{
 		Service: &barber.ServiceItem{
 			Id:                res.ID.String(),
@@ -269,8 +250,8 @@ func (server *Server) UpdateServiceItem(ctx context.Context, req *barber.UpdateS
 			Description:       res.Description.String,
 			ImageUrl:          res.ImageUrl.String,
 			DiscountPrice:     res.DiscountPrice.Float32,
-			DiscountStartTime: discountStartTime,
-			DiscountEndTime:   discountEndTime,
+			DiscountStartTime: utils.ConvertToTimestampProto(res.DiscountStartTime),
+			DiscountEndTime:   utils.ConvertToTimestampProto(res.DiscountEndTime),
 			IsActive:          res.IsActive,
 		},
 	}
@@ -285,12 +266,22 @@ func (server *Server) DeleteServiceItem(ctx context.Context, req *barber.DeleteS
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
 
-	if payload.Barber.BarberID.String() != req.GetId() {
-		return nil, status.Errorf(codes.PermissionDenied, "no permission")
+	idService, err := uuid.Parse(req.GetId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "service don't exist")
 	}
 
-	var id = uuid.MustParse(req.Id)
-	err = server.Store.DeleteBarberShopChains(ctx, id)
+	barberShopId, err := uuid.Parse(req.GetBarberShopId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
+
+	permissionService := server.checkPermissionManageService(ctx, barberShopId, payload.Barber.BarberID)
+	if permissionService != nil {
+		return nil, permissionService
+	}
+
+	err = server.Store.DeleteBarberShopChains(ctx, idService)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "internal")
 	}

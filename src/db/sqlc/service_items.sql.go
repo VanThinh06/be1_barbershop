@@ -230,11 +230,11 @@ SET
   timer = COALESCE($3, timer),
   category_id = COALESCE($4, category_id),
   price = COALESCE($5, price),
-  discount_price = COALESCE($6, 0),
-  discount_start_time = $7,
-  discount_end_time = $8,
-  description = COALESCE($9, ''),
-  image_url = COALESCE($10, ''),
+  discount_price = COALESCE($6, discount_price),
+  discount_start_time = COALESCE($7, discount_start_time),
+  discount_end_time = COALESCE($8, discount_end_time),
+  description = COALESCE($9, description),
+  image_url = COALESCE($10, image_url),
   is_active = COALESCE($11, is_active)
 WHERE id = $12
 RETURNING id, barber_shop_id, category_id, gender_id, name, timer, price, discount_price, discount_start_time, discount_end_time, description, image_url, is_active

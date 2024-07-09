@@ -65,11 +65,11 @@ SET
   timer = COALESCE(sqlc.narg('timer'), timer),
   category_id = COALESCE(sqlc.narg('category_id'), category_id),
   price = COALESCE(sqlc.narg('price'), price),
-  discount_price = COALESCE(sqlc.narg('discount_price'), 0),
-  discount_start_time = sqlc.narg('discount_start_time'),
-  discount_end_time = sqlc.narg('discount_end_time'),
-  description = COALESCE(sqlc.narg('description'), ''),
-  image_url = COALESCE(sqlc.narg('image_url'), ''),
+  discount_price = COALESCE(sqlc.narg('discount_price'), discount_price),
+  discount_start_time = COALESCE(sqlc.narg('discount_start_time'), discount_start_time),
+  discount_end_time = COALESCE(sqlc.narg('discount_end_time'), discount_end_time),
+  description = COALESCE(sqlc.narg('description'), description),
+  image_url = COALESCE(sqlc.narg('image_url'), image_url),
   is_active = COALESCE(sqlc.narg('is_active'), is_active)
 WHERE id = sqlc.arg('id')
 RETURNING *;

@@ -746,6 +746,44 @@
         ]
       }
     },
+    "/v1/barbershop/{barberShopId}/service-item/{id}": {
+      "delete": {
+        "summary": "Update service category",
+        "description": "API endpoint to update a service category",
+        "operationId": "BarberService_DeleteServiceItem",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteServiceItemResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barberShopId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "service categories"
+        ]
+      }
+    },
     "/v1/barbershop/{barberShopId}/service-package": {
       "get": {
         "summary": "List services",
@@ -1375,45 +1413,6 @@
         ],
         "tags": [
           "barbershop services"
-        ]
-      },
-      "delete": {
-        "summary": "Update service category",
-        "description": "API endpoint to update a service category",
-        "operationId": "BarberService_DeleteServiceItem",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbDeleteServiceItemResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "title": "delete"
-            }
-          }
-        ],
-        "tags": [
-          "service categories"
         ]
       }
     },

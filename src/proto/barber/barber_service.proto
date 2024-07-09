@@ -312,8 +312,7 @@ rpc UpdateServiceItem (UpdateServiceItemRequest) returns (UpdateServiceItemRespo
 
 rpc DeleteServiceItem (DeleteServiceItemRequest) returns (DeleteServiceItemResponse){
   option (google.api.http) = {
-    delete: "/v1/service-item/{id}"
-    body: "*"
+    delete: "/v1/barbershop/{barber_shop_id}/service-item/{id}"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
   description: "API endpoint to update a service category"

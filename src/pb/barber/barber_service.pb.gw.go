@@ -945,20 +945,22 @@ func request_BarberService_DeleteServiceItem_0(ctx context.Context, marshaler ru
 	var protoReq DeleteServiceItemRequest
 	var metadata runtime.ServerMetadata
 
-	newReader, berr := utilities.IOReaderFactory(req.Body)
-	if berr != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
-	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-
 	var (
 		val string
 		ok  bool
 		err error
 		_   = err
 	)
+
+	val, ok = pathParams["barber_shop_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "barber_shop_id")
+	}
+
+	protoReq.BarberShopId, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "barber_shop_id", err)
+	}
 
 	val, ok = pathParams["id"]
 	if !ok {
@@ -979,20 +981,22 @@ func local_request_BarberService_DeleteServiceItem_0(ctx context.Context, marsha
 	var protoReq DeleteServiceItemRequest
 	var metadata runtime.ServerMetadata
 
-	newReader, berr := utilities.IOReaderFactory(req.Body)
-	if berr != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
-	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-
 	var (
 		val string
 		ok  bool
 		err error
 		_   = err
 	)
+
+	val, ok = pathParams["barber_shop_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "barber_shop_id")
+	}
+
+	protoReq.BarberShopId, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "barber_shop_id", err)
+	}
 
 	val, ok = pathParams["id"]
 	if !ok {
@@ -2399,7 +2403,7 @@ func RegisterBarberServiceHandlerServer(ctx context.Context, mux *runtime.ServeM
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.BarberService/DeleteServiceItem", runtime.WithHTTPPathPattern("/v1/service-item/{id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.BarberService/DeleteServiceItem", runtime.WithHTTPPathPattern("/v1/barbershop/{barber_shop_id}/service-item/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3453,7 +3457,7 @@ func RegisterBarberServiceHandlerClient(ctx context.Context, mux *runtime.ServeM
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.BarberService/DeleteServiceItem", runtime.WithHTTPPathPattern("/v1/service-item/{id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.BarberService/DeleteServiceItem", runtime.WithHTTPPathPattern("/v1/barbershop/{barber_shop_id}/service-item/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3997,7 +4001,7 @@ var (
 
 	pattern_BarberService_UpdateServiceItem_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "service-item"}, ""))
 
-	pattern_BarberService_DeleteServiceItem_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "service-item", "id"}, ""))
+	pattern_BarberService_DeleteServiceItem_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "barbershop", "barber_shop_id", "service-item", "id"}, ""))
 
 	pattern_BarberService_CreateServicePackage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "service-package"}, ""))
 
