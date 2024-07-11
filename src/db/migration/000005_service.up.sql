@@ -84,7 +84,7 @@ CREATE TABLE "ServicePackageItems" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "service_package_id" uuid NOT NULL,
   "service_item_id" uuid NOT NULL,
-  FOREIGN KEY ("service_package_id") REFERENCES "ServicePackages" ("id"),
+  FOREIGN KEY ("service_package_id") REFERENCES "ServicePackages" ("id") ON DELETE CASCADE,
   FOREIGN KEY ("service_item_id") REFERENCES "ServiceItems" ("id")
 );
 

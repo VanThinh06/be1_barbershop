@@ -551,6 +551,109 @@ func (x *UpdateServicePackageResponse) GetServicePackage() *ServicePackageItem {
 	return nil
 }
 
+// delete
+type DeleteServicePackageRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id           string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	BarberShopId string `protobuf:"bytes,2,opt,name=barber_shop_id,json=barberShopId,proto3" json:"barber_shop_id,omitempty"`
+}
+
+func (x *DeleteServicePackageRequest) Reset() {
+	*x = DeleteServicePackageRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_barber_rpc_service_package_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteServicePackageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteServicePackageRequest) ProtoMessage() {}
+
+func (x *DeleteServicePackageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_barber_rpc_service_package_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteServicePackageRequest.ProtoReflect.Descriptor instead.
+func (*DeleteServicePackageRequest) Descriptor() ([]byte, []int) {
+	return file_barber_rpc_service_package_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *DeleteServicePackageRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *DeleteServicePackageRequest) GetBarberShopId() string {
+	if x != nil {
+		return x.BarberShopId
+	}
+	return ""
+}
+
+type DeleteServicePackageResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Message string `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+}
+
+func (x *DeleteServicePackageResponse) Reset() {
+	*x = DeleteServicePackageResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_barber_rpc_service_package_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteServicePackageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteServicePackageResponse) ProtoMessage() {}
+
+func (x *DeleteServicePackageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_barber_rpc_service_package_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteServicePackageResponse.ProtoReflect.Descriptor instead.
+func (*DeleteServicePackageResponse) Descriptor() ([]byte, []int) {
+	return file_barber_rpc_service_package_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *DeleteServicePackageResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_barber_rpc_service_package_proto protoreflect.FileDescriptor
 
 var file_barber_rpc_service_package_proto_rawDesc = []byte{
@@ -653,10 +756,18 @@ var file_barber_rpc_service_package_proto_rawDesc = []byte{
 	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x70, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x18,
 	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e, 0x70, 0x62, 0x2e, 0x53, 0x65, 0x72, 0x76, 0x69,
 	0x63, 0x65, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x49, 0x74, 0x65, 0x6d, 0x52, 0x0e, 0x73,
-	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x42, 0x1a, 0x5a,
-	0x18, 0x62, 0x61, 0x72, 0x62, 0x65, 0x72, 0x73, 0x68, 0x6f, 0x70, 0x2f, 0x73, 0x72, 0x63, 0x2f,
-	0x70, 0x62, 0x2f, 0x62, 0x61, 0x72, 0x62, 0x65, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x22, 0x53, 0x0a,
+	0x1b, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x50, 0x61,
+	0x63, 0x6b, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x24, 0x0a, 0x0e,
+	0x62, 0x61, 0x72, 0x62, 0x65, 0x72, 0x5f, 0x73, 0x68, 0x6f, 0x70, 0x5f, 0x69, 0x64, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x62, 0x61, 0x72, 0x62, 0x65, 0x72, 0x53, 0x68, 0x6f, 0x70,
+	0x49, 0x64, 0x22, 0x38, 0x0a, 0x1c, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x42, 0x1a, 0x5a, 0x18,
+	0x62, 0x61, 0x72, 0x62, 0x65, 0x72, 0x73, 0x68, 0x6f, 0x70, 0x2f, 0x73, 0x72, 0x63, 0x2f, 0x70,
+	0x62, 0x2f, 0x62, 0x61, 0x72, 0x62, 0x65, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -671,7 +782,7 @@ func file_barber_rpc_service_package_proto_rawDescGZIP() []byte {
 	return file_barber_rpc_service_package_proto_rawDescData
 }
 
-var file_barber_rpc_service_package_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_barber_rpc_service_package_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_barber_rpc_service_package_proto_goTypes = []interface{}{
 	(*CreateServicePackageRequest)(nil),  // 0: pb.CreateServicePackageRequest
 	(*CreateServicePackageResponse)(nil), // 1: pb.CreateServicePackageResponse
@@ -681,21 +792,23 @@ var file_barber_rpc_service_package_proto_goTypes = []interface{}{
 	(*ListServicePackageResponse)(nil),   // 5: pb.ListServicePackageResponse
 	(*UpdateServicePackageRequest)(nil),  // 6: pb.UpdateServicePackageRequest
 	(*UpdateServicePackageResponse)(nil), // 7: pb.UpdateServicePackageResponse
-	(*ServicePackageItem)(nil),           // 8: pb.ServicePackageItem
-	(*timestamppb.Timestamp)(nil),        // 9: google.protobuf.Timestamp
+	(*DeleteServicePackageRequest)(nil),  // 8: pb.DeleteServicePackageRequest
+	(*DeleteServicePackageResponse)(nil), // 9: pb.DeleteServicePackageResponse
+	(*ServicePackageItem)(nil),           // 10: pb.ServicePackageItem
+	(*timestamppb.Timestamp)(nil),        // 11: google.protobuf.Timestamp
 }
 var file_barber_rpc_service_package_proto_depIdxs = []int32{
-	8, // 0: pb.CreateServicePackageResponse.service_package:type_name -> pb.ServicePackageItem
-	8, // 1: pb.GetServicePackageResponse.service_package:type_name -> pb.ServicePackageItem
-	8, // 2: pb.ListServicePackageResponse.service_packages:type_name -> pb.ServicePackageItem
-	9, // 3: pb.UpdateServicePackageRequest.discount_start_time:type_name -> google.protobuf.Timestamp
-	9, // 4: pb.UpdateServicePackageRequest.discount_end_time:type_name -> google.protobuf.Timestamp
-	8, // 5: pb.UpdateServicePackageResponse.service_package:type_name -> pb.ServicePackageItem
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	10, // 0: pb.CreateServicePackageResponse.service_package:type_name -> pb.ServicePackageItem
+	10, // 1: pb.GetServicePackageResponse.service_package:type_name -> pb.ServicePackageItem
+	10, // 2: pb.ListServicePackageResponse.service_packages:type_name -> pb.ServicePackageItem
+	11, // 3: pb.UpdateServicePackageRequest.discount_start_time:type_name -> google.protobuf.Timestamp
+	11, // 4: pb.UpdateServicePackageRequest.discount_end_time:type_name -> google.protobuf.Timestamp
+	10, // 5: pb.UpdateServicePackageResponse.service_package:type_name -> pb.ServicePackageItem
+	6,  // [6:6] is the sub-list for method output_type
+	6,  // [6:6] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_barber_rpc_service_package_proto_init() }
@@ -801,6 +914,30 @@ func file_barber_rpc_service_package_proto_init() {
 				return nil
 			}
 		}
+		file_barber_rpc_service_package_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteServicePackageRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_barber_rpc_service_package_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteServicePackageResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	file_barber_rpc_service_package_proto_msgTypes[0].OneofWrappers = []interface{}{}
 	file_barber_rpc_service_package_proto_msgTypes[6].OneofWrappers = []interface{}{}
@@ -810,7 +947,7 @@ func file_barber_rpc_service_package_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_barber_rpc_service_package_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

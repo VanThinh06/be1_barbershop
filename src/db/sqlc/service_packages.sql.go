@@ -86,6 +86,17 @@ func (q *Queries) CreateServicePackageItem(ctx context.Context, arg CreateServic
 	return i, err
 }
 
+const deleteServicePackage = `-- name: DeleteServicePackage :exec
+DELETE FROM "ServicePackages"
+WHERE
+  "id" = $1
+`
+
+func (q *Queries) DeleteServicePackage(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.Exec(ctx, deleteServicePackage, id)
+	return err
+}
+
 const getServicePackage = `-- name: GetServicePackage :one
 SELECT id, barber_shop_id, combo_service_gender, combo_service_name, combo_service_timer, combo_service_price, combo_service_discount_price, combo_service_discount_start_time, combo_service_discount_end_time, combo_service_description, combo_service_image_url, combo_service_is_active, service_items FROM "view_service_packages"
 WHERE id = $1

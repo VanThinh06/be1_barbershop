@@ -62,3 +62,10 @@ WHERE csi.service_package_id = $1
       SELECT unnest($2::uuid[])
     )
   );
+
+
+-- name: DeleteServicePackage :exec
+DELETE FROM "ServicePackages"
+WHERE
+  "id" = $1;
+

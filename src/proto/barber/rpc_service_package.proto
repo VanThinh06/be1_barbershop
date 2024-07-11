@@ -59,3 +59,13 @@ message UpdateServicePackageRequest{
 message UpdateServicePackageResponse{
     ServicePackageItem service_package = 1;
 }
+
+// delete
+message DeleteServicePackageRequest{
+    string id = 1;
+    string barber_shop_id = 2;
+}
+
+message DeleteServicePackageResponse{
+    string message = 1;
+}

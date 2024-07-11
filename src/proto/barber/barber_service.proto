@@ -369,6 +369,18 @@ rpc UpdateServicePackage (UpdateServicePackageRequest) returns (UpdateServicePac
 };
 }
 
+rpc DeleteServicePackage (DeleteServicePackageRequest) returns (DeleteServicePackageResponse){
+  option (google.api.http) = {
+    delete: "/v1/barbershop/{barber_shop_id}/service-package/{id}"
+  };
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+  description: "API endpoint to update a service category"
+  summary: "Update service category"
+  tags: "service categories"
+};
+}
+
+
 // Appointments
 rpc CreateAppointments (CreateAppointmentsRequest) returns (CreateAppointmentsResponse){
   option (google.api.http) = {

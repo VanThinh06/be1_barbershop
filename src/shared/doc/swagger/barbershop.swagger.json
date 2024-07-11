@@ -816,6 +816,44 @@
         ]
       }
     },
+    "/v1/barbershop/{barberShopId}/service-package/{id}": {
+      "delete": {
+        "summary": "Update service category",
+        "description": "API endpoint to update a service category",
+        "operationId": "BarberService_DeleteServicePackage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteServicePackageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barberShopId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "service categories"
+        ]
+      }
+    },
     "/v1/barbershop/{id}": {
       "get": {
         "summary": "Get a details barber shop",
@@ -2278,6 +2316,14 @@
       }
     },
     "pbDeleteServiceItemResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "pbDeleteServicePackageResponse": {
       "type": "object",
       "properties": {
         "message": {

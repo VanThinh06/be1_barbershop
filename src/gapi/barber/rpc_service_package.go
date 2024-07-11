@@ -281,3 +281,41 @@ func (server *Server) UpdateServicePackage(ctx context.Context, req *barber.Upda
 	}
 	return rsp, nil
 }
+
+// DeleteServiceItem
+func (server *Server) DeleteServicePackage(ctx context.Context, req *barber.DeleteServicePackageRequest) (*barber.DeleteServicePackageResponse, error) {
+
+	payload, err := server.authorizeBarber(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+	}
+
+	idService, err := uuid.Parse(req.GetId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "service don't exist")
+	}
+
+	barberShopId, err := uuid.Parse(req.GetBarberShopId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
+
+	permissionService := server.checkPermissionManageService(ctx, barberShopId, payload.Barber.BarberID)
+	if permissionService != nil {
+		return nil, permissionService
+	}
+
+	err = server.Store.DeleteServicePackage(ctx, idService)
+	if err != nil {
+		if pqErr, ok := err.(*pgconn.PgError); ok {
+			switch pqErr.ConstraintName {
+			}
+		}
+		return nil, utils.InternalError(err)
+	}
+
+	rsp := &barber.DeleteServicePackageResponse{
+		Message: "success",
+	}
+	return rsp, nil
+}

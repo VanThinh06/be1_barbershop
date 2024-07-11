@@ -281,9 +281,15 @@ func (server *Server) DeleteServiceItem(ctx context.Context, req *barber.DeleteS
 		return nil, permissionService
 	}
 
-	err = server.Store.DeleteBarberShopChains(ctx, idService)
+	err = server.Store.DeleteServiceItem(ctx, idService)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "internal")
+		if pqErr, ok := err.(*pgconn.PgError); ok {
+			switch pqErr.ConstraintName {
+			case "ServicePackageItems_service_item_id_fkey":
+				return nil, status.Errorf(codes.FailedPrecondition, "unable to delete this service because it is still in use elsewhere.")
+			}
+		}
+		return nil, status.Errorf(codes.Internal, "failed to delete service item")
 	}
 
 	rsp := &barber.DeleteServiceItemResponse{
