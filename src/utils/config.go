@@ -22,6 +22,10 @@ type Config struct {
 	AesKey                    string        `mapstructure:"AES_KEY"`
 	AccountEmail              string        `mapstructure:"ACCOUNT_EMAIL"`
 	PasswordEmail             string        `mapstructure:"PASSWORD_EMAIL"`
+	CloudinaryUrl             string        `mapstructure:"CLOUDINARY_URL"`
+	CloudinaryName            string        `mapstructure:"CLOUDINARY_NAME"`
+	CloudinarySecret          string        `mapstructure:"CLOUDINARY_SECRET_KEY"`
+	CloudinaryKey             string        `mapstructure:"CLOUDINARY_KEY"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

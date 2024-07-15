@@ -14,6 +14,7 @@ import (
 
 	_ "barbershop/src/shared/doc/statik"
 
+	"github.com/cloudinary/cloudinary-go/v2"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/lib/pq"
@@ -39,7 +40,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Unable to parse database configuration: %v", err)
 	}
-
 	ctx := context.Background()
 	conn, err := pgxpool.NewWithConfig(ctx, pgxpoolConfig)
 	if err != nil {
@@ -47,19 +47,22 @@ func main() {
 	}
 	defer conn.Close()
 
-	app, err := firebase.NewApp(context.Background(), nil)
+	firebase, err := firebase.NewApp(ctx, nil)
 	if err != nil {
 		log.Fatalf("Khởi tạo ứng dụng Firebase thất bại: %v", err)
 	}
 
+	cld, _ := cloudinary.NewFromParams(config.CloudinaryName, config.CloudinaryKey, config.CloudinarySecret)
+
 	store := db.NewStore(conn)
 
-	firebaseApp := db.NewFirebase(app)
-	go runGatewayServer(config, store, firebaseApp)
-	runGrpcServer(config, store, firebaseApp)
+	serviceApp := db.NewServiceApp(firebase, cld)
+
+	go runGatewayServer(config, store, serviceApp)
+	runGrpcServer(config, store, serviceApp)
 }
 
-func runGatewayServer(config utils.Config, store db.StoreMain, firebase db.FirebaseApp) {
+func runGatewayServer(config utils.Config, store db.StoreMain, serviceApp db.ServiceApp) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -67,7 +70,7 @@ func runGatewayServer(config utils.Config, store db.StoreMain, firebase db.Fireb
 	transportCredentials := insecure.NewCredentials()
 	_ = []grpc.DialOption{grpc.WithTransportCredentials(transportCredentials)}
 
-	server, err := gapi.NewServer(config, store, firebase)
+	server, err := gapi.NewServer(config, store, serviceApp)
 	if err != nil {
 		log.Fatal("cannot create server:", err)
 	}
@@ -76,7 +79,7 @@ func runGatewayServer(config utils.Config, store db.StoreMain, firebase db.Fireb
 		log.Fatal("cannot register handler server:", err)
 	}
 
-	serverCustomer, err := customergapi.NewServer(config, store, firebase)
+	serverCustomer, err := customergapi.NewServer(config, store, serviceApp)
 	if err != nil {
 		log.Fatal("cannot create server:", err)
 	}
@@ -107,16 +110,16 @@ func runGatewayServer(config utils.Config, store db.StoreMain, firebase db.Fireb
 	}
 }
 
-func runGrpcServer(config utils.Config, store db.StoreMain, firebase db.FirebaseApp) {
+func runGrpcServer(config utils.Config, store db.StoreMain, serviceApp db.ServiceApp) {
 	grpcServer := grpc.NewServer()
 
-	server, err := gapi.NewServer(config, store, firebase)
+	server, err := gapi.NewServer(config, store, serviceApp)
 	if err != nil {
 		log.Fatal("cannot create service:", err)
 	}
 	barber.RegisterBarberServiceServer(grpcServer, server)
 
-	serverCustomer, err := customergapi.NewServer(config, store, firebase)
+	serverCustomer, err := customergapi.NewServer(config, store, serviceApp)
 	if err != nil {
 		log.Fatal("cannot create service Customer:", err)
 	}

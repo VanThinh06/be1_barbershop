@@ -7,6 +7,7 @@ import (
 	"barbershop/src/utils"
 	"context"
 	"database/sql"
+	"sync"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -34,6 +35,23 @@ func (server *Server) CreateServiceItem(ctx context.Context, req *barber.CreateS
 		return nil, permissionService
 	}
 
+	var wg sync.WaitGroup
+	var respImage *barber.UploadImageResponse
+
+	if len(req.ImageUrl) != 0 {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			argUploadImage := &barber.UploadImageRequest{
+				FileName:  "",
+				ImageData: req.GetImageUrl(),
+			}
+			respImage, err = server.UploadImageService(ctx, argUploadImage)
+		}()
+	}
+
+	wg.Wait()
+
 	arg := db.CreateServiceItemParams{
 		CategoryID: int16(req.GetCategoryId()),
 		GenderID:   int16(req.GetGenderId()),
@@ -45,8 +63,8 @@ func (server *Server) CreateServiceItem(ctx context.Context, req *barber.CreateS
 			Valid:  req.Description != nil,
 		},
 		ImageUrl: sql.NullString{
-			String: req.GetImageUrl(),
-			Valid:  req.ImageUrl != nil,
+			String: respImage.GetImageUrl(),
+			Valid:  respImage.GetImageUrl() != "",
 		},
 		BarberShopID: barberShopId,
 	}
@@ -176,6 +194,18 @@ func (server *Server) UpdateServiceItem(ctx context.Context, req *barber.UpdateS
 		return nil, status.Errorf(codes.NotFound, "service don't exist")
 	}
 
+	var respImage *barber.UploadImageResponse
+	if len(req.ImageUrl) != 0 {
+		argUploadImage := &barber.UploadImageRequest{
+			FileName:  "",
+			ImageData: req.GetImageUrl(),
+		}
+		respImage, err = server.UploadImageService(ctx, argUploadImage)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	arg := db.UpdateServiceItemParams{
 		CategoryID: pgtype.Int2{
 			Int16: int16(req.GetCategoryId()),
@@ -206,8 +236,8 @@ func (server *Server) UpdateServiceItem(ctx context.Context, req *barber.UpdateS
 			Valid:  req.Description != nil,
 		},
 		ImageUrl: sql.NullString{
-			String: req.GetImageUrl(),
-			Valid:  req.ImageUrl != nil,
+			String: respImage.GetImageUrl(),
+			Valid:  respImage.GetImageUrl() != "",
 		},
 		DiscountPrice: pgtype.Float4{
 			Float32: req.GetDiscountPrice(),

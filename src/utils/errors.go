@@ -53,3 +53,7 @@ func AlreadyExistsError(err error, strError string) error {
 func ReturnError(code codes.Code, err error, strError string) error {
 	return status.Error(code, strError)
 }
+
+func ForeignKeyError(err error, strError string) error {
+	return status.Error(codes.FailedPrecondition, strError)
+}

@@ -218,6 +218,21 @@ func convertListServiceCategory(res []db.ListServiceCategoriesRow) []*barber.Ser
 	}
 	return serviceCategories
 }
+func convertListCategoryPosition(res []db.ListCategoryPositionRow) []*barber.ServiceCategory {
+	var serviceCategories []*barber.ServiceCategory
+	for _, item := range res {
+
+		serviceCategory := &barber.ServiceCategory{
+			Id:           int32(item.ID),
+			Name:         item.Name,
+			BarberShopId: item.BarberShopID.UUID.String(),
+			Position:     int32(item.Position.Int16),
+			Visible:      item.Visible.Bool,
+		}
+		serviceCategories = append(serviceCategories, serviceCategory)
+	}
+	return serviceCategories
+}
 
 func convertListService(res []db.ListServicesByCategoryRow) []*barber.ServiceItem {
 	var services []*barber.ServiceItem

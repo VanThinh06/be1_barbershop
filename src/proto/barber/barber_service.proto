@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package pb;
+import "barber/rpc_upload_image.proto";
 
 import "barber/rpc_provinces_get.proto";
 import "barber/rpc_districts_get.proto";
@@ -247,6 +248,17 @@ rpc DeleteServiceCategory (DeleteServiceCategoryRequest) returns (DeleteServiceC
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
   description: "API endpoint to delete a service category"
   summary: "Delete service category"
+  tags: "service categories"
+};
+}
+
+rpc ListCategoryPosition (ListServiceCategoryRequest) returns (ListServiceCategoryResponse){
+  option (google.api.http) = {
+    get: "/v1/barbershop/{barber_shop_id}/category-position"
+  };
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+  description: "API endpoint to create a service category"
+  summary: "Get service category"
   tags: "service categories"
 };
 }
@@ -598,5 +610,17 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         tags: "lookup"
       };
     }
+
+    rpc UploadImage(UploadImageRequest) returns (UploadImageResponse) {
+        option (google.api.http) = {
+            post: "/v1/upload"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "API endpoint to upload an image"
+            summary: "Upload image"
+            tags: ["upload"]
+        };
+      }
 }
     

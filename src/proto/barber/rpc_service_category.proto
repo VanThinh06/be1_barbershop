@@ -32,7 +32,8 @@ message UpdateServiceCategoryResponse {
 }
 
 message DeleteServiceCategoryRequest{
-    string id = 1;
+    repeated int32 id = 1;
+    string barber_shop_id = 2;
 }
 
 message DeleteServiceCategoryResponse{

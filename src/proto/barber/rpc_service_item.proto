@@ -16,7 +16,7 @@ message CreateServiceItemRequest{
     int32 timer = 5;
     float price = 6;
     optional string description = 7;
-    optional string image_url = 8;
+    optional bytes image_url = 8;
 }
 
 message CreateServiceItemResponse{
@@ -50,7 +50,7 @@ message UpdateServiceItemRequest{
     optional int32 timer = 5;
     optional float price = 6;
     optional string description = 7;
-    optional string image_url = 8;
+    optional bytes image_url = 8;
     optional bool is_active = 9;
     optional int32 category_id = 10;
     optional float discount_price = 12;

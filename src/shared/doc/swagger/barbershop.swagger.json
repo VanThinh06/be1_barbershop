@@ -682,6 +682,38 @@
         ]
       }
     },
+    "/v1/barbershop/{barberShopId}/category-position": {
+      "get": {
+        "summary": "Get service category",
+        "description": "API endpoint to create a service category",
+        "operationId": "BarberService_ListCategoryPosition",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListServiceCategoryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barberShopId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "service categories"
+        ]
+      }
+    },
     "/v1/barbershop/{barberShopId}/service-category": {
       "get": {
         "summary": "Get service category",
@@ -1304,6 +1336,18 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "collectionFormat": "csv",
+            "minItems": 1
+          },
+          {
+            "name": "barberShopId",
+            "in": "query",
+            "required": false,
             "type": "string"
           }
         ],
@@ -1549,6 +1593,40 @@
         ],
         "tags": [
           "barbershop services"
+        ]
+      }
+    },
+    "/v1/upload": {
+      "post": {
+        "summary": "Upload image",
+        "description": "API endpoint to upload an image",
+        "operationId": "BarberService_UploadImage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUploadImageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUploadImageRequest"
+            }
+          }
+        ],
+        "tags": [
+          "upload"
         ]
       }
     },
@@ -2227,7 +2305,8 @@
           "type": "string"
         },
         "imageUrl": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         }
       },
       "title": "insert"
@@ -2265,7 +2344,8 @@
           "type": "string"
         },
         "imageUrl": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "serviceItems": {
           "type": "array",
@@ -2935,7 +3015,8 @@
           "type": "string"
         },
         "imageUrl": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "isActive": {
           "type": "boolean"
@@ -2995,7 +3076,8 @@
           "type": "string"
         },
         "imageUrl": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "isActive": {
           "type": "boolean"
@@ -3025,6 +3107,29 @@
       "properties": {
         "servicePackage": {
           "$ref": "#/definitions/pbServicePackageItem"
+        }
+      }
+    },
+    "pbUploadImageRequest": {
+      "type": "object",
+      "properties": {
+        "fileName": {
+          "type": "string"
+        },
+        "imageData": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "pbUploadImageResponse": {
+      "type": "object",
+      "properties": {
+        "imageUrl": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
         }
       }
     },

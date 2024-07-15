@@ -131,6 +131,81 @@ func (server *Server) UpdateServiceCategory(ctx context.Context, req *barber.Upd
 	return rsp, nil
 }
 
+// DeleteServiceCategory
+func (server *Server) DeleteServiceCategory(ctx context.Context, req *barber.DeleteServiceCategoryRequest) (*barber.DeleteServiceCategoryResponse, error) {
+
+	payload, err := server.authorizeBarber(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+	}
+
+	barberShopId, err := uuid.Parse(req.GetBarberShopId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
+
+	permissionService := server.checkPermissionManageService(ctx, barberShopId, payload.Barber.BarberID)
+	if permissionService != nil {
+		return nil, permissionService
+	}
+
+	err = server.Store.ExecTx(ctx, func(q *db.Queries) error {
+		for _, v := range req.GetId() {
+			err := q.DeleteServiceCategories(ctx, int16(v))
+			if err != nil {
+				return utils.ForeignKeyError(err, "cannot delete category because it is used by other services")
+			}
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	rsp := &barber.DeleteServiceCategoryResponse{
+		Message: "success",
+	}
+	return rsp, nil
+}
+
+// ListCategoryPosition
+func (server *Server) ListCategoryPosition(ctx context.Context, req *barber.ListServiceCategoryRequest) (*barber.ListServiceCategoryResponse, error) {
+
+	payload, err := server.authorizeBarber(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+	}
+
+	barberShopId, err := uuid.Parse(req.BarberShopId)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
+
+	argCheckPermission := db.CheckBarberRolePermissionParams{
+		ID:           int16(utilities.ViewServiceList),
+		BarberID:     payload.Barber.BarberID,
+		BarberShopID: barberShopId,
+	}
+	isPermission, err := server.Store.CheckBarberRolePermission(ctx, argCheckPermission)
+	if !isPermission {
+		return nil, noPermissionError(err)
+	}
+
+	res, err := server.Store.ListCategoryPosition(ctx, uuid.NullUUID{
+		UUID:  barberShopId,
+		Valid: true,
+	}) 
+	if err != nil {
+		return nil, status.Error(codes.Internal, "internal")
+	}
+
+	rsp := &barber.ListServiceCategoryResponse{
+		ServiceCategories: convertListCategoryPosition(res),
+	}
+	return rsp, nil
+}
+
 // UpdateCategoryPosition
 func (server *Server) UpdateCategoryPosition(ctx context.Context, req *barber.UpdateCategoryPositionRequest) (*barber.UpdateCategoryPositionResponse, error) {
 
@@ -171,29 +246,6 @@ func (server *Server) UpdateCategoryPosition(ctx context.Context, req *barber.Up
 	}
 
 	rsp := &barber.UpdateCategoryPositionResponse{
-		Message: "success",
-	}
-	return rsp, nil
-}
-
-// DeleteServiceCategory
-func (server *Server) DeleteServiceCategory(ctx context.Context, req *barber.DeleteServiceCategoryRequest) (*barber.DeleteServiceCategoryResponse, error) {
-
-	payload, err := server.authorizeBarber(ctx)
-	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
-	}
-
-	if payload.Barber.BarberID.String() != req.GetId() {
-		return nil, status.Errorf(codes.PermissionDenied, "no permission")
-	}
-
-	err = server.Store.DeleteServiceCategories(ctx, 1)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "internal")
-	}
-
-	rsp := &barber.DeleteServiceCategoryResponse{
 		Message: "success",
 	}
 	return rsp, nil

@@ -6,6 +6,7 @@ import (
 	"barbershop/src/utils"
 	"context"
 	"database/sql"
+	"sync"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -48,6 +49,23 @@ func (server *Server) CreateServicePackage(ctx context.Context, req *barber.Crea
 		}
 	}
 
+	var wg sync.WaitGroup
+	var respImage *barber.UploadImageResponse
+
+	if len(req.ImageUrl) != 0 {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			argUploadImage := &barber.UploadImageRequest{
+				FileName:  "",
+				ImageData: req.GetImageUrl(),
+			}
+			respImage, err = server.UploadImageService(ctx, argUploadImage)
+		}()
+	}
+
+	wg.Wait()
+
 	var createdService db.ServicePackage
 	err = server.Store.ExecTx(ctx, func(q *db.Queries) error {
 		arg := db.CreateServicePackageParams{
@@ -60,8 +78,8 @@ func (server *Server) CreateServicePackage(ctx context.Context, req *barber.Crea
 				Valid:  req.Description != nil,
 			},
 			ImageUrl: sql.NullString{
-				String: req.GetImageUrl(),
-				Valid:  req.ImageUrl != nil,
+				String: respImage.GetImageUrl(),
+				Valid:  respImage.GetImageUrl() != "",
 			},
 			BarberShopID: barberShopId,
 		}
@@ -194,6 +212,23 @@ func (server *Server) UpdateServicePackage(ctx context.Context, req *barber.Upda
 		listServiceItems = append(listServiceItems, uuidServiceItem)
 	}
 
+	var wg sync.WaitGroup
+	var respImage *barber.UploadImageResponse
+
+	if len(req.ImageUrl) != 0 {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			argUploadImage := &barber.UploadImageRequest{
+				FileName:  "",
+				ImageData: req.GetImageUrl(),
+			}
+			respImage, err = server.UploadImageService(ctx, argUploadImage)
+		}()
+	}
+
+	wg.Wait()
+
 	arg := db.UpdateServicePackageParams{
 		GenderID: pgtype.Int2{
 			Int16: int16(req.GetGenderId()),
@@ -220,8 +255,8 @@ func (server *Server) UpdateServicePackage(ctx context.Context, req *barber.Upda
 			Valid:  req.Description != nil,
 		},
 		ImageUrl: sql.NullString{
-			String: req.GetImageUrl(),
-			Valid:  req.ImageUrl != nil,
+			String: respImage.GetImageUrl(),
+			Valid:  respImage.GetImageUrl() != "",
 		},
 		DiscountPrice: pgtype.Float4{
 			Float32: req.GetDiscountPrice(),

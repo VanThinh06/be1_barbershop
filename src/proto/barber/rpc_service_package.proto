@@ -14,7 +14,7 @@ message CreateServicePackageRequest{
     int32 timer = 4;
     float price = 5;
     optional string description = 6;
-    optional string image_url = 7;
+    optional bytes image_url = 7;
     repeated string service_items = 8;
 }
 
@@ -48,7 +48,7 @@ message UpdateServicePackageRequest{
     optional int32 timer = 5;
     optional float price = 6;
     optional string description = 7;
-    optional string image_url = 8;
+    optional bytes image_url = 8;
     optional bool is_active = 9;
     optional float discount_price = 10;
     optional google.protobuf.Timestamp discount_start_time = 11;
