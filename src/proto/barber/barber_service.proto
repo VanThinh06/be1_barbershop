@@ -231,7 +231,7 @@ rpc ListServiceCategory (ListServiceCategoryRequest) returns (ListServiceCategor
 
 rpc UpdateServiceCategory (UpdateServiceCategoryRequest) returns (UpdateServiceCategoryResponse){
   option (google.api.http) = {
-    patch: "/v1/service-category/{id}"
+    patch: "/v1/service-category"
     body: "*"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -243,7 +243,8 @@ rpc UpdateServiceCategory (UpdateServiceCategoryRequest) returns (UpdateServiceC
 
 rpc DeleteServiceCategory (DeleteServiceCategoryRequest) returns (DeleteServiceCategoryResponse){
   option (google.api.http) = {
-    delete: "/v1/service-category/{id}"
+    delete: "/v1/barbershop/{barber_shop_id}/service-category"
+    body: "*"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
   description: "API endpoint to delete a service category"

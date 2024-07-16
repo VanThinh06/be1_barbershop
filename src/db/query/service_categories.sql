@@ -15,22 +15,22 @@ LEFT JOIN
 ON 
     sc.id = cp.category_id 
 WHERE sc."barber_shop_id" = $1
-ORDER BY cp.position
-;
+ORDER BY sc.name;
 
 
--- name: UpdateServiceCategory :exec
+-- name: UpdateServiceCategory :one
 UPDATE "ServiceCategories"
 SET "name" = coalesce(sqlc.narg('name'), name)
-WHERE "id" = $1;
+WHERE "id" = $1
+RETURNING *;
+;
 
 
 -- name: DeleteServiceCategories :exec
 DELETE FROM "ServiceCategories"
 WHERE "id" IN (
-  $1 -- Danh sách các ID
+  $1 
 );
-
 
 -- name: ListCategoryPosition :many
 SELECT 
@@ -44,7 +44,8 @@ LEFT JOIN
 ON 
     sc.id = cp.category_id 
 WHERE sc."barber_shop_id" = $1 OR sc."barber_shop_id" IS NULL
-ORDER BY cp.position
+ORDER BY cp.visible DESC,
+         cp."position"
 ;
 
 -- name: UpdateCategoryPosition :exec
@@ -53,4 +54,5 @@ VALUES ($1, $2, $3, $4)
 ON CONFLICT ("barber_shop_id", "category_id") 
 DO UPDATE SET 
     "position" = EXCLUDED."position",
-    "visible" = EXCLUDED."visible";
+    "visible" = EXCLUDED."visible"
+WHERE EXCLUDED."visible" = true;

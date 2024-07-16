@@ -51,20 +51,20 @@ func (server *Server) CreateServicePackage(ctx context.Context, req *barber.Crea
 
 	var wg sync.WaitGroup
 	var respImage *barber.UploadImageResponse
-
-	if len(req.ImageUrl) != 0 {
+	var errUploadImage error
+	if len(req.GetImageUrl()) > 0 {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			argUploadImage := &barber.UploadImageRequest{
-				FileName:  "",
-				ImageData: req.GetImageUrl(),
+			if len(req.GetImageUrl()) > 0 {
+				respImage, errUploadImage = server.deleteAndUpdateImage(ctx, "", req.GetImageUrl(), req.GetBarberShopId(), utils.ServicePackage)
 			}
-			respImage, err = server.UploadImageService(ctx, argUploadImage)
 		}()
 	}
-
 	wg.Wait()
+	if errUploadImage != nil {
+		return nil, errUploadImage
+	}
 
 	var createdService db.ServicePackage
 	err = server.Store.ExecTx(ctx, func(q *db.Queries) error {
@@ -203,7 +203,6 @@ func (server *Server) UpdateServicePackage(ctx context.Context, req *barber.Upda
 	}
 
 	var listServiceItems []uuid.UUID
-
 	for _, item := range req.GetServiceItems() {
 		uuidServiceItem, err := uuid.Parse(item)
 		if err != nil {
@@ -212,22 +211,17 @@ func (server *Server) UpdateServicePackage(ctx context.Context, req *barber.Upda
 		listServiceItems = append(listServiceItems, uuidServiceItem)
 	}
 
-	var wg sync.WaitGroup
 	var respImage *barber.UploadImageResponse
-
-	if len(req.ImageUrl) != 0 {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			argUploadImage := &barber.UploadImageRequest{
-				FileName:  "",
-				ImageData: req.GetImageUrl(),
-			}
-			respImage, err = server.UploadImageService(ctx, argUploadImage)
-		}()
+	if len(req.GetImageUrl()) > 0 {
+		res, err := server.Store.GetServicePackage(ctx, idServicePackage)
+		if err != nil {
+			return nil, err
+		}
+		respImage, err = server.deleteAndUpdateImage(ctx, res.ComboServiceImageUrl.String, req.GetImageUrl(), req.GetBarberShopId(), utils.ServicePackage)
+		if err != nil {
+			return nil, err
+		}
 	}
-
-	wg.Wait()
 
 	arg := db.UpdateServicePackageParams{
 		GenderID: pgtype.Int2{

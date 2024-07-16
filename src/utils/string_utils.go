@@ -23,3 +23,8 @@ func ConvertToTimestampProto(timestamp pgtype.Timestamp) *timestamppb.Timestamp 
 	}
 	return timestamppb.New(timestamp.Time)
 }
+
+func ExtractPublicIDFromURL(url string) string {
+	publicID := url[strings.LastIndex(url, "/")+1 : strings.LastIndex(url, ".")]
+	return publicID
+}

@@ -20,7 +20,7 @@ CREATE TABLE "CategoryPositions" (
   "visible" boolean NOT NULL DEFAULT TRUE,
   PRIMARY KEY ("barber_shop_id", "category_id"),
   FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id"),
-  FOREIGN KEY ("category_id") REFERENCES "ServiceCategories" ("id")
+  FOREIGN KEY ("category_id") REFERENCES "ServiceCategories" ("id") ON DELETE CASCADE
 );
 
 -- Create indexes

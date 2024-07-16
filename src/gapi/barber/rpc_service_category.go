@@ -103,9 +103,17 @@ func (server *Server) ListServiceCategory(ctx context.Context, req *barber.ListS
 // UpdateServiceCategory
 func (server *Server) UpdateServiceCategory(ctx context.Context, req *barber.UpdateServiceCategoryRequest) (*barber.UpdateServiceCategoryResponse, error) {
 
-	_, err := server.authorizeBarber(ctx)
+	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
+	}
+	barberShopId, err := uuid.Parse(req.GetBarberShopId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
+	}
+	permissionService := server.checkPermissionManageService(ctx, barberShopId, payload.Barber.BarberID)
+	if permissionService != nil {
+		return nil, permissionService
 	}
 
 	arg := db.UpdateServiceCategoryParams{
@@ -116,7 +124,7 @@ func (server *Server) UpdateServiceCategory(ctx context.Context, req *barber.Upd
 		},
 	}
 
-	err = server.Store.UpdateServiceCategory(ctx, arg)
+	category, err := server.Store.UpdateServiceCategory(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
@@ -126,7 +134,7 @@ func (server *Server) UpdateServiceCategory(ctx context.Context, req *barber.Upd
 	}
 
 	rsp := &barber.UpdateServiceCategoryResponse{
-		Message: "Message",
+		ServiceCategory: convertServiceCategory(category),
 	}
 	return rsp, nil
 }
@@ -150,7 +158,7 @@ func (server *Server) DeleteServiceCategory(ctx context.Context, req *barber.Del
 	}
 
 	err = server.Store.ExecTx(ctx, func(q *db.Queries) error {
-		for _, v := range req.GetId() {
+		for _, v := range req.GetIds() {
 			err := q.DeleteServiceCategories(ctx, int16(v))
 			if err != nil {
 				return utils.ForeignKeyError(err, "cannot delete category because it is used by other services")
@@ -195,7 +203,7 @@ func (server *Server) ListCategoryPosition(ctx context.Context, req *barber.List
 	res, err := server.Store.ListCategoryPosition(ctx, uuid.NullUUID{
 		UUID:  barberShopId,
 		Valid: true,
-	}) 
+	})
 	if err != nil {
 		return nil, status.Error(codes.Internal, "internal")
 	}

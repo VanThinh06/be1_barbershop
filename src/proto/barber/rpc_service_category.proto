@@ -23,16 +23,17 @@ message ListServiceCategoryResponse {
 }
 
 message UpdateServiceCategoryRequest {
-    optional string name = 1;
-    int32 id = 2;
+    int32 id = 1;
+    optional string name = 2;
+    string barber_shop_id = 3;
 }
 
 message UpdateServiceCategoryResponse {
-    string message = 1;
+    ServiceCategory service_category = 1;
 }
 
 message DeleteServiceCategoryRequest{
-    repeated int32 id = 1;
+    repeated int32 ids = 1;
     string barber_shop_id = 2;
 }
 

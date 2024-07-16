@@ -37,20 +37,20 @@ func (server *Server) CreateServiceItem(ctx context.Context, req *barber.CreateS
 
 	var wg sync.WaitGroup
 	var respImage *barber.UploadImageResponse
-
+	var errUploadImage error
 	if len(req.ImageUrl) != 0 {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			argUploadImage := &barber.UploadImageRequest{
-				FileName:  "",
-				ImageData: req.GetImageUrl(),
+			if len(req.GetImageUrl()) > 0 {
+				respImage, errUploadImage = server.deleteAndUpdateImage(ctx, "", req.GetImageUrl(), req.GetBarberShopId(), utils.ServiceItems)
 			}
-			respImage, err = server.UploadImageService(ctx, argUploadImage)
 		}()
 	}
-
 	wg.Wait()
+	if errUploadImage != nil {
+		return nil, errUploadImage
+	}
 
 	arg := db.CreateServiceItemParams{
 		CategoryID: int16(req.GetCategoryId()),
@@ -194,13 +194,14 @@ func (server *Server) UpdateServiceItem(ctx context.Context, req *barber.UpdateS
 		return nil, status.Errorf(codes.NotFound, "service don't exist")
 	}
 
+	// Xử lý upload ảnh
 	var respImage *barber.UploadImageResponse
-	if len(req.ImageUrl) != 0 {
-		argUploadImage := &barber.UploadImageRequest{
-			FileName:  "",
-			ImageData: req.GetImageUrl(),
+	if len(req.GetImageUrl()) > 0 {
+		res, err := server.Store.GetServiceItem(ctx, idService)
+		if err != nil {
+			return nil, err
 		}
-		respImage, err = server.UploadImageService(ctx, argUploadImage)
+		respImage, err = server.deleteAndUpdateImage(ctx, res.ImageUrl.String, req.GetImageUrl(), req.GetBarberShopId(), utils.ServiceItems)
 		if err != nil {
 			return nil, err
 		}
@@ -326,6 +327,29 @@ func (server *Server) DeleteServiceItem(ctx context.Context, req *barber.DeleteS
 		Message: "success",
 	}
 	return rsp, nil
+}
+
+func (server *Server) deleteAndUpdateImage(ctx context.Context, imageUrl string, imageData []byte, barberShopId string, folderName string) (*barber.UploadImageResponse, error) {
+
+	if len(imageUrl) > 0 {
+		publicIdImage := utils.ExtractPublicIDFromURL(imageUrl)
+		err := server.DeleteImage(ctx, publicIdImage)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	argUploadImage := &barber.UploadImageRequest{
+		FileName:     "",
+		ImageData:    imageData,
+		BarberShopId: barberShopId,
+		FolderName:   folderName,
+	}
+	uploadImage, err := server.UploadImageServiceItem(ctx, argUploadImage)
+	if err != nil {
+		return nil, err
+	}
+	return uploadImage, nil
 }
 
 func (server *Server) checkPermissionManageService(ctx context.Context, barberShopID uuid.UUID, barberID uuid.UUID) error {

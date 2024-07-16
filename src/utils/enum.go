@@ -1,6 +1,7 @@
 package utils
 
 type GenderEnum int32
+
 const (
 	NoGender GenderEnum = iota
 	Male
@@ -9,6 +10,7 @@ const (
 )
 
 type RoleEnum int32
+
 const (
 	NoRole GenderEnum = iota
 	Barber
@@ -19,6 +21,7 @@ const (
 )
 
 type RoleTypeEnum string
+
 const (
 	Staff         RoleTypeEnum = "Staff"
 	Management    RoleTypeEnum = "Management"
@@ -26,6 +29,7 @@ const (
 )
 
 type PermissionEnum int32
+
 const (
 	NoPermission PermissionEnum = iota
 	ViewEmployeeInformation
@@ -34,4 +38,11 @@ const (
 	ManageService
 	ViewAppointmentList
 	ManageAppointment
+)
+
+type FolderImage int32
+
+const (
+	ServiceItems   = "service-items"
+	ServicePackage = "service-packages"
 )

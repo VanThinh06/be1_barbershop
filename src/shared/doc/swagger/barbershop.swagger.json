@@ -744,6 +744,53 @@
         "tags": [
           "service categories"
         ]
+      },
+      "delete": {
+        "summary": "Delete service category",
+        "description": "API endpoint to delete a service category",
+        "operationId": "BarberService_DeleteServiceCategory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteServiceCategoryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barberShopId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "service categories"
+        ]
       }
     },
     "/v1/barbershop/{barberShopId}/service-item": {
@@ -1310,50 +1357,6 @@
         "tags": [
           "service categories"
         ]
-      }
-    },
-    "/v1/service-category/{id}": {
-      "delete": {
-        "summary": "Delete service category",
-        "description": "API endpoint to delete a service category",
-        "operationId": "BarberService_DeleteServiceCategory",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbDeleteServiceCategoryResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "collectionFormat": "csv",
-            "minItems": 1
-          },
-          {
-            "name": "barberShopId",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "service categories"
-        ]
       },
       "patch": {
         "summary": "Update service category",
@@ -1375,23 +1378,11 @@
         },
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string"
-                }
-              }
+              "$ref": "#/definitions/pbUpdateServiceCategoryRequest"
             }
           }
         ],
@@ -2979,11 +2970,26 @@
         }
       }
     },
+    "pbUpdateServiceCategoryRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "barberShopId": {
+          "type": "string"
+        }
+      }
+    },
     "pbUpdateServiceCategoryResponse": {
       "type": "object",
       "properties": {
-        "message": {
-          "type": "string"
+        "serviceCategory": {
+          "$ref": "#/definitions/pbServiceCategory"
         }
       }
     },
@@ -3113,12 +3119,18 @@
     "pbUploadImageRequest": {
       "type": "object",
       "properties": {
+        "barberShopId": {
+          "type": "string"
+        },
         "fileName": {
           "type": "string"
         },
         "imageData": {
           "type": "string",
           "format": "byte"
+        },
+        "folderName": {
+          "type": "string"
         }
       }
     },
