@@ -17,7 +17,7 @@ type Barber struct {
 	GenderID          pgtype.Int2        `json:"gender_id"`
 	Phone             string             `json:"phone"`
 	NickName          string             `json:"nick_name"`
-	Email             string             `json:"email"`
+	Email             sql.NullString     `json:"email"`
 	HashedPassword    sql.NullString     `json:"hashed_password"`
 	FullName          string             `json:"full_name"`
 	Haircut           bool               `json:"haircut"`

@@ -17,130 +17,17 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// barber employee create single
-func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeeRequest) (*barber.CreateBarberEmployeeResponse, error) {
-
-	payload, err := server.authorizeBarber(ctx)
-	if err != nil {
-		return nil, utils.UnauthenticatedError(err)
-	}
-
-	barberShopID, err := uuid.Parse(req.BarberShopId)
-	if err != nil {
-		return nil, utils.NotFoundError(err, "barber shop don't exist")
-	}
-
-	argCheckPermission := db.CheckBarberRolePermissionParams{
-		ID:           int16(utilities.ManageEmployee),
-		BarberID:     payload.Barber.BarberID,
-		BarberShopID: barberShopID,
-	}
-	isPermission, err := server.Store.CheckBarberRolePermission(ctx, argCheckPermission)
-	if !isPermission {
-		return nil, utils.NoPermissionError(err)
-	}
-
-	validations := utils.ValidateBarberEmployee(req.BarberEmployee)
-	if validations != nil {
-		return nil, utils.InvalidArgumentError(validations)
-	}
-
-	defaultPassword, err := server.Store.GetDefaultPasswordEmployee(ctx, barberShopID)
-	if err != nil {
-		return nil, utils.InternalError(err)
-	}
-	var hashedPassword string
-	if defaultPassword.Valid {
-		hashedPassword, err = helpers.HashPassword(defaultPassword.String)
-		if err != nil {
-			return nil, utils.InternalError(err)
-		}
-	}
-
-	nickName := utils.GenerateNickName(req.BarberEmployee.FullName)
-
-	var hashedPasswordValid bool = hashedPassword != ""
-	arg := db.CreateBarberEmployeeParams{
-		Phone: req.BarberEmployee.GetPhone(),
-		HashedPassword: sql.NullString{
-			String: hashedPassword,
-			Valid:  hashedPasswordValid,
-		},
-		NickName: strings.ToLower(nickName),
-		FullName: req.BarberEmployee.GetFullName(),
-	}
-
-	errTx := make(chan error)
-
-	go func() {
-		err := server.txCreateBarberEmployee(ctx, req, arg)
-		errTx <- err
-	}()
-
-	err = <-errTx
-
-	if err != nil {
-		return nil, err
-	}
-
-	rsp := &barber.CreateBarberEmployeeResponse{
-		Message: "Barber added successfully.",
-	}
-	return rsp, nil
-}
-
-func (server *Server) txCreateBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeeRequest, arg db.CreateBarberEmployeeParams) error {
-
-	err := server.Store.ExecTx(ctx, func(q *db.Queries) error {
-
-		resBarber, err := server.Store.CreateBarberEmployee(ctx, arg)
-		if err != nil {
-			if pqErr, ok := err.(*pgconn.PgError); ok {
-				switch pqErr.ConstraintName {
-				case "Barbers_pkey":
-					return returnError(codes.AlreadyExists, "This id has already existed", err)
-				case "Barbers_email_key":
-					return returnError(codes.AlreadyExists, "This email has already existed", err)
-				case "Barbers_phone_key":
-					return returnError(codes.AlreadyExists, "This phone has already existed", err)
-				case "Barbers_nick_name_key":
-					return returnError(codes.AlreadyExists, "This nick name has already existed", err)
-				}
-			}
-			return internalError(err)
-		}
-
-		barberShopID, err := uuid.Parse(req.BarberShopId)
-		if err != nil {
-			return status.Errorf(codes.InvalidArgument, "barbershops don't exist")
-		}
-		argBarberRole := db.CreateBarberRoleParams{
-			BarberID:     resBarber.ID,
-			BarberShopID: barberShopID,
-			RoleID:       int16(req.RoleId),
-		}
-		_, err = server.Store.CreateBarberRole(ctx, argBarberRole)
-		if err != nil {
-			return err
-		}
-		return err
-	})
-	return err
-}
-
 // barber employee create multi
-func (server *Server) CreateMultiBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeesRequest) (*barber.CreateBarberEmployeesResponse, error) {
+func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeeRequest) (*barber.CreateBarberEmployeeResponse, error) {
 
 	payload, err := server.authorizeBarber(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
-
 	barberShopID, err := uuid.Parse(req.BarberShopId)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
 	}
-
 	err = server.checkPermissionManageEmployee(ctx, barberShopID, payload.Barber.BarberID)
 	if err != nil {
 		return nil, noPermissionError(err)
@@ -163,7 +50,7 @@ func (server *Server) CreateMultiBarberEmployee(ctx context.Context, req *barber
 		return nil, err
 	}
 
-	return &barber.CreateBarberEmployeesResponse{
+	return &barber.CreateBarberEmployeeResponse{
 		Message: "Barber added successfully.",
 	}, nil
 }
@@ -431,7 +318,7 @@ func (server *Server) checkPermissionManageEmployee(ctx context.Context, barberS
 	return nil
 }
 
-func (server *Server) txCreateMultiBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeesRequest, hashedPassword string) error {
+func (server *Server) txCreateMultiBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeeRequest, hashedPassword string) error {
 	err := server.Store.ExecTx(ctx, func(q *db.Queries) error {
 		var err error
 		for _, b := range req.BarberEmployees {
@@ -472,13 +359,11 @@ func (server *Server) txCreateMultiBarberEmployee(ctx context.Context, req *barb
 						return returnError(codes.AlreadyExists, strErr, err)
 					}
 				}
-				return internalError(err)
+				return utils.InternalError(err)
 			}
 
-			barberShopID, err := uuid.Parse(req.BarberShopId)
-			if err != nil {
-				return status.Errorf(codes.InvalidArgument, "barbershops don't exist")
-			}
+			barberShopID := uuid.MustParse(req.BarberShopId)
+
 			argBarberRole := db.CreateBarberRoleParams{
 				BarberID:     resBarber.ID,
 				BarberShopID: barberShopID,
@@ -491,6 +376,5 @@ func (server *Server) txCreateMultiBarberEmployee(ctx context.Context, req *barb
 		}
 		return err
 	})
-
 	return err
 }

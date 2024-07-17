@@ -744,53 +744,6 @@
         "tags": [
           "service categories"
         ]
-      },
-      "delete": {
-        "summary": "Delete service category",
-        "description": "API endpoint to delete a service category",
-        "operationId": "BarberService_DeleteServiceCategory",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbDeleteServiceCategoryResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "barberShopId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "ids": {
-                  "type": "array",
-                  "items": {
-                    "type": "integer",
-                    "format": "int32"
-                  }
-                }
-              }
-            }
-          }
-        ],
-        "tags": [
-          "service categories"
-        ]
       }
     },
     "/v1/barbershop/{barberShopId}/service-item": {
@@ -1267,40 +1220,6 @@
         ]
       }
     },
-    "/v1/multi-barber-employee": {
-      "post": {
-        "summary": "Create a barber",
-        "description": "API endpoint to create barber employee",
-        "operationId": "BarberService_CreateBarberEmployees",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbCreateBarberEmployeesResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbCreateBarberEmployeesRequest"
-            }
-          }
-        ],
-        "tags": [
-          "barbers"
-        ]
-      }
-    },
     "/v1/provinces": {
       "get": {
         "summary": "Get provinces",
@@ -1326,6 +1245,38 @@
       }
     },
     "/v1/service-category": {
+      "delete": {
+        "summary": "Delete service category",
+        "description": "API endpoint to delete a service category",
+        "operationId": "BarberService_DeleteServiceCategory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteServiceCategoryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbDeleteServiceCategoryRequest"
+            }
+          }
+        ],
+        "tags": [
+          "service categories"
+        ]
+      },
       "post": {
         "summary": "Create service category",
         "description": "API endpoint to create a service category",
@@ -2012,29 +1963,6 @@
     "pbCreateBarberEmployeeRequest": {
       "type": "object",
       "properties": {
-        "barberEmployee": {
-          "$ref": "#/definitions/pbBarberEmployee"
-        },
-        "roleId": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "barberShopId": {
-          "type": "string"
-        }
-      }
-    },
-    "pbCreateBarberEmployeeResponse": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string"
-        }
-      }
-    },
-    "pbCreateBarberEmployeesRequest": {
-      "type": "object",
-      "properties": {
         "barberEmployees": {
           "type": "array",
           "items": {
@@ -2051,7 +1979,7 @@
         }
       }
     },
-    "pbCreateBarberEmployeesResponse": {
+    "pbCreateBarberEmployeeResponse": {
       "type": "object",
       "properties": {
         "message": {
@@ -2374,6 +2302,21 @@
       "type": "object",
       "properties": {
         "status": {
+          "type": "string"
+        }
+      }
+    },
+    "pbDeleteServiceCategoryRequest": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "barberShopId": {
           "type": "string"
         }
       }

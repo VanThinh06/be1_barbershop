@@ -37,7 +37,7 @@ type CreateBarberParams struct {
 	HashedPassword sql.NullString `json:"hashed_password"`
 	NickName       string         `json:"nick_name"`
 	FullName       string         `json:"full_name"`
-	Email          string         `json:"email"`
+	Email          sql.NullString `json:"email"`
 }
 
 func (q *Queries) CreateBarber(ctx context.Context, arg CreateBarberParams) (Barber, error) {
@@ -150,7 +150,7 @@ type GetBarberRow struct {
 	GenderID          pgtype.Int2        `json:"gender_id"`
 	Phone             string             `json:"phone"`
 	NickName          string             `json:"nick_name"`
-	Email             string             `json:"email"`
+	Email             sql.NullString     `json:"email"`
 	HashedPassword    sql.NullString     `json:"hashed_password"`
 	FullName          string             `json:"full_name"`
 	Haircut           bool               `json:"haircut"`
@@ -213,7 +213,7 @@ type GetBarberEmployeeRow struct {
 	GenderID          pgtype.Int2        `json:"gender_id"`
 	Phone             string             `json:"phone"`
 	NickName          string             `json:"nick_name"`
-	Email             string             `json:"email"`
+	Email             sql.NullString     `json:"email"`
 	HashedPassword    sql.NullString     `json:"hashed_password"`
 	FullName          string             `json:"full_name"`
 	Haircut           bool               `json:"haircut"`
@@ -310,8 +310,8 @@ WHERE
 `
 
 type GetUserBarberParams struct {
-	Email        string `json:"email"`
-	TypeUsername string `json:"type_username"`
+	Email        sql.NullString `json:"email"`
+	TypeUsername string         `json:"type_username"`
 }
 
 type GetUserBarberRow struct {
@@ -319,7 +319,7 @@ type GetUserBarberRow struct {
 	GenderID          pgtype.Int2        `json:"gender_id"`
 	Phone             string             `json:"phone"`
 	NickName          string             `json:"nick_name"`
-	Email             string             `json:"email"`
+	Email             sql.NullString     `json:"email"`
 	HashedPassword    sql.NullString     `json:"hashed_password"`
 	FullName          string             `json:"full_name"`
 	Haircut           bool               `json:"haircut"`
@@ -380,7 +380,7 @@ type ListEmployeesRow struct {
 	GenderID          pgtype.Int2        `json:"gender_id"`
 	Phone             string             `json:"phone"`
 	NickName          string             `json:"nick_name"`
-	Email             string             `json:"email"`
+	Email             sql.NullString     `json:"email"`
 	HashedPassword    sql.NullString     `json:"hashed_password"`
 	FullName          string             `json:"full_name"`
 	Haircut           bool               `json:"haircut"`

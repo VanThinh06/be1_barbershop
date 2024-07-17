@@ -26,8 +26,8 @@ import "barber/rpc_barbers_get.proto";
 import "barber/rpc_barbers_update.proto";
 import "barber/rpc_barbers_permission.proto";
 
-import "barber/rpc_barbers_create_employee.proto";
-import "barber/rpc_barbers_create_employees.proto";
+import "barber/rpc_barber_employee.proto";
+
 import "barber/rpc_barbers_get_employee.proto";
 import "barber/rpc_barbers_delete_employee.proto";
 
@@ -243,7 +243,7 @@ rpc UpdateServiceCategory (UpdateServiceCategoryRequest) returns (UpdateServiceC
 
 rpc DeleteServiceCategory (DeleteServiceCategoryRequest) returns (DeleteServiceCategoryResponse){
   option (google.api.http) = {
-    delete: "/v1/barbershop/{barber_shop_id}/service-category"
+    delete: "/v1/service-category"
     body: "*"
   };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -441,21 +441,9 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         description: "API endpoint to create barber employee"
         summary: "Create a barber"
         tags: "barbers"
-
       };
   }
 
-  rpc CreateBarberEmployees (CreateBarberEmployeesRequest) returns (CreateBarberEmployeesResponse){
-    option (google.api.http) = {
-              post: "/v1/multi-barber-employee"
-              body: "*"
-            };
-    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      description: "API endpoint to create barber employee"
-      summary: "Create a barber"
-      tags: "barbers"
-    };
-  }
 
   rpc GetBarberEmployees (GetBarberEmployeeRequest) returns (GetBarberEmployeeResponse){
     option (google.api.http) = {

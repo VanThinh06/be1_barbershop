@@ -147,7 +147,7 @@ func convertBarberEmployee(res db.GetBarberRow) *barber.BarberDetail {
 		Barber: &barber.Barbers{
 			Id:         res.ID.String(),
 			GenderId:   int32(res.GenderID.Int16),
-			Email:      res.Email,
+			Email:      res.Email.String,
 			Phone:      res.Phone,
 			NickName:   res.NickName,
 			FullName:   res.FullName,
@@ -174,7 +174,7 @@ func convertBarberEmployees(res []db.ListEmployeesRow) []*barber.BarberDetail {
 			Barber: &barber.Barbers{
 				Id:         item.ID.String(),
 				GenderId:   int32(item.GenderID.Int16),
-				Email:      item.Email,
+				Email:      item.Email.String,
 				Phone:      item.Phone,
 				NickName:   item.NickName,
 				FullName:   item.FullName,

@@ -50,7 +50,6 @@ const (
 	BarberService_ListAppointmentsByDate_FullMethodName      = "/pb.BarberService/ListAppointmentsByDate"
 	BarberService_CreateBarber_FullMethodName                = "/pb.BarberService/CreateBarber"
 	BarberService_CreateBarberEmployee_FullMethodName        = "/pb.BarberService/CreateBarberEmployee"
-	BarberService_CreateBarberEmployees_FullMethodName       = "/pb.BarberService/CreateBarberEmployees"
 	BarberService_GetBarberEmployees_FullMethodName          = "/pb.BarberService/GetBarberEmployees"
 	BarberService_GetBarber_FullMethodName                   = "/pb.BarberService/GetBarber"
 	BarberService_UpdateBarber_FullMethodName                = "/pb.BarberService/UpdateBarber"
@@ -110,7 +109,6 @@ type BarberServiceClient interface {
 	// Barber
 	CreateBarber(ctx context.Context, in *CreateBarberRequest, opts ...grpc.CallOption) (*CreateBarberResponse, error)
 	CreateBarberEmployee(ctx context.Context, in *CreateBarberEmployeeRequest, opts ...grpc.CallOption) (*CreateBarberEmployeeResponse, error)
-	CreateBarberEmployees(ctx context.Context, in *CreateBarberEmployeesRequest, opts ...grpc.CallOption) (*CreateBarberEmployeesResponse, error)
 	GetBarberEmployees(ctx context.Context, in *GetBarberEmployeeRequest, opts ...grpc.CallOption) (*GetBarberEmployeeResponse, error)
 	GetBarber(ctx context.Context, in *GetBarbersRequest, opts ...grpc.CallOption) (*GetBarbersResponse, error)
 	UpdateBarber(ctx context.Context, in *UpdateBarberRequest, opts ...grpc.CallOption) (*UpdateBarberResponse, error)
@@ -415,15 +413,6 @@ func (c *barberServiceClient) CreateBarberEmployee(ctx context.Context, in *Crea
 	return out, nil
 }
 
-func (c *barberServiceClient) CreateBarberEmployees(ctx context.Context, in *CreateBarberEmployeesRequest, opts ...grpc.CallOption) (*CreateBarberEmployeesResponse, error) {
-	out := new(CreateBarberEmployeesResponse)
-	err := c.cc.Invoke(ctx, BarberService_CreateBarberEmployees_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *barberServiceClient) GetBarberEmployees(ctx context.Context, in *GetBarberEmployeeRequest, opts ...grpc.CallOption) (*GetBarberEmployeeResponse, error) {
 	out := new(GetBarberEmployeeResponse)
 	err := c.cc.Invoke(ctx, BarberService_GetBarberEmployees_FullMethodName, in, out, opts...)
@@ -593,7 +582,6 @@ type BarberServiceServer interface {
 	// Barber
 	CreateBarber(context.Context, *CreateBarberRequest) (*CreateBarberResponse, error)
 	CreateBarberEmployee(context.Context, *CreateBarberEmployeeRequest) (*CreateBarberEmployeeResponse, error)
-	CreateBarberEmployees(context.Context, *CreateBarberEmployeesRequest) (*CreateBarberEmployeesResponse, error)
 	GetBarberEmployees(context.Context, *GetBarberEmployeeRequest) (*GetBarberEmployeeResponse, error)
 	GetBarber(context.Context, *GetBarbersRequest) (*GetBarbersResponse, error)
 	UpdateBarber(context.Context, *UpdateBarberRequest) (*UpdateBarberResponse, error)
@@ -708,9 +696,6 @@ func (UnimplementedBarberServiceServer) CreateBarber(context.Context, *CreateBar
 }
 func (UnimplementedBarberServiceServer) CreateBarberEmployee(context.Context, *CreateBarberEmployeeRequest) (*CreateBarberEmployeeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBarberEmployee not implemented")
-}
-func (UnimplementedBarberServiceServer) CreateBarberEmployees(context.Context, *CreateBarberEmployeesRequest) (*CreateBarberEmployeesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateBarberEmployees not implemented")
 }
 func (UnimplementedBarberServiceServer) GetBarberEmployees(context.Context, *GetBarberEmployeeRequest) (*GetBarberEmployeeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBarberEmployees not implemented")
@@ -1325,24 +1310,6 @@ func _BarberService_CreateBarberEmployee_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BarberService_CreateBarberEmployees_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateBarberEmployeesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BarberServiceServer).CreateBarberEmployees(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BarberService_CreateBarberEmployees_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BarberServiceServer).CreateBarberEmployees(ctx, req.(*CreateBarberEmployeesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _BarberService_GetBarberEmployees_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetBarberEmployeeRequest)
 	if err := dec(in); err != nil {
@@ -1725,10 +1692,6 @@ var BarberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateBarberEmployee",
 			Handler:    _BarberService_CreateBarberEmployee_Handler,
-		},
-		{
-			MethodName: "CreateBarberEmployees",
-			Handler:    _BarberService_CreateBarberEmployees_Handler,
 		},
 		{
 			MethodName: "GetBarberEmployees",

@@ -661,23 +661,6 @@ func request_BarberService_DeleteServiceCategory_0(ctx context.Context, marshale
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["barber_shop_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "barber_shop_id")
-	}
-
-	protoReq.BarberShopId, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "barber_shop_id", err)
-	}
-
 	msg, err := client.DeleteServiceCategory(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
@@ -693,23 +676,6 @@ func local_request_BarberService_DeleteServiceCategory_0(ctx context.Context, ma
 	}
 	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["barber_shop_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "barber_shop_id")
-	}
-
-	protoReq.BarberShopId, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "barber_shop_id", err)
 	}
 
 	msg, err := server.DeleteServiceCategory(ctx, &protoReq)
@@ -1425,40 +1391,6 @@ func local_request_BarberService_CreateBarberEmployee_0(ctx context.Context, mar
 	}
 
 	msg, err := server.CreateBarberEmployee(ctx, &protoReq)
-	return msg, metadata, err
-
-}
-
-func request_BarberService_CreateBarberEmployees_0(ctx context.Context, marshaler runtime.Marshaler, client BarberServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq CreateBarberEmployeesRequest
-	var metadata runtime.ServerMetadata
-
-	newReader, berr := utilities.IOReaderFactory(req.Body)
-	if berr != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
-	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-
-	msg, err := client.CreateBarberEmployees(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-
-}
-
-func local_request_BarberService_CreateBarberEmployees_0(ctx context.Context, marshaler runtime.Marshaler, server BarberServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq CreateBarberEmployeesRequest
-	var metadata runtime.ServerMetadata
-
-	newReader, berr := utilities.IOReaderFactory(req.Body)
-	if berr != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
-	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-
-	msg, err := server.CreateBarberEmployees(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -2393,7 +2325,7 @@ func RegisterBarberServiceHandlerServer(ctx context.Context, mux *runtime.ServeM
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.BarberService/DeleteServiceCategory", runtime.WithHTTPPathPattern("/v1/barbershop/{barber_shop_id}/service-category"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.BarberService/DeleteServiceCategory", runtime.WithHTTPPathPattern("/v1/service-category"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -2807,31 +2739,6 @@ func RegisterBarberServiceHandlerServer(ctx context.Context, mux *runtime.ServeM
 		}
 
 		forward_BarberService_CreateBarberEmployee_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("POST", pattern_BarberService_CreateBarberEmployees_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		var stream runtime.ServerTransportStream
-		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.BarberService/CreateBarberEmployees", runtime.WithHTTPPathPattern("/v1/multi-barber-employee"))
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := local_request_BarberService_CreateBarberEmployees_0(annotatedContext, inboundMarshaler, server, req, pathParams)
-		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
-		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
-		if err != nil {
-			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_BarberService_CreateBarberEmployees_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -3540,7 +3447,7 @@ func RegisterBarberServiceHandlerClient(ctx context.Context, mux *runtime.ServeM
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.BarberService/DeleteServiceCategory", runtime.WithHTTPPathPattern("/v1/barbershop/{barber_shop_id}/service-category"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.BarberService/DeleteServiceCategory", runtime.WithHTTPPathPattern("/v1/service-category"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3908,28 +3815,6 @@ func RegisterBarberServiceHandlerClient(ctx context.Context, mux *runtime.ServeM
 
 	})
 
-	mux.Handle("POST", pattern_BarberService_CreateBarberEmployees_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pb.BarberService/CreateBarberEmployees", runtime.WithHTTPPathPattern("/v1/multi-barber-employee"))
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_BarberService_CreateBarberEmployees_0(annotatedContext, inboundMarshaler, client, req, pathParams)
-		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
-		if err != nil {
-			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_BarberService_CreateBarberEmployees_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
 	mux.Handle("GET", pattern_BarberService_GetBarberEmployees_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -4270,7 +4155,7 @@ var (
 
 	pattern_BarberService_UpdateServiceCategory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "service-category"}, ""))
 
-	pattern_BarberService_DeleteServiceCategory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "barbershop", "barber_shop_id", "service-category"}, ""))
+	pattern_BarberService_DeleteServiceCategory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "service-category"}, ""))
 
 	pattern_BarberService_ListCategoryPosition_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "barbershop", "barber_shop_id", "category-position"}, ""))
 
@@ -4303,8 +4188,6 @@ var (
 	pattern_BarberService_CreateBarber_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "barber"}, ""))
 
 	pattern_BarberService_CreateBarberEmployee_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "barber-employee"}, ""))
-
-	pattern_BarberService_CreateBarberEmployees_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "multi-barber-employee"}, ""))
 
 	pattern_BarberService_GetBarberEmployees_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "barber-employee", "barber_shop_id"}, ""))
 
@@ -4397,8 +4280,6 @@ var (
 	forward_BarberService_CreateBarber_0 = runtime.ForwardResponseMessage
 
 	forward_BarberService_CreateBarberEmployee_0 = runtime.ForwardResponseMessage
-
-	forward_BarberService_CreateBarberEmployees_0 = runtime.ForwardResponseMessage
 
 	forward_BarberService_GetBarberEmployees_0 = runtime.ForwardResponseMessage
 

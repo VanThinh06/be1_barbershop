@@ -4,7 +4,7 @@ CREATE TABLE "Barbers" (
   "gender_id" int2,
   "phone" varchar(15) UNIQUE NOT NULL,
   "nick_name" varchar(50) UNIQUE NOT NULL,
-  "email" varchar(50) UNIQUE NOT NULL,
+  "email" varchar(50) UNIQUE,
   "hashed_password" varchar(150),
   "full_name" varchar(50) NOT NULL,
   "haircut" bool NOT NULL DEFAULT FALSE,
