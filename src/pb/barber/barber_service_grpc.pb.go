@@ -26,6 +26,7 @@ const (
 	BarberService_CreateBarberShop_FullMethodName            = "/pb.BarberService/CreateBarberShop"
 	BarberService_ListBarberShops_FullMethodName             = "/pb.BarberService/ListBarberShops"
 	BarberService_GetBarberShop_FullMethodName               = "/pb.BarberService/GetBarberShop"
+	BarberService_GetPermissionFromBarberShop_FullMethodName = "/pb.BarberService/GetPermissionFromBarberShop"
 	BarberService_SearchByNameBarberShops_FullMethodName     = "/pb.BarberService/SearchByNameBarberShops"
 	BarberService_ListNearbyBarberShops_FullMethodName       = "/pb.BarberService/ListNearbyBarberShops"
 	BarberService_UpdateBarberShop_FullMethodName            = "/pb.BarberService/UpdateBarberShop"
@@ -59,7 +60,6 @@ const (
 	BarberService_ForgotPasswordBarber_FullMethodName        = "/pb.BarberService/ForgotPasswordBarber"
 	BarberService_VerifyOtpBarber_FullMethodName             = "/pb.BarberService/VerifyOtpBarber"
 	BarberService_ResetPasswordBarber_FullMethodName         = "/pb.BarberService/ResetPasswordBarber"
-	BarberService_GetPermissionFromBarberShop_FullMethodName = "/pb.BarberService/GetPermissionFromBarberShop"
 	BarberService_GetProvinces_FullMethodName                = "/pb.BarberService/GetProvinces"
 	BarberService_GetDistricts_FullMethodName                = "/pb.BarberService/GetDistricts"
 	BarberService_GetWards_FullMethodName                    = "/pb.BarberService/GetWards"
@@ -80,6 +80,7 @@ type BarberServiceClient interface {
 	CreateBarberShop(ctx context.Context, in *CreateBarberShopRequest, opts ...grpc.CallOption) (*CreateBarberShopResponse, error)
 	ListBarberShops(ctx context.Context, in *ListBarberShopsRequest, opts ...grpc.CallOption) (*ListBarberShopsResponse, error)
 	GetBarberShop(ctx context.Context, in *GetBarberShopRequest, opts ...grpc.CallOption) (*GetBarberShopResponse, error)
+	GetPermissionFromBarberShop(ctx context.Context, in *GetPermissionFromBarberShopRequest, opts ...grpc.CallOption) (*GetPermissionFromBarberShopResponse, error)
 	SearchByNameBarberShops(ctx context.Context, in *SearchByNameBarberShopsRequest, opts ...grpc.CallOption) (*SearchByNameBarberShopsResponse, error)
 	ListNearbyBarberShops(ctx context.Context, in *ListNearbyBarberShopsRequest, opts ...grpc.CallOption) (*ListNearbyBarberShopsResponse, error)
 	UpdateBarberShop(ctx context.Context, in *UpdateBarberShopRequest, opts ...grpc.CallOption) (*UpdateBarberShopResponse, error)
@@ -118,7 +119,6 @@ type BarberServiceClient interface {
 	ForgotPasswordBarber(ctx context.Context, in *ForgotPasswordBarberRequest, opts ...grpc.CallOption) (*ForgotPasswordBarberResponse, error)
 	VerifyOtpBarber(ctx context.Context, in *VerifyOtpBarberRequest, opts ...grpc.CallOption) (*VerifyOtpBarberResponse, error)
 	ResetPasswordBarber(ctx context.Context, in *ResetPasswordBarberRequest, opts ...grpc.CallOption) (*ResetPasswordBarberResponse, error)
-	GetPermissionFromBarberShop(ctx context.Context, in *GetPermissionFromBarberShopRequest, opts ...grpc.CallOption) (*GetPermissionFromBarberShopResponse, error)
 	// / lookup
 	GetProvinces(ctx context.Context, in *GetProvincesRequest, opts ...grpc.CallOption) (*GetProvincesResponse, error)
 	GetDistricts(ctx context.Context, in *GetDistrictsRequest, opts ...grpc.CallOption) (*GetDistrictsResponse, error)
@@ -191,6 +191,15 @@ func (c *barberServiceClient) ListBarberShops(ctx context.Context, in *ListBarbe
 func (c *barberServiceClient) GetBarberShop(ctx context.Context, in *GetBarberShopRequest, opts ...grpc.CallOption) (*GetBarberShopResponse, error) {
 	out := new(GetBarberShopResponse)
 	err := c.cc.Invoke(ctx, BarberService_GetBarberShop_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *barberServiceClient) GetPermissionFromBarberShop(ctx context.Context, in *GetPermissionFromBarberShopRequest, opts ...grpc.CallOption) (*GetPermissionFromBarberShopResponse, error) {
+	out := new(GetPermissionFromBarberShopResponse)
+	err := c.cc.Invoke(ctx, BarberService_GetPermissionFromBarberShop_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -494,15 +503,6 @@ func (c *barberServiceClient) ResetPasswordBarber(ctx context.Context, in *Reset
 	return out, nil
 }
 
-func (c *barberServiceClient) GetPermissionFromBarberShop(ctx context.Context, in *GetPermissionFromBarberShopRequest, opts ...grpc.CallOption) (*GetPermissionFromBarberShopResponse, error) {
-	out := new(GetPermissionFromBarberShopResponse)
-	err := c.cc.Invoke(ctx, BarberService_GetPermissionFromBarberShop_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *barberServiceClient) GetProvinces(ctx context.Context, in *GetProvincesRequest, opts ...grpc.CallOption) (*GetProvincesResponse, error) {
 	out := new(GetProvincesResponse)
 	err := c.cc.Invoke(ctx, BarberService_GetProvinces_FullMethodName, in, out, opts...)
@@ -553,6 +553,7 @@ type BarberServiceServer interface {
 	CreateBarberShop(context.Context, *CreateBarberShopRequest) (*CreateBarberShopResponse, error)
 	ListBarberShops(context.Context, *ListBarberShopsRequest) (*ListBarberShopsResponse, error)
 	GetBarberShop(context.Context, *GetBarberShopRequest) (*GetBarberShopResponse, error)
+	GetPermissionFromBarberShop(context.Context, *GetPermissionFromBarberShopRequest) (*GetPermissionFromBarberShopResponse, error)
 	SearchByNameBarberShops(context.Context, *SearchByNameBarberShopsRequest) (*SearchByNameBarberShopsResponse, error)
 	ListNearbyBarberShops(context.Context, *ListNearbyBarberShopsRequest) (*ListNearbyBarberShopsResponse, error)
 	UpdateBarberShop(context.Context, *UpdateBarberShopRequest) (*UpdateBarberShopResponse, error)
@@ -591,7 +592,6 @@ type BarberServiceServer interface {
 	ForgotPasswordBarber(context.Context, *ForgotPasswordBarberRequest) (*ForgotPasswordBarberResponse, error)
 	VerifyOtpBarber(context.Context, *VerifyOtpBarberRequest) (*VerifyOtpBarberResponse, error)
 	ResetPasswordBarber(context.Context, *ResetPasswordBarberRequest) (*ResetPasswordBarberResponse, error)
-	GetPermissionFromBarberShop(context.Context, *GetPermissionFromBarberShopRequest) (*GetPermissionFromBarberShopResponse, error)
 	// / lookup
 	GetProvinces(context.Context, *GetProvincesRequest) (*GetProvincesResponse, error)
 	GetDistricts(context.Context, *GetDistrictsRequest) (*GetDistrictsResponse, error)
@@ -624,6 +624,9 @@ func (UnimplementedBarberServiceServer) ListBarberShops(context.Context, *ListBa
 }
 func (UnimplementedBarberServiceServer) GetBarberShop(context.Context, *GetBarberShopRequest) (*GetBarberShopResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBarberShop not implemented")
+}
+func (UnimplementedBarberServiceServer) GetPermissionFromBarberShop(context.Context, *GetPermissionFromBarberShopRequest) (*GetPermissionFromBarberShopResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPermissionFromBarberShop not implemented")
 }
 func (UnimplementedBarberServiceServer) SearchByNameBarberShops(context.Context, *SearchByNameBarberShopsRequest) (*SearchByNameBarberShopsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchByNameBarberShops not implemented")
@@ -723,9 +726,6 @@ func (UnimplementedBarberServiceServer) VerifyOtpBarber(context.Context, *Verify
 }
 func (UnimplementedBarberServiceServer) ResetPasswordBarber(context.Context, *ResetPasswordBarberRequest) (*ResetPasswordBarberResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetPasswordBarber not implemented")
-}
-func (UnimplementedBarberServiceServer) GetPermissionFromBarberShop(context.Context, *GetPermissionFromBarberShopRequest) (*GetPermissionFromBarberShopResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPermissionFromBarberShop not implemented")
 }
 func (UnimplementedBarberServiceServer) GetProvinces(context.Context, *GetProvincesRequest) (*GetProvincesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProvinces not implemented")
@@ -874,6 +874,24 @@ func _BarberService_GetBarberShop_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BarberServiceServer).GetBarberShop(ctx, req.(*GetBarberShopRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BarberService_GetPermissionFromBarberShop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPermissionFromBarberShopRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BarberServiceServer).GetPermissionFromBarberShop(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BarberService_GetPermissionFromBarberShop_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BarberServiceServer).GetPermissionFromBarberShop(ctx, req.(*GetPermissionFromBarberShopRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1472,24 +1490,6 @@ func _BarberService_ResetPasswordBarber_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BarberService_GetPermissionFromBarberShop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPermissionFromBarberShopRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BarberServiceServer).GetPermissionFromBarberShop(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BarberService_GetPermissionFromBarberShop_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BarberServiceServer).GetPermissionFromBarberShop(ctx, req.(*GetPermissionFromBarberShopRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _BarberService_GetProvinces_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetProvincesRequest)
 	if err := dec(in); err != nil {
@@ -1596,6 +1596,10 @@ var BarberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBarberShop",
 			Handler:    _BarberService_GetBarberShop_Handler,
+		},
+		{
+			MethodName: "GetPermissionFromBarberShop",
+			Handler:    _BarberService_GetPermissionFromBarberShop_Handler,
 		},
 		{
 			MethodName: "SearchByNameBarberShops",
@@ -1728,10 +1732,6 @@ var BarberService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResetPasswordBarber",
 			Handler:    _BarberService_ResetPasswordBarber_Handler,
-		},
-		{
-			MethodName: "GetPermissionFromBarberShop",
-			Handler:    _BarberService_GetPermissionFromBarberShop_Handler,
 		},
 		{
 			MethodName: "GetProvinces",

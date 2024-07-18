@@ -350,40 +350,6 @@
         ]
       }
     },
-    "/v1/barber/getPermission": {
-      "post": {
-        "summary": "Get permission from barber shop",
-        "description": "API endpoint to update a new barber shop",
-        "operationId": "BarberService_GetPermissionFromBarberShop",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbGetPermissionFromBarberShopResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbGetPermissionFromBarberShopRequest"
-            }
-          }
-        ],
-        "tags": [
-          "barber shops"
-        ]
-      }
-    },
     "/v1/barber/login": {
       "post": {
         "summary": "Authenticate a barber",
@@ -711,6 +677,38 @@
         ],
         "tags": [
           "service categories"
+        ]
+      }
+    },
+    "/v1/barbershop/{barberShopId}/getPermission": {
+      "get": {
+        "summary": "Get permission from barber shop",
+        "description": "API endpoint to update a new barber shop",
+        "operationId": "BarberService_GetPermissionFromBarberShop",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetPermissionFromBarberShopResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "barberShopId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "barber shops"
         ]
       }
     },
@@ -2437,17 +2435,6 @@
             "type": "object",
             "$ref": "#/definitions/pbDistricts"
           }
-        }
-      }
-    },
-    "pbGetPermissionFromBarberShopRequest": {
-      "type": "object",
-      "properties": {
-        "barberId": {
-          "type": "string"
-        },
-        "barberShopId": {
-          "type": "string"
         }
       }
     },

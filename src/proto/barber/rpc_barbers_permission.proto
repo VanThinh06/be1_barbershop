@@ -6,7 +6,6 @@ option go_package = "barbershop/src/pb/barber";
 
 
 message GetPermissionFromBarberShopRequest {
-    string barber_id = 1;
     string barber_shop_id = 2;
 }
 

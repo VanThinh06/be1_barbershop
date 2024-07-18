@@ -146,11 +146,22 @@ rpc ListBarberShops (ListBarberShopsRequest) returns (ListBarberShopsResponse){
 
 rpc GetBarberShop (GetBarberShopRequest) returns (GetBarberShopResponse){
   option (google.api.http) = {
-            get: "/v1/barbershop/{id}"
-            };
+    get: "/v1/barbershop/{id}"
+  };
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
     description: "API endpoint to create a new barber shop"
     summary: "Get a details barber shop"
+    tags: "barber shops"
+  };
+}
+
+rpc GetPermissionFromBarberShop (GetPermissionFromBarberShopRequest) returns (GetPermissionFromBarberShopResponse){
+  option (google.api.http) = {
+      get: "/v1/barbershop/{barber_shop_id}/getPermission"
+  };
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+    description: "API endpoint to update a new barber shop"
+    summary: "Get permission from barber shop"
     tags: "barber shops"
   };
 }
@@ -551,18 +562,6 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         description: "API endpoint for barber authentication" 
         summary: "reset password barber"
         tags: "authentication"
-      };
-    }
-
-    rpc GetPermissionFromBarberShop (GetPermissionFromBarberShopRequest) returns (GetPermissionFromBarberShopResponse){
-      option (google.api.http) = {
-                post: "/v1/barber/getPermission"
-                body: "*"
-              };
-      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-        description: "API endpoint to update a new barber shop"
-        summary: "Get permission from barber shop"
-        tags: "barber shops"
       };
     }
 

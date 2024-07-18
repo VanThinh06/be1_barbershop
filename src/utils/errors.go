@@ -42,7 +42,7 @@ func NotFoundError(err error, strError string) error {
 	return status.Errorf(codes.NotFound, "not found %v", strError)
 }
 
-func InvalidError(err error, strError string) error {
+func InvalidError(err error, strError string) error {	
 	return status.Errorf(codes.InvalidArgument, strError)
 }
 

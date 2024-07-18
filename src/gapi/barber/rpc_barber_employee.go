@@ -281,16 +281,8 @@ func (server *Server) GetPermissionFromBarberShop(ctx context.Context, req *barb
 		return nil, status.Errorf(codes.InvalidArgument, "barbershop don't exist")
 	}
 
-	barberId, err := uuid.Parse(req.GetBarberId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "barber don't exist")
-	}
-	if authPayload.Barber.BarberID.String() != req.GetBarberId() {
-		return nil, status.Errorf(codes.InvalidArgument, "barber don't exist")
-	}
-
 	argPermission := db.GetPermissionFromBarberShopParams{
-		ID:           barberId,
+		ID:           authPayload.Barber.BarberID,
 		BarberShopID: barberShopId,
 	}
 
