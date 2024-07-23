@@ -10,6 +10,7 @@ CREATE TABLE "Barbers" (
   "haircut" bool NOT NULL DEFAULT FALSE,
   "work_status" BOOLEAN NOT NULL DEFAULT TRUE,
   "avatar_url" varchar(120),
+  "default_password_encrypted" TEXT,
   "password_changed_at" timestamptz DEFAULT NULL,
   "create_at" timestamptz NOT NULL DEFAULT (now()),
   FOREIGN KEY ("gender_id") REFERENCES "Genders" ("id")
@@ -64,5 +65,21 @@ CREATE TABLE "OTPRequests" (
   FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("id")
 );
 
--- Create index on OTPRequests
-CREATE INDEX ON "OTPRequests" ("barber_id");
+-- Create or replace function to clean old OTP requests
+CREATE OR REPLACE FUNCTION clean_old_otp_requests()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Xóa OTP không thuộc về ngày hiện tại
+    DELETE FROM "OTPRequests"
+    WHERE "barber_id" = NEW."barber_id" 
+      AND "requested_at"::date <> CURRENT_DATE;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger to invoke the function before insert
+CREATE TRIGGER before_insert_otp_request
+BEFORE INSERT ON "OTPRequests"
+FOR EACH ROW
+EXECUTE FUNCTION clean_old_otp_requests();

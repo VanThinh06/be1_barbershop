@@ -516,7 +516,7 @@
           }
         ],
         "tags": [
-          "barber shops"
+          "barber shop"
         ]
       }
     },
@@ -936,41 +936,7 @@
           }
         },
         "tags": [
-          "barber shops"
-        ]
-      }
-    },
-    "/v1/barbershops/nearby": {
-      "post": {
-        "summary": "Delete barber shop",
-        "description": "API endpoint to update a new barber shop",
-        "operationId": "BarberService_ListNearbyBarberShops",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbListNearbyBarberShopsResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbListNearbyBarberShopsRequest"
-            }
-          }
-        ],
-        "tags": [
-          "barber shops"
+          "barber shop"
         ]
       }
     },
@@ -1069,15 +1035,6 @@
                   "type": "integer",
                   "format": "int32"
                 },
-                "startTime": {
-                  "$ref": "#/definitions/pbTimeOfDay"
-                },
-                "endTime": {
-                  "$ref": "#/definitions/pbTimeOfDay"
-                },
-                "breakTime": {
-                  "$ref": "#/definitions/pbTimeOfDay"
-                },
                 "intervalScheduler": {
                   "type": "integer",
                   "format": "int32"
@@ -1091,56 +1048,6 @@
                 },
                 "isVerified": {
                   "type": "boolean"
-                }
-              }
-            }
-          }
-        ],
-        "tags": [
-          "barber shops"
-        ]
-      }
-    },
-    "/v1/barbershops/{name}": {
-      "post": {
-        "summary": "Query barber shop",
-        "description": "API endpoint to query a new barber shop",
-        "operationId": "BarberService_SearchByNameBarberShops",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbSearchByNameBarberShopsResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "longitude": {
-                  "type": "number",
-                  "format": "double"
-                },
-                "latitude": {
-                  "type": "number",
-                  "format": "double"
                 }
               }
             }
@@ -1748,17 +1655,14 @@
         "name": {
           "type": "string"
         },
-        "provinceId": {
-          "type": "integer",
-          "format": "int32"
+        "provinceName": {
+          "type": "string"
         },
-        "districtId": {
-          "type": "integer",
-          "format": "int32"
+        "districtName": {
+          "type": "string"
         },
-        "wardId": {
-          "type": "integer",
-          "format": "int32"
+        "wardName": {
+          "type": "string"
         },
         "specificLocation": {
           "type": "string"
@@ -1787,16 +1691,7 @@
         "isReputation": {
           "type": "boolean"
         },
-        "provinceName": {
-          "type": "string"
-        },
-        "districtName": {
-          "type": "string"
-        },
-        "wardName": {
-          "type": "string"
-        },
-        "roleId": {
+        "barberRoleId": {
           "type": "integer",
           "format": "int32"
         }
@@ -1968,6 +1863,9 @@
             "$ref": "#/definitions/pbBarberEmployee"
           }
         },
+        "defaultPassword": {
+          "type": "string"
+        },
         "roleId": {
           "type": "integer",
           "format": "int32"
@@ -2097,60 +1995,60 @@
           "type": "string"
         },
         "startTimeMonday": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "endTimeMonday": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "startTimeTuesday": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "endTimeTuesday": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "startTimeWednesday": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "endTimeWednesday": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "startTimeThursday": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "endTimeThursday": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "startTimeFriday": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "endTimeFriday": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "startTimeSaturday": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "endTimeSaturday": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "startTimeSunday": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "endTimeSunday": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "longitude": {
           "type": "number",
@@ -2513,35 +2411,6 @@
         }
       }
     },
-    "pbListNearbyBarberShopsRequest": {
-      "type": "object",
-      "properties": {
-        "longitude": {
-          "type": "number",
-          "format": "double"
-        },
-        "latitude": {
-          "type": "number",
-          "format": "double"
-        },
-        "distanceInMeters": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "pbListNearbyBarberShopsResponse": {
-      "type": "object",
-      "properties": {
-        "barberShops": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/pbBarberShop"
-          }
-        }
-      }
-    },
     "pbListServiceCategoryResponse": {
       "type": "object",
       "properties": {
@@ -2658,18 +2527,6 @@
       "properties": {
         "message": {
           "type": "string"
-        }
-      }
-    },
-    "pbSearchByNameBarberShopsResponse": {
-      "type": "object",
-      "properties": {
-        "barberShops": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/pbBarberShop"
-          }
         }
       }
     },
@@ -2800,21 +2657,6 @@
             "type": "object",
             "$ref": "#/definitions/pbServiceItem"
           }
-        }
-      }
-    },
-    "pbTimeOfDay": {
-      "type": "object",
-      "properties": {
-        "hours": {
-          "type": "integer",
-          "format": "int32",
-          "title": "Số giờ (0-23)"
-        },
-        "minutes": {
-          "type": "integer",
-          "format": "int32",
-          "title": "Số phút (0-59)"
         }
       }
     },

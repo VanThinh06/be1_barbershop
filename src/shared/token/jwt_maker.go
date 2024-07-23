@@ -96,3 +96,9 @@ func (maker *JWTMaker) RefreshToken(id uuid.UUID, barber Barber, duration time.D
 	token, err := jwtToken.SignedString([]byte(maker.secretKey))
 	return token, payload, err
 }
+func (maker *JWTMaker) CreateAESString(encryptedText string) (string, error) {
+	return "", nil
+}
+func (maker *JWTMaker) DecodeAESString(encryptedText string) (string, error) {
+	return "", nil
+}

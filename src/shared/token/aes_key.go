@@ -9,10 +9,9 @@ import (
 	"io"
 )
 
+func (maker *PasetoMaker) CreateAESString(plaintext string) (string, error) {
 
-func GenerateAESString(key string, plaintext string) (string, error) {
-
-	keyBytes := []byte(key)
+	keyBytes := []byte(maker.aesKey)
 
 	block, err := aes.NewCipher(keyBytes)
 	if err != nil {
@@ -23,7 +22,6 @@ func GenerateAESString(key string, plaintext string) (string, error) {
 	blockSize := block.BlockSize()
 	padding := blockSize - len(plaintextBytes)%blockSize
 	padText := append(plaintextBytes, bytes.Repeat([]byte{byte(padding)}, padding)...)
-
 
 	iv := make([]byte, aes.BlockSize)
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
@@ -40,8 +38,8 @@ func GenerateAESString(key string, plaintext string) (string, error) {
 	return base64.StdEncoding.EncodeToString(result), nil
 }
 
-func DecodeAESString(key string, encryptedText string) (string, error) {
-	keyBytes := []byte(key)
+func (maker *PasetoMaker) DecodeAESString(encryptedText string) (string, error) {
+	keyBytes := []byte(maker.aesKey)
 
 	encBytes, err := base64.StdEncoding.DecodeString(encryptedText)
 	if err != nil {

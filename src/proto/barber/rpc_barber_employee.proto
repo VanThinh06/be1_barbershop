@@ -10,8 +10,9 @@ option go_package = "barbershop/src/pb/barber";
 
 message CreateBarberEmployeeRequest{
     repeated BarberEmployee barber_employees = 1;
-    int32 role_id = 2;
-    string barber_shop_id = 3;
+    string default_password = 2;
+    int32 role_id = 3;
+    string barber_shop_id = 4;
 }
 
 message CreateBarberEmployeeResponse {

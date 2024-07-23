@@ -13,13 +13,7 @@ import "barber/rpc_barbershop_chains_update.proto";
 import "barber/rpc_barbershop_chains_delete.proto";
 
 
-import "barber/rpc_barbershops_create.proto";
 import "barber/rpc_barbershop.proto";
-import "barber/rpc_barbershops_list.proto";
-import "barber/rpc_barbershops_update.proto";
-import "barber/rpc_barbershops_delete.proto";
-import "barber/rpc_barbershops_list_nearby.proto";
-import "barber/rpc_barbershops_search_by_name.proto";
 
 
 import "barber/rpc_barbers_get.proto";
@@ -120,7 +114,6 @@ rpc DeleteBarberShopChains (DeleteBarberShopChainsRequest) returns (DeleteBarber
 };
 }
 
-///barbershops
 rpc CreateBarberShop (CreateBarberShopRequest) returns (CreateBarberShopResponse){
   option (google.api.http) = {
             post: "/v1/barbershop"
@@ -129,7 +122,7 @@ rpc CreateBarberShop (CreateBarberShopRequest) returns (CreateBarberShopResponse
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
     description: "API endpoint to create a new barber shop"
     summary: "Create a barber shop"
-    tags: "barber shops"
+    tags: "barber shop"
   };
 }
 
@@ -140,7 +133,7 @@ rpc ListBarberShops (ListBarberShopsRequest) returns (ListBarberShopsResponse){
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
     description: "API endpoint to get barber shop"
     summary: "Get barber shop"
-    tags: "barber shops"
+    tags: "barber shop"
   };
 }
 
@@ -162,30 +155,6 @@ rpc GetPermissionFromBarberShop (GetPermissionFromBarberShopRequest) returns (Ge
   option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
     description: "API endpoint to update a new barber shop"
     summary: "Get permission from barber shop"
-    tags: "barber shops"
-  };
-}
-
-rpc SearchByNameBarberShops (SearchByNameBarberShopsRequest) returns (SearchByNameBarberShopsResponse){
-  option (google.api.http) = {
-            post: "/v1/barbershops/{name}"
-            body: "*"
-          };
-  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-    description: "API endpoint to query a new barber shop"
-    summary: "Query barber shop"
-    tags: "barber shops"
-  };
-}
-
-rpc ListNearbyBarberShops (ListNearbyBarberShopsRequest) returns (ListNearbyBarberShopsResponse){
-  option (google.api.http) = {
-            post: "/v1/barbershops/nearby"
-            body: "*"
-          };
-  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-    description: "API endpoint to update a new barber shop"
-    summary: "Delete barber shop"
     tags: "barber shops"
   };
 }

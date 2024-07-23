@@ -52,9 +52,9 @@ WHERE
     bs."barber_shop_id" = $1
     AND (cp."visible" = true)  
 ORDER BY
-    cp."position",  -- Sắp xếp theo vị trí của category
+    cp."position",  
     sc."id",
-    bs."gender_id"; -- Để phân loại theo gender_id nếu cần thiết
+    bs."gender_id"; 
 
 
 -- name: UpdateServiceItem :one

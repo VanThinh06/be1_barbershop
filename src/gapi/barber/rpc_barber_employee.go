@@ -3,7 +3,6 @@ package gapi
 import (
 	db "barbershop/src/db/sqlc"
 	"barbershop/src/pb/barber"
-	"barbershop/src/shared/helpers"
 	"barbershop/src/shared/utilities"
 	"barbershop/src/utils"
 	"context"
@@ -24,6 +23,7 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthenticated")
 	}
+
 	barberShopID, err := uuid.Parse(req.BarberShopId)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "barbershops don't exist")
@@ -33,19 +33,16 @@ func (server *Server) CreateBarberEmployee(ctx context.Context, req *barber.Crea
 		return nil, noPermissionError(err)
 	}
 
-	defaultPassword, err := server.Store.GetDefaultPasswordEmployee(ctx, barberShopID)
+	valPassword := utils.ValidatePassword(req.DefaultPassword)
+	if valPassword != nil {
+		return nil, err
+	}
+	hasDefaultPassword, err := server.tokenMaker.CreateAESString(req.GetDefaultPassword())
 	if err != nil {
 		return nil, internalError(err)
 	}
-	var hashedPassword string
-	if defaultPassword.Valid {
-		hashedPassword, err = helpers.HashPassword(defaultPassword.String)
-		if err != nil {
-			return nil, internalError(err)
-		}
-	}
 
-	err = server.txCreateMultiBarberEmployee(ctx, req, hashedPassword)
+	err = server.txCreateMultiBarberEmployee(ctx, req, hasDefaultPassword)
 	if err != nil {
 		return nil, err
 	}
@@ -78,12 +75,12 @@ func (server *Server) GetBarberEmployees(ctx context.Context, req *barber.GetBar
 		return nil, noPermissionError(err)
 	}
 
-	arg := db.ListEmployeesParams{
+	arg := db.ListBarberEmployeesParams{
 		BarberShopID: barberShopID,
 		Limit:        req.Limit,
 		Offset:       req.Limit * (req.Page - 1),
 	}
-	barberEmployees, err := server.Store.ListEmployees(ctx, arg)
+	barberEmployees, err := server.Store.ListBarberEmployees(ctx, arg)
 	if err != nil {
 		return nil, internalError(err)
 	}
@@ -128,11 +125,11 @@ func (server *Server) DeleteBarberEmployee(ctx context.Context, req *barber.Dele
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "employee don't exist")
 	}
-	argBarber := db.GetBarberEmployeeParams{
+	argBarber := db.GetBarberWithOptionalRoleParams{
 		ID:           barberId,
 		BarberShopID: barberShopId,
 	}
-	resBarber, err := server.Store.GetBarberEmployee(ctx, argBarber)
+	resBarber, err := server.Store.GetBarberWithOptionalRole(ctx, argBarber)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, returnError(codes.NotFound, "the employee does not belong to this barber shop", err)
@@ -143,7 +140,7 @@ func (server *Server) DeleteBarberEmployee(ctx context.Context, req *barber.Dele
 		return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to delete employee")
 	}
 
-	err = server.Store.DeleteBarberRole(ctx, resBarber.ID_2.UUID)
+	err = server.Store.DeleteBarberRoleById(ctx, resBarber.ID_2.UUID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "internal")
 	}
@@ -153,7 +150,7 @@ func (server *Server) DeleteBarberEmployee(ctx context.Context, req *barber.Dele
 	}
 
 	if !resBarber.HashedPassword.Valid {
-		err = server.Store.DeleteBarber(ctx, barberId)
+		err = server.Store.DeleteBarberById(ctx, barberId)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "internal")
 		}
@@ -193,17 +190,17 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 		if err != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "barber don't exist")
 		}
-		argBarberRole := db.GetBarberRoleParams{
+		argBarberRole := db.SelectBarberRoleByIdsParams{
 			BarberID:     barberId,
 			BarberShopID: barberShopId,
 		}
-		_, err = server.Store.GetBarberRole(ctx, argBarberRole)
+		_, err = server.Store.SelectBarberRoleByIds(ctx, argBarberRole)
 		if err != nil {
 			return nil, status.Errorf(codes.PermissionDenied, "failed to no permission to update barber")
 		}
 	}
 
-	arg := db.UpdateBarberParams{
+	arg := db.UpdateBarberDetailsParams{
 		ID: uuid.MustParse(req.Barber.GetId()),
 
 		NickName: sql.NullString{
@@ -243,7 +240,7 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 		},
 	}
 
-	_, err = server.Store.UpdateBarber(ctx, arg)
+	_, err = server.Store.UpdateBarberDetails(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, returnError(codes.NotFound, "barber not found", err)
@@ -281,12 +278,12 @@ func (server *Server) GetPermissionFromBarberShop(ctx context.Context, req *barb
 		return nil, status.Errorf(codes.InvalidArgument, "barbershop don't exist")
 	}
 
-	argPermission := db.GetPermissionFromBarberShopParams{
+	argPermission := db.GetPermissionsByBarberShopParams{
 		ID:           authPayload.Barber.BarberID,
 		BarberShopID: barberShopId,
 	}
 
-	permission, err := server.Store.GetPermissionFromBarberShop(ctx, argPermission)
+	permission, err := server.Store.GetPermissionsByBarberShop(ctx, argPermission)
 	if err != nil {
 		return nil, utils.InternalError(err)
 	}
@@ -310,7 +307,7 @@ func (server *Server) checkPermissionManageEmployee(ctx context.Context, barberS
 	return nil
 }
 
-func (server *Server) txCreateMultiBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeeRequest, hashedPassword string) error {
+func (server *Server) txCreateMultiBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeeRequest, hasDefaultPassword string) error {
 	err := server.Store.ExecTx(ctx, func(q *db.Queries) error {
 		var err error
 		for _, b := range req.BarberEmployees {
@@ -321,27 +318,23 @@ func (server *Server) txCreateMultiBarberEmployee(ctx context.Context, req *barb
 			}
 
 			nickName := utils.GenerateNickName(b.FullName)
-			var hashedPasswordValid bool = hashedPassword != ""
-			arg := db.CreateBarberEmployeeParams{
+			arg := db.InsertBarberParams{
 				Phone: b.GetPhone(),
-				HashedPassword: sql.NullString{
-					String: hashedPassword,
-					Valid:  hashedPasswordValid,
+				DefaultPasswordEncrypted: pgtype.Text{
+					String: hasDefaultPassword,
+					Valid:  true,
 				},
 				NickName: strings.ToLower(nickName),
 				FullName: b.GetFullName(),
 			}
 
-			resBarber, err := server.Store.CreateBarberEmployee(ctx, arg)
+			resBarber, err := server.Store.InsertBarber(ctx, arg)
 			if err != nil {
 				if pqErr, ok := err.(*pgconn.PgError); ok {
 					strErr := ""
 					switch pqErr.ConstraintName {
 					case "Barbers_pkey":
 						strErr = arg.FullName + " 's id has already existed"
-						return returnError(codes.AlreadyExists, strErr, err)
-					case "Barbers_email_key":
-						strErr = arg.FullName + " 's email already exists"
 						return returnError(codes.AlreadyExists, strErr, err)
 					case "Barbers_phone_key":
 						strErr = arg.FullName + " 's phone number already exists"
@@ -356,12 +349,12 @@ func (server *Server) txCreateMultiBarberEmployee(ctx context.Context, req *barb
 
 			barberShopID := uuid.MustParse(req.BarberShopId)
 
-			argBarberRole := db.CreateBarberRoleParams{
+			argBarberRole := db.InsertBarberRoleParams{
 				BarberID:     resBarber.ID,
 				BarberShopID: barberShopID,
 				RoleID:       int16(req.RoleId),
 			}
-			_, err = server.Store.CreateBarberRole(ctx, argBarberRole)
+			_, err = server.Store.InsertBarberRole(ctx, argBarberRole)
 			if err != nil {
 				return err
 			}

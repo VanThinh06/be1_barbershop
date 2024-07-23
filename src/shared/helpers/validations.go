@@ -11,7 +11,6 @@ import (
 var (
 	nicknameRegex = "^[a-zA-Z0-9" + regexp.QuoteMeta(".#@-_") + "]+$"
 	emailRegex    = `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
-
 	vietnamRegex = regexp.MustCompile(`^(0[35789])[0-9]{8}$`)
 	numberRegex  = regexp.MustCompile(`^\d+$`)
 )
@@ -20,19 +19,6 @@ const (
 	minNumberLength = 1
 	maxNumberLength = 10
 )
-
-func ValidateNumber(number string) error {
-	if err := ValidateString(number, minNumberLength, maxNumberLength); err != nil {
-		return err
-	}
-
-	match := numberRegex.MatchString(number)
-	if !match {
-		return errors.New("invalid number format")
-	}
-
-	return nil
-}
 
 func ValidateString(value string, minLength, maxLength int) error {
 	n := len(strings.TrimSpace(value))
@@ -63,13 +49,6 @@ func ValidatePassword(password string) error {
 	return nil
 }
 
-func ValidateId(id string) error {
-	if err := ValidateString(id, 36, 36); err != nil {
-		return err
-	}
-
-	return nil
-}
 
 func ValidatePhoneNumber(phoneNumber string) error {
 	normalizedNumber := regexp.MustCompile(`\D`).ReplaceAllString(phoneNumber, "")

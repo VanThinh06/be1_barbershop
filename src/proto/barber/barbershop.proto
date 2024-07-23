@@ -9,9 +9,9 @@ message BarberShop {
     string id = 1;
     string barber_shop_chain_id = 2;
     string name = 3;
-    int32 province_id = 4;
-    int32 district_id = 5;
-    int32 ward_id = 6;
+    string province_name = 4;
+    string district_name = 5;
+    string ward_name = 6;
     string specific_location = 7;
     string phone = 8;
     string email = 9;
@@ -21,8 +21,5 @@ message BarberShop {
     string facade_photo_url = 13;
     bool is_main_branch = 14;
     bool is_reputation = 15;
-    string province_name = 16;
-    string district_name = 17;
-    string ward_name = 18;
-    int32 role_id = 19;
+    int32 barber_role_id = 16;
 }

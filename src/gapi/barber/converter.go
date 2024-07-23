@@ -34,9 +34,6 @@ func convertBarberShop(barberShop db.BarberShop) *barber.BarberShop {
 		Id:                barberShop.ID.String(),
 		BarberShopChainId: barberShopChainId,
 		Name:              barberShop.Name,
-		ProvinceId:        int32(barberShop.ProvinceID),
-		DistrictId:        int32(barberShop.DistrictID),
-		WardId:            int32(barberShop.ProvinceID),
 		SpecificLocation:  barberShop.SpecificLocation,
 		Phone:             barberShop.Phone,
 		Email:             barberShop.Email,
@@ -49,14 +46,11 @@ func convertBarberShop(barberShop db.BarberShop) *barber.BarberShop {
 	}
 }
 
-func convertGetBarberShop(barberShop db.GetBarberShopRow) *barber.BarberShop {
+func convertGetBarberShop(barberShop db.ViewBarberShop) *barber.BarberShop {
 	return &barber.BarberShop{
 		Id:                barberShop.ID.String(),
 		BarberShopChainId: barberShop.BarberShopChainID.UUID.String(),
 		Name:              barberShop.Name,
-		ProvinceId:        int32(barberShop.ProvinceID),
-		DistrictId:        int32(barberShop.DistrictID),
-		WardId:            int32(barberShop.ProvinceID),
 		SpecificLocation:  barberShop.SpecificLocation,
 		Phone:             barberShop.Phone,
 		Email:             barberShop.Email,
@@ -72,29 +66,25 @@ func convertGetBarberShop(barberShop db.GetBarberShopRow) *barber.BarberShop {
 	}
 }
 
-func convertListBarberShops(res []db.ListBarberShopsRow) []*barber.BarberShop {
+func convertListBarberShops(res []db.ListBarberShopsByBarberIdRow) []*barber.BarberShop {
 	var barberShops []*barber.BarberShop
 	for _, barberShop := range res {
 		barberShopPB := &barber.BarberShop{
-			Id:                barberShop.ID.String(),
-			BarberShopChainId: barberShop.BarberShopChainID.UUID.String(),
-			Name:              barberShop.Name,
-			ProvinceId:        int32(barberShop.ProvinceID),
-			DistrictId:        int32(barberShop.DistrictID),
-			WardId:            int32(barberShop.ProvinceID),
-			SpecificLocation:  barberShop.SpecificLocation,
-			Phone:             barberShop.Phone,
-			Email:             barberShop.Email,
-			WebsiteUrl:        barberShop.WebsiteUrl.String,
-			AvatarUrl:         barberShop.AvatarUrl,
-			CoverPhotoUrl:     barberShop.CoverPhotoUrl,
-			FacadePhotoUrl:    barberShop.FacadePhotoUrl,
-			IsMainBranch:      barberShop.IsMainBranch,
-			IsReputation:      barberShop.IsReputation,
-			ProvinceName:      barberShop.ProvinceName,
-			DistrictName:      barberShop.DistrictName,
-			WardName:          barberShop.WardName,
-			RoleId:            int32(barberShop.RoleID.Int16),
+			Id:               barberShop.ID.String(),
+			Name:             barberShop.Name,
+			SpecificLocation: barberShop.SpecificLocation,
+			Phone:            barberShop.Phone,
+			Email:            barberShop.Email,
+			WebsiteUrl:       barberShop.WebsiteUrl.String,
+			AvatarUrl:        barberShop.AvatarUrl,
+			CoverPhotoUrl:    barberShop.CoverPhotoUrl,
+			FacadePhotoUrl:   barberShop.FacadePhotoUrl,
+			IsMainBranch:     barberShop.IsMainBranch,
+			IsReputation:     barberShop.IsReputation,
+			ProvinceName:     barberShop.ProvinceName,
+			DistrictName:     barberShop.DistrictName,
+			WardName:         barberShop.WardName,
+			BarberRoleId:     int32(barberShop.RoleID.Int16),
 		}
 
 		barberShops = append(barberShops, barberShopPB)
@@ -102,26 +92,26 @@ func convertListBarberShops(res []db.ListBarberShopsRow) []*barber.BarberShop {
 	return barberShops
 }
 
-func ConvertSearchByNameBarberShops(res []db.SearchByNameBarberShopsRow) []*barber.BarberShop {
-	var barberShops []*barber.BarberShop
+// func ConvertSearchByNameBarberShops(res []db.SearchByNameBarberShopsRow) []*barber.BarberShop {
+// 	var barberShops []*barber.BarberShop
 
-	for _, barberShop := range res {
-		// chainIDString := barberShop.BarberShopChainID.UUID.String()
-		barberShopPB := &barber.BarberShop{
-			Id: barberShop.ID.String(),
-			// BarberShopChainId: &chainIDString,
-			// BranchCount:       int32(barberShop.BranchNumber.Int16),
-			// Distance: float32(barberShop.Distance),
-			// Longitude:         wrapperspb.Double(barberShop.Longitude),
-			// Latitude:          wrapperspb.Double(barberShop.Latitude),
-			Name: barberShop.Name,
-			// Coordinates:       barberShop.Coordinates,
-			IsReputation: barberShop.IsReputation,
-		}
-		barberShops = append(barberShops, barberShopPB)
-	}
-	return barberShops
-}
+// 	for _, barberShop := range res {
+// 		// chainIDString := barberShop.BarberShopChainID.UUID.String()
+// 		barberShopPB := &barber.BarberShop{
+// 			Id: barberShop.ID.String(),
+// 			// BarberShopChainId: &chainIDString,
+// 			// BranchCount:       int32(barberShop.BranchNumber.Int16),
+// 			// Distance: float32(barberShop.Distance),
+// 			// Longitude:         wrapperspb.Double(barberShop.Longitude),
+// 			// Latitude:          wrapperspb.Double(barberShop.Latitude),
+// 			Name: barberShop.Name,
+// 			// Coordinates:       barberShop.Coordinates,
+// 			IsReputation: barberShop.IsReputation,
+// 		}
+// 		barberShops = append(barberShops, barberShopPB)
+// 	}
+// 	return barberShops
+// }
 
 func ConvertListBarberShopsNearby(res []db.ListNearbyBarberShopsRow) []*barber.BarberShop {
 	var barberShops []*barber.BarberShop
@@ -141,7 +131,7 @@ func ConvertListBarberShopsNearby(res []db.ListNearbyBarberShopsRow) []*barber.B
 	return barberShops
 }
 
-func convertBarberEmployee(res db.GetBarberRow) *barber.BarberDetail {
+func convertBarberEmployee(res db.GetBarberWithRoleAndShopRow) *barber.BarberDetail {
 
 	barberEmployee := &barber.BarberDetail{
 		Barber: &barber.Barbers{
@@ -166,7 +156,7 @@ func convertBarberEmployee(res db.GetBarberRow) *barber.BarberDetail {
 	return barberEmployee
 }
 
-func convertBarberEmployees(res []db.ListEmployeesRow) []*barber.BarberDetail {
+func convertBarberEmployees(res []db.ListBarberEmployeesRow) []*barber.BarberDetail {
 	var barberEmployees []*barber.BarberDetail
 
 	for _, item := range res {

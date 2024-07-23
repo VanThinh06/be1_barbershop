@@ -55,3 +55,10 @@ func ValidateBarberUpdate(req *barber.UpdateBarberRequest) (validations []*errde
 
 	return validations
 }
+
+func ValidatePassword(password string) error {
+	if err := helpers.ValidatePassword(password); err != nil {
+		return err
+	}
+	return nil
+}

@@ -13,9 +13,10 @@ import (
 type PasetoMaker struct {
 	paseto       *paseto.V2
 	symmetricKey []byte
+	aesKey       string
 }
 
-func NewPasetoMaker(symmetricKey string) (Maker, error) {
+func NewPasetoMaker(symmetricKey string,  aesKey string) (Maker, error) {
 	if len(symmetricKey) != chacha20poly1305.KeySize {
 		return nil, fmt.Errorf("invalid key size: must be exactly %d characters", chacha20poly1305.KeySize)
 	}
@@ -23,6 +24,7 @@ func NewPasetoMaker(symmetricKey string) (Maker, error) {
 	maker := &PasetoMaker{
 		paseto:       paseto.NewV2(),
 		symmetricKey: []byte(symmetricKey),
+		aesKey: aesKey,
 	}
 
 	return maker, nil

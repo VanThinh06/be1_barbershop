@@ -8,11 +8,13 @@ import (
 	"barbershop/src/utils"
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -32,7 +34,7 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 	}
 
 	nickName := utils.GenerateNickName(req.FullName)
-	arg := db.CreateBarberParams{
+	arg := db.InsertBarberWithDetailsParams{
 		NickName: strings.ToLower(nickName),
 		FullName: req.GetFullName(),
 		HashedPassword: sql.NullString{
@@ -46,14 +48,14 @@ func (server *Server) CreateBarber(ctx context.Context, req *barber.CreateBarber
 		},
 	}
 
-	res, err := server.Store.CreateBarber(ctx, arg)
+	res, err := server.Store.InsertBarberWithDetails(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pgconn.PgError); ok {
 			switch pqErr.ConstraintName {
-			case "Barbers_pkey":
-				return nil, utils.AlreadyExistsError(err, "This nick name has already existed")
+			case "Barbers_email_key":
+				return nil, utils.AlreadyExistsError(err, "This email has already existed")
 			case "Barbers_phone_key":
-				return nil, utils.AlreadyExistsError(err, "This nick name has already existed")
+				return nil, utils.AlreadyExistsError(err, "This phone has already existed")
 			case "Barbers_nick_name_key":
 				return nil, utils.AlreadyExistsError(err, "This nick name has already existed")
 			}
@@ -91,13 +93,13 @@ func (server *Server) GetBarber(ctx context.Context, req *barber.GetBarbersReque
 		return nil, utils.NotFoundError(err, "barber don't exist")
 	}
 
-	arg := db.GetBarberParams{
+	arg := db.GetBarberWithRoleAndShopParams{
 		ID:           idBarber,
 		BarberShopID: idBarberShop,
 	}
-	res, err := server.Store.GetBarber(ctx, arg)
+	res, err := server.Store.GetBarberWithRoleAndShop(ctx, arg)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, utils.NotFoundError(err, "barber don't exist")
 		}
 		return nil, utils.InternalError(err)
@@ -111,7 +113,7 @@ func (server *Server) GetBarber(ctx context.Context, req *barber.GetBarbersReque
 
 // authenticate barber login
 func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRequest) (*barber.LoginBarberResponse, error) {
-	contact := db.GetUserBarberParams{
+	contact := db.GetBarberByCredentialParams{
 		TypeUsername: "phone",
 		Email: sql.NullString{
 			String: req.GetUsername(),
@@ -128,9 +130,9 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 		}
 	}
 
-	res, err := server.Store.GetUserBarber(ctx, contact)
+	res, err := server.Store.GetBarberByCredential(ctx, contact)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, utils.NotFoundError(err, "you have not created an account yet")
 		}
 		return nil, utils.InvalidError(err, "username or password is incorrect")
@@ -210,7 +212,7 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *barber.Refres
 
 	session, err := server.Store.GetSessionBarber(ctx, payload.ID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, utils.NotFoundError(err, "not found")
 		}
 
@@ -288,22 +290,22 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *barber.Refres
 
 // authenticate barber forgot password
 func (server *Server) ForgotPasswordBarber(ctx context.Context, req *barber.ForgotPasswordBarberRequest) (*barber.ForgotPasswordBarberResponse, error) {
-	contact := db.GetUserBarberParams{
+	contact := db.GetBarberByCredentialParams{
 		TypeUsername: "email",
 		Email: sql.NullString{
 			String: req.GetEmail(),
 			Valid:  req.Email != "",
 		},
 	}
-	user, err := server.Store.GetUserBarber(ctx, contact)
+	user, err := server.Store.GetBarberByCredential(ctx, contact)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, utils.NotFoundError(err, "account does not exist")
 		}
 		return nil, utils.InvalidError(err, "email is incorrect")
 	}
 
-	countOTP, err := server.Store.SelectRequestOTPNumber(ctx, user.ID)
+	countOTP, err := server.Store.GetCountOTPsForBarberToday(ctx, user.ID)
 	if err != nil {
 		return nil, utils.InternalError(err)
 	}
@@ -313,7 +315,7 @@ func (server *Server) ForgotPasswordBarber(ctx context.Context, req *barber.Forg
 	}
 
 	otp := utils.GenerateOTP()
-	argOTP := db.InsertOTPRequestParams{
+	argOTP := db.InsertNewOTPRequestParams{
 		BarberID: user.ID,
 		Otp:      otp,
 	}
@@ -323,7 +325,7 @@ func (server *Server) ForgotPasswordBarber(ctx context.Context, req *barber.Forg
 		return nil, utils.InternalError(err)
 	}
 
-	err = server.Store.InsertOTPRequest(ctx, argOTP)
+	err = server.Store.InsertNewOTPRequest(ctx, argOTP)
 	if err != nil {
 		return nil, utils.InternalError(err)
 	}
@@ -341,24 +343,27 @@ func (server *Server) VerifyOtpBarber(ctx context.Context, req *barber.VerifyOtp
 	if err != nil {
 		return nil, utils.NotFoundError(err, "barber don't exist")
 	}
-	argOtpRequest := db.SelectOTPRequestParams{
+	argOtpRequest := db.GetOTPRequestDetailsParams{
 		BarberID: barberId,
 		Otp:      req.Code,
 	}
-	resOtp, err := server.Store.SelectOTPRequest(ctx, argOtpRequest)
+	resOtp, err := server.Store.GetOTPRequestDetails(ctx, argOtpRequest)
 	if err != nil {
-		return nil, utils.InternalError(err)
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, utils.ReturnError(codes.ResourceExhausted, err, "invalid or expired OTP")
+		}
+		return nil, utils.ReturnError(codes.Internal, err, "an error occurred while processing OTP")
 	}
 
-	if time.Now().UTC().Sub(resOtp.RequestedAt) > time.Minute*10 {
+	if time.Now().UTC().Sub(resOtp.RequestedAt) > time.Minute*5 {
 		return nil, utils.ReturnError(codes.ResourceExhausted, err, "invalid or expired OTP")
 	}
 
-	argConfirmOTPRequest := db.ConfirmOTPRequestParams{
+	argConfirmOTPRequest := db.UpdateOTPRequestConfirmationParams{
 		IsConfirm: true,
 		ID:        resOtp.ID,
 	}
-	err = server.Store.ConfirmOTPRequest(ctx, argConfirmOTPRequest)
+	err = server.Store.UpdateOTPRequestConfirmation(ctx, argConfirmOTPRequest)
 	if err != nil {
 		return nil, utils.InternalError(err)
 	}
@@ -392,11 +397,11 @@ func (server *Server) ResetPasswordBarber(ctx context.Context, req *barber.Reset
 		return nil, utils.InvalidError(nil, "New password must not be the same as the old password")
 	}
 
-	argOtpRequest := db.SelectOTPRequestParams{
+	argOtpRequest := db.GetOTPRequestDetailsParams{
 		BarberID: barberId,
 		Otp:      req.Code,
 	}
-	resOtp, err := server.Store.SelectOTPRequest(ctx, argOtpRequest)
+	resOtp, err := server.Store.GetOTPRequestDetails(ctx, argOtpRequest)
 	if err != nil {
 		return nil, utils.InternalError(err)
 	}
@@ -408,14 +413,14 @@ func (server *Server) ResetPasswordBarber(ctx context.Context, req *barber.Reset
 	if err != nil {
 		return nil, utils.InternalError(err)
 	}
-	argUpdatePasswordBarber := db.UpdatePasswordBarberParams{
+	argUpdatePasswordBarber := db.UpdateBarberPasswordParams{
 		HashedPassword: sql.NullString{
 			String: hashedPassword,
 			Valid:  true,
 		},
 		ID: barberId,
 	}
-	resBarber, err := server.Store.UpdatePasswordBarber(ctx, argUpdatePasswordBarber)
+	resBarber, err := server.Store.UpdateBarberPassword(ctx, argUpdatePasswordBarber)
 	if err != nil {
 		return nil, utils.InternalError(err)
 	}

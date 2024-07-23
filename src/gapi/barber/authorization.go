@@ -45,7 +45,7 @@ func (server *Server) authorizeBarber(ctx context.Context) (*token.BarberPayload
 	return payload, nil
 }
 
-func (server *Server) authorizeCustomer(ctx context.Context) (*token.CustomerPayload, error) {
+func (server *Server) AuthorizeCustomer(ctx context.Context) (*token.CustomerPayload, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, fmt.Errorf("missing metadata")
