@@ -71,6 +71,15 @@ WHERE
     OR
     (sqlc.arg(type_username)::varchar = 'phone' AND b.phone = $1);
 
+-- name: GetBarberById :one
+SELECT 
+    *
+FROM 
+    "Barbers" 
+WHERE 
+    id = $1;
+
+
 -- name: ListEmployees :many
 SELECT *,
        (SELECT COUNT(*) FROM "Barbers" b

@@ -381,6 +381,17 @@ func (server *Server) ResetPasswordBarber(ctx context.Context, req *barber.Reset
 	if err != nil {
 		return nil, utils.NotFoundError(err, "barber don't exist")
 	}
+
+	respBarber, err := server.Store.GetBarberById(ctx, barberId)
+	if err != nil {
+		return nil, utils.NotFoundError(err, "barber don't exist")
+	}
+
+	newPasswordErr := helpers.CheckPassword(req.Password, respBarber.HashedPassword.String)
+	if newPasswordErr == nil {
+		return nil, utils.InvalidError(nil, "New password must not be the same as the old password")
+	}
+
 	argOtpRequest := db.SelectOTPRequestParams{
 		BarberID: barberId,
 		Otp:      req.Code,
