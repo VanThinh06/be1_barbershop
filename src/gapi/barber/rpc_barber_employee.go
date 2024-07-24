@@ -229,7 +229,6 @@ func (server *Server) UpdateBarber(ctx context.Context, req *barber.UpdateBarber
 			Bool:  req.Barber.GetWorkStatus(),
 			Valid: req.Barber.WorkStatus != nil,
 		},
-
 		Email: sql.NullString{
 			String: strings.ToLower(req.Barber.GetEmail()),
 			Valid:  req.Barber.Email != nil,

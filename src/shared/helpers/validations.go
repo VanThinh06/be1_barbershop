@@ -15,11 +15,6 @@ var (
 	numberRegex  = regexp.MustCompile(`^\d+$`)
 )
 
-const (
-	minNumberLength = 1
-	maxNumberLength = 10
-)
-
 func ValidateString(value string, minLength, maxLength int) error {
 	n := len(strings.TrimSpace(value))
 	if n < minLength || n > maxLength {
@@ -49,7 +44,6 @@ func ValidatePassword(password string) error {
 	return nil
 }
 
-
 func ValidatePhoneNumber(phoneNumber string) error {
 	normalizedNumber := regexp.MustCompile(`\D`).ReplaceAllString(phoneNumber, "")
 
@@ -73,8 +67,6 @@ func ValidateFullName(fullName string) error {
 
 	return nil
 }
-
-
 
 func isVietnameseLetter(char rune) bool {
 	vietnameseCharset := []*unicode.RangeTable{

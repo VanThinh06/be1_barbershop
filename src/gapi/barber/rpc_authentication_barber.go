@@ -139,11 +139,18 @@ func (server *Server) LoginBarber(ctx context.Context, req *barber.LoginBarberRe
 	}
 
 	if !res.HashedPassword.Valid {
-		return nil, utils.InvalidError(err, "username or password is incorrect")
-	}
-	err = helpers.CheckPassword(req.Password, res.HashedPassword.String)
-	if err != nil {
-		return nil, utils.InvalidError(err, "username or password is incorrect")
+		password, err := server.tokenMaker.DecodeAESString(req.GetPassword())
+		if err != nil {
+			return nil, utils.InvalidError(err, "username or password is incorrect")
+		}
+		if password != res.DefaultPasswordEncrypted.String {
+			return nil, utils.InvalidError(err, "username or password is incorrect")
+		}
+	} else {
+		err = helpers.CheckPassword(req.Password, res.HashedPassword.String)
+		if err != nil {
+			return nil, utils.InvalidError(err, "username or password is incorrect")
+		}
 	}
 
 	barberPayload := token.Barber{
@@ -392,9 +399,11 @@ func (server *Server) ResetPasswordBarber(ctx context.Context, req *barber.Reset
 		return nil, utils.NotFoundError(err, "barber don't exist")
 	}
 
-	newPasswordErr := helpers.CheckPassword(req.Password, respBarber.HashedPassword.String)
-	if newPasswordErr == nil {
-		return nil, utils.InvalidError(nil, "New password must not be the same as the old password")
+	if respBarber.HashedPassword.Valid {
+		newPasswordErr := helpers.CheckPassword(req.Password, respBarber.HashedPassword.String)
+		if newPasswordErr == nil {
+			return nil, utils.InvalidError(nil, "New password must not be the same as the old password")
+		}
 	}
 
 	argOtpRequest := db.GetOTPRequestDetailsParams{
