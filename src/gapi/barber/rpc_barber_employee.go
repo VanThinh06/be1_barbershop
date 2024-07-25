@@ -308,7 +308,7 @@ func (server *Server) checkPermissionManageEmployee(ctx context.Context, barberS
 
 func (server *Server) txCreateMultiBarberEmployee(ctx context.Context, req *barber.CreateBarberEmployeeRequest, hasDefaultPassword string) error {
 	err := server.Store.ExecTx(ctx, func(q *db.Queries) error {
-		var err error
+
 		for _, b := range req.BarberEmployees {
 
 			validations := utils.ValidateBarberEmployee(b)
@@ -327,25 +327,24 @@ func (server *Server) txCreateMultiBarberEmployee(ctx context.Context, req *barb
 				FullName: b.GetFullName(),
 			}
 
-			resBarber, err := server.Store.InsertBarber(ctx, arg)
+			resBarber, err := q.InsertBarber(ctx, arg)
 			if err != nil {
 				if pqErr, ok := err.(*pgconn.PgError); ok {
-					strErr := ""
+					var strErr string
 					switch pqErr.ConstraintName {
 					case "Barbers_pkey":
-						strErr = arg.FullName + " 's id has already existed"
-						return returnError(codes.AlreadyExists, strErr, err)
+						strErr = arg.FullName + "'s ID already exists"
 					case "Barbers_phone_key":
-						strErr = arg.FullName + " 's phone number already exists"
-						return returnError(codes.AlreadyExists, strErr, err)
+						strErr = arg.FullName + "'s phone number already exists"
 					case "Barbers_nick_name_key":
-						strErr = arg.FullName + " 's nick name already exists"
-						return returnError(codes.AlreadyExists, strErr, err)
+						strErr = arg.FullName + "'s nick name already exists"
+					default:
+						strErr = "Unexpected error occurred"
 					}
+					return returnError(codes.AlreadyExists, strErr, err)
 				}
 				return utils.InternalError(err)
 			}
-
 			barberShopID := uuid.MustParse(req.BarberShopId)
 
 			argBarberRole := db.InsertBarberRoleParams{
@@ -353,12 +352,12 @@ func (server *Server) txCreateMultiBarberEmployee(ctx context.Context, req *barb
 				BarberShopID: barberShopID,
 				RoleID:       int16(req.RoleId),
 			}
-			_, err = server.Store.InsertBarberRole(ctx, argBarberRole)
+			_, err = q.InsertBarberRole(ctx, argBarberRole)
 			if err != nil {
 				return err
 			}
 		}
-		return err
+		return nil
 	})
 	return err
 }
