@@ -235,7 +235,7 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *barber.Refres
 	if session.BarberID != payload.Barber.BarberID {
 		err = fmt.Errorf("incorrect session user")
 
-		return nil, unauthenticatedError(err)
+		return nil, utils.UnauthenticatedError(err)
 
 	}
 
@@ -246,7 +246,7 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *barber.Refres
 
 	}
 
-	if time.Now().After(session.ExpiresAt) {
+	if time.Now().UTC().After(session.ExpiresAt) {
 		err = fmt.Errorf("expired session")
 		return nil, utils.UnauthenticatedError(err)
 	}
@@ -298,12 +298,22 @@ func (server *Server) RefreshTokenBarber(ctx context.Context, req *barber.Refres
 // authenticate barber forgot password
 func (server *Server) ForgotPasswordBarber(ctx context.Context, req *barber.ForgotPasswordBarberRequest) (*barber.ForgotPasswordBarberResponse, error) {
 	contact := db.GetBarberByCredentialParams{
-		TypeUsername: "email",
+		TypeUsername: "phone",
 		Email: sql.NullString{
-			String: req.GetEmail(),
-			Valid:  req.Email != "",
+			String: req.GetUsername(),
+			Valid:  req.Username != "",
 		},
 	}
+
+	err := helpers.ValidatePhoneNumber(req.Username)
+	if err != nil {
+		contact.TypeUsername = "email"
+		contact.Email = sql.NullString{
+			String: req.GetUsername(),
+			Valid:  req.Username != "",
+		}
+	}
+
 	user, err := server.Store.GetBarberByCredential(ctx, contact)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -326,8 +336,11 @@ func (server *Server) ForgotPasswordBarber(ctx context.Context, req *barber.Forg
 		BarberID: user.ID,
 		Otp:      otp,
 	}
+	if !user.Email.Valid {
+		return nil, utils.ReturnError(codes.FailedPrecondition, err, "invalid email. please contact the administrator to add an email.")
+	}
 
-	err = utils.SendOTP(req.GetEmail(), otp)
+	err = utils.SendOTP(user.Email.String, otp)
 	if err != nil {
 		return nil, utils.InternalError(err)
 	}

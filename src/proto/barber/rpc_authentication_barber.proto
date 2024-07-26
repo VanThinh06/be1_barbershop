@@ -19,7 +19,7 @@ message CreateBarberResponse {
 
 
 message ForgotPasswordBarberRequest{
-    string email = 1;
+    string username = 1;
 }
 
 message ForgotPasswordBarberResponse {
