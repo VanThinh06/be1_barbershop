@@ -23,7 +23,8 @@ message ForgotPasswordBarberRequest{
 }
 
 message ForgotPasswordBarberResponse {
-    string message = 1;
+    string user_id = 1;
+    string email = 2;
 }
 
 message VerifyOtpBarberRequest{
