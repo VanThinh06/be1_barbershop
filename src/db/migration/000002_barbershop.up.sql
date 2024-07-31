@@ -1,7 +1,8 @@
 
 CREATE TABLE "BarberShops" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "barber_shop_id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "barber_shop_chain_id" uuid,
+  "code" varchar(20) UNIQUE NOT NULL,
   "name" varchar(200) NOT NULL,
   "province_id" int2 NOT NULL,
   "district_id" int2 NOT NULL,
@@ -38,7 +39,7 @@ CREATE TABLE "BarberShops" (
   "is_reputation" bool NOT NULL DEFAULT false,
   "is_verified" bool NOT NULL DEFAULT false,
   "create_at" timestamptz NOT NULL DEFAULT (now()),
-  FOREIGN KEY ("barber_shop_chain_id") REFERENCES "BarberShopChains" ("id"),
+  FOREIGN KEY ("barber_shop_chain_id") REFERENCES "BarberShopChains" ("barber_shop_chain_id"),
   FOREIGN KEY ("province_id") REFERENCES "Provinces" ("id"),
   FOREIGN KEY ("district_id") REFERENCES "Districts" ("id"),
   FOREIGN KEY ("ward_id") REFERENCES "Wards" ("id")
@@ -49,6 +50,8 @@ CREATE INDEX ON "BarberShops" ("name");
 CREATE INDEX ON "BarberShops" ("province_id");
 CREATE INDEX ON "BarberShops" ("district_id");
 CREATE INDEX ON "BarberShops" ("ward_id");
+CREATE INDEX ON "BarberShops" ("code");
+
 
 CREATE VIEW "view_barber_shops" AS
 SELECT 

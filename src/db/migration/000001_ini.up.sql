@@ -49,7 +49,7 @@ CREATE INDEX ON "Roles" ("name");
 CREATE TABLE "Permissions" (
   "id" serial2 PRIMARY KEY,
   "name" varchar(100) UNIQUE NOT NULL,
-  "description" varchar(255)
+  "module" varchar(100) NOT NULL
 );
 
 -- Create index on name
@@ -71,7 +71,7 @@ CREATE INDEX ON "RolePermissions" ("permission_id");
 
 -- Create BarberShopChains table
 CREATE TABLE "BarberShopChains" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "barber_shop_chain_id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" varchar(100) NOT NULL,
   "chain_identifier" varchar(50) UNIQUE NOT NULL,
   "founder" varchar(50) NOT NULL,
@@ -82,3 +82,12 @@ CREATE TABLE "BarberShopChains" (
 -- Create indexes on BarberShopChains
 CREATE INDEX ON "BarberShopChains" ("name");
 CREATE INDEX ON "BarberShopChains" ("chain_identifier");
+
+-- Create BarberRoles table
+CREATE TABLE "BarberRoles" (
+  "barber_role_id" serial2 PRIMARY KEY DEFAULT,
+  "name" VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- Create indexes on BarberRoles
+CREATE INDEX ON "BarberRoles" ("name");
