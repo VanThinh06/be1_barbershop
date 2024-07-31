@@ -2268,7 +2268,10 @@
     "pbForgotPasswordBarberResponse": {
       "type": "object",
       "properties": {
-        "message": {
+        "userId": {
+          "type": "string"
+        },
+        "email": {
           "type": "string"
         }
       }

@@ -351,7 +351,8 @@ func (server *Server) ForgotPasswordBarber(ctx context.Context, req *barber.Forg
 	}
 
 	rsp := &barber.ForgotPasswordBarberResponse{
-		Message: user.ID.String(),
+		UserId: user.ID.String(),
+		Email:  user.Email.String,
 	}
 	return rsp, nil
 }
