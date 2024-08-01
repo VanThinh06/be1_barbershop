@@ -55,7 +55,7 @@ CREATE INDEX ON "BarberShops" ("code");
 
 CREATE VIEW "view_barber_shops" AS
 SELECT 
-  bs.id,
+  bs.barber_shop_id,
   bs.barber_shop_chain_id,
   bs.name,
   p.name AS province_name,

@@ -3,7 +3,7 @@ CREATE TABLE "ServiceCategories" (
   "id" serial2 PRIMARY KEY,
   "name" varchar(50) NOT NULL,
   "barber_shop_id" uuid,
-  FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id")
+  FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("barber_shop_id")
 );
 
 -- Create indexes
@@ -19,7 +19,7 @@ CREATE TABLE "CategoryPositions" (
   "position" int2 NOT NULL,
   "visible" boolean NOT NULL DEFAULT TRUE,
   PRIMARY KEY ("barber_shop_id", "category_id"),
-  FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id"),
+  FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("barber_shop_id"),
   FOREIGN KEY ("category_id") REFERENCES "ServiceCategories" ("id") ON DELETE CASCADE
 );
 
@@ -43,7 +43,7 @@ CREATE TABLE "ServiceItems" (
   "description" varchar(500) DEFAULT '', 
   "image_url" varchar(120)  DEFAULT '', 
   "is_active" BOOLEAN NOT NULL DEFAULT FALSE,
-  FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id"),
+  FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("barber_shop_id"),
   FOREIGN KEY ("category_id") REFERENCES "ServiceCategories" ("id"),
   FOREIGN KEY ("gender_id") REFERENCES "Genders" ("id")
 );
@@ -69,7 +69,7 @@ CREATE TABLE "ServicePackages" (
   "description" varchar(500) DEFAULT '', 
   "image_url" varchar(120) DEFAULT '', 
   "is_active" BOOLEAN NOT NULL DEFAULT FALSE,
-  FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id"),
+  FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("barber_shop_id"),
   FOREIGN KEY ("gender_id") REFERENCES "Genders" ("id")
 );
 
