@@ -1,6 +1,6 @@
 -- Create Customers table
 CREATE TABLE "Customers" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "id" serial PRIMARY KEY ,
   "name" varchar(50) NOT NULL,
   "email" varchar(50) UNIQUE NOT NULL,
   "phone" varchar(15) UNIQUE,
@@ -19,8 +19,8 @@ CREATE INDEX ON "Customers" ("email");
 
 -- Create SessionsCustomer table
 CREATE TABLE "SessionsCustomer" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "customer_id" uuid NOT NULL,
+  "id" serial PRIMARY KEY ,
+  "customer_id" INT NOT NULL,
   "refresh_token" varchar NOT NULL,
   "user_agent" varchar NOT NULL,
   "client_ip" varchar NOT NULL,
@@ -37,8 +37,8 @@ CREATE INDEX ON "SessionsCustomer" ("customer_id");
 
 -- Create OTPRequestsCustomer table
 CREATE TABLE "OTPRequestsCustomer" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "customer_id" uuid NOT NULL,
+  "id" serial PRIMARY KEY,
+  "customer_id" INT NOT NULL,
   "otp" varchar(6) NOT NULL,
   "requested_at" timestamptz NOT NULL DEFAULT (now()),
   "is_confirm" bool NOT NULL DEFAULT false,

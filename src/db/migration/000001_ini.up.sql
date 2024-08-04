@@ -70,7 +70,7 @@ CREATE INDEX ON "RolePermissions" ("permission_id");
 
 -- Create BarberShopChains table
 CREATE TABLE "BarberShopChains" (
-  "barber_shop_chain_id" uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  "shop_chain_id" smallserial PRIMARY KEY,
   "name" varchar(100) NOT NULL,
   "chain_identifier" varchar(50) UNIQUE NOT NULL,
   "founder" varchar(50) NOT NULL,

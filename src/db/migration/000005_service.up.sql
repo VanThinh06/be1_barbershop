@@ -1,37 +1,37 @@
 -- Create ServiceCategories table
 CREATE TABLE "ServiceCategories" (
-  "id" serial2 PRIMARY KEY,
+  "id" smallserial PRIMARY KEY,
   "name" varchar(50) NOT NULL,
-  "barber_shop_id" uuid,
-  FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("barber_shop_id")
+  "shop_id" INT,
+  FOREIGN KEY ("shop_id") REFERENCES "BarberShops" ("shop_id")
 );
 
 -- Create indexes
-CREATE UNIQUE INDEX ON "ServiceCategories" ("name", "barber_shop_id");
+CREATE UNIQUE INDEX ON "ServiceCategories" ("name", "shop_id");
 CREATE INDEX ON "ServiceCategories" ("name");
-CREATE INDEX ON "ServiceCategories" ("barber_shop_id");
+CREATE INDEX ON "ServiceCategories" ("shop_id");
 
 
 -- Create CategoryPositions table
 CREATE TABLE "CategoryPositions" (
-  "barber_shop_id" uuid NOT NULL,
-  "category_id" serial2 NOT NULL,
+  "shop_id" INT NOT NULL,
+  "category_id" INT2 NOT NULL,
   "position" int2 NOT NULL,
   "visible" boolean NOT NULL DEFAULT TRUE,
-  PRIMARY KEY ("barber_shop_id", "category_id"),
-  FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("barber_shop_id"),
+  PRIMARY KEY ("shop_id", "category_id"),
+  FOREIGN KEY ("shop_id") REFERENCES "BarberShops" ("shop_id"),
   FOREIGN KEY ("category_id") REFERENCES "ServiceCategories" ("id") ON DELETE CASCADE
 );
 
 -- Create indexes
-CREATE INDEX  ON "CategoryPositions" ("barber_shop_id");
+CREATE INDEX  ON "CategoryPositions" ("shop_id");
 CREATE INDEX  ON "CategoryPositions" ("category_id");
 
 
 -- Create ServiceItems table
 CREATE TABLE "ServiceItems" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "barber_shop_id" uuid NOT NULL,
+  "id" serial PRIMARY KEY,
+  "shop_id" INT NOT NULL,
   "category_id" int2 NOT NULL,
   "gender_id" int2 NOT NULL,
   "name" varchar(100) NOT NULL,
@@ -43,22 +43,22 @@ CREATE TABLE "ServiceItems" (
   "description" varchar(500) DEFAULT '', 
   "image_url" varchar(120)  DEFAULT '', 
   "is_active" BOOLEAN NOT NULL DEFAULT FALSE,
-  FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("barber_shop_id"),
+  FOREIGN KEY ("shop_id") REFERENCES "BarberShops" ("shop_id"),
   FOREIGN KEY ("category_id") REFERENCES "ServiceCategories" ("id"),
   FOREIGN KEY ("gender_id") REFERENCES "Genders" ("id")
 );
 
 -- Create indexes
-CREATE INDEX ON "ServiceItems" ("barber_shop_id");
+CREATE INDEX ON "ServiceItems" ("shop_id");
 CREATE INDEX ON "ServiceItems" ("category_id");
 CREATE INDEX ON "ServiceItems" ("gender_id");
-CREATE UNIQUE INDEX ON "ServiceItems" ("barber_shop_id", "category_id", "name");
+CREATE UNIQUE INDEX ON "ServiceItems" ("shop_id", "category_id", "name");
 
 
 -- Create ServicePackages table
 CREATE TABLE "ServicePackages" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "barber_shop_id" uuid NOT NULL,
+  "id" smallserial PRIMARY KEY,
+  "shop_id" INT NOT NULL,
   "name" varchar(100) NOT NULL,
   "gender_id" int2 NOT NULL,
   "timer" int2 NOT NULL DEFAULT 0,
@@ -69,21 +69,21 @@ CREATE TABLE "ServicePackages" (
   "description" varchar(500) DEFAULT '', 
   "image_url" varchar(120) DEFAULT '', 
   "is_active" BOOLEAN NOT NULL DEFAULT FALSE,
-  FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("barber_shop_id"),
+  FOREIGN KEY ("shop_id") REFERENCES "BarberShops" ("shop_id"),
   FOREIGN KEY ("gender_id") REFERENCES "Genders" ("id")
 );
 
 -- Create indexes
-CREATE INDEX ON "ServicePackages" ("barber_shop_id");
+CREATE INDEX ON "ServicePackages" ("shop_id");
 CREATE INDEX ON "ServicePackages" ("gender_id");
-CREATE UNIQUE INDEX ON "ServicePackages" ("barber_shop_id", "name");
+CREATE UNIQUE INDEX ON "ServicePackages" ("shop_id", "name");
 
 
 -- Create ServicePackageItems table
 CREATE TABLE "ServicePackageItems" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "service_package_id" uuid NOT NULL,
-  "service_item_id" uuid NOT NULL,
+  "id" serial PRIMARY KEY,
+  "service_package_id" INT2 NOT NULL,
+  "service_item_id" INT NOT NULL,
   FOREIGN KEY ("service_package_id") REFERENCES "ServicePackages" ("id") ON DELETE CASCADE,
   FOREIGN KEY ("service_item_id") REFERENCES "ServiceItems" ("id")
 );
@@ -97,7 +97,7 @@ CREATE UNIQUE INDEX ON "ServicePackageItems" ("service_package_id", "service_ite
 CREATE VIEW "view_service_packages" AS
 SELECT 
   cs.id,
-  cs.barber_shop_id,
+  cs.shop_id,
   cs.gender_id AS combo_service_gender,
   cs.name AS combo_service_name,
   cs.timer AS combo_service_timer,
@@ -120,7 +120,7 @@ JOIN
 LEFT JOIN 
   "ServiceItems" si ON csi.service_item_id = si.id
 GROUP BY 
-  cs.id, cs.barber_shop_id, cs.gender_id, cs.name, cs.timer, cs.price, cs.discount_price, 
+  cs.id, cs.shop_id, cs.gender_id, cs.name, cs.timer, cs.price, cs.discount_price, 
   cs.discount_start_time, cs.discount_end_time, cs.description, cs.image_url, cs.is_active;
 
 
@@ -136,17 +136,17 @@ GROUP BY
 -- CREATE TABLE "BarberShopReviews" (
 --   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
 --   "customer_id" uuid NOT NULL,
---   "barber_shop_id" uuid NOT NULL,
+--   "shop_id" uuid NOT NULL,
 --   "rating" int2 NOT NULL,
 --   "comment" varchar(240),
 --   "create_at" timestamptz NOT NULL DEFAULT (now()),
 --   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
 --   FOREIGN KEY ("customer_id") REFERENCES "Customers" ("id"),
---   FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id")
+--   FOREIGN KEY ("shop_id") REFERENCES "BarberShops" ("id")
 -- );
 
 -- CREATE INDEX ON "BarberShopReviews" ("customer_id");
--- CREATE INDEX ON "BarberShopReviews" ("barber_shop_id");
+-- CREATE INDEX ON "BarberShopReviews" ("shop_id");
 
 -- CREATE TABLE "BarberReviews" (
 --   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
@@ -166,21 +166,21 @@ GROUP BY
 
 -- CREATE TABLE "Appointments" (
 --   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
---   "barber_shop_id" uuid NOT NULL,
+--   "shop_id" uuid NOT NULL,
 --   "customer_id" uuid NOT NULL,
 --   "barber_id" uuid NOT NULL,
 --   "appointment_date_time" timestamptz NOT NULL,
 --   "status" int2 NOT NULL,
 --   "create_at" timestamptz NOT NULL DEFAULT (now()),
 --   "update_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
---   FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("id"),
+--   FOREIGN KEY ("shop_id") REFERENCES "BarberShops" ("id"),
 --   FOREIGN KEY ("customer_id") REFERENCES "Customers" ("id"),
 --   FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("id")
 -- );
 
 -- CREATE INDEX ON "Appointments" ("barber_id");
 -- CREATE INDEX ON "Appointments" ("customer_id");
--- CREATE INDEX ON "Appointments" ("barber_shop_id");
+-- CREATE INDEX ON "Appointments" ("shop_id");
 -- CREATE UNIQUE INDEX ON "Appointments" ("barber_id", "appointment_date_time");
 
 -- CREATE OR REPLACE FUNCTION check_appointment_conflict()
@@ -189,7 +189,7 @@ GROUP BY
 --   IF EXISTS (
 --     SELECT 1
 --     FROM "Appointments"
---     WHERE "barber_shop_id" = NEW."barber_shop_id"
+--     WHERE "shop_id" = NEW."shop_id"
 --       AND "barber_id" = NEW."barber_id"
 --       AND (
 --         (NEW."appointment_date_time" + NEW."timer" * interval '1 minute') BETWEEN "appointment_date_time" AND "appointment_date_time" + NEW."timer" * interval '1 minute'
