@@ -1,64 +1,61 @@
+
+CREATE TABLE "Users" (
+  "user_id" SERIAL PRIMARY KEY,
+  "phone" VARCHAR(15) UNIQUE NOT NULL,
+  "email" VARCHAR(50) UNIQUE,
+  "hashed_password" VARCHAR(150) NOT NULL,
+  "is_active" BOOLEAN NOT NULL DEFAULT TRUE,
+  "role_id" SMALLINT NOT NULL,
+  "password_changed_at" TIMESTAMPTZ DEFAULT NULL,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  FOREIGN KEY ("role_id") REFERENCES "Roles" ("id")
+);
+
+CREATE INDEX ON "Users" ("role_id");
+
 -- Create Barbers table
 CREATE TABLE "Barbers" (
-  "barber_id" serial PRIMARY KEY,
+  "barber_id" SERIAL PRIMARY KEY,
   "shop_id" INT,
-  "barber_code" int,
-  "gender_id" int2,
-  "phone" varchar(15) UNIQUE NOT NULL,
-  "nick_name" varchar(50) NOT NULL,
-  "email" varchar(50) UNIQUE,
-  "full_name" varchar(50) NOT NULL,
-  "avatar_url" varchar(120),
-  "barber_type_id" INT2 NOT NULL,
+  "user_id" INT,
+  "barber_code" INT,
+  "gender_id" SMALLINT,
+  "phone" VARCHAR(15) UNIQUE NOT NULL,
+  "nick_name" VARCHAR(50),
+  "email" VARCHAR(50) UNIQUE,
+  "full_name" VARCHAR(50) NOT NULL,
+  "avatar_url" VARCHAR(120),
+  "barber_type_id" SMALLINT NOT NULL,
   "birth_date" DATE,
   "member_date" DATE,
-  "create_at" timestamptz NOT NULL DEFAULT (now()),
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   FOREIGN KEY ("shop_id") REFERENCES "BarberShops" ("shop_id"),
   FOREIGN KEY ("gender_id") REFERENCES "Genders" ("id"),
   FOREIGN KEY ("barber_type_id") REFERENCES "BarberTypes" ("id"),
+  FOREIGN KEY ("user_id") REFERENCES "Users" ("user_id"),
   UNIQUE ("nick_name", "shop_id")
 );
 
--- Create indexes on Barbers
-CREATE INDEX ON "Barbers" ("phone");
-CREATE INDEX ON "Barbers" ("email");
-CREATE INDEX ON "Barbers" ("nick_name");
+CREATE INDEX ON "Barbers" ("barber_code");
 
--- Create BarberRoles table
-CREATE TABLE "BarberRoles" (
-  "id" serial PRIMARY KEY,
-  "barber_id" int NOT NULL,
-  "barber_shop_id" int NOT NULL,
-  "role_id" int2 NOT NULL,
-  FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("barber_id"),
+
+-- Create UserRoles table
+CREATE TABLE "UserRoles" (
+  "id" SERIAL PRIMARY KEY,
+  "user_id" INT NOT NULL,
+  "barber_shop_id" INT NOT NULL,
+  "role_id" SMALLINT NOT NULL,
+  FOREIGN KEY ("user_id") REFERENCES "Users" ("user_id"),
   FOREIGN KEY ("barber_shop_id") REFERENCES "BarberShops" ("shop_id"),
-  FOREIGN KEY ("role_id") REFERENCES "Roles" ("id"),
-  UNIQUE ("barber_id", "barber_shop_id", "role_id")
+  FOREIGN KEY ("role_id") REFERENCES "Roles" ("id")
 );
 
--- Create indexes on BarberRoles
-CREATE INDEX ON "BarberRoles" ("barber_id");
-CREATE INDEX ON "BarberRoles" ("barber_shop_id");
-CREATE INDEX ON "BarberRoles" ("role_id");
+-- Create indexes on Barber
 
+Roles
+CREATE INDEX ON "UserRoles" ("barber_id");
+CREATE INDEX ON "UserRoles" ("barber_shop_id");
 
-CREATE TABLE "Users" (
-  "user_id" serial PRIMARY KEY,
-  "phone" varchar(15) UNIQUE NOT NULL,
-  "email" varchar(50) UNIQUE,
-  "hashed_password" varchar(150),
-  "is_active" BOOLEAN NOT NULL DEFAULT TRUE,
-  "role_id" int2 NOT NULL,
-  "barber_id" INT,
-  "password_changed_at" timestamptz DEFAULT NULL,
-  "created_at" timestamptz NOT NULL DEFAULT now(),
-  FOREIGN KEY ("role_id") REFERENCES "Roles" ("id"),
-  FOREIGN KEY ("barber_id") REFERENCES "Barbers" ("barber_id")
-);
-CREATE INDEX ON "Users" ("phone");
-CREATE INDEX ON "Users" ("email");
-CREATE INDEX ON "Users" ("role_id");
-CREATE INDEX ON "Users" ("barber_id");
 
 -- Create SessionsBarber table
 CREATE TABLE "SessionsBarber" (
