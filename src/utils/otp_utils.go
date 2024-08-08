@@ -21,7 +21,7 @@ func GenerateOTP() string {
 }
 
 func SendOTP(email, otp string) error {
-	config, err := LoadConfig(".")
+	config, err := InitConfig(".")
 	if err != nil {
 		return errors.New("token is invalid")
 	}

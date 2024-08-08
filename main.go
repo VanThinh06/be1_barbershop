@@ -1,6 +1,7 @@
 package main
 
 import (
+	"barbershop/src/config"
 	db "barbershop/src/db/sqlc"
 	gapi "barbershop/src/gapi/barber"
 	customergapi "barbershop/src/gapi/customer"
@@ -14,12 +15,10 @@ import (
 
 	_ "barbershop/src/shared/doc/statik"
 
-	"github.com/cloudinary/cloudinary-go/v2"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/lib/pq"
 
-	firebase "firebase.google.com/go/v4"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rakyll/statik/fs"
 	"google.golang.org/grpc"
@@ -30,36 +29,43 @@ import (
 // go:generate statik -src=barbershop/src/shared/doc/swagger -dest=barbershop/src/shared/doc
 
 func main() {
+	logger := config.InitLogger()
 
-	config, err := utils.LoadConfig(".")
+	logger.Info("Starting application...")
+
+	configSetting, err := config.InitConfig(".")
 	if err != nil {
-		log.Fatal("cannot load config:", err)
+		logger.WithError(err).Fatal("Cannot load config")
 	}
 
-	pgxpoolConfig, err := pgxpool.ParseConfig(config.DBSource)
+	pgxpoolConfig, err := pgxpool.ParseConfig(configSetting.DBSource)
 	if err != nil {
-		log.Fatalf("Unable to parse database configuration: %v", err)
+		logger.WithError(err).Fatal("Unable to parse database configuration")
 	}
+
 	ctx := context.Background()
 	conn, err := pgxpool.NewWithConfig(ctx, pgxpoolConfig)
 	if err != nil {
-		log.Fatal("cannot connect to db:", err)
+		logger.WithError(err).Fatal("Cannot connect to database")
 	}
 	defer conn.Close()
 
-	firebase, err := firebase.NewApp(ctx, nil)
+	firebase, err := config.InitFirebase(ctx)
 	if err != nil {
-		log.Fatalf("Khởi tạo ứng dụng Firebase thất bại: %v", err)
+		logger.WithError(err).Fatal("Failed to initialize Firebase app")
 	}
 
-	cld, _ := cloudinary.NewFromParams(config.CloudinaryName, config.CloudinaryKey, config.CloudinarySecret)
+	cld, err := config.InitCloudinary(*configSetting)
+	if err != nil {
+		logger.WithError(err).Fatal("Failed to initialize Cloudinary app")
+	}
 
 	store := db.NewStore(conn)
 
 	serviceApp := db.NewServiceApp(firebase, cld)
 
-	go runGatewayServer(config, store, serviceApp)
-	runGrpcServer(config, store, serviceApp)
+	go runGatewayServer(configSetting, store, serviceApp)
+	runGrpcServer(configSetting, store, serviceApp)
 }
 
 func runGatewayServer(config utils.Config, store db.StoreMain, serviceApp db.ServiceApp) {

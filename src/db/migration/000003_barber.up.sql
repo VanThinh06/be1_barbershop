@@ -51,8 +51,6 @@ CREATE TABLE "UserRoles" (
 );
 
 -- Create indexes on Barber
-
-Roles
 CREATE INDEX ON "UserRoles" ("barber_id");
 CREATE INDEX ON "UserRoles" ("barber_shop_id");
 
