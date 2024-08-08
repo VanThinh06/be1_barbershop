@@ -50,25 +50,19 @@ func main() {
 	}
 	defer conn.Close()
 
-	firebase, err := config.InitFirebase(ctx)
+	firebase, cld, err := config.InitServices(ctx, *configSetting)
 	if err != nil {
-		logger.WithError(err).Fatal("Failed to initialize Firebase app")
-	}
-
-	cld, err := config.InitCloudinary(*configSetting)
-	if err != nil {
-		logger.WithError(err).Fatal("Failed to initialize Cloudinary app")
+		logger.WithError(err).Fatal("Failed to initialize Services app")
 	}
 
 	store := db.NewStore(conn)
-
 	serviceApp := db.NewServiceApp(firebase, cld)
 
-	go runGatewayServer(configSetting, store, serviceApp)
+	go runGatewayServer(*configSetting, store, serviceApp)
 	runGrpcServer(configSetting, store, serviceApp)
 }
 
-func runGatewayServer(config utils.Config, store db.StoreMain, serviceApp db.ServiceApp) {
+func runGatewayServer(config config.Config, store db.StoreMain, serviceApp db.ServiceApp) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 

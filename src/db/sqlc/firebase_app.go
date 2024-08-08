@@ -10,8 +10,6 @@ type ServiceApp struct {
 	CloudinaryApp *cloudinary.Cloudinary
 }
 
-
-
 func NewServiceApp(firebase *firebase.App, cloudinary *cloudinary.Cloudinary) ServiceApp {
 	return ServiceApp{
 		FirebaseApp:   firebase,

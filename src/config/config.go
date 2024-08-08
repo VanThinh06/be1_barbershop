@@ -33,7 +33,7 @@ type Config struct {
 	CloudinaryKey             string        `mapstructure:"CLOUDINARY_KEY"`
 }
 
-func InitConfig(path string) (config *Config, err error) {
+func InitConfig(path string) (config Config, err error) {
 
 	viper.AddConfigPath(path)
 	viper.SetConfigName("app")
@@ -47,15 +47,15 @@ func InitConfig(path string) (config *Config, err error) {
 
 	err = viper.ReadInConfig()
 	if err != nil {
-		return nil, err
+		return config, err
 	}
 
 	err = viper.Unmarshal(&config)
 	if err != nil {
-		return nil, err
+		return config, err
 	}
 
-	return
+	return config, err
 }
 
 func InitLogger() *logrus.Logger {
@@ -69,18 +69,15 @@ func InitLogger() *logrus.Logger {
 	return logger
 }
 
-func InitFirebase(ctx context.Context) (*firebase.App, error) {
+func InitServices(ctx context.Context, config Config) (*firebase.App, *cloudinary.Cloudinary, error) {
 	firebase, err := firebase.NewApp(ctx, nil)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return firebase, nil
-}
 
-func InitCloudinary(config Config) (*cloudinary.Cloudinary, error) {
 	cld, err := cloudinary.NewFromParams(config.CloudinaryName, config.CloudinaryKey, config.CloudinarySecret)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return cld, nil
+	return firebase, cld, nil
 }
